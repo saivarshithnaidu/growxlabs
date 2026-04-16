@@ -9,12 +9,12 @@ export function GlobalBackground() {
         This is the consolidated singular theme based on the most recent 
         "DottedSurface" requirement. 
       */}
-      <DottedSurface className="opacity-30" />
+      <DottedSurface className="opacity-50" />
       
       {/* Subtle brand glow to prevent total darkness */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[160px] animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[140px] animate-float" />
       </div>
     </div>
   );

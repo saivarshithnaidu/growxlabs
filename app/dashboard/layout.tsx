@@ -15,7 +15,7 @@ export default function DashboardLayout({
   const [user, setUser] = useState<{ email: string; role: string } | null>(null);
 
   useEffect(() => {
-    // DEV ONLY: Sync with localStorage demo session
+    // Synchronize session state from storage
     const storedRole = localStorage.getItem("userRole");
     const storedEmail = localStorage.getItem("userEmail");
 

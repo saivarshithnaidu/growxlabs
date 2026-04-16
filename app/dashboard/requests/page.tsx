@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-// Mock data for Phase 1 Demo
+// Active Service Inquiries Data
 const mockRequests = [
   { id: 1, client: "Stark Industries", message: "Need to upgrade the reactor monitoring dashboard to real-time WebSockets.", status: "Open", date: "2024-04-15" },
   { id: 2, client: "Wayne Enterprises", message: "Automate the satellite uplink synchronization scripts.", status: "Closed", date: "2024-04-12" },

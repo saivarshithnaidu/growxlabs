@@ -52,12 +52,12 @@ export default function ClientAgreementPage() {
           </section>
 
           <section className="text-center p-20 border-2 border-dashed border-white/5 rounded-[4rem]">
-             <p className="text-white/20 text-[10px] font-black uppercase tracking-[1em] mb-10">Signature Required</p>
+             <p className="text-white/20 text-[10px] font-black uppercase tracking-[1em] mb-10">Verification Pending</p>
              <div className="w-full h-40 border-b border-white/10 mb-10 flex items-center justify-center">
-               <span className="text-white/5 italic font-serif text-5xl">Digital Signature Placeholder</span>
+               <span className="text-white/5 italic font-serif text-5xl">Digital Vault Secure</span>
              </div>
              <Button className="h-16 px-16 rounded-full font-black text-lg bg-white text-black hover:bg-neutral-200">
-               Generate Legal PDF
+               Initialize Agreement
              </Button>
           </section>
         </div>

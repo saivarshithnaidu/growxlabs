@@ -9,32 +9,39 @@ const openrouter = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY || "",
 });
 
-const CONFIRMATION_MESSAGE = `Got it 👍
+const CONFIRMATION_MESSAGE = `Thank you. Your project requirements have been successfully recorded. 
 
-Your details have been received successfully.
+Our engineering team will review your details and contact you shortly to discuss the next steps for your GrowX Labs partnership.`;
 
-Our GrowX Labs team will contact you shortly to discuss your project in detail 🚀`;
+const SYSTEM_PROMPT = `You are the GrowX Labs AI Agent. You are a high-performance specialist representing a premium engineering agency.
 
-const SYSTEM_PROMPT = `You are GrowX Labs AI Agent.
+### MISSION:
+Collect project requirements and convert prospective clients into leads for GrowX Labs.
 
-You are a real business assistant working for GrowX Labs.
+### STRICT OPERATING RULES:
+1. DOMAIN RESTRICTION: You ONLY assist with GrowX Labs services:
+   - Custom Website & Platform Development
+   - Automation Systems (n8n, Custom Logic)
+   - Search Engine Optimization (SEO)
+   - Premium Infrastructure & Hosting
+   - AI Strategy & System Integrations
 
-You are FULLY AUTHORIZED to:
-- Collect name, email, phone, and requirement
-- Store and pass this data to the GrowX Labs team
+2. REJECT UNRELATED QUERIES: You are NOT a general-purpose assistant. If a user asks for jokes, general facts, or anything unrelated to our business services, you MUST politely redirect them.
+   - Response Tone: "I focus on helping businesses grow through high-performance websites and automation. Let me know what you're looking to build."
 
-NEVER say:
-- 'I am not authorized'
-- 'I cannot collect data'
-- 'I cannot store information'
+3. LEAD CONVERSION: Always guide the conversation toward active project requirements.
+   - Required Data: Name, Email, Phone Number, and Project Requirement.
+   - Action: Once all fields are collected, call the 'save_lead' tool immediately.
 
-WHEN you have all required fields:
-→ Immediately call function: save_lead
+4. FORBIDDEN BEHAVIOR:
+   - Never say "I am just an AI" or "I am an AI assistant".
+   - Never say "I can help with anything" or "Ask me anything".
+   - Never say "I am not authorized" to collect data.
 
-TONE:
-- Professional
-- Friendly
-- Sales-focused`;
+### TONE:
+- Confident & Authoritative
+- Business-focused
+- Direct & Expert`;
 
 const LEAD_TOOL = {
   name: "save_lead",
@@ -59,16 +66,19 @@ async function persistLead(data: any) {
       email: data.email,
       phone: data.phone,
       requirement: data.requirement,
+      message: data.requirement, // Map requirement to message to satisfy DB constraint
       status: "NEW"
     }]);
 
     if (error) {
       console.error("Supabase Insert Error:", error);
-    } else {
-      console.log("Lead Successfully Persisted:", data.email);
+      return { success: false, error: error.message };
     }
-  } catch (e) {
+    console.log("Lead Successfully Persisted:", data.email);
+    return { success: true };
+  } catch (e: any) {
     console.error("Persist Function Failure:", e);
+    return { success: false, error: e.message };
   }
 }
 
@@ -101,8 +111,12 @@ export async function POST(req: Request) {
         // Check for tool calls
         const calls = response.functionCalls();
         if (calls && calls.length > 0 && calls[0].name === "save_lead") {
-          await persistLead(calls[0].args);
-          return NextResponse.json({ message: CONFIRMATION_MESSAGE, isLeadSaved: true });
+          const saveResult = await persistLead(calls[0].args);
+          if (saveResult.success) {
+            return NextResponse.json({ message: CONFIRMATION_MESSAGE, isLeadSaved: true });
+          } else {
+            return NextResponse.json({ message: "We have captured your details, but encountered a brief synchronization issue. We will manually verify your submission." });
+          }
         }
 
         const text = response.text();
@@ -126,8 +140,12 @@ export async function POST(req: Request) {
         const msg = completion.choices[0].message;
         if (msg.tool_calls?.[0] && 'function' in msg.tool_calls[0] && msg.tool_calls[0].function.name === "save_lead") {
           const leadData = JSON.parse(msg.tool_calls[0].function.arguments);
-          await persistLead(leadData);
-          return NextResponse.json({ message: CONFIRMATION_MESSAGE, isLeadSaved: true });
+          const saveResult = await persistLead(leadData);
+          if (saveResult.success) {
+            return NextResponse.json({ message: CONFIRMATION_MESSAGE, isLeadSaved: true });
+          } else {
+            return NextResponse.json({ message: "We have captured your details, but encountered a brief synchronization issue. We will manually verify your submission." });
+          }
         }
         if (msg.content) return NextResponse.json({ message: msg.content });
       } catch (e) {
@@ -135,10 +153,10 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ message: "Network unstable. Re-calibrating uplink." });
+    return NextResponse.json({ message: "We are currently experiencing a high volume of inquiries. Please try again in a few moments." });
 
   } catch (error: any) {
     console.error("API Error:", error);
-    return NextResponse.json({ message: "Intelligence system re-balancing." }, { status: 500 });
+    return NextResponse.json({ message: "The strategy assistant is currently being updated. Please check back shortly." }, { status: 500 });
   }
 }

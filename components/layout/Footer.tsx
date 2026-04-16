@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Rocket, Shield, Lock, CheckCircle, Globe, Mail } from "lucide-react";
+import Image from "next/image";
+import { Shield, Lock, CheckCircle, Globe, Mail } from "lucide-react";
 
 export function Footer() {
   const links = {
@@ -29,9 +30,15 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20 text-center md:text-left">
           {/* Brand Column */}
           <div className="space-y-6">
-            <Link href="/" className="flex items-center space-x-2 justify-center md:justify-start">
-              <Rocket className="h-6 w-6 text-white" />
-              <span className="text-xl font-black text-white tracking-tighter">GrowX Labs</span>
+            <Link href="/" className="flex items-center justify-center md:justify-start group">
+              <div className="relative h-10 w-40 transition-transform group-hover:scale-[1.02] duration-300">
+                <Image 
+                  src="/logo.svg" 
+                  alt="GrowX Labs" 
+                  fill 
+                  className="object-contain"
+                />
+              </div>
             </Link>
             <p className="text-white/40 text-[13px] leading-relaxed font-light">
               Engineering high-performance ecosystems and autonomous intelligence 

@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Rocket } from "lucide-react";
+import Image from "next/image";
+import { Menu, X, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { useSession, signOut } from "next-auth/react";
 
 const navLinks = [
   { name: "Services", href: "/services" },
@@ -16,14 +18,22 @@ const navLinks = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
+
+  const isLoggedIn = status === "authenticated";
+  const userRole = (session?.user as any)?.role;
+  const dashboardPath = userRole === "ADMIN" ? "/admin/search" : "/dashboard";
 
   return (
     <nav
@@ -34,12 +44,18 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <Link href="/" className="flex items-center space-x-2">
-            <Rocket className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold tracking-tight text-white">
-              GrowX<span className="text-primary">Labs</span>
-            </span>
+          <Link href="/" className="flex items-center group">
+            <div className="relative h-12 w-48 transition-transform group-hover:scale-[1.02] duration-300">
+              <Image 
+                src="/logo.svg" 
+                alt="GrowX Labs" 
+                fill 
+                className="object-contain"
+                priority
+              />
+            </div>
           </Link>
+
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-8">
@@ -52,9 +68,9 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
-            <Link href="/login">
+            <Link href={isLoggedIn ? dashboardPath : "/register"}>
               <Button size="sm" variant="primary">
-                Get Started
+                {isLoggedIn ? "Dashboard" : "Get Started"}
               </Button>
             </Link>
           </div>
@@ -84,11 +100,23 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          <Link href="/login" className="block w-full">
+          <Link href={isLoggedIn ? dashboardPath : "/register"} className="block w-full">
             <Button className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-              Get Started
+              {isLoggedIn ? "Dashboard" : "Get Started"}
             </Button>
           </Link>
+          {isLoggedIn && (
+            <Button 
+              variant="outline" 
+              className="w-full border-white/5 text-white/40"
+              onClick={() => {
+                signOut();
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              Sign Out
+            </Button>
+          )}
         </div>
       )}
     </nav>

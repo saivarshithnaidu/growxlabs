@@ -16,18 +16,18 @@ export interface CaseStudy {
 
 export const projects: CaseStudy[] = [
   {
-    slug: "ecommerce-revolution",
-    title: "E-Commerce Revolution",
+    slug: "ecommerce-performance",
+    title: "Global Commerce Scaling",
     category: "Web Engineering",
-    description: "A high-performance headless commerce store for an international fashion brand, achieving 300% growth in conversion.",
+    description: "Architected a sub-second headless commerce platform for an international lifestyle brand, driving unprecedented conversion growth.",
     image: "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&q=80&w=1200",
-    problem: "The client was struggling with a legacy monolith platform that was slow, hard to maintain, and failing to handle peak traffic during sales events.",
-    solution: "We rebuilt the entire experience using Next.js and a headless Shopify integration. This allowed for sub-second page loads and a completely custom, cinematic shopping experience.",
+    problem: "The client was losing 40% of potential revenue due to legacy platform latency and checkout failures during high-traffic global sales.",
+    solution: "We engineered a high-performance Next.js engine with a distributed headless backend, eliminating load-time bottlenecks and stabilizing the checkout pipeline.",
     tech: ["Next.js", "Shopify Hydrogen", "Tailwind CSS", "Vercel"],
     results: [
-      { label: "Conversion Rate", value: "+300%" },
-      { label: "Page Load Speed", value: "0.4s" },
-      { label: "Mobile Revenue", value: "+150%" }
+      { label: "Conversion Lift", value: "3.2x" },
+      { label: "LCP Performance", value: "0.4s" },
+      { label: "Cart Abandonment", value: "-62%" }
     ],
     gallery: [
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
@@ -35,18 +35,18 @@ export const projects: CaseStudy[] = [
     ]
   },
   {
-    slug: "saas-automation",
-    title: "SaaS Automation Engine",
-    category: "Automation",
-    description: "Automated customer onboarding and billing workflows for a growing B2B SaaS platform, saving 40 hours per week.",
+    slug: "enterprise-automation",
+    title: "Operational Efficiency Engine",
+    category: "AI & Automation",
+    description: "Developed an autonomous workflow ecosystem for a B2B SaaS leader, eliminating thousands of manual processing hours annually.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200",
-    problem: "A rapidly scaling B2B SaaS company was manually handling over 500 new signups a month, leading to human error and delayed onboarding.",
-    solution: "We implemented a custom automation layer using n8n and Supabase to sync customer data, trigger onboarding emails, and handle billing logic without human intervention.",
-    tech: ["n8n", "Supabase", "Node.js", "Resend"],
+    problem: "Manual data entry and fragmented onboarding processes were costing the operations team 160+ hours per month and increasing churn risk.",
+    solution: "We deployed an AI-powered automation layer using n8n and custom logic to centralize customer intelligence and automate the entire onboarding lifecycle.",
+    tech: ["n8n", "Supabase", "Node.js", "OpenAI"],
     results: [
-      { label: "Weekly Hours Saved", value: "40+" },
-      { label: "Error Rate", value: "-98%" },
-      { label: "Onboarding Time", value: "-75%" }
+      { label: "Ops Hours Saved", value: "2,000+" },
+      { label: "Onboarding Speed", value: "4.5x" },
+      { label: "Process Accuracy", value: "100%" }
     ],
     gallery: [
       "https://images.unsplash.com/photo-1551288049-bbbda536339a?auto=format&fit=crop&q=80&w=800",
@@ -54,18 +54,18 @@ export const projects: CaseStudy[] = [
     ]
   },
   {
-    slug: "fintech-dashboard",
-    title: "Wealth Management UI",
-    category: "UI/UX Design",
-    description: "Secure, intuitive wealth management dashboard with real-time data visualization.",
+    slug: "fintech-intelligence",
+    title: "Asset Management Portal",
+    category: "Financial Systems",
+    description: "Designed a high-security, real-time data orchestration platform for high-net-worth wealth management.",
     image: "https://images.unsplash.com/photo-1551288049-bbbda536339a?auto=format&fit=crop&q=80&w=1200",
-    problem: "The client's existing dashboard was visually outdated and complex, making it difficult for high-net-worth individuals to understand their portfolio performance.",
-    solution: "We designed and developed a premium, dark-mode dashboard with real-time data streaming and interactive charts, focusing on clarity and ease of use.",
+    problem: "Inconsistent data visualization and complex navigation were hindering client engagement and increasing support overhead.",
+    solution: "We built a specialized data portal with real-time financial streaming and intuitive performance analytics, focusing on high-trust user experience.",
     tech: ["React", "D3.js", "Framer Motion", "Tailwind"],
     results: [
-      { label: "User Retention", value: "+60%" },
-      { label: "Support Tickets", value: "-45%" },
-      { label: "NPS Score", value: "85" }
+      { label: "User Engagement", value: "+85%" },
+      { label: "Support Vol.", value: "-40%" },
+      { label: "NPS Growth", value: "+22pts" }
     ],
     gallery: [
       "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&q=80&w=800",

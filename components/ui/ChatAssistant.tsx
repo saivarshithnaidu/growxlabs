@@ -36,10 +36,10 @@ export function ChatAssistant() {
         if (Array.isArray(data) && data.length > 0) {
           setMessages(data.map(m => ({ role: m.role, content: m.message })));
         } else {
-          setMessages([{ role: "assistant", content: "Architecture confirmed. I am GrowX AI. How can I assist your business growth today?" }]);
+          setMessages([{ role: "assistant", content: "Welcome to GrowX Labs. How can I assist with your technical or automation requirements today?" }]);
         }
       } catch (e) {
-        setMessages([{ role: "assistant", content: "Architecture confirmed. I am GrowX AI. How can I assist your business growth today?" }]);
+        setMessages([{ role: "assistant", content: "Welcome to GrowX Labs. How can I assist with your technical or automation requirements today?" }]);
       }
     };
     loadHistory();
@@ -84,7 +84,7 @@ export function ChatAssistant() {
       });
 
       const data = await response.json();
-      const botReply = data.message || "Uplink error.";
+      const botReply = data.message || "Connection error. Please retry.";
       
       setMessages(prev => [...prev, { role: "assistant", content: botReply }]);
       
@@ -92,7 +92,7 @@ export function ChatAssistant() {
       saveMessage("assistant", botReply);
 
     } catch (error) {
-      setMessages(prev => [...prev, { role: "assistant", content: "Communication uplink unstable." }]);
+      setMessages(prev => [...prev, { role: "assistant", content: "Our strategy systems are currently high in demand. Please try again." }]);
     } finally {
       setIsLoading(false);
     }
@@ -115,10 +115,10 @@ export function ChatAssistant() {
                     <Bot className="text-black h-5 w-5" />
                  </div>
                  <div>
-                   <h3 className="text-white font-black text-lg tracking-tighter uppercase leading-none">GrowX AI</h3>
+                   <h3 className="text-white font-black text-lg tracking-tighter uppercase leading-none">Strategy Assistant</h3>
                    <span className="flex items-center text-[10px] font-bold uppercase tracking-widest text-primary mt-1">
                      <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse mr-2" />
-                     Live Persistence v3
+                     Online & Secure
                    </span>
                  </div>
                </div>
@@ -151,8 +151,8 @@ export function ChatAssistant() {
                 <input 
                   autoFocus value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Inquire GrowX Intelligence..."
-                  className="w-full h-16 bg-white/[0.03] border border-white/5 rounded-2xl pl-7 pr-16 text-white text-sm focus:outline-none focus:border-white/20 transition-all"
+                  placeholder="Ask about our services..."
+                  className="w-full h-16 bg-white/[0.03] border border-white/5 rounded-2xl pl-7 pr-16 text-white text-sm focus:outline-none focus:border-white/20 transition-all placeholder:text-white/20"
                 />
                 <button 
                   type="submit" disabled={isLoading || !input.trim()}
@@ -163,6 +163,7 @@ export function ChatAssistant() {
           </motion.div>
         )}
       </AnimatePresence>
+
 
       <motion.button
         whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}

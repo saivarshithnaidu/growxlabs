@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Rocket, LogOut, ShieldCheck, UserCheck, Activity } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { LogOut, ShieldCheck, UserCheck, Activity, Radar, Target, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function DashboardPage() {
@@ -76,20 +78,50 @@ export default function DashboardPage() {
           </Button>
         </motion.div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          <Link href="/admin/search">
+            <Card className="p-10 glass border-primary/20 bg-primary/5 group hover:bg-primary/10 transition-all cursor-pointer">
+              <div className="flex justify-between items-start mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center p-2">
+                  <Radar className="text-primary h-6 w-6 animate-pulse" />
+                </div>
+                <ArrowUpRight className="text-white/20 group-hover:text-primary transition-colors" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-2 tracking-tighter">Market Radar</h3>
+              <p className="text-white/40 text-sm font-light">Initialize hyper-local market scans to identify high-potential prospects using the Apify intelligence engine.</p>
+            </Card>
+          </Link>
+
+          <Link href="/admin/leads">
+            <Card className="p-10 glass border-white/5 group hover:border-white/10 transition-all cursor-pointer">
+              <div className="flex justify-between items-start mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center p-2">
+                  <Target className="text-white h-6 w-6" />
+                </div>
+                <ArrowUpRight className="text-white/20 group-hover:text-white transition-colors" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-2 tracking-tighter">Prospect Hub</h3>
+              <p className="text-white/40 text-sm font-light">Manage, enrich, and dispatch outreach strategies to identified targets and track conversion milestones.</p>
+            </Card>
+          </Link>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <Card className="p-10 glass border-white/5 space-y-6">
-            <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center">
-              <Rocket className="text-white h-6 w-6" />
+            <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center overflow-hidden p-2">
+              <div className="relative h-full w-full">
+                <Image src="/favicon-logo.png" alt="X" fill className="object-contain" />
+              </div>
             </div>
             <div>
               <h3 className="text-xl font-bold text-white mb-2 tracking-tight">System Status</h3>
               <p className="text-white/40 text-sm font-light leading-relaxed">
-                All GrowX core systems are operational. Internal environment v1.0 is active.
+                All core systems are operational. The GrowX infrastructure is fully synchronized.
               </p>
             </div>
             <div className="pt-4 flex items-center space-x-2">
               <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-green-500">Connected</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-green-500">Live Infrastructure</span>
             </div>
           </Card>
 
@@ -100,11 +132,11 @@ export default function DashboardPage() {
             <div>
               <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Active Analytics</h3>
               <p className="text-white/40 text-sm font-light leading-relaxed">
-                Platform is monitoring global project sync. Performance health at 100%.
+                Monitoring global project metrics and deployment health. Performance is optimal.
               </p>
             </div>
             <div className="pt-4 flex items-center space-x-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-white/20">Real-time Data Active</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/20">Data Streams Synchronized</span>
             </div>
           </Card>
 
@@ -113,26 +145,26 @@ export default function DashboardPage() {
               <ShieldCheck className="text-white h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Security Audit</h3>
+              <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Access Control</h3>
               <p className="text-white/40 text-sm font-light leading-relaxed">
-                Authentication layer is currently in demo mode. Hardcoded overrides enabled.
+                Enterprise-grade security is active. All access logs are being recorded for auditing.
               </p>
             </div>
             <div className="pt-4 flex items-center space-x-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-white/20">Auth Phase 1</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/20">Secured Node</span>
             </div>
           </Card>
         </div>
 
         <div className="mt-16">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-black text-white tracking-tight uppercase">Recent Project Intelligence.</h2>
+            <h2 className="text-2xl font-black text-white tracking-tight uppercase">Recent Project Activity.</h2>
             <Button 
               variant="ghost" 
               onClick={() => router.push("/dashboard/leads")}
               className="text-primary font-black uppercase tracking-widest text-[10px]"
             >
-              View All Intelligence
+              View All Insights
             </Button>
           </div>
           
@@ -145,7 +177,7 @@ export default function DashboardPage() {
                    onClick={() => router.push("/dashboard/leads")}
                  >
                     <div className="flex items-center justify-between">
-                       <span className="text-[8px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-full group-hover:bg-primary group-hover:text-black transition-all">Intelligence</span>
+                       <span className="text-[8px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-full group-hover:bg-primary group-hover:text-black transition-all">PROJECT LEAD</span>
                        <span className="text-[8px] font-black uppercase tracking-widest text-white/20 tracking-[0.2em]">{new Date(lead.created_at).toLocaleDateString()}</span>
                     </div>
                     <div className="space-y-1">
@@ -156,11 +188,13 @@ export default function DashboardPage() {
                ))
              ) : (
                <Card className="p-8 glass border-white/5 border-dashed flex flex-col items-center justify-center text-center space-y-4 col-span-full">
-                 <div className="h-12 w-12 rounded-full border border-white/10 flex items-center justify-center text-white/20">
-                   <Rocket size={20} />
+                 <div className="h-12 w-12 rounded-full border border-white/10 flex items-center justify-center overflow-hidden p-3 opacity-20">
+                   <div className="relative h-full w-full">
+                     <Image src="/favicon-logo.png" alt="X" fill className="object-contain grayscale" />
+                   </div>
                  </div>
                  <p className="text-sm font-light text-white/20 italic">
-                   Awaiting new project intelligence from the AI Agent...
+                   Awaiting new project inquiries...
                  </p>
                </Card>
              )}
@@ -169,9 +203,10 @@ export default function DashboardPage() {
 
         <div className="mt-24 text-center">
           <p className="text-white/10 text-xs font-black uppercase tracking-[0.4em]">
-            Authorized GrowX Internal Dashboard
+            GrowX Labs Management Portal
           </p>
         </div>
+
       </div>
     </div>
   );

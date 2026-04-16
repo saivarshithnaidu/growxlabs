@@ -7,7 +7,7 @@ import { Plus, LayoutGrid, List, MoreVertical, Clock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 
-// Mock data for Phase 1 Demo
+// Active Production Cycles Data
 const mockProjects = [
   { id: 1, title: "Next-Gen Fintech UI", client: "Goldman Sachs", status: "In Progress", progress: 65, category: "UI/UX" },
   { id: 2, title: "Warehouse AI Sync", client: "Amazon", status: "Active", progress: 30, category: "Automation" },

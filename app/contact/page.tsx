@@ -30,146 +30,162 @@ export default function ContactPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to send message properly. Please try again.");
+        throw new Error("Our systems are currently experiencing a high volume of inquiries. Please try again or email us directly.");
       }
 
       setStatus("success");
       setFormData({ name: "", email: "", message: "" });
     } catch (err: any) {
       setStatus("error");
-      setErrorMessage(err.message || "Something went wrong.");
+      setErrorMessage(err.message || "An unexpected error occurred. Please try again.");
     }
   };
 
   return (
-    <div className="pt-32 pb-24">
+    <div className="pt-32 pb-48 bg-[#030303]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-24">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-bold text-white mb-6"
+            className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter"
           >
-            Let&apos;s Build <span className="text-gradient">Something Great.</span>
+            Start Your <span className="text-gradient">Project.</span>
           </motion.h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Ready to start your next project or have a question? 
-            Reach out and we&apos;ll get back to you within 24 hours.
+          <p className="text-xl text-white/40 max-w-2xl mx-auto font-light leading-relaxed">
+            We review documentation and respond to all project inquiries within 24 business hours.
+            Secure your growth infrastructure today.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
           {/* Contact Information */}
-          <div className="space-y-8">
-            <h2 className="text-3xl font-bold text-white">Contact Information</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We&apos;re currently accepting new projects and partnerships. 
-              Fill out the form or use our direct contact info below.
-            </p>
+          <div className="space-y-12">
+            <div>
+              <h2 className="text-3xl font-black text-white tracking-tight mb-6 uppercase">Consultation Office</h2>
+              <p className="text-white/40 leading-relaxed text-lg font-light">
+                We are currently accepting high-impact partnerships for Q3. 
+                Use the portal below or contact our strategy team directly.
+              </p>
+            </div>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               {[
-                { icon: Mail, label: "Email", value: "hello@growxlabs.com" },
-                { icon: Phone, label: "Phone", value: "+1 (555) 000-0000" },
-                { icon: MapPin, label: "Office", value: "123 Innovation Drive, Tech City" },
+                { icon: Mail, label: "Direct Email", value: "partnerships@growxlabs.tech" },
+                { icon: Phone, label: "Strategy Line", value: "+91 91216 00000" },
+                { icon: MapPin, label: "Global HQ", value: "Engineering Block, Guntur, India" },
               ].map((item, i) => (
-                <div key={i} className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <item.icon className="text-primary h-6 w-6" />
+                <div key={i} className="flex items-center space-x-6 group">
+                  <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
+                    <item.icon className="text-white h-6 w-6" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">{item.label}</p>
-                    <p className="text-white font-medium">{item.value}</p>
+                    <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.2em]">{item.label}</p>
+                    <p className="text-white font-bold text-lg tracking-tight">{item.value}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Social Proof Placeholder */}
-            <div className="pt-12">
-              <p className="text-sm font-semibold text-muted-foreground mb-4">TRUSTED BY INNOVATORS AT</p>
-              <div className="flex flex-wrap gap-8 opacity-40">
-                <span className="text-2xl font-bold text-white tracking-widest">TECHCORP</span>
-                <span className="text-2xl font-bold text-white tracking-widest">SKYLAB</span>
-                <span className="text-2xl font-bold text-white tracking-widest">NEXUS</span>
+            <div className="pt-12 border-t border-white/5">
+              <p className="text-[10px] font-black text-white/20 mb-8 uppercase tracking-[0.3em]">Industry Recognized Excellence</p>
+              <div className="flex flex-wrap gap-10 opacity-30 grayscale items-center">
+                 <span className="text-xl font-black text-white tracking-widest leading-none">TECHCORP</span>
+                 <span className="text-xl font-black text-white tracking-widest leading-none">SKYLAB</span>
+                 <span className="text-xl font-black text-white tracking-widest leading-none">NEXUS</span>
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
-          <Card className="p-8 md:p-10">
-            {status === "success" ? (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-12 space-y-6"
-              >
-                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="text-green-500 w-10 h-10" />
-                </div>
-                <h3 className="text-2xl font-bold text-white">Message Sent!</h3>
-                <p className="text-muted-foreground">
-                  Thank you for reaching out. A strategy expert will review your message 
-                  and contact you shortly.
-                </p>
-                <Button onClick={() => setStatus("idle")} variant="outline" className="mt-4">
-                  Send Another Message
-                </Button>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">Full Name</label>
-                  <Input 
-                    required
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">Email Address</label>
-                  <Input 
-                    required
-                    type="email"
-                    placeholder="john@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">How can we help?</label>
-                  <Textarea 
-                    required
-                    placeholder="Tell us about your project, goals, and timeline..."
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  />
-                </div>
-
-                {status === "error" && (
-                  <div className="flex items-center space-x-2 text-red-500 text-sm bg-red-500/10 p-4 rounded-lg">
-                    <AlertCircle size={16} />
-                    <span>{errorMessage}</span>
-                  </div>
-                )}
-
-                <Button 
-                  type="submit" 
-                  className="w-full h-14 text-lg" 
-                  disabled={status === "loading"}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <Card className="p-10 md:p-16 glass border-white/5 rounded-[3rem] shadow-2xl shadow-black/50">
+              {status === "success" ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center py-12 space-y-8"
                 >
-                  {status === "loading" ? "Sending..." : "Send Message"}
-                  <Send className="ml-2 h-5 w-5" />
-                </Button>
-                <p className="text-xs text-center text-muted-foreground">
-                  By submitting, you agree to our privacy policy and terms of service.
-                </p>
-              </form>
-            )}
-          </Card>
+                  <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="text-white w-12 h-12" />
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-3xl font-black text-white tracking-tighter">Transmission Secured.</h3>
+                    <p className="text-white/40 font-light text-lg">
+                      Your inquiry has been logged. A partner strategy expert 
+                      will contact you via email shortly.
+                    </p>
+                  </div>
+                  <Button onClick={() => setStatus("idle")} variant="outline" className="rounded-full px-10 h-14 border-white/10 hover:bg-white/5 text-white/60 hover:text-white transition-all">
+                    Initialize New Inquiry
+                  </Button>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-4">Full Name</label>
+                    <Input 
+                      required
+                      placeholder="Jane Cooper"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="h-14 rounded-2xl bg-white/[0.03] border-white/5 pl-6 text-white focus:border-white/20 transition-all font-medium"
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-4">Corporate Email Address</label>
+                    <Input 
+                      required
+                      type="email"
+                      placeholder="j.cooper@enterprise.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="h-14 rounded-2xl bg-white/[0.03] border-white/5 pl-6 text-white focus:border-white/20 transition-all font-medium"
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-4">Project Scope & Requirements</label>
+                    <Textarea 
+                      required
+                      placeholder="Discuss your growth objectives, desired timeline, and technical constraints..."
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="min-h-[160px] rounded-3xl bg-white/[0.03] border-white/5 p-6 text-white focus:border-white/20 transition-all font-medium leading-relaxed"
+                    />
+                  </div>
+
+                  {status === "error" && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="flex items-center space-x-3 text-red-500 text-xs bg-red-500/10 p-5 rounded-2xl border border-red-500/20"
+                    >
+                      <AlertCircle size={18} />
+                      <span className="font-bold leading-tight">{errorMessage}</span>
+                    </motion.div>
+                  )}
+
+                  <Button 
+                    type="submit" 
+                    className="w-full h-16 text-lg font-black bg-white text-black hover:bg-neutral-200 transition-all rounded-2xl shadow-xl shadow-white/5" 
+                    disabled={status === "loading"}
+                  >
+                    {status === "loading" ? "Initializing Transmission..." : "Get a Custom Quote"}
+                    <Send className="ml-2 h-5 w-5" />
+                  </Button>
+                  <p className="text-[10px] text-center text-white/20 font-medium uppercase tracking-widest">
+                    Encrypted Protocol &bull; Secure Data Handling &bull; NDAs Active
+                  </p>
+                </form>
+              )}
+            </Card>
+          </motion.div>
         </div>
       </div>
     </div>
   );
 }
+

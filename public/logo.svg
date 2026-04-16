@@ -1,0 +1,9 @@
+<svg width="240" height="50" viewBox="0 0 240 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Clean Bold X Symbol -->
+  <path d="M10 10L30 30" stroke="white" stroke-width="6" stroke-linecap="butt"/>
+  <path d="M30 10L23 17" stroke="white" stroke-width="6" stroke-linecap="butt"/>
+  <path d="M17 23L10 30" stroke="white" stroke-width="6" stroke-linecap="butt"/>
+  
+  <!-- Balanced Typography -->
+  <text x="45" y="32" fill="white" style="font-family: Arial, sans-serif; font-weight: 900; font-size: 24px; letter-spacing: -0.05em;">GROWX <tspan style="font-weight: 300; letter-spacing: 0.1em; opacity: 0.8;">LABS</tspan></text>
+</svg>

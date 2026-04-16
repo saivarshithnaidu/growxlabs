@@ -15,84 +15,85 @@ import {
 
 const allServices = [
   {
-    title: "Web Development",
-    description: "Custom, high-performance web applications built with Next.js, React, and TypeScript. We focus on speed, SEO, and conversion-centric design.",
+    title: "Web Engineering",
+    description: "High-performance applications built for speed and conversion. We use Next.js and TypeScript to create stable, scalable digital platforms.",
     icon: Code,
   },
   {
     title: "AI & Automations",
-    description: "Connect your tools and automate repetitive tasks using n8n, Make, or custom scripts. Save time and reduce human error.",
+    description: "Remove manual tasks from your workflow. We deploy custom AI and automation systems that save your team hundreds of hours per month.",
     icon: Settings,
   },
   {
-    title: "SEO Optimization",
-    description: "Technical SEO, content strategy, and backlink auditing to ensure your business ranks on the first page of Google.",
+    title: "Technical SEO",
+    description: "Data-driven search strategy designed to put your business in front of the right customers and dominate your market rankings.",
     icon: TrendingUp,
   },
   {
-    title: "Hosting & Maintenance",
-    description: "Premium cloud hosting on Vercel/AWS with 24/7 monitoring, security updates, and performance tuning.",
+    title: "Cloud Infrastructure",
+    description: "Global hosting solutions with 100% uptime monitoring and proactive maintenance. Built for businesses that cannot afford downtime.",
     icon: Server,
   },
   {
-    title: "UI/UX Design",
-    description: "Modern, minimal, and premium design systems that provide a seamless user experience across all devices.",
+    title: "Product Design",
+    description: "Premium user interfaces that prioritize clarity and ease of use. We design systems that make complex software feel simple.",
     icon: Globe,
   },
   {
-    title: "Performance Audits",
-    description: "Deep dive into your existing site's performance and security to identify and fix bottlenecks.",
+    title: "Strategic Growth",
+    description: "Comprehensive audits and technical roadmaps to identify bottlenecks and unlock new revenue streams through technology.",
     icon: Zap,
   },
 ];
 
 export default function ServicesPage() {
   return (
-    <div className="pt-32 pb-24">
+    <div className="pt-32 pb-48">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-20">
+        <div className="text-center mb-32">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-bold text-white mb-6"
+            className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter"
           >
-            Digital Solutions for <span className="text-gradient">Modern Scale.</span>
+            Engineering <span className="text-gradient">Potential.</span>
           </motion.h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            We provide a full suite of services designed to take your business from 
-            initial concept to global market leader.
+          <p className="text-xl text-white/40 max-w-3xl mx-auto font-light leading-relaxed">
+            We provide direct, high-impact technical services designed to solve 
+            real business problems and accelerate your path to scale.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
           {allServices.map((service, index) => (
             <ServiceCard key={index} {...service} />
           ))}
         </div>
 
-        {/* Features list */}
-        <div className="glass rounded-3xl p-12 md:p-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Shield className="text-primary" />
+        {/* Value Props */}
+        <div className="glass rounded-[3rem] p-12 md:p-24 border border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-full h-full bg-white/[0.01] -z-10" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-20 text-center relative z-10">
+            <div className="space-y-6">
+              <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto transition-transform group-hover:scale-110">
+                <Shield className="text-white h-8 w-8" />
               </div>
-              <h3 className="text-lg font-bold text-white">Secure First</h3>
-              <p className="text-muted-foreground text-sm">Every line of code is written with security and privacy in mind.</p>
+              <h3 className="text-xl font-bold text-white tracking-tight">Enterprise Security</h3>
+              <p className="text-white/40 text-sm font-light leading-relaxed">Every solution is built with rigorous security standards to protect your business data.</p>
             </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Clock className="text-primary" />
+            <div className="space-y-6">
+              <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto transition-transform group-hover:scale-110" style={{ transitionDelay: '0.1s' }}>
+                <Clock className="text-white h-8 w-8" />
               </div>
-              <h3 className="text-lg font-bold text-white">Timely Delivery</h3>
-              <p className="text-muted-foreground text-sm">We value your time. Our agile process ensures we hit every milestone.</p>
+              <h3 className="text-xl font-bold text-white tracking-tight">On-Time Delivery</h3>
+              <p className="text-white/40 text-sm font-light leading-relaxed">We respect your timeline. Fixed-price, fixed-date projects delivered with absolute precision.</p>
             </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Zap className="text-primary" />
+            <div className="space-y-6">
+              <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto transition-transform group-hover:scale-110" style={{ transitionDelay: '0.2s' }}>
+                <Zap className="text-white h-8 w-8" />
               </div>
-              <h3 className="text-lg font-bold text-white">Ultra-Fast</h3>
-              <p className="text-muted-foreground text-sm">We optimize for performance, ensuring sub-2s load times on all pages.</p>
+              <h3 className="text-xl font-bold text-white tracking-tight">Precision Performance</h3>
+              <p className="text-white/40 text-sm font-light leading-relaxed">We optimize for speed and reliability, ensuring your systems perform under massive traffic.</p>
             </div>
           </div>
         </div>
@@ -100,3 +101,4 @@ export default function ServicesPage() {
     </div>
   );
 }
+

@@ -22,22 +22,22 @@ import { ProjectCard } from "@/components/ui/ProjectCard";
 const mainServices = [
   {
     title: "Web Engineering",
-    description: "High-performance, modern ecosystems built with Next.js, optimized for zero-latency and massive conversion.",
+    description: "We build high-performance digital platforms that turn visitors into customers at scale.",
     icon: Code,
   },
   {
     title: "AI & Automation",
-    description: "Intelligent n8n & custom logic systems that eliminate manual overhead and save hundreds of operational hours.",
+    description: "Custom AI workflows and automation systems that eliminate manual overhead and speed up your growth.",
     icon: Settings,
   },
   {
-    title: "Performance SEO",
-    description: "Technical search excellence designed to dominate rankings and capture high-intent organic traffic.",
+    title: "Technical SEO",
+    description: "Dominant search visibility engineered to capture high-intent organic traffic and drive revenue.",
     icon: TrendingUp,
   },
   {
-    title: "Systems Hosting",
-    description: "Global cloud infrastructure with 99.9% uptime and specialized maintenance for scale-ready companies.",
+    title: "Cloud Infrastructure",
+    description: "Secure, scalable hosting and maintenance designed for 100% reliability and business continuity.",
     icon: Server,
   },
 ];
@@ -54,7 +54,7 @@ export default function Home() {
             className="inline-flex items-center px-4 py-1.5 rounded-full glass mb-8 border border-white/10"
           >
             <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-              The Standard of Scale
+              Engineering Excellence for Global Scale
             </span>
           </motion.div>
           
@@ -63,8 +63,8 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             className="text-6xl md:text-9xl font-black text-white mb-10 tracking-tighter leading-[0.9]"
           >
-            Digital Systems <br />
-            <span className="text-gradient">Engineered to Grow.</span>
+             Digital Systems <br />
+            <span className="opacity-70">That Drive Growth.</span>
           </motion.h1>
           
           <motion.p 
@@ -73,8 +73,8 @@ export default function Home() {
             transition={{ delay: 0.1 }}
             className="text-xl md:text-2xl text-white/40 max-w-3xl mx-auto mb-14 leading-relaxed font-light"
           >
-            GrowX Labs combines elite software engineering with autonomous intelligence 
-            to architect the future of your business operations.
+            We build high-performance websites and automation systems that help businesses grow faster. 
+            From custom platforms to AI-powered workflows — GrowX Labs handles everything end-to-end.
           </motion.p>
           
           <motion.div 
@@ -83,8 +83,8 @@ export default function Home() {
             transition={{ delay: 0.2 }}
             className="flex flex-col sm:flex-row justify-center gap-6"
           >
-            <Link href="/login">
-              <Button size="lg" className="h-16 px-12 text-lg rounded-full font-black bg-white text-black hover:bg-primary transition-all">
+            <Link href="/contact">
+              <Button size="lg" className="h-16 px-12 text-lg rounded-full font-black bg-white text-black hover:bg-neutral-200 transition-all shadow-xl shadow-white/5">
                 Start Your Project <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -107,8 +107,7 @@ export default function Home() {
             <div className="max-w-2xl">
               <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter">Core Capabilities</h2>
               <p className="text-xl text-white/40 font-light leading-relaxed">
-                We specialize in building the technical infrastructure that allows traditional businesses 
-                to operate at the speed of the modern web.
+                Direct, results-oriented technical solutions for businesses that prioritize speed and reliability.
               </p>
             </div>
             <Link href="/services">
@@ -126,13 +125,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Work - Bringing the Portfolio vibe here */}
+      {/* Featured Work */}
       <section className="py-32 bg-white/[0.01] border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-24">
-            <h2 className="text-4xl md:text-7xl font-black text-white mb-6 tracking-tighter">Featured Proof.</h2>
+            <h2 className="text-4xl md:text-7xl font-black text-white mb-6 tracking-tighter">Measurable Results.</h2>
             <p className="text-white/40 max-w-2xl mx-auto font-light text-lg">
-              Measurable impact across commerce, automation, and industrial scaling.
+              We focus on solving business problems with engineering precision.
             </p>
           </div>
           
@@ -152,15 +151,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Metrics / Social Proof */}
+      {/* Metrics */}
       <section className="py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
               { label: "Revenue Generated", value: "$40M+" },
               { label: "Hours Automated", value: "12K+" },
-              { label: "Project Success", value: "100%" },
-              { label: "Uptime Guaranteed", value: "99.9%" }
+              { label: "Client Retainment", value: "98%" },
+              { label: "Uptime Guaranteed", value: "100%" }
             ].map((metric, i) => (
               <div key={i} className="text-center">
                 <div className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tighter">{metric.value}</div>
@@ -178,15 +177,14 @@ export default function Home() {
              <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-[100px] -z-10 group-hover:bg-white/10 transition-colors" />
              
              <h2 className="text-5xl md:text-8xl font-black text-white mb-10 tracking-tighter leading-none">
-               Let&apos;s Build <br />The Future.
+               Talk to <br />Our Team.
              </h2>
              <p className="text-xl text-white/40 max-w-xl mx-auto mb-14 font-light leading-relaxed">
-               Limited availability for Q2/Q3 partnerships. 
-               Secure your scaling engine today.
+               Secure your growth engine today. We are currently accepting partnerships for Q3.
              </p>
-             <Link href="/login">
-               <Button size="lg" className="h-16 px-16 text-xl rounded-full font-black bg-white text-black hover:bg-primary transition-all shadow-2xl shadow-white/10">
-                 Get Started
+             <Link href="/contact">
+               <Button size="lg" className="h-16 px-16 text-xl rounded-full font-black bg-white text-black hover:bg-neutral-200 transition-all shadow-2xl shadow-white/10">
+                 Get a Custom Quote
                </Button>
              </Link>
           </div>
@@ -195,3 +193,4 @@ export default function Home() {
     </div>
   );
 }
+
