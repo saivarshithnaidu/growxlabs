@@ -11,6 +11,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
+  const [recentLeads, setRecentLeads] = useState<any[]>([]);
 
   useEffect(() => {
     // Check local session for demo purposes
@@ -22,8 +23,26 @@ export default function DashboardPage() {
     } else {
       setRole(storedRole);
       setEmail(storedEmail);
+      if (storedRole === "Admin" || storedRole === "Co-Admin") {
+        fetchRecentLeads();
+      }
     }
   }, [router]);
+
+  const fetchRecentLeads = async () => {
+    try {
+      const { createClient } = await import("@/lib/supabase/client");
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("leads")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(3);
+      setRecentLeads(data || []);
+    } catch (e) {
+      console.error("Recent Leads Error:", e);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("userRole");
@@ -109,6 +128,50 @@ export default function DashboardPage() {
               <span className="text-[10px] font-black uppercase tracking-widest text-white/20">Auth Phase 1</span>
             </div>
           </Card>
+        </div>
+
+        {/* Recent Intelligence Section */}
+        <div className="mt-16">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-black text-white tracking-tight uppercase">Recent Project Intelligence.</h2>
+            <Button 
+              variant="ghost" 
+              onClick={() => router.push("/dashboard/leads")}
+              className="text-primary font-black uppercase tracking-widest text-[10px]"
+            >
+              View All Intelligence
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+             {recentLeads.length > 0 ? (
+               recentLeads.map((lead) => (
+                 <Card 
+                   key={lead.id} 
+                   className="p-6 glass border-white/5 flex flex-col space-y-4 hover:border-white/20 transition-all cursor-pointer group"
+                   onClick={() => router.push("/dashboard/leads")}
+                 >
+                    <div className="flex items-center justify-between">
+                       <span className="text-[8px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-full group-hover:bg-primary group-hover:text-black transition-all">Intelligence</span>
+                       <span className="text-[8px] font-black uppercase tracking-widest text-white/20 tracking-[0.2em]">{new Date(lead.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div className="space-y-1">
+                       <h4 className="text-white font-bold tracking-tight text-lg">{lead.name}</h4>
+                       <p className="text-white/40 text-xs truncate italic">"{lead.requirement}"</p>
+                    </div>
+                 </Card>
+               ))
+             ) : (
+               <Card className="p-8 glass border-white/5 border-dashed flex flex-col items-center justify-center text-center space-y-4 col-span-full">
+                 <div className="h-12 w-12 rounded-full border border-white/10 flex items-center justify-center text-white/20">
+                   <Rocket size={20} />
+                 </div>
+                 <p className="text-sm font-light text-white/20 italic">
+                   Awaiting new project intelligence from the AI Agent...
+                 </p>
+               </Card>
+             )}
+          </div>
         </div>
 
         <div className="mt-24 text-center">

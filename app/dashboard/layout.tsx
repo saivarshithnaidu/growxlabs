@@ -34,6 +34,7 @@ export default function DashboardLayout({
 
   const sidebarLinks = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard, roles: ["Admin", "Co-Admin", "Client"] },
+    { name: "Leads", href: "/dashboard/leads", icon: MessageSquare, roles: ["Admin", "Co-Admin"] },
     { name: "Clients", href: "/dashboard/clients", icon: Users, roles: ["Admin", "Co-Admin"] },
     { name: "Projects", href: "/dashboard/projects", icon: FolderKanban, roles: ["Admin", "Co-Admin", "Client"] },
     { name: "Requests", href: "/dashboard/requests", icon: MessageSquare, roles: ["Admin", "Co-Admin", "Client"] },

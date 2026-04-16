@@ -74,8 +74,8 @@ export async function POST(req: Request) {
     // 1. PRIMARY: GEMINI (Using generateContent as requested)
     if (process.env.GEMINI_API_KEY) {
       try {
-        const model = genAI.getGenerativeModel({ 
-          model: "gemini-1.5-flash-latest",
+        const model = genAI.getGenerativeModel({
+          model: "gemini-2.5-flash",
           tools: [{ functionDeclarations: [LEAD_TOOL] }] as any,
           safetySettings: [
             { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
-        
+
         // Check for tool calls
         const calls = response.functionCalls();
         if (calls && calls.length > 0 && calls[0].name === "save_lead") {
