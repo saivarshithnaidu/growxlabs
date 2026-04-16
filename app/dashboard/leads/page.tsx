@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/Card";
 import { 
   MessageSquare, Search, Filter, Mail, Phone, 
-  Calendar, CheckCircle2, Clock, MoreHorizontal 
+  Calendar, CheckCircle2, Clock, MoreHorizontal, Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,7 +26,6 @@ export default function LeadsPage() {
   const [role, setRole] = useState<string | null>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
 
   useEffect(() => {
     const storedRole = localStorage.getItem("userRole");
@@ -43,12 +41,10 @@ export default function LeadsPage() {
 
   const fetchLeads = async () => {
     try {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
+      setLoading(true);
+      const res = await fetch("/api/lead/list");
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
       setLeads(data || []);
     } catch (e) {
       console.error("Fetch Leads Error:", e);
@@ -149,8 +145,12 @@ export default function LeadsPage() {
             ))
           ) : (
             <div className="h-96 flex flex-col items-center justify-center glass rounded-[3rem] border-dashed border-white/10 italic text-white/20 space-y-4">
-               <Loader2 className="animate-spin h-12 w-12 opacity-20" />
-               <p className="text-xl font-light">Awaiting new project intelligence...</p>
+               {loading ? (
+                 <Loader2 className="animate-spin h-12 w-12 opacity-20" />
+               ) : (
+                 <Rocket className="h-12 w-12 opacity-20" />
+               )}
+               <p className="text-xl font-light">{loading ? "Synchronizing intelligence..." : "Awaiting new project intelligence..."}</p>
             </div>
           )}
         </AnimatePresence>
@@ -159,7 +159,7 @@ export default function LeadsPage() {
   );
 }
 
-function Loader2({ className }: { className?: string }) {
+function Rocket({ className }: { className?: string }) {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
@@ -170,9 +170,11 @@ function Loader2({ className }: { className?: string }) {
       strokeWidth="2" 
       strokeLinecap="round" 
       strokeLinejoin="round" 
-      className={cn("lucide lucide-loader-2", className)}
+      className={className}
     >
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.71-2.13.09-2.91" />
+      <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+      <path d="M9 12l3 3" />
     </svg>
   );
 }

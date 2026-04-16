@@ -14,7 +14,6 @@ export default function DashboardPage() {
   const [recentLeads, setRecentLeads] = useState<any[]>([]);
 
   useEffect(() => {
-    // Check local session for demo purposes
     const storedRole = localStorage.getItem("userRole");
     const storedEmail = localStorage.getItem("userEmail");
     
@@ -31,14 +30,9 @@ export default function DashboardPage() {
 
   const fetchRecentLeads = async () => {
     try {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(3);
-      setRecentLeads(data || []);
+      const res = await fetch("/api/lead/list");
+      const data = await res.json();
+      setRecentLeads((data || []).slice(0, 3));
     } catch (e) {
       console.error("Recent Leads Error:", e);
     }
@@ -130,7 +124,6 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Recent Intelligence Section */}
         <div className="mt-16">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-black text-white tracking-tight uppercase">Recent Project Intelligence.</h2>

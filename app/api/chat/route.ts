@@ -54,15 +54,21 @@ const LEAD_TOOL = {
 async function persistLead(data: any) {
   try {
     const supabase = await createClient();
-    await supabase.from("leads").insert([{
+    const { error } = await supabase.from("leads").insert([{
       name: data.name,
       email: data.email,
       phone: data.phone,
       requirement: data.requirement,
       status: "NEW"
     }]);
+
+    if (error) {
+      console.error("Supabase Insert Error:", error);
+    } else {
+      console.log("Lead Successfully Persisted:", data.email);
+    }
   } catch (e) {
-    console.error("Persist Error:", e);
+    console.error("Persist Function Failure:", e);
   }
 }
 
@@ -75,7 +81,7 @@ export async function POST(req: Request) {
     if (process.env.GEMINI_API_KEY) {
       try {
         const model = genAI.getGenerativeModel({
-          model: "gemini-2.5-flash",
+          model: "gemini-1.5-flash-latest",
           tools: [{ functionDeclarations: [LEAD_TOOL] }] as any,
           safetySettings: [
             { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
