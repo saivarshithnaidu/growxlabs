@@ -3,21 +3,19 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const data = await req.json();
+    const { session_id, role, message } = await req.json();
     const supabase = await createClient();
 
-    const { error } = await supabase.from("leads").insert([{
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      requirement: data.requirement,
-      status: "NEW"
+    const { error } = await supabase.from("chats").insert([{
+      session_id,
+      role,
+      message
     }]);
 
     if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Lead API Error:", error);
+    console.error("Chat Save API Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
