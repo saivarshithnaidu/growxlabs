@@ -110,7 +110,7 @@ export async function POST(req: Request) {
     if (process.env.OPENROUTER_API_KEY) {
       try {
         const completion = await openrouter.chat.completions.create({
-          model: "anthropic/claude-3-haiku",
+          model: "openai/gpt-4o-mini",
           messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
           max_tokens: 800,
           tools: [{ type: "function", function: LEAD_TOOL }],
