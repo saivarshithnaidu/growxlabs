@@ -1,83 +1,92 @@
 import Link from "next/link";
-import { Rocket, Globe, Send, MessageSquare, Mail, MapPin, Phone } from "lucide-react";
+import { Rocket, Shield, Lock, CheckCircle, Globe, Mail } from "lucide-react";
 
 export function Footer() {
+  const links = {
+    services: [
+      { name: "Web Engineering", href: "/services" },
+      { name: "Automation (n8n)", href: "/services" },
+      { name: "Premium Hosting", href: "/services" },
+      { name: "AI Integration", href: "/services" },
+    ],
+    legal: [
+      { name: "Terms & Conditions", href: "/terms" },
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Refund Policy", href: "/refund-policy" },
+      { name: "Client Agreement", href: "/client-agreement" },
+    ],
+    operational: [
+      { name: "Project Handover", href: "/handover" },
+      { name: "AI Products", href: "/products" },
+      { name: "Client Portal", href: "/dashboard" },
+      { name: "Success Stories", href: "/portfolio" },
+    ]
+  };
+
   return (
-    <footer className="border-t border-border bg-background pt-16 pb-8">
+    <footer className="border-t border-white/5 bg-black pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20 text-center md:text-left">
           {/* Brand Column */}
-          <div className="space-y-4">
-            <Link href="/" className="flex items-center space-x-2">
-              <Rocket className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold text-white">GrowX Labs</span>
+          <div className="space-y-6">
+            <Link href="/" className="flex items-center space-x-2 justify-center md:justify-start">
+              <Rocket className="h-6 w-6 text-white" />
+              <span className="text-xl font-black text-white tracking-tighter">GrowX Labs</span>
             </Link>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              We build high-performance websites and intelligent automation systems 
-              that help modern businesses scale exponentially.
+            <p className="text-white/40 text-[13px] leading-relaxed font-light">
+              Engineering high-performance ecosystems and autonomous intelligence 
+              for modern businesses scaling at the speed of the web.
             </p>
-            <div className="flex space-x-4">
-              <Link href="#" className="text-muted-foreground hover:text-white transition-colors">
-                <Globe size={20} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-white transition-colors">
-                <Send size={20} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-white transition-colors">
-                <MessageSquare size={20} />
-              </Link>
+            <div className="pt-4 flex flex-col space-y-3">
+              <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-white/20 justify-center md:justify-start">
+                <Shield size={12} className="text-white/40" />
+                <span>HTTPS / TLS Encrypted</span>
+              </div>
+              <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-white/20 justify-center md:justify-start">
+                <Lock size={12} className="text-white/40" />
+                <span>Secure Data Handling</span>
+              </div>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Nav groups */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Services</h4>
+            <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em] mb-8">Capabilities</h4>
             <ul className="space-y-4">
-              <li><Link href="/services" className="text-muted-foreground hover:text-white text-sm transition-colors">Web Development</Link></li>
-              <li><Link href="/services" className="text-muted-foreground hover:text-white text-sm transition-colors">Custom Automation</Link></li>
-              <li><Link href="/services" className="text-muted-foreground hover:text-white text-sm transition-colors">SEO Optimization</Link></li>
-              <li><Link href="/services" className="text-muted-foreground hover:text-white text-sm transition-colors">Cloud Hosting</Link></li>
+              {links.services.map(l => (
+                <li key={l.name}><Link href={l.href} className="text-white/40 hover:text-white text-sm font-light transition-all">{l.name}</Link></li>
+              ))}
             </ul>
           </div>
 
-          {/* Company */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Company</h4>
+            <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em] mb-8">Legal & Policy</h4>
             <ul className="space-y-4">
-              <li><Link href="/about" className="text-muted-foreground hover:text-white text-sm transition-colors">About Us</Link></li>
-              <li><Link href="/portfolio" className="text-muted-foreground hover:text-white text-sm transition-colors">Portfolio</Link></li>
-              <li><Link href="/contact" className="text-muted-foreground hover:text-white text-sm transition-colors">Contact</Link></li>
-              <li><Link href="/dashboard" className="text-muted-foreground hover:text-white text-sm transition-colors">Client Portal</Link></li>
+              {links.legal.map(l => (
+                <li key={l.name}><Link href={l.href} className="text-white/40 hover:text-white text-sm font-light transition-all">{l.name}</Link></li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Contact Us</h4>
+            <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em] mb-8">Operational</h4>
             <ul className="space-y-4">
-              <li className="flex items-center space-x-3 text-sm text-muted-foreground">
-                <MapPin size={18} className="text-primary" />
-                <span>123 Innovation Drive, Tech City</span>
-              </li>
-              <li className="flex items-center space-x-3 text-sm text-muted-foreground">
-                <Mail size={18} className="text-primary" />
-                <span>hello@growxlabs.com</span>
-              </li>
-              <li className="flex items-center space-x-3 text-sm text-muted-foreground">
-                <Phone size={18} className="text-primary" />
-                <span>+1 (555) 123-4567</span>
-              </li>
+              {links.operational.map(l => (
+                <li key={l.name}><Link href={l.href} className="text-white/40 hover:text-white text-sm font-light transition-all">{l.name}</Link></li>
+              ))}
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-muted-foreground text-xs">
-            © {new Date().getFullYear()} GrowX Labs. All rights reserved.
-          </p>
-          <div className="flex space-x-6">
-            <Link href="#" className="text-muted-foreground hover:text-white text-xs transition-colors">Privacy Policy</Link>
-            <Link href="#" className="text-muted-foreground hover:text-white text-xs transition-colors">Terms of Service</Link>
+        <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex items-center space-x-6">
+            <p className="text-white/20 text-[11px] font-bold uppercase tracking-widest">
+              © {new Date().getFullYear()} GrowX Labs India
+            </p>
+          </div>
+          <div className="flex items-center space-x-6 text-[11px] font-bold uppercase tracking-widest">
+            <span className="text-white/20">Jurisdiction</span>
+            <span className="text-white/60">Guntur, India</span>
           </div>
         </div>
       </div>
