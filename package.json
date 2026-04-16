@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@paper-design/shaders-react": "^0.0.76",
     "@react-three/fiber": "^9.6.0",
     "@supabase/ssr": "^0.10.2",

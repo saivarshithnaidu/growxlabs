@@ -1,8 +1,11 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { OpenAI } from "openai";
 import { NextResponse } from "next/server";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "dummy_key",
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const openrouter = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY || "",
 });
 
 const SYSTEM_PROMPT = `
@@ -15,81 +18,102 @@ SERVICES:
 - Performance SEO: Data-driven search excellence.
 - Systems Hosting: Premium managed cloud infrastructure.
 
-PRICING RANGES (SUGGESTIONS ONLY):
-- Web Projects: Typically $2,000 - $15,000+
-- Automation: Usually $500 - $5,000 setup, plus monthly maintenance.
-- SEO: Retainers from $1,000/mo.
-
 RULES:
 1. DO NOT finalize pricing or promise specific delivery dates.
 2. DO NOT agree to contracts or negotiate final deals.
-3. ALWAYS offer to schedule a strategy call if the user is interested.
-4. BE professional, concise, and cinematic in your tone.
+3. BE professional, concise, and cinematic in your tone.
 
 LEAD COLLECTION:
-Try to naturally collect the following from potential clients:
-- Name
-- Email address
-- Business type/Vertical
-- Project Requirement
-- Budget (optional)
-
-Once you have Name, Email, and Requirement, use the 'save_lead' tool to store the data.
+Try to naturally collect: Name, Email, Business, and Requirement.
+Once you have Name, Email, and Requirement, trigger the 'save_lead' tool/function.
 `;
+
+const LEAD_TOOL = {
+  name: "save_lead",
+  description: "Save client lead information to the GrowX database.",
+  parameters: {
+    type: "object",
+    properties: {
+      name: { type: "string" },
+      email: { type: "string" },
+      business: { type: "string" },
+      requirement: { type: "string" },
+      budget: { type: "string" }
+    },
+    required: ["name", "email", "requirement"]
+  }
+};
 
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...messages
-      ],
-      tools: [
-        {
-          type: "function",
-          function: {
-            name: "save_lead",
-            description: "Save client lead information to the GrowX database.",
-            parameters: {
-              type: "object",
-              properties: {
-                name: { type: "string" },
-                email: { type: "string" },
-                business: { type: "string" },
-                requirement: { type: "string" },
-                budget: { type: "string" }
-              },
-              required: ["name", "email", "requirement"]
-            }
-          }
-        }
-      ],
-      tool_choice: "auto"
-    });
+    // 1. ATTEMPT PRIMARY: GEMINI
+    try {
+      if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY missing");
+      
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        systemInstruction: SYSTEM_PROMPT,
+        tools: [{ functionDeclarations: [LEAD_TOOL] }] as any
+      });
 
-    const message = response.choices[0].message;
+      // Convert messages to Gemini format (simplification for demo)
+      const chat = model.startChat({
+        history: messages.slice(0, -1).map((m: any) => ({
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: m.content }]
+        }))
+      });
 
-    // Handle tool calls
-    if (message.tool_calls) {
-      for (const toolCall of message.tool_calls) {
+      const result = await chat.sendMessage(messages[messages.length - 1].content);
+      const response = result.response;
+      const call = response.functionCalls()?.[0];
+
+      if (call && call.name === "save_lead") {
+        return NextResponse.json({ 
+          message: "I've noted your architectural requirements and our team will contact you shortly. Is there anything else you'd like to verify?",
+          isLeadSaved: true,
+          leadData: call.args
+        });
+      }
+
+      const text = response.text();
+      if (text) return NextResponse.json({ message: text, provider: "gemini" });
+      
+    } catch (geminiError) {
+      console.error("Gemini Failure, Falling back to OpenRouter:", geminiError);
+    }
+
+    // 2. FALLBACK: OPENROUTER (Claude/GPT)
+    if (process.env.OPENROUTER_API_KEY) {
+      const completion = await openrouter.chat.completions.create({
+        model: "anthropic/claude-3-haiku",
+        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+        tools: [{ type: "function", function: LEAD_TOOL }],
+        tool_choice: "auto"
+      });
+
+      const message = completion.choices[0].message;
+
+      if (message.tool_calls) {
+        const toolCall = message.tool_calls[0];
         if ('function' in toolCall && toolCall.function.name === "save_lead") {
-          const leadData = JSON.parse(toolCall.function.arguments);
-          
           return NextResponse.json({ 
             message: "I've noted your architectural requirements and our team will contact you shortly. Is there anything else you'd like to verify?",
             isLeadSaved: true,
-            leadData 
+            leadData: JSON.parse(toolCall.function.arguments)
           });
         }
       }
+
+      return NextResponse.json({ message: message.content, provider: "openrouter" });
     }
 
-    return NextResponse.json({ message: message.content });
+    throw new Error("All AI providers exhausted");
+
   } catch (error: any) {
-    console.error("Chat Error:", error);
-    return NextResponse.json({ message: "System is re-calibrating. Please try again in a moment." }, { status: 500 });
+    console.error("Critical Chat Error:", error);
+    return NextResponse.json({ message: "Communication uplink unstable. Systems are re-balancing." }, { status: 500 });
   }
 }
