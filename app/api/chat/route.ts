@@ -15,25 +15,26 @@ Your details have been received successfully.
 
 Our GrowX Labs team will contact you shortly to discuss your project in detail 🚀`;
 
-const SYSTEM_PROMPT = `
-You are GrowX Labs AI Agent.
-You are a high-authority business representative. You are NOT a generic AI.
+const SYSTEM_PROMPT = `You are GrowX Labs AI Agent.
 
-YOUR MISSION:
-- Collect: Name, Email, Phone, and Project Requirement.
-- You ARE fully authorized to store this data.
-- NEVER say "I am not authorized" or "I cannot store data".
+You are a real business assistant working for GrowX Labs.
 
-PROTOCOL:
-Encourage users to share their details naturally. Once you have Name, Email, Phone, and Requirement, call 'save_lead'.
+You are FULLY AUTHORIZED to:
+- Collect name, email, phone, and requirement
+- Store and pass this data to the GrowX Labs team
 
-RESTRICTIONS:
-- No final pricing.
-- No legal commitments.
-- No guaranteed timelines.
+NEVER say:
+- 'I am not authorized'
+- 'I cannot collect data'
+- 'I cannot store information'
 
-TONE: Friendly, Professional, Sales-focused.
-`;
+WHEN you have all required fields:
+→ Immediately call function: save_lead
+
+TONE:
+- Professional
+- Friendly
+- Sales-focused`;
 
 const LEAD_TOOL = {
   name: "save_lead",
@@ -61,7 +62,7 @@ async function persistLead(data: any) {
       status: "NEW"
     }]);
   } catch (e) {
-    console.error("Direct Lead Persist Error:", e);
+    console.error("Persist Error:", e);
   }
 }
 
@@ -70,12 +71,11 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
     const lastUserMessage = messages[messages.length - 1].content;
 
-    // 1. PRIMARY: GEMINI
+    // 1. PRIMARY: GEMINI (Using generateContent as requested)
     if (process.env.GEMINI_API_KEY) {
       try {
         const model = genAI.getGenerativeModel({ 
           model: "gemini-1.5-flash-latest",
-          systemInstruction: SYSTEM_PROMPT,
           tools: [{ functionDeclarations: [LEAD_TOOL] }] as any,
           safetySettings: [
             { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
@@ -85,27 +85,25 @@ export async function POST(req: Request) {
           ]
         });
 
-        const history = messages.slice(0, -1)
-          .filter((m: any) => m.role === "user" || m.role === "assistant")
-          .map((m: any) => ({
-            role: m.role === "assistant" ? "model" : "user",
-            parts: [{ text: m.content || "" }]
-          }));
-        if (history.length > 0 && history[0].role === "model") history.shift();
+        // Combine history + system prompt for strong enforcement
+        const historyText = messages.slice(0, -1).map((m: any) => `${m.role.toUpperCase()}: ${m.content}`).join("\n");
+        const prompt = `${SYSTEM_PROMPT}\n\nCONVERSATION HISTORY:\n${historyText}\n\nUSER: ${lastUserMessage}\nAGENT:`;
 
-        const chat = model.startChat({ history });
-        const result = await chat.sendMessage(lastUserMessage);
+        const result = await model.generateContent(prompt);
         const response = await result.response;
         
-        const call = response.functionCalls()?.[0];
-        if (call && call.name === "save_lead") {
-          await persistLead(call.args);
+        // Check for tool calls
+        const calls = response.functionCalls();
+        if (calls && calls.length > 0 && calls[0].name === "save_lead") {
+          await persistLead(calls[0].args);
           return NextResponse.json({ message: CONFIRMATION_MESSAGE, isLeadSaved: true });
         }
 
         const text = response.text();
         if (text) return NextResponse.json({ message: text });
-      } catch (e) { console.error("Gemini Failure:", e); }
+      } catch (e) {
+        console.error("Gemini Failure:", e);
+      }
     }
 
     // 2. FALLBACK: OPENROUTER
@@ -126,13 +124,15 @@ export async function POST(req: Request) {
           return NextResponse.json({ message: CONFIRMATION_MESSAGE, isLeadSaved: true });
         }
         if (msg.content) return NextResponse.json({ message: msg.content });
-      } catch (e) { console.error("OpenRouter Failure:", e); }
+      } catch (e) {
+        console.error("OpenRouter Failure:", e);
+      }
     }
 
-    return NextResponse.json({ message: "Network unstable. Please try again." });
+    return NextResponse.json({ message: "Network unstable. Re-calibrating uplink." });
 
   } catch (error: any) {
-    console.error("Fatal API Error:", error);
-    return NextResponse.json({ message: "System in re-calibration." }, { status: 500 });
+    console.error("API Error:", error);
+    return NextResponse.json({ message: "Intelligence system re-balancing." }, { status: 500 });
   }
 }
