@@ -68,11 +68,22 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
-            <Link href={isLoggedIn ? dashboardPath : "/register"}>
-              <Button size="sm" variant="primary">
-                {isLoggedIn ? "Dashboard" : "Get Started"}
-              </Button>
-            </Link>
+            <div className="flex items-center space-x-4">
+              <Link href={isLoggedIn ? dashboardPath : "/register"}>
+                <Button size="sm" variant="primary">
+                  {isLoggedIn ? "Dashboard" : "Get Started"}
+                </Button>
+              </Link>
+              {isLoggedIn && (
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="text-muted-foreground hover:text-red-400 transition-colors p-2 rounded-full hover:bg-white/5"
+                  title="Sign Out"
+                >
+                  <LogOut className="h-5 w-5" />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
