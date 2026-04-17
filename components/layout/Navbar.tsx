@@ -33,7 +33,7 @@ export function Navbar() {
 
   const isLoggedIn = status === "authenticated";
   const userRole = (session?.user as any)?.role;
-  const dashboardPath = userRole === "ADMIN" ? "/admin/search" : "/dashboard";
+  const dashboardPath = (userRole === "ADMIN" || userRole === "CO_ADMIN") ? "/admin/leads" : "/client/dashboard";
 
   return (
     <nav
