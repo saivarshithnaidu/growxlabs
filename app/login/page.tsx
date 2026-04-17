@@ -21,8 +21,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/admin");
+    if (status === "authenticated" && session?.user) {
+      const role = (session.user as any).role;
+      if (role === "ADMIN" || role === "CO_ADMIN") {
+        router.push("/admin/leads");
+      } else {
+        router.push("/client/dashboard");
+      }
     }
   }, [status, session, router]);
 
@@ -42,7 +47,7 @@ export default function LoginPage() {
         throw new Error("Invalid email or password. Please try again.");
       }
 
-      router.push("/admin");
+      // The useEffect will handle redirection once the session is updated
       router.refresh();
     } catch (err: any) {
       setError(err.message);

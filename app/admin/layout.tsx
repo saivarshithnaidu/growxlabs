@@ -2,24 +2,31 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Navbar } from "@/components/layout/Navbar";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { Loader2, ShieldAlert } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const role = localStorage.getItem("userRole");
-    if (!role) {
+    if (status === "loading") return;
+
+    if (status === "unauthenticated") {
       router.push("/login");
-    } else if (role !== "Admin" && role !== "Co-Admin") {
-      setAuthorized(false);
-    } else {
-      setAuthorized(true);
+      return;
     }
-  }, [router]);
+
+    const role = (session?.user as any)?.role;
+    if (role === "ADMIN" || role === "CO_ADMIN") {
+      setAuthorized(true);
+    } else {
+      setAuthorized(false);
+    }
+  }, [status, session, router]);
 
   if (authorized === null) {
     return (
