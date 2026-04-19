@@ -1,18 +1,16 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Inter } from "next/font/google";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { GrowXChatWidget } from "@/components/ui/GrowXChatWidget";
 import { GlobalBackground } from "@/components/layout/GlobalBackground";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
+import { CookieConsent } from "@/components/layout/CookieConsent";
 import "../globals.css";
 import { locales } from "@/navigation";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-
-import Script from "next/script";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -38,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       languages
     },
     openGraph: {
-      url: `https://growxlabs.tech/${locale}`,
+      url: `https://growxlabs.tech/${locale}/`,
       siteName: 'GrowX Labs',
       type: 'website',
     },
@@ -66,34 +64,52 @@ export default async function LocaleLayout({
           <AuthProvider>
             <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
               <GlobalBackground />
-              <Navbar />
-              <main className="flex-grow container mx-auto px-4 relative z-10 pt-20">
+              
+              <ConditionalLayout>
                 {children}
-              </main>
-              <Footer />
-              <GrowXChatWidget />
+              </ConditionalLayout>
+
+              <CookieConsent />
+              
               <Script id="apollo-tracker" strategy="afterInteractive">
                 {`
                   (function initApollo(){
                     if (window.apolloInitialized) return;
-                    window.apolloInitialized = true;
                     
-                    var n=Math.random().toString(36).substring(7),
-                    o=document.createElement("script");
-                  
-                    o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n;
-                    o.async=true;
-                    o.defer=true;
-                  
-                    o.onload=function(){
-                      if (window.trackingFunctions) {
-                        window.trackingFunctions.onLoad({
-                          appId:"69bffd4fc1dee4001d17a7f6"
-                        });
+                    function startTracking() {
+                      if (window.apolloInitialized) return;
+                      window.apolloInitialized = true;
+                      
+                      var n=Math.random().toString(36).substring(7),
+                      o=document.createElement("script");
+                    
+                      o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n;
+                      o.async=true;
+                      o.defer=true;
+                    
+                      o.onload=function(){
+                        if (window.trackingFunctions) {
+                          window.trackingFunctions.onLoad({
+                            appId:"69bffd4fc1dee4001d17a7f6"
+                          });
+                        }
+                      };
+                    
+                      document.head.appendChild(o);
+                    }
+
+                    // Check for existing consent safely
+                    try {
+                      if (localStorage.getItem("growx_cookie_consent") === "accepted") {
+                        startTracking();
+                      } else {
+                        // Wait for consent event
+                        window.addEventListener("growx_consent_accepted", startTracking);
                       }
-                    };
-                  
-                    document.head.appendChild(o);
+                    } catch (e) {
+                      // If storage is blocked, we just wait for the event which is memory-bound
+                      window.addEventListener("growx_consent_accepted", startTracking);
+                    }
                   })();
                 `}
               </Script>

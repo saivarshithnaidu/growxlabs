@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { 
-  Layout, FileText, CreditCard, 
-  Rocket, LogOut, ShieldCheck 
+import {
+  Layout, FileText, CreditCard,
+  Rocket, LogOut, ShieldCheck
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -31,8 +31,8 @@ export function ClientNav() {
               href={item.href}
               className={cn(
                 "flex items-center px-6 py-3 rounded-2xl transition-all whitespace-nowrap group",
-                isActive 
-                  ? "bg-primary text-white font-black" 
+                isActive
+                  ? "bg-primary text-white font-black"
                   : "text-white/40 hover:text-white hover:bg-white/5"
               )}
             >
@@ -48,10 +48,10 @@ export function ClientNav() {
 
       <div className="flex items-center space-x-6">
         <div className="hidden md:flex items-center space-x-3 px-4 py-2 bg-white/5 rounded-full border border-white/5">
-           <ShieldCheck size={14} className="text-green-500" />
-           <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Client Portal</span>
+          <ShieldCheck size={14} className="text-green-500" />
+          <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Client Portal</span>
         </div>
-        <button 
+        <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className="p-3 text-white/20 hover:text-red-500 transition-all"
         >
