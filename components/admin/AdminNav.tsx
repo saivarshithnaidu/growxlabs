@@ -17,6 +17,7 @@ const navItems = [
   { name: "Outreach", href: "/admin/outreach", icon: Inbox },
   { name: "Invoices", href: "/admin/invoices", icon: BarChart3 },
   { name: "Agreements", href: "/admin/agreements", icon: FileText },
+  { name: "Proposals", href: "/admin/proposals", icon: FileCheck },
 ];
 
 const templateItems = [

@@ -7,56 +7,54 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    const { data: client, error: clientError } = await supabaseAdmin
-      .from("clients")
-      .select("*")
-      .eq("id", data.client_id)
-      .single();
-
-    if (clientError || !client) throw new Error("Client not found");
-
     // 1. Create Invoice in DB
     const { data: invoice, error: invError } = await supabaseAdmin
       .from("invoices")
       .insert([{
-        client_id: data.client_id,
-        agreement_id: data.agreement_id,
+        client_name: data.client_name,
+        client_email: data.client_email,
+        client_phone: data.client_phone,
+        business_name: data.business_name,
+        project_name: data.project_name,
+        invoice_number: data.invoice_number,
         amount: data.amount,
-        balance_due: data.amount,
-        status: "pending",
-        due_date: data.due_date
+        subtotal: data.subtotal,
+        currency: data.currency,
+        balance_due: data.amount, // Default balance due to total amount initially
+        status: data.status || "pending",
+        due_date: data.due_date,
+        items: data.items,
+        notes: data.notes,
+        payment_type: data.payment_type,
+        razorpay_link: data.razorpay_link
       }])
       .select()
       .single();
 
     if (invError) throw invError;
 
-    // 2. Generate PDF
-    const pdfUrl = await PDFService.generateInvoice({
-      ...invoice,
-      client_name: client.name,
-      business_name: client.business_name,
-      description: data.description || "Project Milestone Payment",
-      invoice_id: invoice.id.slice(0, 8).toUpperCase()
-    });
+    // 2. Generate PDF (Optional backend fallback, though dashboard uses window.print() for primary)
+    try {
+        const pdfUrl = await PDFService.generateInvoice({
+          ...invoice,
+          invoice_id: invoice.invoice_number || invoice.id.slice(0, 8).toUpperCase()
+        });
 
-    // 3. Create Razorpay Order
-    const order = await RazorpayService.createOrder(data.amount, invoice.id);
-
-    // 4. Update Invoice
-    await supabaseAdmin
-      .from("invoices")
-      .update({ 
-        pdf_url: pdfUrl,
-        razorpay_order_id: order.id 
-      })
-      .eq("id", invoice.id);
+        // 3. Update Invoice with PDF
+        await supabaseAdmin
+          .from("invoices")
+          .update({ pdf_url: pdfUrl })
+          .eq("id", invoice.id);
+          
+        invoice.pdf_url = pdfUrl;
+    } catch (pdfErr) {
+        console.warn("PDF Generation failed, but invoice saved:", pdfErr);
+    }
 
     return NextResponse.json({ 
       success: true, 
-      invoiceId: invoice.id, 
-      razorpayOrderId: order.id,
-      pdfUrl 
+      invoiceId: invoice.id,
+      invoice: invoice
     });
   } catch (error: any) {
     console.error("Invoice API Error:", error);

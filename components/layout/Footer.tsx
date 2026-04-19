@@ -1,8 +1,13 @@
-import Link from "next/link";
+"use client";
+import { Shield, Lock } from "lucide-react";
+import { Link } from "@/navigation";
 import Image from "next/image";
-import { Shield, Lock, CheckCircle, Globe, Mail } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 export function Footer() {
+  const t = useTranslations("Footer");
+  const locale = useLocale();
+
   const links = {
     services: [
       { name: "Web Engineering", href: "/services" },
@@ -19,7 +24,7 @@ export function Footer() {
     operational: [
       { name: "Project Handover", href: "/handover" },
       { name: "AI Products", href: "/products" },
-      { name: "Client Portal", href: "/dashboard" },
+      { name: "Client Portal", href: "/client/dashboard" },
       { name: "Success Stories", href: "/portfolio" },
     ]
   };
@@ -41,8 +46,7 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-white/40 text-[13px] leading-relaxed font-light">
-              Engineering high-performance ecosystems and autonomous intelligence 
-              for modern businesses scaling at the speed of the web.
+              {t("description")}
             </p>
             <div className="pt-4 flex flex-col space-y-3">
               <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-white/20 justify-center md:justify-start">
@@ -88,12 +92,12 @@ export function Footer() {
         <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center space-x-6">
             <p className="text-white/20 text-[11px] font-bold uppercase tracking-widest">
-              © {new Date().getFullYear()} GrowX Labs India
+              © {new Date().getFullYear()} GrowX Labs {t("jurisdiction")}
             </p>
           </div>
           <div className="flex items-center space-x-6 text-[11px] font-bold uppercase tracking-widest">
             <span className="text-white/20">Jurisdiction</span>
-            <span className="text-white/60">Guntur, India</span>
+            <span className="text-white/60">{t("location")}</span>
           </div>
         </div>
       </div>

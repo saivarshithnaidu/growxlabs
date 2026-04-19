@@ -58,7 +58,7 @@ export const projects: CaseStudy[] = [
     title: "Asset Management Portal",
     category: "Financial Systems",
     description: "Designed a high-security, real-time data orchestration platform for high-net-worth wealth management.",
-    image: "https://images.unsplash.com/photo-1551288049-bbbda536339a?auto=format&fit=crop&q=80&w=1200",
+    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=1200",
     problem: "Inconsistent data visualization and complex navigation were hindering client engagement and increasing support overhead.",
     solution: "We built a specialized data portal with real-time financial streaming and intuitive performance analytics, focusing on high-trust user experience.",
     tech: ["React", "D3.js", "Framer Motion", "Tailwind"],
@@ -69,7 +69,7 @@ export const projects: CaseStudy[] = [
     ],
     gallery: [
       "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1551288049-bbbda536339a?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1450101496173-ec413b681f4c?auto=format&fit=crop&q=80&w=800"
     ]
   }
 ];

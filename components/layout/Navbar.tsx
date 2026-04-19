@@ -1,24 +1,33 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { useSession, signOut } from "next-auth/react";
-
-const navLinks = [
-  { name: "Services", href: "/services" },
-  { name: "Portfolio", href: "/portfolio" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
-];
+import { usePathname } from "@/navigation";
+import { Link } from "@/navigation";
+import { useTranslations, useLocale } from "next-intl";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const t = useTranslations("Nav");
+  const locale = useLocale();
+
+  const navLinks = [
+    { name: t("services"), href: "/services" },
+    { name: t("portfolio"), href: "/portfolio" },
+    { name: t("pricing"), href: "/pricing" },
+    { name: t("about"), href: "/about" },
+    { name: t("contact"), href: "/contact" },
+  ];
+
+  if (pathname?.includes("/demos")) return null;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,8 +47,10 @@ export function Navbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300",
-        isScrolled ? "glass py-2" : "bg-transparent py-4"
+        "fixed top-0 w-full z-50 transition-[background-color,border-color,backdrop-filter] duration-700 ease-in-out py-4",
+        isScrolled 
+          ? "glass border-b border-white/10" 
+          : "bg-transparent border-b border-transparent"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,10 +79,11 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
+              <LanguageSwitcher />
               <Link href={isLoggedIn ? dashboardPath : "/register"}>
                 <Button size="sm" variant="primary">
-                  {isLoggedIn ? "Dashboard" : "Get Started"}
+                  {isLoggedIn ? t("dashboard") : t("get_started")}
                 </Button>
               </Link>
               {isLoggedIn && (
@@ -87,7 +99,8 @@ export function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-4">
+            <LanguageSwitcher />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 text-muted-foreground hover:text-white"
@@ -113,7 +126,7 @@ export function Navbar() {
           ))}
           <Link href={isLoggedIn ? dashboardPath : "/register"} className="block w-full">
             <Button className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-              {isLoggedIn ? "Dashboard" : "Get Started"}
+              {isLoggedIn ? t("dashboard") : t("get_started")}
             </Button>
           </Link>
           {isLoggedIn && (
