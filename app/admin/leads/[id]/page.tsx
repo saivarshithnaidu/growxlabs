@@ -8,7 +8,7 @@ import {
   ArrowLeft, Mail, Phone, Globe, MapPin, 
   Target, ShieldCheck, Zap, Camera, 
   User, Star, MessageSquare, Save,
-  CheckCircle2, XCircle, Clock
+  CheckCircle2, XCircle, Clock, RefreshCw
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -234,6 +234,87 @@ export default function LeadDetailsPage() {
               placeholder="Record outreach attempts, client requirements, or specific pain points..."
               className="w-full h-40 bg-white/[0.03] border border-white/5 rounded-xl p-4 text-sm font-medium text-white/60 focus:outline-none focus:border-white/10 transition-colors"
              />
+          </Card>
+
+          {/* AI Outreach Section */}
+          <Card className="p-8 border-blue-500/10 bg-blue-500/[0.02] rounded-2xl space-y-6 border border-dashed">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap size={16} className="text-blue-500" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">AI Outreach Strategy</h3>
+              </div>
+              {lead.outreach_generated && (
+                <span className="text-[10px] font-black text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 uppercase tracking-widest">
+                  Content Ready
+                </span>
+              )}
+            </div>
+
+            {!lead.outreach_generated ? (
+              <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-8 text-center space-y-4">
+                <p className="text-white/40 text-sm">No outreach strategy has been generated for this lead yet.</p>
+                <Button 
+                  onClick={async () => {
+                    setSaving(true);
+                    try {
+                      const res = await fetch("/api/leads/outreach/generate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ leadId: lead.id })
+                      });
+                      const data = await res.json();
+                      if (data.error) throw new Error(data.error);
+                      await fetchLead(); // Refresh data
+                    } catch (e) {
+                      console.error(e);
+                    } finally {
+                      setSaving(false);
+                    }
+                  }}
+                  disabled={saving}
+                  className="bg-blue-600 hover:bg-blue-500 text-white"
+                >
+                  <RefreshCw size={14} className={cn("mr-2", saving && "animate-spin")} /> Generate Strategy
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">WhatsApp Draft</p>
+                    <div className="p-4 rounded-xl bg-black/20 border border-white/5 text-xs text-white/60 leading-relaxed italic">
+                      {lead.outreach_content?.whatsapp}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Email Strategy</p>
+                    <div className="p-4 rounded-xl bg-black/20 border border-white/5 text-xs text-white/60 leading-relaxed italic">
+                      {lead.outreach_content?.email}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  {lead.phone && (
+                    <Button 
+                      onClick={() => window.open(`https://wa.me/${lead.phone?.replace(/\D/g, '')}?text=${encodeURIComponent(lead.outreach_content?.whatsapp || "")}`, '_blank')}
+                      className="bg-green-600/10 text-green-500 hover:bg-green-600 hover:text-white border border-green-500/20 text-xs font-bold"
+                    >
+                      Deploy WhatsApp
+                    </Button>
+                  )}
+                  {lead.email && (
+                    <Button 
+                      onClick={() => window.open(`mailto:${lead.email}?subject=Partnership Strategy for ${lead.business_name}&body=${encodeURIComponent(lead.outreach_content?.email || "")}`)}
+                      variant="outline"
+                      className="border-white/10 hover:bg-white/5 text-white/60 text-xs font-bold"
+                    >
+                      Send Email draft
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
           </Card>
         </div>
 

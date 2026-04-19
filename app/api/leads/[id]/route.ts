@@ -23,16 +23,17 @@ export async function PATCH(
 
     // 2. Parse Body
     const body = await request.json();
-    const { status, notes } = body;
+    
+    // Remove id from body to prevent trying to update it
+    const { id: _, ...updateData } = body;
 
-    console.log(`API: Updating Lead ${id} -> Status: ${status}`);
+    console.log(`API: Updating Lead ${id}`, updateData);
 
     // 3. Update Database
     const { data, error } = await supabaseAdmin
       .from("leads")
       .update({ 
-        status, 
-        notes,
+        ...updateData,
         updated_at: new Date().toISOString()
       })
       .eq("id", id)

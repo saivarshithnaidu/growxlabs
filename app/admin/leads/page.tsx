@@ -40,7 +40,7 @@ const StatusBadge = ({ status }: { status: Lead['status'] }) => {
 export default function LeadsAdminPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [activeLeadId, setActiveLeadId] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   
   // AI Outreach Panel State
@@ -85,11 +85,14 @@ export default function LeadsAdminPage() {
     if (!id) return;
 
     setUpdatingId(id);
+    console.log("DEBUG: Calling updateStatus for ID:", id, "Status:", status);
     const previousLeads = [...leads];
     setLeads(current => current.map(l => l.id === id ? { ...l, status, ...extraData } : l));
 
     try {
-      const res = await fetch(`/api/leads/${id}`, {
+      const url = `/api/leads/${id}`;
+      console.log("DEBUG: Fetching URL:", url);
+      const res = await fetch(url, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status, ...extraData })
@@ -97,6 +100,7 @@ export default function LeadsAdminPage() {
 
       if (!res.ok) throw new Error("Failed to update status");
       showToast(`Success: Lead updated`);
+      await fetchLeads(); // Refresh data to stay in sync
     } catch (e) {
       console.error(e);
       setLeads(previousLeads);
@@ -122,12 +126,15 @@ export default function LeadsAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ leadId: lead.id })
       });
+
+      console.log("Generating outreach for:", lead.id);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       
       setGeneratedContent(data);
-      // Update local state to show it's generated
-      setLeads(cur => cur.map(l => l.id === lead.id ? { ...l, outreach_generated: true, outreach_content: data } : l));
+      // Update local state and refresh to keep everything in sync
+      await fetchLeads();
+      showToast("Strategy Generated ✨");
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "AI Generation failed";
       showToast(message, "error");
@@ -199,7 +206,7 @@ export default function LeadsAdminPage() {
           ) : leads.length > 0 ? (
             leads.map((lead, i) => {
               const priority = getPriority(lead.lead_score || 0);
-              const isExpanded = expandedId === lead.id;
+              const isExpanded = activeLeadId === lead.id;
 
               return (
                 <motion.div
@@ -248,12 +255,24 @@ export default function LeadsAdminPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 sm:grid-cols-4 lg:flex gap-2 w-full lg:w-auto">
+                      <div className="flex items-center justify-end gap-3 flex-wrap lg:flex-nowrap">
+                        {lead.phone && lead.phone.length >= 10 && (
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              console.log("Opening WhatsApp for:", lead.phone);
+                              window.open(`https://wa.me/${lead.phone?.replace(/\D/g, '')}`, '_blank');
+                            }}
+                            className="h-10 px-6 bg-green-600/10 text-green-500 hover:bg-green-600 hover:text-white border border-green-500/20 text-[10px] font-black uppercase tracking-widest"
+                          >
+                             WhatsApp
+                          </Button>
+                        )}
                         <Button
-                          onClick={() => setExpandedId(isExpanded ? null : lead.id!)}
+                          onClick={() => setActiveLeadId(isExpanded ? null : lead.id!)}
                           className={cn(
-                            "h-10 px-8 transition-all text-xs font-black uppercase tracking-widest w-full lg:min-w-[160px]",
-                            isExpanded ? "bg-white text-black" : "bg-white/5 text-white hover:bg-white hover:text-black"
+                            "h-10 px-8 transition-all text-[10px] font-black uppercase tracking-widest",
+                            isExpanded ? "bg-white text-black shadow-lg shadow-white/5" : "bg-white/5 text-white hover:bg-white hover:text-black"
                           )}
                         >
                           {isExpanded ? "Close Info" : "View Details"}
