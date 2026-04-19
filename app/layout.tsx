@@ -12,8 +12,17 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://growxlabs.tech'),
   title: "GrowX Labs | Web Development & Automation Agency",
   description: "We build websites and automation systems that grow your business. High-performance, scalable solutions for modern enterprises.",
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    url: 'https://growxlabs.tech',
+    siteName: 'GrowX Labs',
+    type: 'website',
+  },
   icons: {
     icon: "/logo-symbol.svg",
   },

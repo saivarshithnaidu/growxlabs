@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { PDFService } from "@/lib/services/pdf.service";
+import { getBaseUrl } from "@/lib/utils";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
     // 5. Trigger Initial Advance Invoice
     try {
       if (agreement.advance_amount > 0) {
-        await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/invoice/create`, {
+        await fetch(`${getBaseUrl()}/api/invoice/create`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -71,6 +72,7 @@ export async function POST(req: Request) {
     }
 
     // 6. Send Email via Resend
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://growxlabs.tech";
     await resend.emails.send({
       from: "GrowX Labs Partners <partners@growxlabs.tech>",
       to: client.email,
@@ -80,7 +82,7 @@ export async function POST(req: Request) {
           <h2 style="color: #000;">Hello ${client.name},</h2>
           <p>We've prepared the partnership agreement for your upcoming project with GrowX Labs.</p>
           <p>You can review and accept the agreement directly in your portal, or view the attached PDF.</p>
-          <a href="${process.env.NEXT_PUBLIC_SITE_URL}/client/agreement" style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin: 20px 0;">Sign Agreement</a>
+          <a href="${appUrl}/client/agreement" style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin: 20px 0;">Sign Agreement</a>
         </div>
       `,
       attachments: [{ filename: 'agreement.pdf', path: pdfUrl }]

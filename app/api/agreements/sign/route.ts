@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getBaseUrl } from "@/lib/utils";
 
 export async function POST(req: Request) {
   try {
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
 
     // Trigger next step: Create initial advance invoice automatically
     // This maintains the "Core Flow" requested by the user
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/invoice/create`, {
+    const res = await fetch(`${getBaseUrl()}/api/invoice/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

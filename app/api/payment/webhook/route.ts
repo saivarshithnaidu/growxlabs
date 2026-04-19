@@ -71,7 +71,7 @@ export async function POST(req: Request) {
             <h1 style="color: #000;">Payment Confirmed.</h1>
             <p>Welcome to the family. Your project is now officially ACTIVE.</p>
             <p>Please complete the onboarding form to help us start the engineering phase:</p>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/onboarding" style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin: 20px 0;">Start Onboarding</a>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/onboarding" style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin: 20px 0;">Start Onboarding</a>
           </div>
         `
       });
