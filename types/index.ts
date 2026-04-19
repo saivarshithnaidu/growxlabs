@@ -11,13 +11,20 @@ export interface Lead {
   google_rating?: number;
   reviews_count?: number;
   lead_score: number;
-  status: 'new' | 'enriching' | 'enriched' | 'contacted' | 'following_up' | 'warm' | 'cold' | 'client' | 'closed';
+  status: 'new' | 'qualified' | 'outreach' | 'enriching' | 'enriched' | 'contacted' | 'following_up' | 'warm' | 'cold' | 'client' | 'closed';
   outreach_channel?: 'email' | 'whatsapp' | 'linkedin';
   follow_up_date?: string;
   notes?: string;
   assigned_to?: string;
   city?: string;
   created_at?: string;
+  outreach_generated?: boolean;
+  outreach_sent?: boolean;
+  outreach_content?: {
+    whatsapp: string;
+    email: string;
+    call: string;
+  };
 }
 
 export type OutreachStatus = Lead['status'];
