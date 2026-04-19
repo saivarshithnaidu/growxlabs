@@ -21,7 +21,7 @@ Your goal is to qualify prospective clients for our high-end engineering and AI 
 Expert, professional, and results-oriented. You represent a premium agency.`;
 
 const LEAD_TOOL = {
-  type: "function",
+  type: "function" as const,
   function: {
     name: "save_lead",
     description: "Submit qualified lead data for strategy session.",
@@ -112,7 +112,8 @@ export async function POST(req: Request) {
 
     if (choice.tool_calls?.[0]) {
       const toolCall = choice.tool_calls[0];
-      if (toolCall.function.name === "save_lead") {
+      // Type guard for function call
+      if ("function" in toolCall && toolCall.function.name === "save_lead") {
         const leadData = JSON.parse(toolCall.function.arguments);
         const result = await handleLeadSubmission(leadData);
         
@@ -127,7 +128,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: choice.content });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Sales Agent API Error:", error);
     return NextResponse.json({ message: "My intelligence systems are currently calibrating. Please try again soon." }, { status: 500 });
   }
