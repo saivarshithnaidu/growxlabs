@@ -9,9 +9,14 @@ interface ServiceCardProps {
   icon: LucideIcon;
 }
 
-export function ServiceCard({ title, description, icon: Icon }: ServiceCardProps) {
+import { memo } from "react";
+
+export const ServiceCard = memo(function ServiceCard({ title, description, icon: Icon }: ServiceCardProps) {
   return (
     <motion.div
+      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20 }}
+      viewport={{ once: true, margin: "-50px" }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
       className="group"
@@ -27,4 +32,4 @@ export function ServiceCard({ title, description, icon: Icon }: ServiceCardProps
       </div>
     </motion.div>
   );
-}
+});

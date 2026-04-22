@@ -11,7 +11,12 @@ import "../globals.css";
 import { locales } from "@/navigation";
 import Script from "next/script";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({ 
+  subsets: ["latin"], 
+  variable: "--font-sans",
+  display: "swap",
+  preload: true,
+});
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -73,9 +78,13 @@ export default async function LocaleLayout({
               </ConditionalLayout>
 
               <CookieConsent />
-              
-              <Script id="apollo-tracker" strategy="afterInteractive">
-                {`
+            </ThemeProvider>
+            
+            <Script 
+              id="apollo-tracker" 
+              strategy="lazyOnload"
+              dangerouslySetInnerHTML={{
+                __html: `
                   (function initApollo(){
                     if (window.apolloInitialized) return;
                     
@@ -101,22 +110,38 @@ export default async function LocaleLayout({
                       document.head.appendChild(o);
                     }
 
-                    // Check for existing consent safely
+                    function handleInteraction() {
+                      startTracking();
+                      ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'].forEach(e => 
+                        window.removeEventListener(e, handleInteraction)
+                      );
+                    }
+
+                    // Pre-consent check
                     try {
-                      if (localStorage.getItem("growx_cookie_consent") === "accepted") {
-                        startTracking();
+                      const consent = localStorage.getItem("growx_cookie_consent");
+                      if (consent === "accepted") {
+                        ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'].forEach(e => 
+                          window.addEventListener(e, handleInteraction, { once: true, passive: true })
+                        );
                       } else {
-                        // Wait for consent event
-                        window.addEventListener("growx_consent_accepted", startTracking);
+                        window.addEventListener("growx_consent_accepted", () => {
+                          ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'].forEach(e => 
+                            window.addEventListener(e, handleInteraction, { once: true, passive: true })
+                          );
+                        });
                       }
                     } catch (e) {
-                      // If storage is blocked, we just wait for the event which is memory-bound
-                      window.addEventListener("growx_consent_accepted", startTracking);
+                      window.addEventListener("growx_consent_accepted", () => {
+                        ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'].forEach(e => 
+                          window.addEventListener(e, handleInteraction, { once: true, passive: true })
+                        );
+                      });
                     }
                   })();
-                `}
-              </Script>
-            </ThemeProvider>
+                `
+              }}
+            />
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Building2, Home, MapPin, TrendingUp, ArrowUpRight, ShieldCheck, CheckCircle2, Star } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { DemoNavbar, DemoFooter, FloatingWhatsApp, DemoBadge } from "@/components/demos/SharedDemoUI";
@@ -28,27 +29,29 @@ export default function RealEstateDemo() {
       <section className="relative h-[100vh] flex items-center justify-center pt-24 pb-24 px-6 overflow-hidden">
         {/* Background Layer */}
         <div className="absolute inset-0 z-0">
-           <img 
+           <Image 
              src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
              alt="Real Estate Hero" 
-             className="w-full h-full object-cover brightness-[0.2]" 
+             fill
+             className="object-cover brightness-[0.2]" 
+             priority
            />
            <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F1A]/80 via-transparent to-[#0B0F1A]" />
            <div className="absolute inset-0 bg-[#6C63FF]/5 mix-blend-overlay" />
         </div>
 
         <div className="max-w-7xl mx-auto text-center space-y-12 relative z-10">
-           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="inline-flex items-center gap-3 px-6 py-3 bg-[#111827]/40 backdrop-blur-3xl rounded-2xl border border-white/10 mx-auto">
+           <motion.div whileInView={{ opacity: 1, scale: 1 }} initial={{ opacity: 0, scale: 0.9 }} viewport={{ once: true }} className="inline-flex items-center gap-3 px-6 py-3 bg-[#111827]/40 backdrop-blur-3xl rounded-2xl border border-white/10 mx-auto">
               <Building2 size={18} className="text-[#6C63FF]" />
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#DFE5F3]/40">Strategic Asset Acquisition Group</span>
            </motion.div>
-           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="text-7xl md:text-[12rem] font-black tracking-tighter leading-[0.75] italic">
+           <motion.h1 whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 30 }} viewport={{ once: true }} className="text-7xl md:text-[12rem] font-black tracking-tighter leading-[0.75] italic">
               Wealth <br /> <span className="text-[#6C63FF]">Architected.</span>
            </motion.h1>
-           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-2xl text-[#9CA3AF] max-w-2xl mx-auto font-medium leading-relaxed">
+           <motion.p whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-2xl text-[#9CA3AF] max-w-2xl mx-auto font-medium leading-relaxed">
               Engineering generational wealth through high-performance real estate infrastructure and elite asset class logic.
            </motion.p>
-           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex flex-col md:flex-row items-center justify-center gap-10 pt-8">
+           <motion.div whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex flex-col md:flex-row items-center justify-center gap-10 pt-8">
               <Button className="h-16 px-16 rounded-2xl bg-[#6C63FF] text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-[#6C63FF]/40 border-none hover:scale-105 transition-all">Secure Final Asset</Button>
               <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]/20 italic">
                  Institutional Verification Active
@@ -90,7 +93,7 @@ export default function RealEstateDemo() {
                {LISTINGS.map((l, i) => (
                   <div key={i} className="group cursor-pointer space-y-8">
                      <div className="relative aspect-[1/1.25] rounded-[3.5rem] overflow-hidden border border-white/[0.08] shadow-2xl">
-                        <img src={l.img} alt={l.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75" />
+                        <Image src={l.img} alt={l.name} fill className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75" />
                         <div className="absolute top-8 left-8 px-5 py-2.5 bg-black/60 backdrop-blur-xl border border-white/5 rounded-full text-[9px] font-black uppercase tracking-widest">{l.type}</div>
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F1A] via-transparent to-transparent opacity-80" />
                      </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Bed, Star, MapPin, Wifi, Phone, Coffee, Wind, Car, Users, Camera as Instagram, Share2 as Facebook, Globe as Twitter, ShieldCheck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { DemoNavbar, DemoFooter, FloatingWhatsApp, DemoBadge } from "@/components/demos/SharedDemoUI";
@@ -28,30 +29,31 @@ export default function HotelDemo() {
       <section className="relative h-screen flex items-center justify-center pt-24 pb-20 px-6 overflow-hidden">
         {/* Background Layer */}
         <div className="absolute inset-0 z-0">
-           <img 
+           <Image 
              src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
              alt="Luxury Hero" 
-             className="w-full h-full object-cover brightness-[0.25]" 
+             fill
+             className="object-cover brightness-[0.25]" 
+             priority
            />
            <div className="absolute inset-0 bg-gradient-to-tr from-[#0B0F1A] via-transparent to-transparent opacity-90" />
            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0B0F1A]/40 to-[#0B0F1A]" />
         </div>
 
         <div className="max-w-7xl mx-auto text-center space-y-12 relative z-10">
-           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-3 px-6 py-3 bg-[#111827]/60 backdrop-blur-3xl rounded-2xl border border-white/10 mx-auto">
+           <motion.div whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} className="inline-flex items-center gap-3 px-6 py-3 bg-[#111827]/60 backdrop-blur-3xl rounded-2xl border border-white/10 mx-auto">
               <Bed size={18} className="text-[#6C63FF]" />
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#DFE5F3]/40">Boutique Hospitality Engineering</span>
            </motion.div>
-           <motion.h1 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-7xl md:text-[11rem] font-black tracking-tighter leading-[0.75] italic">
+           <motion.h1 whileInView={{ opacity: 1, scale: 1 }} initial={{ opacity: 0, scale: 0.95 }} viewport={{ once: true }} className="text-7xl md:text-[11rem] font-black tracking-tighter leading-[0.75] italic">
               Elite <br /> <span className="text-[#6C63FF]">Reserves.</span>
            </motion.h1>
-           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-2xl text-[#9CA3AF] max-w-2xl mx-auto font-medium leading-relaxed">
+           <motion.p whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-2xl text-[#9CA3AF] max-w-2xl mx-auto font-medium leading-relaxed">
               Where boutique hospitality meets edge engineering. A stay that feels like prime infrastructure.
            </motion.p>
-           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex flex-col md:flex-row items-center justify-center gap-10 pt-4">
+           <motion.div whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex flex-col md:flex-row items-center justify-center gap-10 pt-4">
               <Button className="h-16 px-16 rounded-2xl bg-[#6C63FF] text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-[#6C63FF]/40 border-none hover:scale-105 transition-all">Book Protocol</Button>
               <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]/40">
-                 <div className="h-1 w-1 bg-[#6C63FF] rounded-full animate-pulse" />
                  Bengaluru Financial District
               </div>
            </motion.div>
@@ -88,7 +90,7 @@ export default function HotelDemo() {
                {ROOMS.map((r, i) => (
                   <div key={i} className="group cursor-pointer space-y-6">
                      <div className="relative aspect-[1/1.25] rounded-[2.5rem] overflow-hidden border border-white/[0.08] shadow-2xl">
-                        <img src={r.img} alt={r.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75" />
+                        <Image src={r.img} alt={r.name} fill className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75" />
                         <div className="absolute top-6 left-6 px-4 py-2 bg-black/60 backdrop-blur-md rounded-full text-[8px] font-black uppercase tracking-widest">{r.type}</div>
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F1A] via-transparent to-transparent opacity-60" />
                      </div>

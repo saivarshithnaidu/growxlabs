@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Utensils, Star, MapPin, Clock, Camera as Instagram, Share2 as Facebook, Globe as Twitter, ChevronRight, MessageCircle, ShieldCheck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { DemoNavbar, DemoFooter, FloatingWhatsApp, DemoBadge } from "@/components/demos/SharedDemoUI";
@@ -28,26 +29,28 @@ export default function RestaurantDemo() {
       <section className="relative h-screen flex items-center justify-center pt-24 pb-20 px-6 overflow-hidden">
         {/* Background Layer */}
         <div className="absolute inset-0 z-0">
-           <img 
+           <Image 
              src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
              alt="Hero" 
-             className="w-full h-full object-cover brightness-[0.2]" 
+             fill
+             className="object-cover brightness-[0.2]" 
+             priority
            />
            <div className="absolute inset-0 bg-gradient-to-br from-[#6C63FF]/20 via-[#0B0F1A]/80 to-transparent" />
         </div>
 
         <div className="max-w-7xl mx-auto text-center space-y-12 relative z-10">
-           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-3 px-6 py-3 bg-white/[0.02] backdrop-blur-3xl rounded-2xl border border-white/10 mx-auto">
+           <motion.div whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} className="inline-flex items-center gap-3 px-6 py-3 bg-white/[0.02] backdrop-blur-3xl rounded-2xl border border-white/10 mx-auto">
               <Utensils size={18} className="text-[#6C63FF]" />
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#DFE5F3]/40">Premium Dining Architecture</span>
            </motion.div>
-           <motion.h1 initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-7xl md:text-[10rem] font-black tracking-tighter leading-[0.8] italic">
+           <motion.h1 whileInView={{ opacity: 1, scale: 1 }} initial={{ opacity: 0, scale: 0.9 }} viewport={{ once: true }} className="text-7xl md:text-[10rem] font-black tracking-tighter leading-[0.8] italic">
               Taste <br /> <span className="text-[#6C63FF]">Infrastructure.</span>
            </motion.h1>
-           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-2xl text-[#9CA3AF] max-w-2xl mx-auto font-medium leading-relaxed">
+           <motion.p whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-2xl text-[#9CA3AF] max-w-2xl mx-auto font-medium leading-relaxed">
               Engineering elite culinary experiences for the high-intent global palate. Digital-first, flavor-engineered.
            </motion.p>
-           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex flex-col md:flex-row items-center justify-center gap-8">
+           <motion.div whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex flex-col md:flex-row items-center justify-center gap-8">
               <Button className="h-16 px-16 rounded-2xl bg-[#6C63FF] text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-[#6C63FF]/40 border-none hover:scale-105 transition-all">Reserve Your Position</Button>
               <div className="text-[10px] font-black uppercase tracking-[0.4em] text-[#DFE5F3]/20 flex items-center gap-4">
                  <div className="h-[1px] w-8 bg-white/10" />
@@ -88,7 +91,7 @@ export default function RestaurantDemo() {
                {DISHES.map((d, i) => (
                   <div key={i} className="group cursor-pointer space-y-6">
                      <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-white/[0.08] shadow-2xl">
-                        <img src={d.img} alt={d.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75" />
+                        <Image src={d.img} alt={d.name} fill className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75" />
                         <div className="absolute top-6 left-6 px-4 py-2 bg-black/60 backdrop-blur-md rounded-full text-[8px] font-black uppercase tracking-widest">{d.type}</div>
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F1A] via-transparent to-transparent opacity-60" />
                      </div>

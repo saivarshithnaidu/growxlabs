@@ -11,13 +11,16 @@ type ProjectCardProps = Pick<CaseStudy, "title" | "tag" | "description" | "tech"
   image?: string;
 };
 
-export function ProjectCard({ title, tag, category, description, tech, metric, link, status, href }: ProjectCardProps) {
+import { memo } from "react";
+
+export const ProjectCard = memo(function ProjectCard({ title, tag, category, description, tech, metric, link, status, href }: ProjectCardProps) {
   const displayTag = tag || category || "";
   
   return (
     <motion.div
+      whileInView={{ opacity: 1, y: 0 }}
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.3 }}
       className="group h-full"
@@ -54,7 +57,7 @@ export function ProjectCard({ title, tag, category, description, tech, metric, l
             {/* Live Status Badge */}
             {status === "Live" && (
               <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[#00A86B]">
-                <span className="w-2 h-2 rounded-full bg-[#00A86B] animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#00A86B]" />
                 Live
               </span>
             )}
@@ -82,4 +85,4 @@ export function ProjectCard({ title, tag, category, description, tech, metric, l
       </div>
     </motion.div>
   );
-}
+});

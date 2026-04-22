@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
   // 2. Fallback: ip-api (Using a timeout to prevent slow loads)
   try {
-    const res = await fetch("http://ip-api.com/json/", { next: { revalidate: 3600 } });
+    const res = await fetch("https://demo.ip-api.com/json/", { next: { revalidate: 3600 } });
     const data = await res.json();
     return NextResponse.json({ country: data.countryCode || "US" });
   } catch (error) {

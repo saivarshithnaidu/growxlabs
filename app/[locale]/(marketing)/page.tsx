@@ -43,8 +43,9 @@ export default function Home() {
       <section className="w-full relative min-h-[90vh] flex items-center justify-center overflow-hidden px-6 md:px-10 xl:px-16 2xl:px-24">
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto text-center relative z-10 w-full">
           <motion.div
+            whileInView={{ opacity: 1, scale: 1 }}
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
             className="mb-8"
           >
             <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B]">
@@ -53,8 +54,9 @@ export default function Home() {
           </motion.div>
           
           <motion.h1 
+            whileInView={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             className="text-white font-bold mb-10 leading-[1.1] max-w-[1100px] mx-auto"
             style={{ fontSize: "clamp(48px, 6vw, 96px)", fontWeight: 700 }}
           >
@@ -62,8 +64,9 @@ export default function Home() {
           </motion.h1>
           
           <motion.p 
+            whileInView={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ delay: 0.1 }}
             className="text-[18px] text-[#A0A0A0] max-w-[520px] mx-auto mb-14 leading-[1.7]"
           >
@@ -71,13 +74,14 @@ export default function Home() {
           </motion.p>
           
           <motion.div 
+            whileInView={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ delay: 0.2 }}
             className="flex flex-col sm:flex-row justify-center gap-4"
           >
             <Link href="/contact">
-              <Button size="lg" className="h-12 px-8 py-3 text-base rounded-full font-semibold bg-[#00A86B] text-white hover:bg-[#00A86B]/90 hover:scale-105 transition-all shadow-none">
+              <Button size="lg" className="h-12 px-8 py-3 text-base rounded-full font-semibold bg-[#00A86B] text-white hover:bg-[#00A86B]/90 transition-all shadow-none">
                 Start Your Project →
               </Button>
             </Link>

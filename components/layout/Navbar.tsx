@@ -20,8 +20,10 @@ export function Navbar() {
 
   const navLinks = [
     { name: t("services"), href: "/services" },
+    { name: "Courses", href: "/courses" },
     { name: t("portfolio"), href: "/portfolio" },
     { name: t("pricing"), href: "/pricing" },
+    { name: t("subscriptions"), href: "/subscriptions" },
     { name: t("about"), href: "/about" },
     { name: t("contact"), href: "/contact" },
   ];
@@ -29,11 +31,18 @@ export function Navbar() {
   if (pathname?.includes("/demos")) return null;
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
