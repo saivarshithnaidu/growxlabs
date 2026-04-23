@@ -5,7 +5,8 @@ import bcrypt from "bcryptjs";
 
 const ADMIN_CREDENTIALS = [
   { email: "admin@growxlabs.tech", password: "VARSHITH973206", name: "Varshith", role: "ADMIN" },
-  { email: "coadmin@growxlabs.tech", password: "AKHILESH", name: "Akhilesh", role: "CO_ADMIN" }
+  { email: "coadmin@growxlabs.tech", password: "AKHILESH", name: "Akhilesh", role: "CO_ADMIN" },
+  { email: "test@growxlabs.tech", password: "GrowXTest2024!", name: "Razorpay Tester", role: "CLIENT" }
 ];
 
 const handler = NextAuth({
