@@ -18,27 +18,25 @@ export function LocaleRedirect() {
       const storedLocale = localStorage.getItem("growx_user_locale");
       const browserLocale = navigator.language;
       
-      let targetLocale = "en-US";
+      let targetLocale = "en-IN"; // Default to en-IN
       
       if (storedLocale && locales.includes(storedLocale as any)) {
         targetLocale = storedLocale;
       } else if (browserLocale) {
-        // Attempt to match browser locale
-        if (browserLocale.startsWith("hi")) targetLocale = "hi-IN";
-        else if (browserLocale.startsWith("te")) targetLocale = "te-IN";
-        else if (browserLocale.includes("IN")) targetLocale = "en-IN";
-        else if (browserLocale.includes("GB")) targetLocale = "en-GB";
-        else if (browserLocale.includes("DE")) targetLocale = "de-DE";
-        else if (browserLocale.includes("FR")) targetLocale = "fr-FR";
+        // Simple logic: if browser indicates India, keep en-IN, else use en-US (or others as matched)
+        if (browserLocale.includes("IN")) targetLocale = "en-IN";
+        else if (browserLocale.startsWith("en")) targetLocale = "en-US";
+        else {
+           // Fallback for other browsers if needed, but stick to en-US as default others
+           targetLocale = "en-US";
+        }
       }
       
-      // Save it for future visits
+      // Save it
       localStorage.setItem("growx_user_locale", targetLocale);
       
-      // Perform the redirect to the detected locale
-      // Note: In Next.js with next-intl, the middleware usually handles this, 
-      // but this client-side check ensures preference persistence.
-      if (currentLocale === "") { // Only if we are at / root
+      // The middleware should have already handled this, but this is a safety fallback for root
+      if (pathname === "/") {
          router.replace(`/${targetLocale}`);
       }
     } else {

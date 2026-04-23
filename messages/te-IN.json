@@ -40,8 +40,8 @@
     }
   },
   "Pricing": {
-    "currency": "$",
-    "currency_code": "USD",
+    "currency": "₹",
+    "currency_code": "INR",
     "label": "Investment"
   },
   "Chat": {

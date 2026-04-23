@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const intlMiddleware = createMiddleware({
   locales,
-  defaultLocale: 'en-US',
+  defaultLocale: 'en-IN',
   localePrefix
 });
 
@@ -12,19 +12,21 @@ export default function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const hostname = req.headers.get('host') || '';
 
-  // 1. Skip if path is internal, api, or has extension
+  // 1. Skip paths that should not be localized or processed
   if (
     pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
+    pathname.startsWith('/_vercel') ||
     pathname.includes('.')
   ) {
     return NextResponse.next();
   }
 
+  // Detect Country using Vercel header
+  // Defaults to 'IN' for local development as per "Optional: Force region to India for now"
+  const country = req.headers.get('x-vercel-ip-country') || 'IN';
+
   // 2. Identify Subdomain Target
-  // admin.growxlabs.tech -> 'admin'
-  // client.growxlabs.tech -> 'client'
-  // restaurant.growxlabs.tech -> 'restaurant'
   const isProd = !hostname.includes('localhost') && !hostname.includes('.vercel.app');
   let subdomain = '';
   
@@ -36,18 +38,18 @@ export default function proxy(req: NextRequest) {
     else if (hostname.startsWith('realestate.')) subdomain = 'realestate';
   }
 
-  // 3. Handle Mapping
-  if (subdomain) {
-    // If user is accessing a subdomain, we rewrite to the specific localized path
-    // Example: admin.growxlabs.tech/login -> /en-IN/admin/login
-    
-    // First, detect locale (same as root logic)
+  // Helper to determine target locale based on country or cookie
+  const getTargetLocale = () => {
     const cookieLocale = req.cookies.get('NEXT_LOCALE')?.value;
-    const targetLocale = (cookieLocale && locales.includes(cookieLocale as any)) 
-      ? cookieLocale 
-      : (req.headers.get('cf-ipcountry') === 'IN' || !isProd ? 'en-IN' : 'en-US');
+    if (cookieLocale && locales.includes(cookieLocale as any)) return cookieLocale;
+    
+    // Logic: India users -> en-IN, others -> en-US
+    return country === 'IN' ? 'en-IN' : 'en-US';
+  };
 
-    // Map subdomains to internal folders
+  // 3. Handle Subdomain Mapping
+  if (subdomain) {
+    const targetLocale = getTargetLocale();
     const mapping: Record<string, string> = {
       admin: '/admin',
       client: '/client',
@@ -57,27 +59,29 @@ export default function proxy(req: NextRequest) {
     };
 
     const internalPath = mapping[subdomain];
-    
-    // Construct internal URL: /[locale]/[experience]/[rest-of-path]
-    // Note: If we use rewrite, the user keeps seeing the subdomain URL
     const url = req.nextUrl.clone();
     url.pathname = `/${targetLocale}${internalPath}${pathname === '/' ? '' : pathname}`;
     
     return NextResponse.rewrite(url);
   }
 
-  // 4. Root Domain Logic ("growxlabs.tech")
-  if (pathname === '/') {
-    const isDev = process.env.NODE_ENV === 'development';
-    const targetLocale = (req.cookies.get('NEXT_LOCALE')?.value) || (isDev ? 'en-IN' : (req.headers.get('cf-ipcountry') === 'AE' ? 'ar-AE' : 'en-US'));
-    
-    return NextResponse.redirect(new URL(`/${targetLocale}/`, req.url));
+  // 4. Main Domain Locale Persistence / Redirects
+  const segments = pathname.split('/');
+  const hasLocale = locales.includes(segments[1] as any);
+
+  // If no locale in path, determine target and redirect
+  if (!hasLocale) {
+    const targetLocale = getTargetLocale();
+    const url = req.nextUrl.clone();
+    url.pathname = `/${targetLocale}${pathname === '/' ? '' : pathname}`;
+    return NextResponse.redirect(url, 302);
   }
 
-  // 5. Regular path processing for main domain
+  // 5. Standard next-intl processing for paths that already have a locale
   return intlMiddleware(req);
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|.*\\..*).*)']
+  // matcher covers all routes that should be localized
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
 };

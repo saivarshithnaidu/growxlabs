@@ -14,8 +14,8 @@ const PRICING_PLANS = [
   {
     name: "Starter",
     description: "Best for local businesses, landing pages, and personal brands.",
-    prices: { 
-      'en-IN': "₹8,000 - ₹12,000", 
+    prices: {
+      'en-IN': "₹8,000 - ₹12,000",
       'en-US': "$100 - $150",
       'en-GB': "£80 - £120",
       'de-DE': "€95 - €140"
@@ -38,8 +38,8 @@ const PRICING_PLANS = [
   {
     name: "Growth",
     description: "Best for growing businesses needing full websites and automation.",
-    prices: { 
-      'en-IN': "₹20,000 - ₹35,000", 
+    prices: {
+      'en-IN': "₹20,000 - ₹35,000",
       'en-US': "$250 - $420",
       'en-GB': "£200 - £340",
       'de-DE': "€235 - €400"
@@ -62,8 +62,8 @@ const PRICING_PLANS = [
   {
     name: "Enterprise",
     description: "Best for startups, SaaS platforms, and complex web applications.",
-    prices: { 
-      'en-IN': "₹40,000+", 
+    prices: {
+      'en-IN': "₹40,000+",
       'en-US': "$500+",
       'en-GB': "£400+",
       'de-DE': "€470+"
@@ -98,24 +98,24 @@ export default function PricingPage() {
   return (
     <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-        
+
         {/* Header */}
         <div className="text-center mb-20">
-          <motion.span 
+          <motion.span
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-primary font-black uppercase tracking-[0.4em] text-xs"
           >
             Regionalized Investment
           </motion.span>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-[clamp(40px,7vw,72px)] font-black text-white mt-4 mb-6 tracking-tighter leading-[1.1]"
           >
             Simple, Honest Pricing
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -139,46 +139,46 @@ export default function PricingPage() {
                 "p-10 h-full flex flex-col relative overflow-hidden transition-all duration-500 hover:scale-[1.02] border-white/10 shadow-2xl",
                 plan.popular ? "bg-white/[0.04] border-primary/50 shadow-primary/5" : "bg-white/[0.02]"
               )}>
-                 {plan.popular && (
-                    <div className="absolute top-0 right-0 py-2 px-6 bg-primary text-white font-black uppercase text-[8px] tracking-[0.3em] rounded-bl-2xl">
-                       Most Popular
-                    </div>
-                 )}
-                 <div className={cn("absolute -top-24 -right-24 w-64 h-64 rounded-full blur-[100px] -z-10 bg-gradient-to-br", plan.color)} />
-                 
-                 <div className="mb-10">
-                    <h3 className="text-3xl font-black text-white italic tracking-tighter mb-2">{plan.name}</h3>
-                    <p className="text-base text-white/40 font-medium leading-relaxed mb-8">{plan.description}</p>
-                    <div className="text-5xl font-black text-white tracking-tighter mb-1">
-                       {getPlanPrice(plan.prices)}
-                    </div>
-                    <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-primary/60">
-                       <Clock size={12} />
-                       Delivery: {plan.timeline}
-                    </div>
-                 </div>
+                {plan.popular && (
+                  <div className="absolute top-0 right-0 py-2 px-6 bg-primary text-white font-black uppercase text-[8px] tracking-[0.3em] rounded-bl-2xl">
+                    Most Popular
+                  </div>
+                )}
+                <div className={cn("absolute -top-24 -right-24 w-64 h-64 rounded-full blur-[100px] -z-10 bg-gradient-to-br", plan.color)} />
 
-                 <ul className="space-y-4 mb-12 flex-grow">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-4">
-                         <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                            <Check className="text-primary" size={12} />
-                         </div>
-                         <span className="text-base font-medium text-white/50">{feature}</span>
-                      </li>
-                    ))}
-                 </ul>
+                <div className="mb-10">
+                  <h3 className="text-3xl font-black text-white italic tracking-tighter mb-2">{plan.name}</h3>
+                  <p className="text-base text-white/40 font-medium leading-relaxed mb-8">{plan.description}</p>
+                  <div className="text-5xl font-black text-white tracking-tighter mb-1">
+                    {getPlanPrice(plan.prices)}
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-primary/60">
+                    <Clock size={12} />
+                    Delivery: {plan.timeline}
+                  </div>
+                </div>
 
-                 <Link href="/contact" className="mt-auto">
-                   <Button 
-                     className={cn(
-                       "w-full h-14 rounded-2xl font-black uppercase text-[11px] tracking-widest",
-                       plan.popular ? "bg-primary text-white hover:bg-primary/90" : "bg-white text-black hover:bg-white/90"
-                     )}
-                   >
-                     {plan.cta}
-                   </Button>
-                 </Link>
+                <ul className="space-y-4 mb-12 flex-grow">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-4">
+                      <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <Check className="text-primary" size={12} />
+                      </div>
+                      <span className="text-base font-medium text-white/50">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link href="/contact" className="mt-auto">
+                  <Button
+                    className={cn(
+                      "w-full h-14 rounded-2xl font-black uppercase text-[11px] tracking-widest",
+                      plan.popular ? "bg-primary text-white hover:bg-primary/90" : "bg-white text-black hover:bg-white/90"
+                    )}
+                  >
+                    {plan.cta}
+                  </Button>
+                </Link>
               </Card>
             </motion.div>
           ))}

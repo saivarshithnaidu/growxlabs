@@ -8,7 +8,7 @@ export default function SubscriptionsPage() {
   return (
     <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-        
+
         {/* Header Section */}
         <div className="text-center py-24 md:px-16 container mx-auto">
           <span className="text-[#00A86B] font-bold uppercase tracking-widest text-xs mb-4 block">
@@ -24,7 +24,7 @@ export default function SubscriptionsPage() {
 
         {/* Pricing Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
-          
+
           {/* Card 1: Basic */}
           <div className="bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-2xl p-6 md:p-8 flex flex-col justify-between hover:border-[rgba(0,168,107,0.3)] transition-colors duration-300 h-full relative">
             <div>

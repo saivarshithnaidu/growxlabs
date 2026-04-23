@@ -2,15 +2,15 @@
 
 import { motion } from "framer-motion";
 import { ServiceCard } from "@/components/ui/ServiceCard";
-import { 
-  Code, 
-  Settings, 
-  TrendingUp, 
-  Server, 
-  Globe, 
-  Zap, 
-  Shield, 
-  Clock 
+import {
+  Code,
+  Settings,
+  TrendingUp,
+  Server,
+  Globe,
+  Zap,
+  Shield,
+  Clock
 } from "lucide-react";
 
 const allServices = [
@@ -54,7 +54,7 @@ export default function ServicesPage() {
           <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B] mb-4 block">
             WHAT WE BUILD
           </span>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-6 tracking-tight"
