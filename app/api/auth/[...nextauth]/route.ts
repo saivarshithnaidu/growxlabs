@@ -1,6 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import bcrypt from "bcryptjs";
 import { JWT } from "next-auth/jwt";
 
@@ -21,10 +22,8 @@ export const authOptions: AuthOptions = {
           throw new Error("Missing credentials");
         }
 
-        // Database-only Authentication
-        const supabase = await createClient();
-        
-        const { data: user, error } = await supabase
+        // Database-only Authentication - Use Admin client to bypass RLS during login
+        const { data: user, error } = await supabaseAdmin
           .from("users")
           .select("*")
           .eq("email", credentials.email)
