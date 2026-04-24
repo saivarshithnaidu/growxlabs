@@ -7,4 +7,4 @@ export const locales = [
 export const localePrefix = 'always'; 
 
 export const { Link, redirect, usePathname, useRouter } =
-  createNavigation({ locales, localePrefix });
+  createNavigation({ locales, localePrefix, defaultLocale: 'en-IN' });

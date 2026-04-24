@@ -23,29 +23,35 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Role-Based Access Control (RBAC)
-  const isAdminPath = pathname.match(/^\/(?:[a-z]{2})\/admin/) || pathname.startsWith('/admin');
-  
+  // 2. CRITICAL: Handle invalid/legacy or malformed locale segments
+  const segments = pathname.split('/').filter(Boolean);
+  const firstSegment = segments[0];
+
+  // Case-insensitive check for locales
+  const matchedLocale = locales.find(
+    l => l.toLowerCase() === firstSegment?.toLowerCase()
+  );
+
+  // If the path starts with 'en' (legacy) or a casing mismatch (e.g., /en-in/ instead of /en-IN/)
+  if (firstSegment?.toLowerCase() === 'en' || (firstSegment && matchedLocale && firstSegment !== matchedLocale)) {
+    const targetLocale = matchedLocale || 'en-IN';
+    const url = req.nextUrl.clone();
+    segments[0] = targetLocale;
+    url.pathname = '/' + segments.join('/');
+    return NextResponse.redirect(url, 302);
+  }
+
+  // 3. RBAC Check
+  const isAdminPath = pathname.match(/^\/(?:[a-z]{2}(?:-[A-Z]{2})?)\/admin/) || pathname.startsWith('/admin');
   if (isAdminPath) {
     const secret = process.env.NEXTAUTH_SECRET;
-    if (!secret) {
-      throw new Error("Missing NEXTAUTH_SECRET environment variable");
-    }
-    const token = await getToken({ 
-      req, 
-      secret
-    });
-    const role = token?.role as string;
-    if (!token || (role !== 'ADMIN' && role !== 'CO_ADMIN')) {
-      const loginUrl = new URL('/login', req.url);
-      return NextResponse.redirect(loginUrl);
+    const token = await getToken({ req, secret });
+    if (!token || (token.role !== 'ADMIN' && token.role !== 'CO_ADMIN')) {
+      return NextResponse.redirect(new URL('/login', req.url));
     }
   }
 
-  // Detect Country using Vercel header
-  const country = req.headers.get('x-vercel-ip-country') || 'IN';
-
-  // 2. Identify Subdomain Target
+  // 4. Identify Subdomain Target
   const isProd = !hostname.includes('localhost') && !hostname.includes('.vercel.app');
   let subdomain = '';
   
@@ -57,18 +63,8 @@ export default async function middleware(req: NextRequest) {
     else if (hostname.startsWith('realestate.')) subdomain = 'realestate';
   }
 
-  // Helper to determine target locale based on country or cookie
-  const getTargetLocale = () => {
-    const cookieLocale = req.cookies.get('NEXT_LOCALE')?.value;
-    if (cookieLocale && locales.includes(cookieLocale as any)) return cookieLocale;
-    
-    // Simplified logic: Default to 'en'
-    return 'en';
-  };
-
-  // 3. Handle Subdomain Mapping
   if (subdomain) {
-    const targetLocale = getTargetLocale();
+    const targetLocale = req.cookies.get('NEXT_LOCALE')?.value || 'en-IN';
     const mapping: Record<string, string> = {
       admin: '/admin',
       client: '/client',
@@ -76,31 +72,23 @@ export default async function middleware(req: NextRequest) {
       hotel: '/demos/hotel',
       realestate: '/demos/real-estate'
     };
-
     const internalPath = mapping[subdomain];
     const url = req.nextUrl.clone();
     url.pathname = `/${targetLocale}${internalPath}${pathname === '/' ? '' : pathname}`;
-    
     return NextResponse.rewrite(url);
   }
 
-  // 4. Main Domain Locale Persistence / Redirects
-  const segments = pathname.split('/');
-  const hasLocale = locales.includes(segments[1] as any);
-
-  // If no locale in path, determine target and redirect
-  if (!hasLocale) {
-    const targetLocale = getTargetLocale();
+  // 5. SEO Protection: Force locale prefix for all main domain routes
+  if (!matchedLocale) {
+    const targetLocale = req.cookies.get('NEXT_LOCALE')?.value || 'en-IN';
     const url = req.nextUrl.clone();
     url.pathname = `/${targetLocale}${pathname === '/' ? '' : pathname}`;
     return NextResponse.redirect(url, 302);
   }
 
-  // 5. Standard next-intl processing for paths that already have a locale
   return intlMiddleware(req);
 }
 
 export const config = {
-  // matcher covers all routes that should be localized
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)']
 };

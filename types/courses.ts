@@ -35,6 +35,10 @@ export interface Course {
     description: string;
     requirements: string[];
   };
+  become?: string;
+  problemSolved?: string;
+  willBuild?: string;
+  forWho?: string;
 }
 
 export type QuestionType = 'mcq' | 'code_output' | 'bug' | 'fix' | 'scenario' | 'multi_select';

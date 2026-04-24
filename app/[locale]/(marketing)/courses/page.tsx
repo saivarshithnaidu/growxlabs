@@ -6,17 +6,14 @@ import {
   CheckCircle2, 
   ChevronDown, 
   Lock, 
-  Mail, 
   Clock,
   ShieldCheck,
   Star,
   GraduationCap,
   BookOpen,
-  ArrowRight,
-  BarChart,
-  ChevronRight,
-  QrCode,
-  Award
+  Award,
+  HelpCircle,
+  Sparkles
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,6 +26,41 @@ import { useRouter } from "next/navigation";
 import { CertificatePreview } from "@/components/marketing/CertificatePreview";
 import Script from "next/script";
 
+const faqData = [
+  {
+    question: "Are these courses suitable for beginners?",
+    answer: "We have specific 'Beginner' tracks for Java and Python. The AI Engineering track is best suited for those with basic programming knowledge."
+  },
+  {
+    question: "Do I get a certificate after completion?",
+    answer: "Yes. Every course includes a GrowX Labs certification that is cryptographically signed and globally verifiable."
+  },
+  {
+    question: "Is there any support if I get stuck?",
+    answer: "Yes. Our premium tracks include access to our private community where engineers provide direct feedback."
+  },
+  {
+    question: "How long do I have access to the materials?",
+    answer: "Once you enroll, you have lifetime access to the course materials and all future updates."
+  },
+  {
+    question: "Can I get a refund if I'm not satisfied?",
+    answer: "We offer a 7-day no-questions-asked refund policy if you haven't completed more than 20% of the course."
+  }
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqData.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+};
 
 const COURSE_PRICES: Record<string, { inr: number; id: string }> = {
   "ai-engineering": { inr: 1999, id: "ai-engineering" },
@@ -38,20 +70,54 @@ const COURSE_PRICES: Record<string, { inr: number; id: string }> = {
   "java-python-bundle": { inr: 999, id: "java-python-bundle" }
 };
 
+const flagshipAEO = {
+  become: "A world-class AI Engineer capable of architecting autonomous agent systems.",
+  problemSolved: "Solves the 'wrapper' problem by teaching you to build deep RAG and Agentic workflows, not just API calls.",
+  willBuild: "A multi-agent knowledge platform with live web-search and document intelligence.",
+  forWho: "Senior developers, tech leads, and founders who want to lead the AI wave."
+};
+
 const MODULES = [
-  { id: 1, title: "Module 1 — Foundations of AI", content: "Master the building blocks. From Neural Networks and deep learning architectures to the mechanics of Transformers and Large Language Models (LLMs). Understand how CPython internals and GPUs power modern AI." },
-  { id: 2, title: "Module 2 — Prompt Engineering", content: "The art of steering AI. Advanced techniques including Zero-shot, Few-shot, Chain-of-Thought (CoT), and Tree-of-Thought prompting. Build robust system prompts and secure persona architectures." },
-  { id: 3, title: "Module 3 — Working with AI APIs", content: "Engineer production-grade integrations. Deep dive into Claude (Anthropic), GPT-4 (OpenAI), and Gemini (Google) APIs. Master stateful conversations, token management, and structured JSON outputs." },
-  { id: 4, title: "Module 4 — RAG Systems", content: "Build your own knowledge engines. Comprehensive coverage of Retrieval Augmented Generation, including text chunking strategies, embeddings, and vector databases like Supabase (pgvector) and ChromaDB." },
-  { id: 5, title: "Module 5 — Building AI Applications", content: "Full-stack AI development. Implement real-time streaming, multimodal vision processing, and cross-platform AI widgets using Next.js 15, FastAPI, and specialized AI SDKs." },
-  { id: 6, title: "Module 6 — AI in Production", content: "Scale reliably and affordably. Strategies for cost management, latency reduction, and rate-limiting. Implement defensive engineering against prompt injection and jailbreaking." },
-  { id: 7, title: "Module 7 — Advanced AI Engineering", content: "The future of automation. Build autonomous AI Agents using function calling (tool use), orchestrate complex workflows with LangChain, and deploy distributed task processors." },
+  {
+    id: 1,
+    title: "Module 1: The AI Mindset & Core LLM Mechanics",
+    content: "Understanding how Transformer models think. From tokenization and temperature settings to the math behind embeddings. We don't just use APIs; we understand the weights."
+  },
+  {
+    id: 2,
+    title: "Module 2: Advanced Prompt Engineering (Architect Level)",
+    content: "Moving beyond basic instructions. Learn Chain-of-Thought (CoT), Tree-of-Thought (ToT), and automated prompt optimization techniques used by top engineering teams."
+  },
+  {
+    id: 3,
+    title: "Module 3: Deep RAG - Knowledge Retrieval Systems",
+    content: "Building production-grade Retrieval Augmented Generation. Vector databases (Pinecone/Milvus), hybrid search, reranking strategies, and handling massive PDF/Doc sets."
+  },
+  {
+    id: 4,
+    title: "Module 4: Autonomous Agents & Tool Use",
+    content: "Giving AI the ability to act. Building agents that can search the web, execute Python code, and interact with your existing SQL databases independently."
+  },
+  {
+    id: 5,
+    title: "Module 5: Multi-Agent Systems & Deployment",
+    content: "Architecting teams of AI agents using LangGraph or CrewAI. Final deployment to production with monitoring, latency optimization, and cost management."
+  }
 ];
 
 const COMING_SOON = [
-  { title: "n8n Automation Mastery", description: "Design complex, self-healing business automations using AI agents and logic forks." },
-  { title: "DevOps and CI/CD", description: "Infrastructure as Code for AI: Deploying model-weighted apps at global scale." },
-  { title: "Prompt Engineering Advanced", description: "Meta-prompting, prompt distillation, and enterprise-grade testing frameworks." },
+  {
+    title: "Fullstack SaaS Mastery",
+    description: "Build a complete subscription-based platform from scratch using Next.js 15, Stripe, and Supabase."
+  },
+  {
+    title: "DevOps for AI Engineers",
+    description: "Scale your AI applications. Learn Docker, Kubernetes, and specialized GPU orchestration for LLM inference."
+  },
+  {
+    title: "Web3 & Smart Contracts",
+    description: "Master Ethereum and Solidity to build decentralized applications on the blockchain."
+  }
 ];
 
 export default function CoursesPage() {
@@ -60,18 +126,18 @@ export default function CoursesPage() {
   const [openModule, setOpenModule] = useState<number | null>(1);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
+  const [openAEO, setOpenAEO] = useState<string | null>(null);
 
   const handleEnroll = (courseId: string) => {
     if (!session) {
-      router.push("/login?callbackUrl=/courses");
+      router.push(`/login?callbackUrl=/courses`);
       return;
     }
 
-    const course = courses.find(c => c.id === courseId);
     const price = COURSE_PRICES[courseId]?.inr || 1999;
+    const course = courses.find(c => c.id === courseId);
     const title = course?.title || courseId.replace(/-/g, " ").toUpperCase();
     
-    // Redirect to the previously created comprehensive checkout page
     router.push(`/checkout?productId=${courseId}&type=course&price=${price}&title=${encodeURIComponent(title)}`);
   };
 
@@ -83,7 +149,13 @@ export default function CoursesPage() {
 
   return (
     <div className="pt-40 pb-32 px-6 md:px-10 xl:px-16 2xl:px-24 w-full bg-[#030303] min-h-screen font-sans overflow-x-hidden">
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+      
       <div className="max-w-[1600px] mx-auto">
         {/* Header Section */}
         <section className="mb-24">
@@ -111,6 +183,31 @@ export default function CoursesPage() {
               animate={{ opacity: 1, x: 0 }}
               className="lg:col-span-8 group relative rounded-[48px] overflow-hidden border border-white/5 bg-gradient-to-br from-white/[0.04] to-transparent p-10 md:p-16 transition-all duration-700 hover:border-primary/20 shadow-2xl"
             >
+              {/* AI Engineering AEO Section */}
+              <div className="mb-12 p-8 rounded-3xl bg-primary/[0.03] border border-primary/10">
+                <h4 className="text-primary font-bold text-lg mb-6 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5" /> Direct Track Outcome
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <p className="text-white font-bold text-sm uppercase tracking-widest opacity-50">What will you become?</p>
+                    <p className="text-white text-lg leading-snug">{flagshipAEO.become}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-white font-bold text-sm uppercase tracking-widest opacity-50">What problem does this solve?</p>
+                    <p className="text-white text-lg leading-snug">{flagshipAEO.problemSolved}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-white font-bold text-sm uppercase tracking-widest opacity-50">What will you build?</p>
+                    <p className="text-white text-lg leading-snug">{flagshipAEO.willBuild}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-white font-bold text-sm uppercase tracking-widest opacity-50">Who is this for?</p>
+                    <p className="text-white text-lg leading-snug">{flagshipAEO.forWho}</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="absolute top-0 right-0 p-10">
                 <span className="px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
                   Flagship Program
@@ -245,7 +342,7 @@ export default function CoursesPage() {
 
                 <CertificatePreview />
 
-                <div className="text-center">
+                <div className="text-center mt-8">
                   <div className="bg-primary/10 border border-primary/20 rounded-full py-1.5 px-6 inline-flex items-center gap-2 mb-6">
                     <ShieldCheck size={14} className="text-primary" />
                     <span className="text-[10px] font-black text-primary uppercase tracking-widest">Institutional Verification</span>
@@ -290,23 +387,8 @@ export default function CoursesPage() {
           </div>
         </section>
 
-        {/* Professional Masterclasses Section — Redesigned for Horizontal Layout */}
+        {/* Other Courses Grid */}
         <section className="mb-40">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 px-4">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-primary" />
-                <h4 className="text-primary font-black uppercase tracking-[0.5em] text-[10px]">Credential Path</h4>
-              </div>
-              <h3 className="text-white font-bold text-5xl md:text-6xl tracking-tighter leading-tight italic">Earn Your Credentials.</h3>
-            </div>
-            <div className="max-w-md">
-              <p className="text-white/40 text-lg font-medium leading-relaxed md:text-right">
-                Premium, structured learning paths designed for real-world impact. Complete the modules and claim your GrowX certificate.
-              </p>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {courses.map((course, idx) => (
               <motion.div
@@ -360,6 +442,51 @@ export default function CoursesPage() {
                         <Clock size={16} className="text-primary/60" />
                         {course.duration}
                       </div>
+                    </div>
+
+                    {/* COURSE AEO Section */}
+                    <div className="mb-8">
+                      <button 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setOpenAEO(openAEO === course.id ? null : course.id);
+                        }}
+                        className="flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-widest hover:text-white transition-colors"
+                      >
+                        <HelpCircle size={14} /> 
+                        {openAEO === course.id ? "Hide Summary" : "Show Direct Outcomes"}
+                        <ChevronDown className={cn("transition-transform", openAEO === course.id && "rotate-180")} size={14} />
+                      </button>
+                      
+                      <AnimatePresence>
+                        {openAEO === course.id && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="pt-4 space-y-4 border-t border-white/5 mt-4">
+                              <div className="space-y-1">
+                                <p className="text-[9px] font-black uppercase text-white/30 tracking-widest">Outcome</p>
+                                <p className="text-white/70 text-xs leading-snug">{course.become}</p>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-[9px] font-black uppercase text-white/30 tracking-widest">Problem Solved</p>
+                                <p className="text-white/70 text-xs leading-snug">{course.problemSolved}</p>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-[9px] font-black uppercase text-white/30 tracking-widest">Project</p>
+                                <p className="text-white/70 text-xs leading-snug">{course.willBuild}</p>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-[9px] font-black uppercase text-white/30 tracking-widest">For Who</p>
+                                <p className="text-white/70 text-xs leading-snug">{course.forWho}</p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </div>
 
@@ -441,8 +568,30 @@ export default function CoursesPage() {
           </div>
         </section>
 
+        {/* FAQ Section */}
+        <section className="mt-40 max-w-4xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4 italic tracking-tighter">Academy FAQ</h2>
+            <p className="text-white/30 text-lg">Direct answers to common enrollment questions.</p>
+          </div>
+
+          <div className="space-y-6">
+            {faqData.map((faq, index) => (
+              <div key={index} className="p-8 rounded-[32px] border border-white/5 bg-white/[0.01]">
+                <h4 className="text-white font-bold text-lg mb-3 flex items-center gap-3">
+                  <HelpCircle size={18} className="text-primary" />
+                  {faq.question}
+                </h4>
+                <p className="text-white/40 leading-relaxed pl-7 border-l border-white/5">
+                  {faq.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Expansion Roadmap Section */}
-        <section className="pb-20">
+        <section className="pb-20 mt-40">
           <div className="text-center mb-24">
             <div className="flex items-center justify-center gap-4 mb-6">
               <div className="h-px w-6 bg-white/10" />

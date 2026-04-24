@@ -208,7 +208,11 @@ export const courses: Course[] = [
         "API Documentation with Swagger/OpenAPI",
         "Unit Testing with JUnit and Mockito"
       ]
-    }
+    },
+    become: "A professional Java Backend Engineer ready for enterprise-scale systems.",
+    problemSolved: "Bridges the gap between basic syntax and production-ready architecture.",
+    willBuild: "A high-performance Recruitment ATS with RBAC and specialized scoring.",
+    forWho: "Aspiring backend developers and engineers looking to master enterprise Java."
   },
   {
     id: "nextjs-fullstack",
@@ -401,7 +405,11 @@ export const courses: Course[] = [
         "Supabase Auth & Database",
         "Vercel Deployment"
       ]
-    }
+    },
+    become: "A modern Fullstack Developer capable of shipping complete SaaS products.",
+    problemSolved: "Eliminates the complexity of learning frontend and backend separately.",
+    willBuild: "A full-featured SaaS platform with auth, payments, and real-time database.",
+    forWho: "Frontend developers wanting to move full-stack and product founders."
   },
   {
     id: "python-mastery",
@@ -594,7 +602,11 @@ export const courses: Course[] = [
         "Redis Task Queuing",
         "Pytest Coverage > 80%"
       ]
-    }
+    },
+    become: "A versatile Python developer ready for data engineering and automation.",
+    problemSolved: "Moves you from 'scripting' to building robust production APIs.",
+    willBuild: "Distributed task processors and robust FastAPI backend systems.",
+    forWho: "Data enthusiasts and developers wanting to master production Python."
   }
 ];
 

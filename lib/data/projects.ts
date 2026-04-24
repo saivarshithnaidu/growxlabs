@@ -50,6 +50,7 @@ export const projects: CaseStudy[] = [
     solution: "Created a unified AI chat interface that aggregates Claude, GPT 4, and Gemini into one platform with a plugin marketplace for extended capabilities.",
     tech: ["Next.js", "OpenAI", "Anthropic"],
     metric: "3 AI Models",
+    link: "https://universalai.co.in",
     status: "Live",
     results: [
       { label: "AI Models", value: "3" },
