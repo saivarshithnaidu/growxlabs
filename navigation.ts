@@ -1,8 +1,6 @@
 import { createNavigation } from 'next-intl/navigation';
 
-export const locales = [
-  'en-IN', 'en-US', 'en-GB', 'hi', 'te', 'ar', 'de', 'fr', 'es', 'pt', 'ja', 'zh', 'ko', 'id'
-] as const;
+export const locales = ['en-IN', 'en-US'] as const;
 
 export const localePrefix = 'always'; 
 

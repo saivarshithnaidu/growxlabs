@@ -5,7 +5,27 @@ import { projects } from "@/lib/data/projects";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { Reveal } from "@/components/marketing/Reveal";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
+import { locales } from "@/navigation";
 import Script from "next/script";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  
+  const languages: Record<string, string> = {
+    'x-default': 'https://growxlabs.tech/en-IN',
+    'en': 'https://growxlabs.tech/en-IN',
+  };
+  locales.forEach((l) => {
+    languages[l] = `https://growxlabs.tech/${l}`;
+  });
+
+  return {
+    alternates: {
+      canonical: `https://growxlabs.tech/${locale}`,
+      languages
+    }
+  };
+}
 
 export default function Home() {
   const faqData = [

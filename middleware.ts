@@ -51,6 +51,19 @@ export default async function middleware(req: NextRequest) {
     }
   }
 
+  // Detect Country for region-based redirects
+  const country = req.headers.get('x-vercel-ip-country') || 'IN';
+  
+  // Helper to determine target locale
+  const getTargetLocale = () => {
+    const cookieLocale = req.cookies.get('NEXT_LOCALE')?.value;
+    if (cookieLocale && locales.includes(cookieLocale as any)) return cookieLocale;
+    
+    // Map country to locale (en-US for US/CA/GB, otherwise fallback to en-IN)
+    if (['US', 'CA', 'GB'].includes(country)) return 'en-US';
+    return 'en-IN';
+  };
+
   // 4. Identify Subdomain Target
   const isProd = !hostname.includes('localhost') && !hostname.includes('.vercel.app');
   let subdomain = '';
@@ -64,7 +77,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (subdomain) {
-    const targetLocale = req.cookies.get('NEXT_LOCALE')?.value || 'en-IN';
+    const targetLocale = getTargetLocale();
     const mapping: Record<string, string> = {
       admin: '/admin',
       client: '/client',
@@ -80,7 +93,7 @@ export default async function middleware(req: NextRequest) {
 
   // 5. SEO Protection: Force locale prefix for all main domain routes
   if (!matchedLocale) {
-    const targetLocale = req.cookies.get('NEXT_LOCALE')?.value || 'en-IN';
+    const targetLocale = getTargetLocale();
     const url = req.nextUrl.clone();
     url.pathname = `/${targetLocale}${pathname === '/' ? '' : pathname}`;
     return NextResponse.redirect(url, 302);

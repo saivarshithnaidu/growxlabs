@@ -1,7 +1,30 @@
 import React from "react";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
 import { Reveal } from "@/components/marketing/Reveal";
+import { locales } from "@/navigation";
 import Script from "next/script";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const path = "best-website-for-small-business";
+  
+  const languages: Record<string, string> = {
+    'x-default': `https://growxlabs.tech/en-IN/${path}`,
+    'en': `https://growxlabs.tech/en-IN/${path}`,
+  };
+  locales.forEach((l) => {
+    languages[l] = `https://growxlabs.tech/${l}/${path}`;
+  });
+
+  return {
+    title: "The Best Website for Small Business in 2026 | GrowX Labs",
+    description: "Discover the essential features of a high-converting small business website. Learn why automation and performance are the keys to outcompeting local rivals.",
+    alternates: {
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
+      languages
+    }
+  };
+}
 
 export default function SmallBusinessWebsitePage() {
   const jsonLd = {

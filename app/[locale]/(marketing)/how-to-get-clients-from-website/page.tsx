@@ -1,7 +1,30 @@
 import React from "react";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
 import { Reveal } from "@/components/marketing/Reveal";
+import { locales } from "@/navigation";
 import Script from "next/script";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const path = "how-to-get-clients-from-website";
+  
+  const languages: Record<string, string> = {
+    'x-default': `https://growxlabs.tech/en-IN/${path}`,
+    'en': `https://growxlabs.tech/en-IN/${path}`,
+  };
+  locales.forEach((l) => {
+    languages[l] = `https://growxlabs.tech/${l}/${path}`;
+  });
+
+  return {
+    title: "How to Get Clients From Your Website | GrowX Labs",
+    description: "Learn how to transform your website from a passive brochure into an active conversion engine and generate high-quality leads automatically.",
+    alternates: {
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
+      languages
+    }
+  };
+}
 
 export default function HowToGetClientsPage() {
   const jsonLd = {

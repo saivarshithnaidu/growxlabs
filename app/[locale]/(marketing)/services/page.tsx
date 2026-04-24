@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { Reveal } from "@/components/marketing/Reveal";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
+import { locales } from "@/navigation";
 import Script from "next/script";
 
 const faqData = [
@@ -77,12 +78,23 @@ const allServices = [
   },
 ];
 
-export async function generateMetadata() {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  
+  const languages: Record<string, string> = {
+    'x-default': 'https://growxlabs.tech/en-IN/services',
+    'en': 'https://growxlabs.tech/en-IN/services',
+  };
+  locales.forEach((l) => {
+    languages[l] = `https://growxlabs.tech/${l}/services`;
+  });
+
   return {
     title: "Our Services | GrowX Labs",
     description: "Explore our AI-powered web engineering, automation, and technical SEO services designed for high-growth businesses.",
     alternates: {
-      canonical: "https://growxlabs.tech/services",
+      canonical: `https://growxlabs.tech/${locale}/services`,
+      languages
     }
   };
 }

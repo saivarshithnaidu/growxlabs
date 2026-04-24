@@ -25,7 +25,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   
-  const languages: Record<string, string> = {};
+  const languages: Record<string, string> = {
+    'x-default': 'https://growxlabs.tech/en-IN',
+    'en': 'https://growxlabs.tech/en-IN',
+  };
   locales.forEach((l) => {
     languages[l] = `https://growxlabs.tech/${l}`;
   });

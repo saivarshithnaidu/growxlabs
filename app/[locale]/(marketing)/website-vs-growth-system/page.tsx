@@ -1,7 +1,30 @@
 import React from "react";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
 import { Reveal } from "@/components/marketing/Reveal";
+import { locales } from "@/navigation";
 import Script from "next/script";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const path = "website-vs-growth-system";
+  
+  const languages: Record<string, string> = {
+    'x-default': `https://growxlabs.tech/en-IN/${path}`,
+    'en': `https://growxlabs.tech/en-IN/${path}`,
+  };
+  locales.forEach((l) => {
+    languages[l] = `https://growxlabs.tech/${l}/${path}`;
+  });
+
+  return {
+    title: "Website vs. Growth System: What's the Difference? | GrowX Labs",
+    description: "Discover why a traditional website is no longer enough. Learn how a GrowX Labs Growth System actively drives revenue and scales your business.",
+    alternates: {
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
+      languages
+    }
+  };
+}
 
 export default function WebsiteVsSystemPage() {
   const jsonLd = {

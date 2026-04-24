@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next';
 const baseUrl = 'https://growxlabs.tech';
 
 // Only these locales will appear as main entries in the sitemap
-const priorityLocales = ['en-IN', 'en-US', 'en-GB'];
+const priorityLocales = ['en-IN'];
 
 const marketingRoutes = [
   { path: '', priority: 1.0, changefreq: 'daily' as const },
@@ -35,7 +35,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
             // Mapping specific locales to their localized URLs
             'en-IN': `${baseUrl}/en-IN${route.path}`,
             'en-US': `${baseUrl}/en-US${route.path}`,
-            'en-GB': `${baseUrl}/en-GB${route.path}`,
             // Add a general 'en' alternate pointing to the primary en-IN
             'en': `${baseUrl}/en-IN${route.path}`,
             'x-default': `${baseUrl}/en-IN${route.path}`,
