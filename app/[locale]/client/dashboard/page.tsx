@@ -60,7 +60,7 @@ export default function ClientDashboard() {
           icon={<FileText className="text-[#00A86B]" />} 
           label="Agreements" 
           status={data.agreements[0]?.status || "None"} 
-          link="/client/agreement"
+          link={data.agreements[0] ? `/client/dashboard/agreements/${data.agreements[0].id}` : "#"}
         />
         <DashboardStat 
           icon={<CreditCard className="text-[#00A86B]" />} 

@@ -28,53 +28,93 @@ export async function POST(req: Request) {
     
     if (event.event === "payment.captured") {
       const payment = event.payload.payment.entity;
+      const notes = payment.notes || {};
       const orderId = payment.order_id;
 
-      // 1. Find Invoice by Razorpay Order ID
-      const { data: invoice, error: invError } = await supabaseAdmin
-        .from("invoices")
-        .select("*, clients(*)")
-        .eq("razorpay_order_id", orderId)
-        .single();
+      // --- LOGIC 1: COURSE ENROLLMENT ---
+      if (notes.courseId) {
+        const courseId = notes.courseId;
+        const email = notes.userEmail || payment.email;
+        
+        console.log(`[WEBHOOK] Processing course enrollment for ${email} -> ${courseId}`);
 
-      if (invError || !invoice) throw new Error("Invoice not found");
+        // 1. Get User ID by email
+        const { data: user, error: userError } = await supabaseAdmin
+          .from("users")
+          .select("id")
+          .eq("email", email)
+          .single();
 
-      // 2. Update Invoice Status
-      await supabaseAdmin
-        .from("invoices")
-        .update({
-          status: "paid",
-          payment_id: payment.id,
-          advance_paid: true
-        })
-        .eq("id", invoice.id);
+        if (userError || !user) {
+          console.error(`[WEBHOOK] User not found for email ${email}`);
+          // We can't throw here as it might be an invoice payment too, 
+          // but if courseId exists, we should probably handle it.
+        } else {
+          // 2. Handle Bundles
+          const courseIds = courseId === "java-python-bundle" 
+            ? ["java-mastery", "python-mastery"] 
+            : [courseId];
 
-      // 3. Create Project Entry
-      const { data: project } = await supabaseAdmin
-        .from("projects")
-        .insert([{
-          client_id: invoice.client_id,
-          title: `Project: ${invoice.clients.business_name}`,
-          status: "active",
-          progress: 10
-        }])
-        .select()
-        .single();
+          for (const id of courseIds) {
+            await supabaseAdmin
+              .from("enrollments")
+              .upsert({
+                user_id: user.id,
+                course_id: id,
+                status: "active",
+                purchased_at: new Date().toISOString()
+              }, { onConflict: 'user_id,course_id' });
+          }
+          console.log(`[WEBHOOK] Successfully enrolled ${email} in ${courseIds.join(", ")}`);
+        }
+      }
 
-      // 4. Trigger Onboarding Email
-      await resend.emails.send({
-        from: "GrowX Labs <welcome@growxlabs.tech>",
-        to: invoice.clients.email,
-        subject: "Welcome to GrowX Labs - Next Steps",
-        html: `
-          <div style="font-family: sans-serif; padding: 20px;">
-            <h1 style="color: #000;">Payment Confirmed.</h1>
-            <p>Welcome to the family. Your project is now officially ACTIVE.</p>
-            <p>Please complete the onboarding form to help us start the engineering phase:</p>
-            <a href="${process.env.NEXT_PUBLIC_APP_URL}/onboarding" style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin: 20px 0;">Start Onboarding</a>
-          </div>
-        `
-      });
+      // --- LOGIC 2: INVOICE PAYMENT (Existing) ---
+      if (orderId && !notes.courseId) {
+        // Find Invoice by Razorpay Order ID
+        const { data: invoice, error: invError } = await supabaseAdmin
+          .from("invoices")
+          .select("*, clients(*)")
+          .eq("razorpay_order_id", orderId)
+          .single();
+
+        if (invoice) {
+          // Update Invoice Status
+          await supabaseAdmin
+            .from("invoices")
+            .update({
+              status: "paid",
+              payment_id: payment.id,
+              advance_paid: true
+            })
+            .eq("id", invoice.id);
+
+          // Create Project Entry
+          await supabaseAdmin
+            .from("projects")
+            .insert([{
+              client_id: invoice.client_id,
+              title: `Project: ${invoice.clients.business_name}`,
+              status: "active",
+              progress: 10
+            }]);
+
+          // Trigger Onboarding Email
+          await resend.emails.send({
+            from: "GrowX Labs <welcome@growxlabs.tech>",
+            to: invoice.clients.email,
+            subject: "Welcome to GrowX Labs - Next Steps",
+            html: `
+              <div style="font-family: sans-serif; padding: 20px;">
+                <h1 style="color: #000;">Payment Confirmed.</h1>
+                <p>Welcome to the family. Your project is now officially ACTIVE.</p>
+                <p>Please complete the onboarding form to help us start the engineering phase:</p>
+                <a href="${process.env.NEXT_PUBLIC_APP_URL}/onboarding" style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin: 20px 0;">Start Onboarding</a>
+              </div>
+            `
+          });
+        }
+      }
     }
 
     return NextResponse.json({ success: true });

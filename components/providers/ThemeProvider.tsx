@@ -11,8 +11,6 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
     setMounted(true);
   }, []);
 
-  // Avoid rendering the provider (and its scripts) until the client is mounted
-  // to prevent the hydration/script injection error.
   if (!mounted) {
     return <>{children}</>;
   }

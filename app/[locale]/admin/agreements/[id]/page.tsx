@@ -42,12 +42,37 @@ export default function AgreementDetailPage() {
     );
   }
 
+  const handleSign = async (party: "admin" | "client", signature: string | null) => {
+    try {
+      await fetch(`/api/agreements/sign`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          agreementId: id,
+          party,
+          signature
+        })
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <AgreementContract 
+      role="admin"
+      onSign={handleSign}
+      initialSignatures={{
+        admin: agreement.admin_signature,
+        client: agreement.client_signature
+      }}
       data={{
         client_name: agreement.clients?.name,
         business_name: agreement.clients?.business_name,
+        email: agreement.clients?.email,
+        phone: agreement.clients?.phone,
         service_type: agreement.service_type,
+        project_description: agreement.project_description,
         total_amount: agreement.total_amount,
         advance_amount: agreement.advance_amount,
         start_date: agreement.start_date,

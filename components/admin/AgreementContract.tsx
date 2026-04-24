@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Check, Mail, Phone, MapPin, Globe, Printer, ShieldCheck, Pencil, Eye } from 'lucide-react';
+import { Check, Mail, Phone, MapPin, Globe, Printer, ShieldCheck, Pencil, Eye, Save } from 'lucide-react';
+import SignaturePad from '@/components/shared/SignaturePad';
 
 interface AgreementProps {
   data?: {
@@ -17,6 +18,9 @@ interface AgreementProps {
     delivery_date?: string;
     invoice_no?: string;
   };
+  role?: "admin" | "client" | "view";
+  initialSignatures?: { client?: string | null, admin?: string | null };
+  onSign?: (party: "admin" | "client", signatureDataUrl: string | null) => void;
 }
 
 // Editable field wrapper moved OUTSIDE to prevent re-renders losing focus
@@ -43,24 +47,26 @@ const EditableText = ({ isEditing, value, onChange, placeholder, className, type
   );
 };
 
-export default function AgreementContract({ data = {} }: AgreementProps) {
+export default function AgreementContract({ data = {}, role = "admin", initialSignatures = {}, onSign }: AgreementProps) {
   const [isEditing, setIsEditing] = useState(false);
-
+  const [adminSig, setAdminSig] = useState<string | null>(initialSignatures.admin || null);
+  const [clientSig, setClientSig] = useState<string | null>(initialSignatures.client || null);
+  const safeData = data || {};
   const [formData, setFormData] = useState({
-    invoiceNumber: data.invoice_no || `GX-${new Date().getFullYear()}-001`,
+    invoiceNumber: safeData.invoice_no || `GX-${new Date().getFullYear()}-001`,
     date: new Date().toLocaleDateString(),
-    clientName: data.client_name || "",
-    businessName: data.business_name || "",
-    clientEmail: data.email || "",
-    clientPhone: data.phone || "",
-    projectName: data.service_type || "Digital Transformation Project",
-    projectDescription: data.project_description || "",
-    totalValue: data.total_amount || "0",
-    advanceAmount: data.advance_amount || "0",
-    startDate: data.start_date || "",
-    deliveryDate: data.delivery_date || "",
+    clientName: safeData.client_name || "",
+    businessName: safeData.business_name || "",
+    clientEmail: safeData.email || "",
+    clientPhone: safeData.phone || "",
+    projectName: safeData.service_type || "Digital Transformation Project",
+    projectDescription: safeData.project_description || "",
+    totalValue: safeData.total_amount || "0",
+    advanceAmount: safeData.advance_amount || "0",
+    startDate: safeData.start_date || "",
+    deliveryDate: safeData.delivery_date || "",
     scope: [
-      data.project_description || "",
+      safeData.project_description || "",
       "",
       "",
       "",
@@ -107,21 +113,23 @@ export default function AgreementContract({ data = {} }: AgreementProps) {
            <span className="text-xs font-bold uppercase tracking-widest leading-none">Legal Standard Enforcement</span>
         </div>
         <div className="flex gap-3">
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all active:scale-95 ${
-              isEditing
-                ? 'bg-[#00A86B] text-white hover:bg-[#00A86B]/90'
-                : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50'
-            }`}
-          >
-            {isEditing ? <><Eye className="h-4 w-4" /> Preview Mode</> : <><Pencil className="h-4 w-4" /> Edit Live</>}
-          </button>
+          {role === "admin" && (
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all active:scale-95 ${
+                isEditing
+                  ? 'bg-[#00A86B] text-white hover:bg-[#00A86B]/90'
+                  : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50'
+              }`}
+            >
+              {isEditing ? <><Eye className="h-4 w-4" /> Preview Mode</> : <><Pencil className="h-4 w-4" /> Edit Details</>}
+            </button>
+          )}
           <button 
             onClick={handlePrint}
-            className="flex items-center gap-2 bg-[#0D1B4B] text-white px-6 py-3 rounded-xl font-bold hover:shadow-2xl transition-all active:scale-95"
+            className="flex items-center gap-2 bg-[#00b894] text-white px-6 py-3 rounded-xl font-bold hover:shadow-2xl transition-all active:scale-95"
           >
-            <Printer className="h-4 w-4" /> Download & Print Agreement
+            <Printer className="h-4 w-4" /> Download PDF
           </button>
         </div>
       </div>
@@ -140,32 +148,39 @@ export default function AgreementContract({ data = {} }: AgreementProps) {
       <div className="max-w-[850px] mx-auto bg-white shadow-2xl print:shadow-none min-h-[1100px] flex flex-col font-sans border border-neutral-200 print:border-none">
         
         {/* HEADER SECTION */}
-        <div className="bg-[#0D1B4B] text-white p-12 relative overflow-hidden">
-           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
-           <div className="relative z-10 flex justify-between items-end">
-              <div>
-                <h1 className="text-4xl font-black tracking-tighter mb-2 italic">GROWX LABS</h1>
-                <p className="text-xs font-bold tracking-[0.3em] uppercase opacity-60">Engineering Excellence</p>
+        <div className="p-12 pb-0 text-center">
+           <h1 className="text-3xl font-black tracking-[0.2em] text-[#00b894] mb-2 uppercase">✕ GROWX LABS</h1>
+           <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+              AI-Native Digital Agency | growxlabs.tech | hello@growxlabs.tech
+           </p>
+           <div className="h-1 bg-[#00b894] w-full mt-6 opacity-20" />
+           
+           <div className="mt-8">
+              <h2 className="text-xl font-black text-neutral-900 tracking-tight uppercase">Client Service Agreement</h2>
+              <p className="text-[10px] font-bold text-neutral-400 mt-2 italic">Please read carefully before signing. This is a legally binding agreement.</p>
+           </div>
+           
+           <div className="flex justify-between mt-10 text-[9px] font-black uppercase tracking-widest text-neutral-400 border-y border-neutral-100 py-4">
+              <div className="flex gap-2">
+                 <span>Agreement ID:</span>
+                 <span className="text-neutral-900 tracking-normal">
+                   <EditableText isEditing={isEditing} value={formData.invoiceNumber} onChange={(v) => update('invoiceNumber', v)} className="text-neutral-900" />
+                 </span>
               </div>
-              <div className="text-right">
-                 <h2 className="text-2xl font-black text-[#00A86B] tracking-tight uppercase">Client Service Agreement</h2>
-                 <div className="flex gap-4 mt-4 text-[10px] items-center justify-end font-bold opacity-80">
-                    <div className="flex flex-col border-r border-white/10 pr-4">
-                       <span className="uppercase tracking-widest text-[#00A86B]">Agreement ID</span>
-                       <span className="text-sm mt-1">
-                         <EditableText isEditing={isEditing} value={formData.invoiceNumber} onChange={(v) => update('invoiceNumber', v)} className="text-sm text-white" />
-                       </span>
-                    </div>
-                    <div className="flex flex-col">
-                       <span className="uppercase tracking-widest text-[#00A86B]">Issue Date</span>
-                       <span className="text-sm mt-1">{formData.date}</span>
-                    </div>
-                 </div>
+              <div className="flex gap-2">
+                 <span>Issue Date:</span>
+                 <span className="text-neutral-900 tracking-normal">{formData.date}</span>
               </div>
            </div>
         </div>
 
-        {/* DETAILS GRID */}
+        {/* 1. PARTY DETAILS */}
+        <div className="px-12 pt-8">
+           <h3 className="text-[11px] font-black uppercase tracking-widest text-[#00b894] flex items-center gap-3">
+              <span className="bg-[#00b894] text-white px-2 py-0.5 rounded leading-none">1</span>
+              Party Details
+           </h3>
+        </div>
         <div className="grid grid-cols-2 min-h-[176px] border-b border-neutral-100">
            <div className="p-10 border-r border-neutral-100 flex flex-col justify-center">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#00A86B] mb-4">From: Service Provider</span>
@@ -200,6 +215,12 @@ export default function AgreementContract({ data = {} }: AgreementProps) {
 
         {/* PROJECT DETAILS BOX */}
         <div className="p-12">
+           <div className="mb-6">
+              <h3 className="text-[11px] font-black uppercase tracking-widest text-[#00b894] flex items-center gap-3">
+                 <span className="bg-[#00b894] text-white px-2 py-0.5 rounded leading-none">2</span>
+                 Project Specifications
+              </h3>
+           </div>
            <div className="bg-[#0D1B4B]/[0.02] border border-neutral-100 rounded-3xl p-8 mb-10">
               <div className="grid grid-cols-3 gap-y-10">
                  <div className="col-span-2">
@@ -281,9 +302,15 @@ export default function AgreementContract({ data = {} }: AgreementProps) {
 
            {/* PAYMENT SCHEDULE */}
            <div className="mb-12">
+              <div className="mb-6">
+                 <h3 className="text-[11px] font-black uppercase tracking-widest text-[#00b894] flex items-center gap-3">
+                    <span className="bg-[#00b894] text-white px-2 py-0.5 rounded leading-none">3</span>
+                    Payment Milestones
+                 </h3>
+              </div>
               <table className="w-full border-collapse">
                  <thead>
-                    <tr className="bg-[#0D1B4B] text-white">
+                    <tr className="bg-[#00b894] text-white">
                        <th className="text-left p-4 text-[10px] font-black uppercase tracking-widest">Milestone Breakdown</th>
                        <th className="text-right p-4 text-[10px] font-black uppercase tracking-widest">Allocation</th>
                        <th className="text-right p-4 text-[10px] font-black uppercase tracking-widest">Fee (INR)</th>
@@ -319,54 +346,73 @@ export default function AgreementContract({ data = {} }: AgreementProps) {
            </div>
 
            {/* LEGAL TERMS */}
-           <div className="grid grid-cols-2 gap-x-12 gap-y-8 mb-16">
+           <div className="mb-16">
+              <div className="mb-8">
+                 <h3 className="text-[11px] font-black uppercase tracking-widest text-[#00b894] flex items-center gap-3">
+                    <span className="bg-[#00b894] text-white px-2 py-0.5 rounded leading-none">4</span>
+                    Legal Protocol
+                 </h3>
+              </div>
+              <div className="grid grid-cols-2 gap-x-12 gap-y-8">
               {[
                 { title: "Revision Cycles", desc: "Two rounds of major revisions are included. Substantial scope deviations post-approval will incur supplementary fees." },
                 { title: "Intellectual Property", desc: "Global IP rights and source code access transfer to Client only upon complete clearance of all outstanding invoices." },
-                { title: "Client Cooperation", desc: "Client shall provide necessary assets and feedback within 7 business days to maintain the agreed project timeline." },
-                { title: "Confidentiality", desc: "Both parties agree to a 3-year mutual non-disclosure period regarding trade secrets and project specifications." },
-                { title: "Termination", desc: "Either party may terminate with 14 days notice. Work completed until termination date will be payable pro-rata." },
-                { title: "Governance", desc: "This agreement is governed by laws of Guntur, AP, India. All disputes are subject to local jurisdictional courts." }
-              ].map((term, i) => (
-                <div key={i} className="relative pl-8">
-                   <span className="absolute left-0 top-0 text-[10px] font-black text-[#00A86B] bg-[#00A86B]/10 px-1.5 py-0.5 rounded leading-none italic">{i+1}</span>
-                   <h5 className="text-[10px] font-black uppercase tracking-widest text-[#0D1B4B] mb-1.5">{term.title}</h5>
-                   <p className="text-[10px] leading-relaxed text-neutral-500 font-medium italic">{term.desc}</p>
-                </div>
-              ))}
+                 { title: "Client Cooperation", desc: "Client shall provide necessary assets and feedback within 7 business days to maintain the agreed project timeline." },
+                 { title: "Confidentiality", desc: "Both parties agree to a 3-year mutual non-disclosure period regarding trade secrets and project specifications." },
+                 { title: "Termination", desc: "Either party may terminate with 14 days notice. Work completed until termination date will be payable pro-rata." },
+                 { title: "Governance", desc: "This agreement is governed by laws of Guntur, AP, India. All disputes are subject to local jurisdictional courts." }
+               ].map((term, i) => (
+                 <div key={i} className="relative pl-8">
+                    <span className="absolute left-0 top-0 text-[10px] font-black text-[#00A86B] bg-[#00A86B]/10 px-1.5 py-0.5 rounded leading-none italic">{i+1}</span>
+                    <h5 className="text-[10px] font-black uppercase tracking-widest text-[#0D1B4B] mb-1.5">{term.title}</h5>
+                    <p className="text-[10px] leading-relaxed text-neutral-500 font-medium italic">{term.desc}</p>
+                 </div>
+               ))}
+              </div>
            </div>
 
            {/* SIGNATURE AREA */}
-           <div className="grid grid-cols-2 gap-24 pt-12">
-              <div className="space-y-6">
-                 <div className="h-10 border-b-2 border-neutral-900" />
-                 <div>
-                    <p className="text-[10px] font-black uppercase text-[#0D1B4B]">Authorized For GrowX Labs</p>
-                    <p className="text-[9px] font-bold text-neutral-400 mt-0.5 tracking-widest italic uppercase">Principal Engineer / Direct Partner</p>
-                 </div>
-                 <div className="text-[9px] font-bold text-neutral-300 uppercase tracking-widest">Date: ____ / ____ / ________</div>
+           <div className="grid grid-cols-2 gap-12 pt-12">
+              <div className="space-y-4">
+                 <SignaturePad 
+                   label="Authorized For GrowX Labs" 
+                   disabled={role !== "admin"} 
+                   initialSignature={adminSig}
+                   onSign={(sig) => {
+                     setAdminSig(sig);
+                     if (onSign) onSign("admin", sig);
+                   }}
+                 />
+                 <div className="text-[9px] font-bold text-neutral-300 uppercase tracking-widest mt-2">Date: {adminSig ? formData.date : "____ / ____ / ________"}</div>
               </div>
-              <div className="space-y-6">
-                 <div className="h-10 border-b-2 border-neutral-900" />
-                 <div>
-                    <p className="text-[10px] font-black uppercase text-[#0D1B4B]">Authorized For Project Client</p>
-                    <p className="text-[9px] font-bold text-neutral-400 mt-0.5 tracking-widest italic uppercase">{formData.businessName || "Client Representative"}</p>
-                 </div>
-                 <div className="text-[9px] font-bold text-neutral-300 uppercase tracking-widest">Date: ____ / ____ / ________</div>
+              <div className="space-y-4">
+                 <SignaturePad 
+                   label={`Authorized For ${formData.businessName || "Project Client"}`} 
+                   disabled={role !== "client"} 
+                   initialSignature={clientSig}
+                   onSign={(sig) => {
+                     setClientSig(sig);
+                     if (onSign) onSign("client", sig);
+                   }}
+                 />
+                 <div className="text-[9px] font-bold text-neutral-300 uppercase tracking-widest mt-2">Date: {clientSig ? formData.date : "____ / ____ / ________"}</div>
               </div>
            </div>
         </div>
 
         {/* FOOTER BAR */}
-        <div className="mt-auto bg-[#0D1B4B] p-5 text-center">
-           <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
+        <div className="mt-auto border-t border-neutral-100 p-8 text-center">
+           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-400">
+              GrowX Labs | growxlabs.tech | hello@growxlabs.tech | © {new Date().getFullYear()} GrowX Labs. All rights reserved.
+           </p>
+           <p className="text-[8px] font-bold uppercase tracking-[0.4em] text-neutral-200 mt-3 italic">
               Governed by Indian Contract Act 1872 | Arbitration Locale: Guntur, Andhra Pradesh
            </p>
         </div>
       </div>
       
       {/* Print Specific CSS Overrides */}
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @media print {
           body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .print\\:hidden, [class*="print:hidden"] { display: none !important; }
@@ -376,7 +422,7 @@ export default function AgreementContract({ data = {} }: AgreementProps) {
           .bg-neutral-100 { background: white !important; }
           input, textarea { border: none !important; background: none !important; }
         }
-      `}</style>
+      ` }} />
     </div>
   );
 }

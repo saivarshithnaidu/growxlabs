@@ -49,7 +49,7 @@ export default function Home() {
             className="mb-8"
           >
             <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B]">
-              AI-Native Digital Agency
+              AI Native Digital Agency
             </span>
           </motion.div>
           
@@ -70,7 +70,7 @@ export default function Home() {
             transition={{ delay: 0.1 }}
             className="text-[18px] text-[#A0A0A0] max-w-[520px] mx-auto mb-14 leading-[1.7]"
           >
-            We build high-performance websites and automation systems that help businesses grow faster.
+            We build high performance websites and automation systems that help businesses grow faster.
           </motion.p>
           
           <motion.div 
@@ -82,7 +82,7 @@ export default function Home() {
           >
             <Link href="/contact">
               <Button size="lg" className="h-12 px-8 py-3 text-base rounded-full font-semibold bg-[#00A86B] text-white hover:bg-[#00A86B]/90 transition-all shadow-none">
-                Start Your Project →
+                Start Your Project Today
               </Button>
             </Link>
             <Link href="/portfolio">
@@ -105,7 +105,7 @@ export default function Home() {
             </span>
             <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-6 tracking-tight">Core Capabilities</h2>
             <p className="text-[#A0A0A0] max-w-[640px] mx-auto text-lg leading-relaxed">
-              Direct results-oriented technical solutions for businesses that prioritize speed and reliability.
+              Direct results oriented technical solutions for businesses that prioritize speed and reliability.
             </p>
           </div>
           
@@ -134,14 +134,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section — Replacing Testimonials */}
+      {/* CTA Section */}
       <section className="w-full py-24 px-6 md:px-10 xl:px-16 2xl:px-24">
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto text-center">
           <h2 className="text-[clamp(28px,5vw,48px)] font-bold text-white mb-6 tracking-tight">
             Currently Onboarding First Clients
           </h2>
           <p className="text-[#A0A0A0] max-w-[640px] mx-auto text-lg leading-relaxed mb-12">
-            Be among the first businesses to experience AI-powered digital growth with GrowX Labs.
+            Be among the first businesses to experience AI powered digital growth with GrowX Labs.
           </p>
           
           <div className="max-w-xl mx-auto p-10 rounded-2xl border border-[#00A86B]/30 bg-[rgba(255,255,255,0.03)] shadow-2xl backdrop-blur-sm">
@@ -153,7 +153,7 @@ export default function Home() {
             </p>
             <Link href="/contact">
               <Button className="bg-[#00A86B] text-white hover:bg-[#00A86B]/90 rounded-full px-10 py-4 h-14 text-lg font-semibold shadow-none transition-all hover:scale-105">
-                Start Your Project Today →
+                Start Your Project Today
               </Button>
             </Link>
           </div>

@@ -1,29 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-// Hardcoded Admin Credentials for prioritized access
-const ADMIN_CREDENTIALS = [
-  { email: "admin@growxlabs.tech", password: "VARSHITH973206", name: "Varshith" },
-  { email: "coadmin@growxlabs.tech", password: "AKHILESH", name: "Akhilesh" }
-];
-
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
     const supabase = await createClient();
 
-    // 1. Check Hardcoded Bypass First
-    const hardcodedUser = ADMIN_CREDENTIALS.find(u => u.email === email && u.password === password);
-    
-    if (hardcodedUser) {
-      return NextResponse.json({ 
-        success: true, 
-        role: "admin",
-        user: { id: "hardcoded-admin", email: hardcodedUser.email, name: hardcodedUser.name }
-      });
-    }
-
-    // 2. Fallback to Supabase Auth
+    // Authenticate via Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -35,15 +18,10 @@ export async function POST(req: Request) {
       }, { status: 401 });
     }
 
-    // 3. Determine Role
+    // Determine Role
     const user = data.user;
-    let role = "client";
+    let role = user.user_metadata?.role || "client";
     
-    const isAdmin = ADMIN_CREDENTIALS.some(u => u.email === user.email);
-    if (isAdmin || user.user_metadata?.role === "admin") {
-      role = "admin";
-    }
-
     return NextResponse.json({ 
       success: true, 
       role: role,

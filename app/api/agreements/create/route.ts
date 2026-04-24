@@ -51,26 +51,6 @@ export async function POST(req: Request) {
       .update({ pdf_url: pdfUrl })
       .eq("id", agreement.id);
 
-    // 5. Trigger Initial Advance Invoice
-    try {
-      if (agreement.advance_amount > 0) {
-        await fetch(`${getBaseUrl()}/api/invoice/create`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            client_id: agreement.client_id,
-            agreement_id: agreement.id,
-            amount: agreement.advance_amount,
-            description: `Advance Payment for ${agreement.service_type}`,
-            due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 7 days from now
-          })
-        });
-      }
-    } catch (invErr) {
-      console.error("AUTO-INVOICE FAILED:", invErr);
-      // Don't throw, we want the agreement to succeed even if auto-invoice has an issue
-    }
-
     // 6. Send Email via Resend
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://growxlabs.tech";
     await resend.emails.send({
@@ -81,8 +61,8 @@ export async function POST(req: Request) {
         <div style="font-family: sans-serif; padding: 20px;">
           <h2 style="color: #000;">Hello ${client.name},</h2>
           <p>We've prepared the partnership agreement for your upcoming project with GrowX Labs.</p>
-          <p>You can review and accept the agreement directly in your portal, or view the attached PDF.</p>
-          <a href="${appUrl}/client/agreement" style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin: 20px 0;">Sign Agreement</a>
+          <p>You can review and accept the agreement directly via the link below:</p>
+          <a href="${appUrl}/agreements/${agreement.id}" style="background: #00b894; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin: 20px 0; font-weight: bold;">Review & Sign Agreement</a>
         </div>
       `,
       attachments: [{ filename: 'agreement.pdf', path: pdfUrl }]

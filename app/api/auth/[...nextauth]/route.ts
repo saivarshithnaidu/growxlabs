@@ -1,15 +1,14 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createClient } from "@/lib/supabase/server";
 import bcrypt from "bcryptjs";
+import { JWT } from "next-auth/jwt";
 
-const ADMIN_CREDENTIALS = [
-  { email: "admin@growxlabs.tech", password: "VARSHITH973206", name: "Varshith", role: "ADMIN" },
-  { email: "coadmin@growxlabs.tech", password: "AKHILESH", name: "Akhilesh", role: "CO_ADMIN" },
-  { email: "test@growxlabs.tech", password: "GrowXTest2024!", name: "Razorpay Tester", role: "CLIENT" }
-];
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error("Missing NEXTAUTH_SECRET environment variable. Please set it in your .env file.");
+}
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -22,21 +21,7 @@ const handler = NextAuth({
           throw new Error("Missing credentials");
         }
 
-        // 1. Priority Hardcoded Check
-        const hardcoded = ADMIN_CREDENTIALS.find(
-          u => u.email === credentials.email && u.password === credentials.password
-        );
-
-        if (hardcoded) {
-          return {
-            id: "hardcoded-" + hardcoded.role.toLowerCase(),
-            email: hardcoded.email,
-            name: hardcoded.name,
-            role: hardcoded.role,
-          };
-        }
-
-        // 2. Database Fallback
+        // Database-only Authentication
         const supabase = await createClient();
         
         const { data: user, error } = await supabase
@@ -65,14 +50,14 @@ const handler = NextAuth({
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT, user?: any }) {
       if (user) {
         token.role = (user as any).role;
         token.id = user.id;
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: any, token: JWT }) {
       if (session.user) {
         (session.user as any).role = token.role;
         (session.user as any).id = token.id;
@@ -85,10 +70,13 @@ const handler = NextAuth({
     error: "/login",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  secret: process.env.NEXTAUTH_SECRET || "uEa8K39ZpL2vNq5rT7wX9yB2mC5nE8pQ",
-});
+  secret: process.env.NEXTAUTH_SECRET,
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+

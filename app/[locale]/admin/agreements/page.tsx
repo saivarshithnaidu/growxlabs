@@ -129,12 +129,23 @@ export default function AdminAgreementsPage() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-white/40 ml-1">Total Fee ($)</label>
-                    <Input type="number" className="h-11 bg-white/[0.03] border-white/5" onChange={(e) => setForm({ ...form, total_amount: e.target.value })} required />
+                    <label className="text-xs font-bold uppercase tracking-wider text-white/40 ml-1">Total Fee (₹)</label>
+                    <Input type="number" placeholder="0.00" className="h-11 bg-white/[0.03] border-white/5" onChange={(e) => setForm({ ...form, total_amount: e.target.value })} required />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-white/40 ml-1">Advance ($)</label>
-                    <Input type="number" className="h-11 bg-white/[0.03] border-white/5" onChange={(e) => setForm({ ...form, advance_amount: e.target.value })} required />
+                    <label className="text-xs font-bold uppercase tracking-wider text-white/40 ml-1">Advance (₹)</label>
+                    <Input type="number" placeholder="0.00" className="h-11 bg-white/[0.03] border-white/5" onChange={(e) => setForm({ ...form, advance_amount: e.target.value })} required />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-white/40 ml-1">Start Date</label>
+                    <Input type="date" className="h-11 bg-white/[0.03] border-white/5" onChange={(e) => setForm({ ...form, start_date: e.target.value })} required />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-white/40 ml-1">Delivery Date</label>
+                    <Input type="date" className="h-11 bg-white/[0.03] border-white/5" onChange={(e) => setForm({ ...form, delivery_date: e.target.value })} required />
                   </div>
                 </div>
 
@@ -179,10 +190,19 @@ export default function AdminAgreementsPage() {
                           <span className="w-1 h-1 rounded-full bg-white/10" />
                           <span className={cn(
                             "flex items-center",
-                            agg.status === 'signed' ? "text-green-500" : "text-yellow-500"
+                            agg.status === 'fully_signed' ? "text-green-500" : 
+                            agg.status === 'awaiting_admin_signature' ? "text-blue-500" :
+                            "text-yellow-500"
                           )}>
-                            <span className={cn("h-1.5 w-1.5 rounded-full mr-2", agg.status === 'signed' ? "bg-green-500" : "bg-yellow-500")} />
-                            {agg.status === 'signed' ? 'Countersigned' : 'Awaiting Signature'}
+                            <span className={cn(
+                              "h-1.5 w-1.5 rounded-full mr-2", 
+                              agg.status === 'fully_signed' ? "bg-green-500" : 
+                              agg.status === 'awaiting_admin_signature' ? "bg-blue-500" :
+                              "bg-yellow-500"
+                            )} />
+                            {agg.status === 'fully_signed' ? 'Fully Executed' : 
+                             agg.status === 'awaiting_admin_signature' ? 'Client Signed' : 
+                             'Awaiting Client Signature'}
                           </span>
                         </div>
                       </div>

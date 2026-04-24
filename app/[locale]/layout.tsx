@@ -1,21 +1,28 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { Inter } from "next/font/google";
+import { Inter, Caveat } from "next/font/google";
 import { GlobalBackground } from "@/components/layout/GlobalBackground";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
-import { LocaleRedirect } from "@/components/layout/LocaleRedirect";
 import { CookieConsent } from "@/components/layout/CookieConsent";
 import "../globals.css";
 import { locales } from "@/navigation";
 import Script from "next/script";
+import { Toaster } from "sonner";
+
 
 const inter = Inter({ 
   subsets: ["latin"], 
   variable: "--font-sans",
   display: "swap",
   preload: true,
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-cursive",
+  display: "swap",
 });
 
 export function generateStaticParams() {
@@ -62,86 +69,25 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   const messages = await getMessages();
+  if (!messages) return null;
   const direction = locale.startsWith('ar') ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={direction} className={`${inter.variable} h-full antialiased dark`} suppressHydrationWarning>
+    <html lang={locale} dir={direction} className={`${inter.variable} ${caveat.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans relative" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <AuthProvider>
-            <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
+            <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false} disableTransitionOnChange>
               <GlobalBackground />
               
-              <LocaleRedirect />
               <ConditionalLayout>
                 {children}
               </ConditionalLayout>
 
               <CookieConsent />
+              <Toaster position="top-right" expand={false} richColors />
             </ThemeProvider>
             
-            <Script 
-              id="apollo-tracker" 
-              strategy="lazyOnload"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  (function initApollo(){
-                    if (window.apolloInitialized) return;
-                    
-                    function startTracking() {
-                      if (window.apolloInitialized) return;
-                      window.apolloInitialized = true;
-                      
-                      var n=Math.random().toString(36).substring(7),
-                      o=document.createElement("script");
-                    
-                      o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n;
-                      o.async=true;
-                      o.defer=true;
-                    
-                      o.onload=function(){
-                        if (window.trackingFunctions) {
-                          window.trackingFunctions.onLoad({
-                            appId:"69bffd4fc1dee4001d17a7f6"
-                          });
-                        }
-                      };
-                    
-                      document.head.appendChild(o);
-                    }
-
-                    function handleInteraction() {
-                      startTracking();
-                      ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'].forEach(e => 
-                        window.removeEventListener(e, handleInteraction)
-                      );
-                    }
-
-                    // Pre-consent check
-                    try {
-                      const consent = localStorage.getItem("growx_cookie_consent");
-                      if (consent === "accepted") {
-                        ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'].forEach(e => 
-                          window.addEventListener(e, handleInteraction, { once: true, passive: true })
-                        );
-                      } else {
-                        window.addEventListener("growx_consent_accepted", () => {
-                          ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'].forEach(e => 
-                            window.addEventListener(e, handleInteraction, { once: true, passive: true })
-                          );
-                        });
-                      }
-                    } catch (e) {
-                      window.addEventListener("growx_consent_accepted", () => {
-                        ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'].forEach(e => 
-                          window.addEventListener(e, handleInteraction, { once: true, passive: true })
-                        );
-                      });
-                    }
-                  })();
-                `
-              }}
-            />
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

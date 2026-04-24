@@ -9,7 +9,7 @@ const razorpay = isRazorpayConfigured ? new Razorpay({
 }) : null;
 
 export class RazorpayService {
-  static async createOrder(amount: number, invoiceId: string) {
+  static async createOrder(amount: number, invoiceId: string, notes: any = {}) {
     if (!isRazorpayConfigured) {
       console.warn("⚠️ RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is missing. Returning mock order.");
       return { id: "order_mock_" + Math.random().toString(36).slice(2, 11) };
@@ -21,14 +21,20 @@ export class RazorpayService {
       receipt: invoiceId,
       notes: {
         invoice_id: invoiceId,
+        ...notes
       }
     };
 
     try {
       const order = await razorpay.orders.create(options);
       return order;
-    } catch (error) {
-      console.error("Razorpay Order Creation Error:", error);
+    } catch (error: any) {
+      console.error("Razorpay Order Creation Error:", {
+        message: error.message,
+        description: error.description,
+        code: error.code,
+        metadata: error.metadata
+      });
       throw error;
     }
   }

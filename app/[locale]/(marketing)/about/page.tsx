@@ -22,13 +22,13 @@ export default function AboutPage() {
             </h1>
             <div className="space-y-6 text-[18px] text-[#A0A0A0] leading-[1.7]">
               <p>
-                GrowX Labs was founded by two engineers from Andhra Pradesh with one belief — most businesses are losing customers online because their technology has not caught up with their ambition.
+                GrowX Labs was founded by two engineers from Andhra Pradesh with one belief. most businesses are losing customers online because their technology has not caught up with their ambition.
               </p>
               <p>
-                We bridge that gap. We build AI-powered websites, intelligent automation, and full-stack products that turn online presence into measurable revenue.
+                We bridge that gap. We build AI powered websites, intelligent automation, and full stack products that turn online presence into measurable revenue.
               </p>
               <p>
-                We do not just build for clients. We build and operate our own products — ResumeForgeAI, UniversalAI, and RecruitAI — serving real users every day.
+                We do not just build for clients. We build and operate our own products. ResumeForgeAI, UniversalAI, and RecruitAI. serving real users every day.
               </p>
             </div>
           </motion.div>
@@ -55,8 +55,8 @@ export default function AboutPage() {
             </div>
             <h3 className="text-2xl font-bold text-white">Our Mission</h3>
             <p className="text-[#A0A0A0] text-[16px] leading-[1.8] font-medium">
-              To deliver enterprise-grade digital infrastructure to businesses worldwide through AI-powered development 
-              and intelligent automation — faster, smarter, and more affordably than anyone else.
+              To deliver enterprise grade digital infrastructure to businesses worldwide through AI powered development 
+              and intelligent automation. faster, smarter, and more affordably than anyone else.
             </p>
           </Card>
           <Card className="p-12 space-y-6 rounded-2xl border-white/5 bg-white/[0.02] shadow-2xl backdrop-blur-md">
@@ -65,7 +65,7 @@ export default function AboutPage() {
             </div>
             <h3 className="text-2xl font-bold text-white">Our Vision</h3>
             <p className="text-[#A0A0A0] text-[16px] leading-[1.8] font-medium">
-              To become the global standard for AI-first digital agencies — where every website ships faster, 
+              To become the global standard for AI first digital agencies. where every website ships faster, 
               every automation runs smarter, and every client grows measurably.
             </p>
           </Card>
@@ -83,10 +83,10 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="text-3xl font-bold text-white tracking-tight">Varshith Pujala</h3>
-                <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Co-Founder & Full Stack Engineer</p>
+                <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Co Founder & Full Stack Engineer</p>
               </div>
               <p className="text-[#A0A0A0] leading-[1.8] text-[16px] font-medium">
-                Builder of ResumeForgeAI — a live AI career platform serving 500+ users. 
+                Builder of ResumeForgeAI. a live AI career platform serving 500 plus users. 
                 Specializes in Next.js, TypeScript, AI API integrations, and scalable SaaS architecture.
               </p>
               <a href="https://linkedin.com/in/varshithpujala" target="_blank" rel="noopener noreferrer" className="inline-block text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-[#00A86B] transition-colors">
@@ -101,7 +101,7 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="text-3xl font-bold text-white tracking-tight">Akhilesh</h3>
-                <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Co-Founder & Automation Engineer</p>
+                <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Co Founder & Automation Engineer</p>
               </div>
               <p className="text-[#A0A0A0] leading-[1.8] text-[16px] font-medium">
                 n8n automation specialist building enterprise workflow systems. Expert in connecting business tools 

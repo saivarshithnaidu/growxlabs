@@ -16,7 +16,7 @@ import {
 const allServices = [
   {
     title: "Web Engineering",
-    description: "High-performance applications built for speed and conversion. We use Next.js and TypeScript to create stable, scalable digital platforms.",
+    description: "High performance applications built for speed and conversion. We use Next.js and TypeScript to create stable, scalable digital platforms.",
     icon: Code,
   },
   {
@@ -26,7 +26,7 @@ const allServices = [
   },
   {
     title: "Technical SEO",
-    description: "Data-driven search strategy designed to put your business in front of the right customers and dominate your market rankings.",
+    description: "Data driven search strategy designed to put your business in front of the right customers and dominate your market rankings.",
     icon: TrendingUp,
   },
   {
@@ -62,7 +62,7 @@ export default function ServicesPage() {
             Core Capabilities
           </motion.h1>
           <p className="text-[#A0A0A0] max-w-[640px] mx-auto text-lg leading-relaxed">
-            Direct results-oriented technical solutions for businesses that prioritize speed and reliability.
+            Direct results oriented technical solutions for businesses that prioritize speed and reliability.
           </p>
         </div>
 
@@ -86,8 +86,8 @@ export default function ServicesPage() {
               <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
                 <Clock className="text-[#00A86B] h-7 w-7" />
               </div>
-              <h3 className="text-xl font-semibold text-white">On-Time Delivery</h3>
-              <p className="text-[#A0A0A0] text-base leading-relaxed">We respect your timeline. Fixed-price, fixed-date projects delivered with absolute precision.</p>
+              <h3 className="text-xl font-semibold text-white">On Time Delivery</h3>
+              <p className="text-[#A0A0A0] text-base leading-relaxed">We respect your timeline. Fixed price, fixed date projects delivered with absolute precision.</p>
             </div>
             <div className="space-y-4">
               <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">

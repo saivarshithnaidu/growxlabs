@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware';
 import { locales, localePrefix } from './navigation';
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 const intlMiddleware = createMiddleware({
   locales,
@@ -8,7 +9,7 @@ const intlMiddleware = createMiddleware({
   localePrefix
 });
 
-export default function proxy(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const hostname = req.headers.get('host') || '';
 
@@ -20,6 +21,25 @@ export default function proxy(req: NextRequest) {
     pathname.includes('.')
   ) {
     return NextResponse.next();
+  }
+
+  // 2. Role-Based Access Control (RBAC)
+  const isAdminPath = pathname.match(/^\/(?:[a-z]{2}-[A-Z]{2}|[a-z]{2})\/admin/) || pathname.startsWith('/admin');
+  
+  if (isAdminPath) {
+    const secret = process.env.NEXTAUTH_SECRET;
+    if (!secret) {
+      throw new Error("Missing NEXTAUTH_SECRET environment variable");
+    }
+    const token = await getToken({ 
+      req, 
+      secret
+    });
+    const role = token?.role as string;
+    if (!token || (role !== 'ADMIN' && role !== 'CO_ADMIN')) {
+      const loginUrl = new URL('/login', req.url);
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
   // Detect Country using Vercel header
