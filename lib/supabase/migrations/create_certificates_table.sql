@@ -1,5 +1,8 @@
+-- Drop existing table to ensure clean state (if no production data exists)
+DROP TABLE IF EXISTS certificates CASCADE;
+
 -- Create certificates table
-CREATE TABLE IF NOT EXISTS certificates (
+CREATE TABLE certificates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     cert_id TEXT UNIQUE NOT NULL, -- GXL-YYYY-XXXX
     student_name TEXT NOT NULL,
@@ -26,4 +29,4 @@ CREATE POLICY "Public view certificates" ON certificates
 FOR SELECT USING (true);
 
 -- Index for fast lookup by cert_id
-CREATE INDEX IF NOT EXISTS idx_certificates_cert_id ON certificates(cert_id);
+CREATE INDEX idx_certificates_cert_id ON certificates(cert_id);
