@@ -32,44 +32,44 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="w-full relative min-h-[90vh] flex items-center justify-center overflow-hidden px-6 md:px-10 xl:px-16 2xl:px-24">
+      <section className="w-full relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden px-4 sm:px-6 md:px-10 xl:px-16 2xl:px-24 pt-20">
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto text-center relative z-10 w-full">
-          <Reveal scale={0.9} className="mb-8">
-            <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B]">
+          <Reveal scale={0.9} className="mb-6 sm:mb-8">
+            <span className="text-[10px] sm:text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B]">
               AI Native Digital Agency
             </span>
           </Reveal>
           
           <Reveal y={20}>
             <h1 
-              className="text-white font-bold mb-10 leading-[1.1] max-w-[1100px] mx-auto"
-              style={{ fontSize: "clamp(48px, 6vw, 96px)", fontWeight: 700 }}
+              className="text-white font-bold mb-8 sm:mb-10 leading-[1.1] max-w-[1100px] mx-auto px-2"
+              style={{ fontSize: "clamp(40px, 8vw, 96px)", fontWeight: 700 }}
             >
               Digital Systems That Drive Growth.
             </h1>
           </Reveal>
           
           <Reveal y={20} delay={0.1}>
-            <p className="text-[18px] text-[#A0A0A0] max-w-[520px] mx-auto mb-14 leading-[1.7]">
+            <p className="text-[16px] sm:text-[18px] text-[#A0A0A0] max-w-[520px] mx-auto mb-10 sm:mb-14 leading-[1.6] sm:leading-[1.7] px-4">
               We build high performance websites and automation systems that help businesses grow faster.
             </p>
           </Reveal>
           
-          <Reveal y={20} delay={0.2} className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/contact">
-              <Button size="lg" className="h-12 px-8 py-3 text-base rounded-full font-semibold bg-[#00A86B] text-white hover:bg-[#00A86B]/90 transition-all shadow-none">
+          <Reveal y={20} delay={0.2} className="flex flex-col sm:flex-row justify-center gap-4 px-6">
+            <Link href="/contact" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto h-12 px-8 py-3 text-base rounded-full font-semibold bg-[#00A86B] text-white hover:bg-[#00A86B]/90 transition-all shadow-none">
                 Start Your Project Today
               </Button>
             </Link>
-            <Link href="/portfolio">
-              <Button size="lg" variant="outline" className="h-12 px-8 py-3 text-base rounded-full font-semibold border-white/20 hover:border-white hover:bg-white/5 transition-all text-white">
+            <Link href="/portfolio" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-8 py-3 text-base rounded-full font-semibold border-white/20 hover:border-white hover:bg-white/5 transition-all text-white">
                 View Portfolio
               </Button>
             </Link>
           </Reveal>
         </div>
         
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[500px] bg-[#00A86B]/[0.04] blur-[150px] -z-10 rounded-full" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[400px] sm:h-[500px] bg-[#00A86B]/[0.04] blur-[100px] sm:blur-[150px] -z-10 rounded-full" />
       </section>
 
       {/* Services / Core Capabilities Section */}

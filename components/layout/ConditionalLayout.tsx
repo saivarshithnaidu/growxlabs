@@ -2,8 +2,15 @@
 
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { GrowXChatWidget } from "@/components/ui/GrowXChatWidget";
+import dynamic from "next/dynamic";
+
+const Footer = dynamic(() => import("@/components/layout/Footer").then(mod => mod.Footer), {
+  ssr: true,
+});
+
+const GrowXChatWidget = dynamic(() => import("@/components/ui/GrowXChatWidget").then(mod => mod.GrowXChatWidget), {
+  ssr: false,
+});
 
 export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

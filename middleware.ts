@@ -24,7 +24,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   // 2. Role-Based Access Control (RBAC)
-  const isAdminPath = pathname.match(/^\/(?:[a-z]{2}-[A-Z]{2}|[a-z]{2})\/admin/) || pathname.startsWith('/admin');
+  const isAdminPath = pathname.match(/^\/(?:[a-z]{2})\/admin/) || pathname.startsWith('/admin');
   
   if (isAdminPath) {
     const secret = process.env.NEXTAUTH_SECRET;
@@ -43,7 +43,6 @@ export default async function middleware(req: NextRequest) {
   }
 
   // Detect Country using Vercel header
-  // Defaults to 'IN' for local development as per "Optional: Force region to India for now"
   const country = req.headers.get('x-vercel-ip-country') || 'IN';
 
   // 2. Identify Subdomain Target
@@ -63,8 +62,8 @@ export default async function middleware(req: NextRequest) {
     const cookieLocale = req.cookies.get('NEXT_LOCALE')?.value;
     if (cookieLocale && locales.includes(cookieLocale as any)) return cookieLocale;
     
-    // Logic: India users -> en-IN, others -> en-US
-    return country === 'IN' ? 'en-IN' : 'en-US';
+    // Simplified logic: Default to 'en'
+    return 'en';
   };
 
   // 3. Handle Subdomain Mapping

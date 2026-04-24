@@ -5,6 +5,7 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const nextConfig: NextConfig = {
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -13,6 +14,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  compress: true, // Enable brotli/gzip
   async headers() {
     return [
       {
@@ -24,8 +26,30 @@ const nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
           { key: 'Access-Control-Allow-Origin', value: 'https://growxlabs.tech' },
           {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, must-revalidate', // 1 hour for pages
+          },
+          {
             key: 'Content-Security-Policy',
             value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.apollo.io https://va.vercel-scripts.com https://checkout.razorpay.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://assets.apollo.io https://lumberjack.razorpay.com https://api.razorpay.com; frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com; frame-ancestors 'none';",
+          },
+        ],
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable', // 1 year for static assets
+          },
+        ],
+      },
+      {
+        source: '/admin/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'private, no-cache, no-store, max-age=0, must-revalidate', // No cache for admin
           },
         ],
       },

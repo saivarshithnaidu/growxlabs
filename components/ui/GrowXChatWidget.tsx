@@ -272,15 +272,15 @@ export function GrowXChatWidget() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-16 h-16 bg-[#0E1528] border border-white/10 rounded-full flex items-center justify-center shadow-2xl relative transition-all group overflow-hidden"
+        className="w-14 h-14 sm:w-16 sm:h-16 bg-[#0E1528] border border-white/10 rounded-full flex items-center justify-center shadow-2xl relative transition-all group overflow-hidden"
       >
         <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
         {isOpen ? (
-          <X size={28} className="text-white relative z-10" />
+          <X size={24} className="text-white relative z-10 sm:scale-110" />
         ) : (
           <div className="relative z-10">
-             <MessageCircle size={28} className="text-white" />
-             <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-[#0A0F1E] rounded-full" />
+             <MessageCircle size={24} className="text-white sm:scale-110" />
+             <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-[#0A0F1E] rounded-full" />
           </div>
         )}
       </motion.button>

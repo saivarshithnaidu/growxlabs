@@ -36,46 +36,46 @@ export function CookieConsent() {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-0 left-0 right-0 z-[1000] p-6 lg:p-10 pointer-events-none"
+          initial={{ y: 50, opacity: 0, scale: 0.9 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: 50, opacity: 0, scale: 0.9 }}
+          className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 z-[1000] pointer-events-none"
         >
-          <div className="max-w-7xl mx-auto flex justify-center">
-            <div className="w-full lg:w-auto glass-card border border-white/10 p-6 lg:p-8 rounded-[32px] flex flex-col lg:flex-row items-center gap-8 pointer-events-auto shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
-              <div className="flex items-center gap-6">
-                <div className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-xl shadow-white/5">
-                  <ShieldCheck className="text-black h-6 w-6" />
+          <div className="w-full sm:w-[400px] glass-card border border-white/10 p-5 rounded-[24px] pointer-events-auto shadow-2xl backdrop-blur-xl bg-black/40">
+            <div className="flex flex-col gap-5">
+              <div className="flex items-start gap-4">
+                <div className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shrink-0">
+                  <ShieldCheck className="text-black h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-white leading-tight">Cookie Consent</p>
-                  <p className="text-xs text-white/40 max-w-sm leading-relaxed">
-                    We use cookies to improve your experience, analyze traffic, and personalize content. 
-                    <Link href="/privacy" className="text-white/60 hover:text-white underline ml-1 font-medium">Learn more</Link>
+                  <p className="text-sm font-bold text-white leading-tight">Privacy Preferences</p>
+                  <p className="text-[11px] text-white/50 leading-relaxed">
+                    We use cookies to optimize your experience and analyze traffic. 
+                    <Link href="/privacy" className="text-[#00A86B] hover:underline ml-1 font-medium">Policy</Link>
                   </p>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-4 w-full lg:w-auto">
                 <button 
                   onClick={handleReject}
-                  className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+                  className="p-1 text-white/20 hover:text-white transition-colors"
+                  aria-label="Close"
                 >
-                  Reject
+                   <X size={16} />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={handleReject}
+                  className="flex-1 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white border border-white/5 rounded-xl transition-colors"
+                >
+                  Decline
                 </button>
                 <Button 
                   onClick={handleAccept}
-                  className="bg-white text-black hover:bg-neutral-200 px-8 h-12 rounded-2xl font-black text-[10px] uppercase tracking-widest flex-1 lg:flex-none shadow-xl shadow-white/5"
+                  className="flex-1 bg-white text-black hover:bg-neutral-200 h-10 rounded-xl font-bold text-[10px] uppercase tracking-widest"
                 >
-                  Accept All <ChevronRight size={14} className="ml-2" />
+                  Accept All
                 </Button>
-                <button 
-                  onClick={handleReject}
-                  className="p-3 text-white/20 hover:text-white transition-colors lg:ml-2"
-                  aria-label="Close"
-                >
-                   <X size={20} />
-                </button>
               </div>
             </div>
           </div>

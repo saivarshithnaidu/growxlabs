@@ -2,10 +2,9 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { motion, HTMLMotionProps } from "framer-motion";
 
 export interface ButtonProps
-  extends HTMLMotionProps<"button"> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
@@ -27,26 +26,24 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     return (
-      <motion.button
+      <button
         ref={ref}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
         disabled={isLoading || props.disabled}
         className={cn(
-          "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 relative",
+          "inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 relative active:scale-[0.98] hover:scale-[1.02]",
           variants[variant],
           sizes[size],
           className
         )}
-        {...(props as any)}
+        {...props}
       >
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
           </div>
         )}
-        <span className={cn(isLoading && "opacity-0")}>{children as React.ReactNode}</span>
-      </motion.button>
+        <span className={cn(isLoading && "opacity-0")}>{children}</span>
+      </button>
     );
   }
 );

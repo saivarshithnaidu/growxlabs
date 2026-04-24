@@ -1,6 +1,6 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { Inter, Caveat } from "next/font/google";
+import { Inter } from "next/font/google";
 import { GlobalBackground } from "@/components/layout/GlobalBackground";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
@@ -8,22 +8,15 @@ import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { CookieConsent } from "@/components/layout/CookieConsent";
 import "../globals.css";
 import { locales } from "@/navigation";
-import Script from "next/script";
-import { Toaster } from "sonner";
-
+import dynamic from "next/dynamic";
 
 const inter = Inter({ 
   subsets: ["latin"], 
   variable: "--font-sans",
   display: "swap",
-  preload: true,
 });
 
-const caveat = Caveat({
-  subsets: ["latin"],
-  variable: "--font-cursive",
-  display: "swap",
-});
+import { Toaster } from "sonner";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -73,7 +66,7 @@ export default async function LocaleLayout({
   const direction = locale.startsWith('ar') ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={direction} className={`${inter.variable} ${caveat.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={locale} dir={direction} className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans relative" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <AuthProvider>

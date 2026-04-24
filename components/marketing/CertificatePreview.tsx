@@ -2,12 +2,11 @@
 
 import { motion } from "framer-motion";
 import { QrCode } from "lucide-react";
-import { Cinzel, Cormorant_Garamond, Montserrat } from "next/font/google";
+import { Cinzel, Cormorant_Garamond } from "next/font/google";
 import Image from "next/image";
 
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
 const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["300", "400", "600"], style: ["normal", "italic"] });
-const montserrat = Montserrat({ subsets: ["latin"], weight: ["300", "400", "500", "700"] });
 
 export function CertificatePreview() {
   return (
@@ -81,14 +80,14 @@ export function CertificatePreview() {
                 </div>
               </div>
               <div className="w-20 h-[0.5px] bg-[#c9a84c] mb-1" />
-              <p className={`text-[5px] font-bold uppercase tracking-widest text-[#999] ${montserrat.className}`}>Director · GrowX Labs</p>
+              <p className="text-[5px] font-bold uppercase tracking-widest text-[#999]">Director · GrowX Labs</p>
             </div>
 
             <div className="flex flex-col items-center gap-1">
               <div className="bg-white p-1 border border-[#e0d8c8] rounded shadow-sm">
                 <QrCode size={24} strokeWidth={1.5} className="text-black" />
               </div>
-              <p className={`text-[5px] font-bold uppercase tracking-widest text-black/40 ${montserrat.className}`}>Verify</p>
+              <p className="text-[5px] font-bold uppercase tracking-widest text-black/40">Verify</p>
             </div>
           </div>
         </div>

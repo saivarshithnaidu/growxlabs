@@ -87,12 +87,12 @@ export function Navbar() {
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden lg:flex items-center space-x-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-sm font-medium text-[#A0A0A0] hover:text-white transition-colors duration-200"
+                  className="text-sm font-medium text-[#A0A0A0] hover:text-white transition-colors duration-200 whitespace-nowrap"
                 >
                   {link.name}
                 </Link>
@@ -117,10 +117,10 @@ export function Navbar() {
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center">
+            <div className="lg:hidden flex items-center">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-[#A0A0A0] hover:text-white z-[60]"
+                className="p-2 text-[#A0A0A0] hover:text-white z-[60] transition-transform active:scale-90"
                 aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isMobileMenuOpen}
               >
@@ -134,20 +134,20 @@ export function Navbar() {
       {/* Mobile Menu — Full Screen Overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-[55] md:hidden transition-all duration-500",
+          "fixed inset-0 z-[55] lg:hidden transition-all duration-500 ease-in-out",
           isMobileMenuOpen 
             ? "opacity-100 pointer-events-auto" 
             : "opacity-0 pointer-events-none"
         )}
       >
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
+        <div className="absolute inset-0 bg-black/98 backdrop-blur-xl" />
         
         {/* Menu Content — slides from right */}
         <div
           className={cn(
-            "absolute inset-0 flex flex-col items-center justify-center space-y-8 transition-transform duration-500 ease-out",
-            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+            "absolute inset-0 flex flex-col items-center justify-center space-y-8 transition-all duration-500 ease-out px-6 text-center",
+            isMobileMenuOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
           )}
         >
           {navLinks.map((link) => (
@@ -155,16 +155,16 @@ export function Navbar() {
               key={link.name}
               href={link.href}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-2xl font-semibold text-white hover:text-[#00A86B] transition-colors"
+              className="text-2xl font-bold text-white hover:text-[#00A86B] transition-all active:scale-95"
             >
               {link.name}
             </Link>
           ))}
           
-          <div className="pt-8 flex flex-col items-center space-y-4 w-64">
+          <div className="pt-10 flex flex-col items-center space-y-4 w-full max-w-[280px]">
             <Link href={isLoggedIn ? dashboardPath : "/register"} className="block w-full">
               <Button 
-                className="w-full bg-[#00A86B] hover:bg-[#00A86B]/90 shadow-none text-white font-semibold h-12 rounded-full" 
+                className="w-full bg-[#00A86B] hover:bg-[#00A86B]/90 shadow-none text-white font-semibold h-14 rounded-full text-lg" 
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {isLoggedIn ? t("dashboard") : t("get_started")}
@@ -173,7 +173,7 @@ export function Navbar() {
             {isLoggedIn && (
               <Button 
                 variant="outline" 
-                className="w-full border-white/10 text-white/40 h-12 rounded-full"
+                className="w-full border-white/10 text-white/40 h-14 rounded-full"
                 onClick={() => {
                   signOut();
                   setIsMobileMenuOpen(false);

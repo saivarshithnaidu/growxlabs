@@ -8,38 +8,32 @@ import { useLocale } from "next-intl";
 
 const REGIONS = [
   {
-    name: "AMERICAS",
+    name: "AMERICAS & EUROPE",
     languages: [
       { code: "en-US", name: "English (US)", flag: "🇺🇸" },
-      { code: "pt-BR", name: "Portuguese (BR)", flag: "🇧🇷" },
-      { code: "es-ES", name: "Español", flag: "🇪🇸" }
-    ]
-  },
-  {
-    name: "EUROPE",
-    languages: [
       { code: "en-GB", name: "English (UK)", flag: "🇬🇧" },
-      { code: "de-DE", name: "Deutsch", flag: "🇩🇪" },
-      { code: "fr-FR", name: "Français", flag: "🇫🇷" }
+      { code: "en-IN", name: "English (IN)", flag: "🇮🇳" },
+      { code: "es", name: "Español", flag: "🇪🇸" },
+      { code: "pt", name: "Português", flag: "🇧🇷" },
+      { code: "de", name: "Deutsch", flag: "🇩🇪" },
+      { code: "fr", name: "Français", flag: "🇫🇷" }
     ]
   },
   {
     name: "ASIA PACIFIC",
     languages: [
-      { code: "en-AU", name: "English (AU)", flag: "🇦🇺" },
-      { code: "en-IN", name: "English (IN)", flag: "🇮🇳" },
-      { code: "te-IN", name: "తెలుగు", flag: "🇮🇳" },
-      { code: "hi-IN", name: "हिन्दी", flag: "🇮🇳" },
-      { code: "ja-JP", name: "日本語", flag: "🇯🇵" },
-      { code: "zh-CN", name: "中文", flag: "🇨🇳" },
-      { code: "ko-KR", name: "한국어", flag: "🇰🇷" },
-      { code: "id-ID", name: "Indonesian", flag: "🇮🇩" }
+      { code: "hi", name: "हिन्दी", flag: "🇮🇳" },
+      { code: "te", name: "తెలుగు", flag: "🇮🇳" },
+      { code: "ja", name: "日本語", flag: "🇯🇵" },
+      { code: "zh", name: "中文", flag: "🇨🇳" },
+      { code: "ko", name: "한국어", flag: "🇰🇷" },
+      { code: "id", name: "Indonesian", flag: "🇮🇩" }
     ]
   },
   {
     name: "MIDDLE EAST",
     languages: [
-      { code: "ar-AE", name: "العربية (UAE)", flag: "🇦🇪" }
+      { code: "ar", name: "العربية", flag: "🇦🇪" }
     ]
   }
 ];
