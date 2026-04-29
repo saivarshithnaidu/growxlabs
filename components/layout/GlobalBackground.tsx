@@ -1,45 +1,38 @@
 "use client";
 
+import React from "react";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
+import { usePathname } from "@/navigation";
 
-const DottedSurface = dynamic(() => import("@/components/ui/dotted-surface").then(mod => mod.DottedSurface), {
+const TunnelBackground = dynamic(() => import("@/components/ui/tunnel-hero").then(mod => mod.TunnelBackground), {
   ssr: false,
 });
 
 export function GlobalBackground() {
   const [shouldLoad, setShouldLoad] = useState(false);
+  const pathname = usePathname();
+  
+  const isAdminPage = pathname?.includes("/admin") ?? false;
+  const isClientPage = pathname?.includes("/client") ?? false;
+  const isDemoPage = pathname?.includes("/demos") ?? false;
 
   useEffect(() => {
-    // Optimization: Defer loading of heavy Three.js background until first scroll or delay
-    const handleTrigger = () => {
+    // Reverting to a safer initialization to resolve stability issues
+    const timer = setTimeout(() => {
       setShouldLoad(true);
-      window.removeEventListener("scroll", handleTrigger);
-      window.removeEventListener("touchstart", handleTrigger);
-    };
+    }, 1500);
 
-    window.addEventListener("scroll", handleTrigger, { passive: true });
-    window.addEventListener("touchstart", handleTrigger, { passive: true });
-
-    const timeout = setTimeout(() => {
-      setShouldLoad(true);
-    }, 3000); // Fallback to load after 3s if no scroll
-
-    return () => {
-      window.removeEventListener("scroll", handleTrigger);
-      window.removeEventListener("touchstart", handleTrigger);
-      clearTimeout(timeout);
-    };
+    return () => clearTimeout(timer);
   }, []);
+
+  if (isAdminPage || isClientPage || isDemoPage) {
+    return <div className="fixed inset-0 -z-50 bg-black pointer-events-none" />;
+  }
 
   return (
     <div className="fixed inset-0 -z-50 pointer-events-none bg-black">
-      {shouldLoad && <DottedSurface className="opacity-50" />}
-      
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[160px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[140px]" />
-      </div>
+      {shouldLoad && <TunnelBackground />}
     </div>
   );
 }

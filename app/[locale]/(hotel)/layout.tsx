@@ -1,6 +1,6 @@
 import { HotelProvider } from "@/lib/hotel-context";
 import { HotelNavbar } from "@/components/hotel/Navbar";
-import { RestaurantFooter } from "@/components/restaurant/Footer";
+import { HotelFooter } from "@/components/hotel/Footer";
 
 export default function HotelLayout({
   children,
@@ -14,8 +14,9 @@ export default function HotelLayout({
         <main className="flex-grow">
           {children}
         </main>
-        <RestaurantFooter />
+        <HotelFooter />
       </div>
     </HotelProvider>
   );
 }
+

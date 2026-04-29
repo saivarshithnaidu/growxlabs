@@ -53,6 +53,23 @@ export default function AgreementDetailPage() {
           signature
         })
       });
+      fetchAgreement();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleUpdate = async (updatedData: any) => {
+    try {
+      await fetch(`/api/agreements/update`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: id,
+          ...updatedData
+        })
+      });
+      fetchAgreement();
     } catch (e) {
       console.error(e);
     }
@@ -62,6 +79,7 @@ export default function AgreementDetailPage() {
     <AgreementContract 
       role="admin"
       onSign={handleSign}
+      onUpdate={handleUpdate}
       initialSignatures={{
         admin: agreement.admin_signature,
         client: agreement.client_signature

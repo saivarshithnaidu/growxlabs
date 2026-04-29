@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 export async function sendCertificateEmail(
   email: string,
@@ -12,7 +14,7 @@ export async function sendCertificateEmail(
   const certUrl = `https://growxlabs.tech/certificate/${certId}`;
 
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResendClient().emails.send({
       from: "GrowX Labs Academy <academy@growxlabs.tech>",
       to: [email],
       subject: "Your GrowX Labs Certificate is Ready!",

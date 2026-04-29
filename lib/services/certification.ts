@@ -29,12 +29,25 @@ export async function issueCertificate(userId: string, courseId: string, grade: 
 }
 
 export async function verifyCertificate(certificateId: string) {
-  // Database lookup
-  // In a real app: 
-  // const { data } = await supabase.from('certificates').select('*').eq('id', certificateId).single();
+  const { supabaseAdmin } = await import("@/lib/supabase/admin");
+  
+  const { data, error } = await supabaseAdmin
+    .from("certificates")
+    .select("*")
+    .eq("id", certificateId)
+    .single();
+  
+  if (error || !data) {
+    return {
+      valid: false,
+      timestamp: new Date(),
+      error: "Certificate not found"
+    };
+  }
   
   return {
-    valid: certificateId.startsWith("GXL-"),
-    timestamp: new Date()
+    valid: true,
+    timestamp: new Date(),
+    certificate: data
   };
 }

@@ -53,204 +53,95 @@ interface AdminNavProps {
 export function AdminNav({ isCollapsed, onToggle }: AdminNavProps) {
   const pathname = usePathname();
 
+  const renderLink = (item: any) => {
+    const isActive = pathname === item.href;
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        title={isCollapsed ? item.name : ""}
+        className={cn(
+          "flex items-center h-10 px-4 rounded-xl transition-all duration-300 group relative",
+          isActive
+            ? "bg-primary/10 text-primary"
+            : "text-[var(--text-tertiary)] hover:text-white hover:bg-white/[0.04]",
+          isCollapsed && "justify-center px-0"
+        )}
+      >
+        <item.icon className={cn(
+          "h-4 w-4 shrink-0 transition-colors",
+          isActive ? "text-primary" : "text-[var(--text-muted)] group-hover:text-white",
+          !isCollapsed && "mr-3"
+        )} />
+        {!isCollapsed && <span className="text-[13px] font-semibold tracking-tight">{item.name}</span>}
+        {isActive && (
+          <div className={cn(
+            "absolute bg-primary rounded-full shadow-[0_0_8px_rgba(0,168,107,0.5)]",
+            isCollapsed ? "right-1 top-1/2 -translate-y-1/2 w-1 h-4" : "left-0 top-1/2 -translate-y-1/2 w-0.5 h-5"
+          )} />
+        )}
+      </Link>
+    );
+  };
+
   return (
     <aside 
       className={cn(
-        "h-screen border-r border-white/10 bg-[#000000] flex flex-col fixed left-0 top-0 overflow-visible transition-all duration-500 ease-in-out shadow-2xl",
-        isCollapsed ? "w-20" : "w-64",
-        "z-[200]"
+        "h-screen border-r border-[var(--border-subtle)] bg-[var(--surface-1)] flex flex-col fixed left-0 top-0 overflow-visible transition-all duration-500 ease-in-out z-[200]",
+        isCollapsed ? "w-20" : "w-64"
       )}
     >
-      <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden custom-scrollbar">
+      <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden no-scrollbar">
         
         {/* Branding Header */}
         <div className={cn(
             "p-8 transition-all duration-500", 
             isCollapsed ? "px-0 flex justify-center" : "px-8"
         )}>
-           <div className="flex items-center gap-4">
-              <div className="h-10 w-10 bg-[#00A86B] rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-[#00A86B]/10">
-                <ShieldCheck className="text-white h-6 w-6" />
+           <div className="flex items-center gap-3">
+              <div className="h-9 w-9 bg-primary rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
+                <ShieldCheck className="text-white h-5 w-5" />
               </div>
               {!isCollapsed && (
-                  <div className="flex flex-col overflow-hidden whitespace-nowrap animate-in fade-in slide-in-from-left-2">
-                      <span className="text-xl font-bold tracking-tighter text-white leading-none">GrowX Labs</span>
-                      <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.3em] mt-1.5">Admin Central</span>
+                  <div className="flex flex-col overflow-hidden whitespace-nowrap">
+                      <span className="text-lg font-bold tracking-tighter text-white leading-none">GrowX Labs</span>
+                      <span className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] mt-1.5">Admin Central</span>
                   </div>
               )}
            </div>
         </div>
 
         {/* Navigation Content */}
-        <div className="flex-1 mt-4">
-          <div className={cn("flex flex-col space-y-1 mb-10", isCollapsed ? "px-3" : "px-6")}>
-            {!isCollapsed && (
-              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/20 mb-5 px-4">Core Systems</p>
-            )}
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={isCollapsed ? item.name : ""}
-                  className={cn(
-                    "flex items-center h-11 px-4 rounded-xl transition-all duration-300 group relative",
-                    isActive
-                      ? "bg-[#00A86B]/10 text-[#00A86B] border-l-2 border-[#00A86B]"
-                      : "text-white/40 hover:text-white hover:bg-white/[0.03]",
-                    isCollapsed && "justify-center px-0"
-                  )}
-                >
-                  <item.icon className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
-                    isActive ? "text-[#00A86B]" : "text-white/20 group-hover:text-white",
-                    !isCollapsed && "mr-4"
-                  )} />
-                  {!isCollapsed && <span className="text-[13px] font-semibold tracking-tight">{item.name}</span>}
-                  {isCollapsed && isActive && (
-                    <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-4 bg-[#00A86B] rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
+        <div className="flex-1 mt-4 px-3">
+          <div className="flex flex-col space-y-1 mb-8">
+            {!isCollapsed && <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--text-muted)] mb-4 px-4">Core Systems</p>}
+            {navItems.map(renderLink)}
 
-            {!isCollapsed && (
-              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/20 mt-8 mb-5 px-4 animate-in fade-in duration-700">Academy Suite</p>
-            )}
-            {academyItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={isCollapsed ? item.name : ""}
-                  className={cn(
-                    "flex items-center h-11 px-4 rounded-xl transition-all duration-300 group relative",
-                    isActive
-                      ? "bg-[#00A86B]/10 text-[#00A86B] border-l-2 border-[#00A86B]"
-                      : "text-white/40 hover:text-white hover:bg-white/[0.03]",
-                    isCollapsed && "justify-center px-0"
-                  )}
-                >
-                  <item.icon className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
-                    isActive ? "text-[#00A86B]" : "text-white/20 group-hover:text-white",
-                    !isCollapsed && "mr-4"
-                  )} />
-                  {!isCollapsed && <span className="text-[13px] font-semibold tracking-tight">{item.name}</span>}
-                  {isCollapsed && isActive && (
-                    <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-4 bg-[#00A86B] rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
+            {!isCollapsed && <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--text-muted)] mt-8 mb-4 px-4">Academy Suite</p>}
+            {academyItems.map(renderLink)}
 
-            {!isCollapsed && (
-              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/20 mt-8 mb-5 px-4 animate-in fade-in duration-700">Revenue & Monetization</p>
-            )}
-            {monetizationItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={isCollapsed ? item.name : ""}
-                  className={cn(
-                    "flex items-center h-11 px-4 rounded-xl transition-all duration-300 group relative",
-                    isActive
-                      ? "bg-[#00A86B]/10 text-[#00A86B] border-l-2 border-[#00A86B]"
-                      : "text-white/40 hover:text-white hover:bg-white/[0.03]",
-                    isCollapsed && "justify-center px-0"
-                  )}
-                >
-                  <item.icon className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
-                    isActive ? "text-[#00A86B]" : "text-white/20 group-hover:text-white",
-                    !isCollapsed && "mr-4"
-                  )} />
-                  {!isCollapsed && <span className="text-[13px] font-semibold tracking-tight">{item.name}</span>}
-                  {isCollapsed && isActive && (
-                    <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-4 bg-[#00A86B] rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
+            {!isCollapsed && <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--text-muted)] mt-8 mb-4 px-4">Revenue</p>}
+            {monetizationItems.map(renderLink)}
 
-            {!isCollapsed && (
-              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/20 mt-8 mb-5 px-4 animate-in fade-in duration-700">Financial Systems</p>
-            )}
-            {financialItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={isCollapsed ? item.name : ""}
-                  className={cn(
-                    "flex items-center h-11 px-4 rounded-xl transition-all duration-300 group relative",
-                    isActive
-                      ? "bg-[#00A86B]/10 text-[#00A86B] border-l-2 border-[#00A86B]"
-                      : "text-white/40 hover:text-white hover:bg-white/[0.03]",
-                    isCollapsed && "justify-center px-0"
-                  )}
-                >
-                  <item.icon className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
-                    isActive ? "text-[#00A86B]" : "text-white/20 group-hover:text-white",
-                    !isCollapsed && "mr-4"
-                  )} />
-                  {!isCollapsed && <span className="text-[13px] font-semibold tracking-tight">{item.name}</span>}
-                  {isCollapsed && isActive && (
-                    <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-4 bg-[#00A86B] rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className={cn("flex flex-col space-y-1", isCollapsed ? "px-3" : "px-6")}>
-            {!isCollapsed && (
-              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/20 mb-5 px-4">Templates</p>
-            )}
-            {templateItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={isCollapsed ? item.name : ""}
-                  className={cn(
-                    "flex items-center h-11 px-4 rounded-xl transition-all duration-300 group relative",
-                    isActive
-                        ? "bg-[#00A86B]/10 text-[#00A86B] border-l-2 border-[#00A86B]"
-                        : "text-white/40 hover:text-white hover:bg-white/[0.03]",
-                    isCollapsed && "justify-center px-0"
-                  )}
-                >
-                  <item.icon className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
-                    isActive ? "text-[#00A86B]" : "text-white/20 group-hover:text-white",
-                    !isCollapsed && "mr-4"
-                  )} />
-                  {!isCollapsed && <span className="text-[13px] font-semibold tracking-tight">{item.name}</span>}
-                </Link>
-              );
-            })}
+            {!isCollapsed && <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--text-muted)] mt-8 mb-4 px-4">Financials</p>}
+            {financialItems.map(renderLink)}
+            
+            {!isCollapsed && <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--text-muted)] mt-8 mb-4 px-4">Templates</p>}
+            {templateItems.map(renderLink)}
           </div>
         </div>
 
         {/* Footer Area */}
-        <div className={cn("mt-auto py-8 border-t border-white/5", isCollapsed ? "px-3" : "px-6")}>
+        <div className={cn("mt-auto py-6 border-t border-[var(--border-subtle)]", isCollapsed ? "px-3" : "px-6")}>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
             className={cn(
-              "w-full flex items-center h-11 px-4 rounded-xl text-white/30 hover:text-red-400 hover:bg-red-500/5 transition-all group",
+              "w-full flex items-center h-10 px-4 rounded-xl text-[var(--text-muted)] hover:text-red-400 hover:bg-red-500/5 transition-all group",
               isCollapsed && "justify-center px-0"
             )}
           >
-            <LogOut className={cn("h-4 w-4 shrink-0 text-white/10 group-hover:text-red-400 transition-colors", !isCollapsed && "mr-4")} />
-            {!isCollapsed && <span className="text-xs font-bold uppercase tracking-widest">Sign Out</span>}
+            <LogOut className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-red-400", !isCollapsed && "mr-3")} />
+            {!isCollapsed && <span className="text-[11px] font-bold uppercase tracking-widest">Sign Out</span>}
           </button>
         </div>
       </div>
@@ -258,7 +149,7 @@ export function AdminNav({ isCollapsed, onToggle }: AdminNavProps) {
       {/* Toggle Control */}
       <button 
         onClick={onToggle}
-        className="absolute top-10 -right-4 h-8 w-8 rounded-xl bg-[#00A86B] text-white flex items-center justify-center border border-[#00A86B]/40 z-[210] shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300"
+        className="absolute top-10 -right-4 h-8 w-8 rounded-xl bg-primary text-white flex items-center justify-center border border-primary/40 z-[210] shadow-xl hover:scale-110 active:scale-95 transition-all duration-300"
       >
         {isCollapsed ? <PanelLeft size={16} /> : <PanelLeftClose size={16} />}
       </button>

@@ -33,10 +33,10 @@ export function Footer() {
           <div className="space-y-6">
             <Link href="/" className="flex items-center justify-center md:justify-start group">
               <div className="relative h-10 w-40 transition-transform group-hover:scale-[1.02] duration-300">
-                <Image 
-                  src="/logo.svg" 
-                  alt="GrowX Labs" 
-                  fill 
+                <Image
+                  src="/logo.svg"
+                  alt="GrowX Labs"
+                  fill
                   className="object-contain"
                 />
               </div>
@@ -44,7 +44,7 @@ export function Footer() {
             <p className="text-[#A0A0A0] text-[13px] leading-relaxed">
               We build AI-powered websites and automation systems that help businesses grow faster.
             </p>
-            
+
             {/* MSME & Contact Details */}
             <div className="space-y-2 pt-2">
               <p className="text-[12px] text-[#A0A0A0]/60">MSME Registered</p>

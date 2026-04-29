@@ -11,6 +11,7 @@ interface InvoiceProps {
     amount?: number;
     description?: string;
     invoice_id?: string;
+    address?: string;
   };
 }
 
@@ -21,7 +22,6 @@ interface LineItem {
   rate: number;
 }
 
-// Editable field moved OUTSIDE to prevent focus loss
 const EditField = ({ isEditing, value, onChange, placeholder, className, type = "text" }: {
   isEditing: boolean;
   value: string | number;
@@ -31,7 +31,7 @@ const EditField = ({ isEditing, value, onChange, placeholder, className, type = 
   type?: string;
 }) => {
   if (!isEditing) {
-    return <span className={className}>{value || placeholder || "—"}</span>;
+    return <span className={`${className} text-[#000] font-bold`}>{value || placeholder || "—"}</span>;
   }
   return (
     <input
@@ -39,8 +39,8 @@ const EditField = ({ isEditing, value, onChange, placeholder, className, type = 
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className={`${className} bg-yellow-50/80 border-b-2 border-[#00A86B] outline-none px-1 rounded text-neutral-900`}
-      style={{ minWidth: type === "number" ? 60 : 80, color: "inherit" }}
+      className={`${className} bg-[#e8f8f5] border-b-2 border-[#00b894] outline-none px-1 rounded text-[#000] font-bold`}
+      style={{ minWidth: type === "number" ? 60 : 80, color: "#000" }}
     />
   );
 };
@@ -50,21 +50,19 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
 
   const [items, setItems] = useState<LineItem[]>([
     { id: 1, desc: data.description || "Digital Services", qty: 1, rate: data.amount || 0 },
-    { id: 2, desc: "", qty: 1, rate: 0 },
-    { id: 3, desc: "", qty: 1, rate: 0 },
   ]);
 
   const [metadata, setMetadata] = useState({
-    invoiceNo: data.invoice_id || `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+    invoiceNo: data.invoice_id || `GX-INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
     date: new Date().toLocaleDateString(),
-    dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
     clientName: data.client_name || "",
     businessName: data.business_name || "",
     clientEmail: data.email || "",
+    clientAddress: data.address || "",
     advancePaid: 0
   });
 
-  // Live calculations
   const subtotal = items.reduce((acc, item) => acc + (item.qty * item.rate), 0);
   const totalPayable = subtotal;
   const balanceDue = totalPayable - metadata.advancePaid;
@@ -92,300 +90,215 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
   const handlePrint = () => window.print();
 
   return (
-    <div className="min-h-screen bg-neutral-50/50 py-16 px-4 print:bg-white print:p-0 print:m-0">
+    <div className="min-h-screen bg-[#f4f4f4] py-12 px-4 print:bg-white print:py-0 print:px-0" style={{ fontFamily: 'Arial, sans-serif' }}>
       {/* TOOLBAR */}
-      <div className="max-w-[850px] mx-auto mb-10 flex justify-between items-center print:hidden">
-        <div className="flex items-center gap-4">
-           <div className="h-12 w-12 rounded-2xl bg-white shadow-xl shadow-black/5 flex items-center justify-center border border-neutral-100">
-              <ShieldCheck className="text-[#00A86B]" size={24} />
-           </div>
-           <div>
-              <h2 className="text-sm font-black text-neutral-900 uppercase tracking-tighter">Billing Protocol 2.0</h2>
-              <p className="text-xs font-bold text-neutral-400">Precision Financial Engine</p>
-           </div>
+      <div className="max-w-[900px] mx-auto mb-8 flex justify-between items-center print:hidden">
+        <div className="flex items-center gap-2 text-[#666]">
+           <ShieldCheck className="text-[#00b894] h-5 w-5" />
+           <span className="text-[11px] font-bold uppercase tracking-widest leading-none">Invoice Management Console</span>
         </div>
         <div className="flex gap-3">
            <button
              onClick={() => setIsEditing(!isEditing)}
-             className={`flex items-center gap-2 px-6 h-12 rounded-xl font-bold transition-all active:scale-95 text-sm ${
+             className={`flex items-center gap-2 px-6 py-3 rounded font-bold transition-all active:scale-95 text-xs ${
                isEditing
-                 ? 'bg-[#00A86B] text-white hover:bg-[#00A86B]/90'
-                 : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50'
+                 ? 'bg-[#00b894] text-white'
+                 : 'bg-white border border-[#ccc] text-[#222] hover:bg-neutral-50'
              }`}
            >
-             {isEditing ? <><Eye className="h-4 w-4" /> Preview</> : <><Pencil className="h-4 w-4" /> Edit Live</>}
+             {isEditing ? <><Eye size={14} /> Preview</> : <><Pencil size={14} /> Edit Invoice</>}
            </button>
            <button 
              onClick={handlePrint}
-             className="flex items-center gap-2 bg-[#0D1B4B] text-white px-6 h-12 rounded-xl text-sm font-black uppercase tracking-widest hover:shadow-2xl hover:shadow-[#0D1B4B]/20 transition-all active:scale-95"
+             className="flex items-center gap-2 bg-[#222] text-white px-6 py-3 rounded font-bold transition-all active:scale-95 text-xs"
            >
-             <Printer size={16} /> Print Document
+             <Printer size={14} /> Export / Print
            </button>
         </div>
       </div>
 
-      {/* Edit Indicator */}
-      {isEditing && (
-        <div className="max-w-[850px] mx-auto mb-4 px-4 py-3 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-xl flex items-center gap-3 print:hidden">
-          <Pencil className="h-4 w-4 text-[#00A86B]" />
-          <p className="text-sm font-medium text-[#00A86B]">
-            <strong>Edit Mode</strong> — All fields are editable. Totals recalculate live.
-          </p>
-        </div>
-      )}
-
       {/* DOCUMENT CONTAINER */}
-      <div className="max-w-[850px] mx-auto bg-white shadow-[0_40px_100px_rgba(0,0,0,0.04)] print:shadow-none min-h-[1100px] flex flex-col border border-neutral-100 print:border-none relative">
+      <div className="max-w-[900px] mx-auto bg-white shadow-2xl print:shadow-none min-h-[1100px] flex flex-col border border-[#ddd] print:border-none p-10 md:p-20 text-[#000] text-[14px] leading-[1.7]">
         
-        {/* BRAND STRIPE */}
-        <div className="h-3 bg-[#0D1B4B] w-full flex">
-           <div className="flex-1 bg-[#0D1B4B]" />
-           <div className="w-48 bg-[#00A86B]" />
+        {/* HEADER */}
+        <div className="text-center border-b-[4px] border-[#00b894] pb-6 mb-10">
+           <h1 className="text-[32px] font-black text-[#00b894] tracking-[3px] uppercase m-0 leading-tight">GROWX LABS</h1>
+           <p className="text-[13px] text-[#333] mt-2 m-0 font-bold">AI-Native Digital Agency | growxlabs.tech | hello@growxlabs.tech</p>
         </div>
 
-        {/* HEADER BLOCK */}
-        <div className="p-16 flex justify-between items-start">
-           <div className="space-y-6">
-              <div>
-                 <div className="flex items-center gap-3 mb-2">
-                    <div className="h-10 w-10 bg-[#0D1B4B] rounded-xl flex items-center justify-center text-[#00A86B] font-black italic shadow-lg shadow-[#0D1B4B]/20">GX</div>
-                    <h1 className="text-3xl font-black text-[#0D1B4B] tracking-tighter uppercase italic">GrowX Labs</h1>
-                 </div>
-                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#00A86B] pl-1">Build. Automate. Scale.</p>
-              </div>
-
-              <div className="space-y-1 text-xs text-neutral-400 leading-relaxed font-medium">
-                 <p className="text-neutral-900 font-bold">GrowX Labs Engineering</p>
-                 <p>hello@growxlabs.tech</p>
-                 <p>growxlabs.tech</p>
-                 <p>Guntur, Andhra Pradesh, India</p>
-                 <p className="text-[9px] font-bold text-neutral-300 mt-3 tracking-widest uppercase">UDYAM: UDYAM-AP-22-0063260</p>
-              </div>
-           </div>
-
-           <div className="text-right space-y-8">
-              <div className="space-y-1">
-                 <h2 className="text-6xl font-black text-neutral-900/5 tracking-tighter italic select-none">INVOICE</h2>
-                 <p className="text-sm font-black text-[#0D1B4B] uppercase tracking-[0.2em] relative -top-6">
-                   # <EditField isEditing={isEditing} value={metadata.invoiceNo} onChange={(v) => updateMeta('invoiceNo', v)} className="text-sm font-black text-[#0D1B4B]" />
-                 </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-8 text-right bg-neutral-50 p-6 rounded-2xl border border-neutral-100">
-                 <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-[#00A86B] mb-1">Issue Date</p>
-                    <p className="text-xs font-bold text-neutral-900">{metadata.date}</p>
-                 </div>
-                 <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-red-500 mb-1">Due Date</p>
-                    <p className="text-xs font-bold text-neutral-900">{metadata.dueDate}</p>
-                 </div>
-              </div>
-           </div>
+        <div className="text-center mb-12">
+           <div className="text-[22px] font-black text-[#000] mb-2 uppercase tracking-[2px]">TAX INVOICE / BILL OF SUPPLY</div>
+           <div className="text-[14px] text-[#333] font-bold">Invoice # {metadata.invoiceNo}</div>
         </div>
 
         {/* ADDRESS MATRIX */}
-        <div className="px-16 pb-12 grid grid-cols-2 gap-0 border-y border-neutral-100">
-           <div className="p-10 border-r border-neutral-100 group">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-neutral-300 mb-6">Billed From</h3>
-              <div className="space-y-1">
-                 <p className="text-sm font-black text-[#0D1B4B]">Accounts Payable Hub</p>
-                 <p className="text-xs font-medium text-neutral-400">Guntur HQ, Andhra Pradesh</p>
-                 <p className="text-xs font-medium text-neutral-400 underline underline-offset-4 decoration-neutral-100">billing@growxlabs.tech</p>
+        <div className="grid grid-cols-2 gap-x-20 mb-12">
+           <div className="space-y-4">
+              <h3 className="text-[16px] text-[#00b894] border-l-[6px] border-[#00b894] pl-[15px] uppercase font-black tracking-[1px] m-0">Billed From</h3>
+              <div className="space-y-1 text-[#000] font-bold">
+                 <p className="text-[15px]">GrowX Labs Engineering</p>
+                 <p>Guntur, Andhra Pradesh, India</p>
+                 <p>Email: billing@growxlabs.tech</p>
+                 <p className="text-[11px] text-[#666] mt-2 font-normal uppercase tracking-widest">UDYAM: UDYAM-AP-22-0063260</p>
               </div>
            </div>
-           <div className="p-10 bg-neutral-50/50 relative">
-              <div className="absolute top-0 right-0 pt-10 pr-10">
-                 <CheckCircle2 size={16} className="text-[#00A86B] opacity-20" />
-              </div>
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-neutral-300 mb-6">Billing To</h3>
-              <div className="space-y-1">
-                 <p className="text-lg font-black text-[#0D1B4B] tracking-tight">
-                   <EditField isEditing={isEditing} value={metadata.businessName} onChange={(v) => updateMeta('businessName', v)} placeholder="Client Business Name" className="text-lg font-black text-[#0D1B4B]" />
+           <div className="space-y-4">
+              <h3 className="text-[16px] text-[#00b894] border-l-[6px] border-[#00b894] pl-[15px] uppercase font-black tracking-[1px] m-0">Billed To</h3>
+              <div className="space-y-1 text-[#000] font-bold">
+                 <p className="text-[15px]">
+                    <EditField isEditing={isEditing} value={metadata.businessName} onChange={(v) => updateMeta('businessName', v)} placeholder="Business Name" />
                  </p>
-                 <p className="text-xs font-bold text-[#00A86B] uppercase tracking-widest italic">
-                   <EditField isEditing={isEditing} value={metadata.clientName} onChange={(v) => updateMeta('clientName', v)} placeholder="Contact Name" className="text-xs font-bold text-[#00A86B]" />
+                 <p>
+                    <EditField isEditing={isEditing} value={metadata.clientName} onChange={(v) => updateMeta('clientName', v)} placeholder="Contact Name" />
                  </p>
-                 <p className="text-xs font-medium text-neutral-400 mt-2">
-                   <EditField isEditing={isEditing} value={metadata.clientEmail} onChange={(v) => updateMeta('clientEmail', v)} placeholder="email@company.com" className="text-xs text-neutral-400" />
+                 <p>
+                    <EditField isEditing={isEditing} value={metadata.clientAddress} onChange={(v) => updateMeta('clientAddress', v)} placeholder="Address" />
+                 </p>
+                 <p className="text-[#00b894]">
+                    <EditField isEditing={isEditing} value={metadata.clientEmail} onChange={(v) => updateMeta('clientEmail', v)} placeholder="Email" />
                  </p>
               </div>
            </div>
         </div>
 
-        {/* FINANCIALS PANEL */}
-        <div className="px-16 pt-12 flex-1">
-           <table className="w-full border-collapse">
+        {/* INVOICE DETAILS */}
+        <div className="grid grid-cols-2 gap-10 bg-[#f9f9f9] p-8 mb-12 border-2 border-[#eee] rounded-xl">
+           <div>
+              <p className="text-[12px] text-[#666] uppercase font-black m-0 tracking-widest">Invoice Date</p>
+              <p className="text-[15px] font-black text-[#000] m-0">{metadata.date}</p>
+           </div>
+           <div className="text-right">
+              <p className="text-[12px] text-red-500 uppercase font-black m-0 tracking-widest">Due Date</p>
+              <p className="text-[15px] font-black text-[#000] m-0">{metadata.dueDate}</p>
+           </div>
+        </div>
+
+        {/* LINE ITEMS */}
+        <div className="mb-12">
+           <table className="w-full border-collapse border-2 border-[#eee] rounded-lg overflow-hidden">
               <thead>
-                 <tr className="border-b-2 border-neutral-900 text-neutral-400">
-                    <th className="py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] w-12">No</th>
-                    <th className="py-4 text-left text-[10px] font-black uppercase tracking-[0.2em]">Service Description</th>
-                    <th className="py-4 text-center text-[10px] font-black uppercase tracking-[0.2em] w-24">Unit</th>
-                    <th className="py-4 text-right text-[10px] font-black uppercase tracking-[0.2em] w-32">Rate (₹)</th>
-                    <th className="py-4 text-right text-[10px] font-black uppercase tracking-[0.2em] w-32">Total (₹)</th>
-                    {isEditing && <th className="py-4 w-10 print:hidden"></th>}
+                 <tr className="bg-[#00b894] text-white">
+                    <th className="p-4 text-left text-[13px] font-black border-r border-white/20 w-12 uppercase">No</th>
+                    <th className="p-4 text-left text-[13px] font-black border-r border-white/20 uppercase">Description</th>
+                    <th className="p-4 text-center text-[13px] font-black border-r border-white/20 w-24 uppercase">Qty</th>
+                    <th className="p-4 text-right text-[13px] font-black border-r border-white/20 w-36 uppercase">Rate (₹)</th>
+                    <th className="p-4 text-right text-[13px] font-black w-36 uppercase">Total (₹)</th>
                  </tr>
               </thead>
-              <tbody className="text-xs font-bold text-[#0D1B4B]">
+              <tbody className="text-[13px] text-[#000] font-bold">
                  {items.map((item, i) => (
-                   <tr key={item.id} className="border-b border-neutral-50 group transition-colors">
-                      <td className="py-6 text-neutral-300 font-mono tracking-tighter">0{i+1}</td>
-                      <td className="py-6 pr-4">
-                         <input 
-                           value={item.desc}
-                           onChange={(e) => updateItem(item.id, 'desc', e.target.value)}
-                           placeholder="Describe the engineering output..."
-                           className={`bg-transparent w-full focus:outline-none placeholder:font-normal placeholder:opacity-30 text-sm font-bold tracking-tight ${
-                             isEditing ? 'bg-yellow-50/80 border-b-2 border-[#00A86B] rounded px-1' : 'focus:text-[#00A86B]'
-                           }`}
-                           readOnly={!isEditing}
-                         />
-                      </td>
-                      <td className="py-6 text-center text-neutral-400">
-                         <input 
-                           type="number"
-                           value={item.qty}
-                           onChange={(e) => updateItem(item.id, 'qty', e.target.value)}
-                           className={`bg-transparent w-full text-center focus:outline-none ${
-                             isEditing ? 'bg-yellow-50/80 border-b-2 border-[#00A86B] rounded' : ''
-                           }`}
-                           readOnly={!isEditing}
-                           min={0}
-                         />
-                      </td>
-                      <td className="py-6 text-right font-mono tracking-tighter">
-                         <input 
-                           type="number"
-                           value={item.rate}
-                           onChange={(e) => updateItem(item.id, 'rate', e.target.value)}
-                           className={`bg-transparent w-full text-right focus:outline-none ${
-                             isEditing ? 'bg-yellow-50/80 border-b-2 border-[#00A86B] rounded' : ''
-                           }`}
-                           readOnly={!isEditing}
-                           min={0}
-                         />
-                      </td>
-                      <td className="py-6 text-right tabular-nums text-sm font-black tracking-tighter">₹{(item.qty * item.rate).toLocaleString()}</td>
-                      {isEditing && (
-                        <td className="py-6 text-center print:hidden">
-                          <button onClick={() => removeItem(item.id)} className="text-red-400 hover:text-red-600 transition-colors">
-                            <Trash2 size={14} />
-                          </button>
-                        </td>
-                      )}
-                   </tr>
+                    <tr key={item.id} className={`${i % 2 === 0 ? 'bg-white' : 'bg-[#fcfcfc]'} border-b-2 border-[#eee]`}>
+                       <td className="p-4 border-r-2 border-[#eee] text-[#666]">0{i+1}</td>
+                       <td className="p-4 border-r-2 border-[#eee]">
+                          <input 
+                            value={item.desc}
+                            onChange={(e) => updateItem(item.id, 'desc', e.target.value)}
+                            placeholder="Service description..."
+                            className={`bg-transparent w-full focus:outline-none font-bold text-[#000] ${isEditing ? 'bg-[#e8f8f5] rounded px-1' : ''}`}
+                            readOnly={!isEditing}
+                          />
+                       </td>
+                       <td className="p-4 border-r-2 border-[#eee] text-center">
+                          <input 
+                            type="number"
+                            value={item.qty}
+                            onChange={(e) => updateItem(item.id, 'qty', e.target.value)}
+                            className={`bg-transparent w-full text-center focus:outline-none font-bold text-[#000] ${isEditing ? 'bg-[#e8f8f5] rounded' : ''}`}
+                            readOnly={!isEditing}
+                          />
+                       </td>
+                       <td className="p-4 border-r-2 border-[#eee] text-right">
+                          <input 
+                            type="number"
+                            value={item.rate}
+                            onChange={(e) => updateItem(item.id, 'rate', e.target.value)}
+                            className={`bg-transparent w-full text-right focus:outline-none font-bold text-[#000] ${isEditing ? 'bg-[#e8f8f5] rounded' : ''}`}
+                            readOnly={!isEditing}
+                          />
+                       </td>
+                       <td className="p-4 text-right font-black text-[14px]">{(item.qty * item.rate).toLocaleString()}</td>
+                    </tr>
                  ))}
               </tbody>
            </table>
-
-           {/* Add Line Item */}
            {isEditing && (
-             <button
-               onClick={addItem}
-               className="mt-4 flex items-center gap-2 text-[#00A86B] text-xs font-bold uppercase tracking-widest hover:text-[#00A86B]/80 transition-colors print:hidden"
-             >
+             <button onClick={addItem} className="mt-4 flex items-center gap-1 text-[#00b894] text-[12px] font-black uppercase tracking-widest print:hidden">
                <Plus size={14} /> Add Line Item
              </button>
            )}
         </div>
 
-        {/* RECAP MODAL STYLE */}
-        <div className="m-16 p-10 bg-[#0D1B4B] rounded-3xl grid grid-cols-2 gap-16 text-white relative overflow-hidden shadow-2xl shadow-[#0D1B4B]/20">
-           <div className="absolute top-0 right-0 w-64 h-64 bg-[#00A86B] blur-[150px] opacity-10 pointer-events-none" />
-           
-           <div className="space-y-8 flex flex-col justify-between">
-              <div className="space-y-4">
-                 <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#00A86B]">Payment Infrastructure</h4>
-                 <div className="space-y-4">
-                    <div className="p-5 bg-white/5 border border-white/5 rounded-2xl">
-                       <p className="text-[10px] font-black uppercase tracking-widest text-[#00A86B] mb-1">Razorpay Direct</p>
-                       <p className="text-xs font-bold opacity-60">Verified Automated Gateway</p>
-                    </div>
-                    <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
-                       <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1">Bank Sync</p>
-                          <p className="text-xs font-bold">HDFC • VJA • growxlabs@hdfc</p>
-                       </div>
-                       <Mail size={16} className="opacity-20" />
-                    </div>
-                 </div>
+        {/* SUMMARY */}
+        <div className="flex justify-end mb-12">
+           <div className="w-80 space-y-3 bg-[#f9f9f9] p-6 rounded-xl border-2 border-[#eee]">
+              <div className="flex justify-between text-[14px] text-[#000] font-bold">
+                 <span>Subtotal</span>
+                 <span>₹{subtotal.toLocaleString()}</span>
               </div>
-              <p className="text-[9px] font-black uppercase tracking-[0.4em] opacity-40">AUTHENTIC DOCUMENT • NON-TRANSFERABLE</p>
-           </div>
-
-           <div className="space-y-6">
-              <div className="space-y-3">
-                 <div className="flex justify-between items-center text-xs font-bold opacity-40 tracking-wider">
-                    <span className="uppercase">Net Transaction</span>
-                    <span className="tabular-nums">₹{subtotal.toLocaleString()}</span>
-                 </div>
-                 <div className="flex justify-between items-center text-xs font-bold text-[#00A86B] tracking-wider">
-                    <span className="uppercase font-black text-[9px]">Tax Allocation (0%)</span>
-                    <span className="tabular-nums">+ ₹0.00</span>
-                 </div>
-                 <div className="h-px bg-white/10 w-full" />
-                 <div className="flex justify-between items-end pt-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 pb-1.5">Gross Total</span>
-                    <span className="text-5xl font-black tabular-nums tracking-tighter italic">₹{totalPayable.toLocaleString()}</span>
-                 </div>
+              <div className="flex justify-between text-[14px] text-[#00b894] font-black">
+                 <span>Tax (0% GST)</span>
+                 <span>+ ₹0.00</span>
               </div>
-
-              <div className="p-6 bg-white/5 border border-white/10 rounded-2xl space-y-4">
-                 <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest opacity-40">
-                    <span>Credit Received</span>
-                    <span className="text-[#00A86B]">
-                      - ₹{isEditing ? (
-                        <input
-                          type="number"
-                          value={metadata.advancePaid}
-                          onChange={(e) => updateMeta('advancePaid', Number(e.target.value) || 0)}
-                          className="bg-yellow-50/20 border-b-2 border-[#00A86B] outline-none text-center w-24 text-[#00A86B] rounded"
-                          min={0}
-                        />
-                      ) : metadata.advancePaid.toLocaleString()}
-                    </span>
-                 </div>
-                 <div className="flex justify-between items-center">
-                    <span className="text-sm font-black uppercase tracking-widest text-[#00A86B]">Balance Due</span>
-                    <span className="text-2xl font-black tabular-nums tracking-tighter decoration-[#00A86B] underline underline-offset-8 decoration-4">₹{balanceDue.toLocaleString()}</span>
-                 </div>
+              <div className="flex justify-between text-[14px] border-b-2 border-[#ddd] pb-3 text-[#000] font-bold">
+                 <span>Advance Paid</span>
+                 <span className="text-red-500">
+                    - ₹{isEditing ? (
+                      <input
+                        type="number"
+                        value={metadata.advancePaid}
+                        onChange={(e) => updateMeta('advancePaid', Number(e.target.value) || 0)}
+                        className="bg-[#e8f8f5] text-right w-24 outline-none rounded font-black"
+                      />
+                    ) : metadata.advancePaid.toLocaleString()}
+                 </span>
+              </div>
+              <div className="flex justify-between text-[22px] font-black pt-2 text-[#000]">
+                 <span>Balance Due</span>
+                 <span className="underline decoration-[#00b894] decoration-4 underline-offset-4">₹{balanceDue.toLocaleString()}</span>
               </div>
            </div>
         </div>
 
-        {/* LEGAL REQUISITES */}
-        <div className="mx-16 mb-16 pt-10 border-t border-neutral-100 grid grid-cols-2 gap-16">
+        {/* NOTES & SIGNATURE */}
+        <div className="grid grid-cols-2 gap-20 mt-auto pt-10 border-t-2 border-[#eee]">
            <div className="space-y-4">
-              <h5 className="text-[10px] font-black uppercase tracking-widest text-neutral-300">Operational Terms</h5>
-              <div className="text-[9px] font-bold text-neutral-400 uppercase leading-relaxed tracking-widest space-y-2">
-                 <p>• Net terms: Strictly 3 days post-deployment</p>
-                 <p>• Dispute clause: Submit in writing within 24H</p>
-                 <p>• Non-payment: Architecture freeze after +7D</p>
+              <h5 className="text-[13px] font-black uppercase tracking-widest text-[#00b894] m-0">Payment Protocol</h5>
+              <div className="text-[12px] text-[#000] leading-relaxed font-bold italic space-y-1">
+                 <p>Bank Transfer: HDFC Bank | growxlabs@hdfc</p>
+                 <p>UPI: growxlabs@ybl</p>
+                 <p>Note: Digital receipt is issued instantly upon confirmation.</p>
               </div>
            </div>
-           <div className="flex flex-col items-end justify-center text-right space-y-3">
-              <div className="h-12 w-48 border border-neutral-100 rounded-xl bg-neutral-50/50 flex flex-col items-center justify-center">
-                 <p className="text-[10px] font-black italic text-[#00A86B] uppercase tracking-[0.2em] mb-1">Authorised Signatory</p>
-                 <div className="h-px w-24 bg-[#0D1B4B]/10" />
+           <div className="text-right flex flex-col items-end">
+              <div className="w-56 border-b-4 border-[#333] mb-2 flex items-center justify-center">
+                 {/* Space for stamp/signature */}
+                 <div className="h-16 flex items-center justify-center text-[10px] text-neutral-300 font-bold uppercase tracking-[4px]">Verified</div>
               </div>
-              <p className="text-[8px] font-black text-neutral-300 uppercase tracking-[0.5em]">Digitally Secured by GrowX</p>
+              <p className="text-[13px] font-black text-[#000] uppercase m-0">Authorized Signatory</p>
+              <p className="text-[11px] text-[#666] font-bold m-0 tracking-widest uppercase">GrowX Labs Engineering</p>
            </div>
         </div>
+
+        {/* FOOTER */}
+        <div className="mt-12 pt-6 border-t border-[#eee] text-center text-[12px] text-[#aaa] font-bold">
+           GrowX Labs | growxlabs.tech | hello@growxlabs.tech | © 2025 GrowX Labs. All rights reserved.
+        </div>
+
       </div>
 
-      {/* CORE PRINT STYLE */}
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @media print {
-          body { background: white !important; margin: 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .print\\:hidden, [class*="print:hidden"] { display: none !important; }
-          @page { margin: 1cm; size: A4 portrait; }
-          .min-h-screen { min-height: auto !important; padding: 0 !important; margin: 0 !important; }
-          .bg-neutral-50\\/50 { background: white !important; }
-          .shadow-\\[0_40px_100px_rgba\\(0\\,0\\,0\\,0\\.04\\)\\] { box-shadow: none !important; }
-          input, textarea { border: none !important; background: none !important; }
-          button { display: none !important; }
+          body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .print\\:hidden { display: none !important; }
+          @page { margin: 1cm; size: A4; }
+          .shadow-2xl { box-shadow: none !important; }
+          .min-h-screen { min-height: auto !important; padding: 0 !important; }
+          input, textarea { border: none !important; background: none !important; color: #000 !important; font-weight: bold !important; }
+          .bg-[#00b894] { background-color: #00b894 !important; }
+          .text-[#00b894] { color: #00b894 !important; }
+          .bg-[#e8f8f5] { background-color: #e8f8f5 !important; }
         }
-      `}</style>
+      ` }} />
     </div>
   );
 }

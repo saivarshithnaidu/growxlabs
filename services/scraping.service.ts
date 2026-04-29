@@ -82,7 +82,7 @@ export class ScrapingService {
         const lead = {
           name: businessName,
           business_name: businessName,
-          phone: phone.replace(/\s+/g, ''),
+          phone: phone ? phone.replace(/\s+/g, '') : "",
           website_url: null,
           has_website: false,
           google_rating: googleRating,

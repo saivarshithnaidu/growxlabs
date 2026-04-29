@@ -35,7 +35,13 @@ export async function POST(req: Request) {
 
     for (const lead of prospects) {
       try {
-        const domain = lead.website_url ? new URL(lead.website_url).hostname.replace("www.", "") : null;
+        const domain = lead.website_url ? (() => {
+          try {
+            return new URL(lead.website_url).hostname.replace("www.", "");
+          } catch {
+            return null;
+          }
+        })() : null;
         
         const apolloRes = await fetch("https://api.apollo.io/v1/people/match", {
           method: "POST",

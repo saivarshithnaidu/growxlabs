@@ -25,7 +25,7 @@ export default function Loading() {
             transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
             className="absolute inset-2 border-t-2 border-l-2 border-[#00b894] rounded-full"
           />
-          
+
           {/* Pulsing center dot */}
           <motion.div
             animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
@@ -36,24 +36,24 @@ export default function Loading() {
 
         {/* Text Loading State */}
         <div className="space-y-4 text-center">
-          <motion.h3 
+          <motion.h3
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-white text-xs font-black uppercase tracking-[0.4em] italic"
           >
             Synchronizing Matrix
           </motion.h3>
-          
+
           {/* Skeleton-like progress bar */}
           <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
             <motion.div
-              animate={{ 
+              animate={{
                 x: ['-100%', '100%'],
               }}
-              transition={{ 
-                duration: 1.5, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
               }}
               className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-[#00b894] to-transparent"
             />
@@ -62,12 +62,12 @@ export default function Loading() {
 
         {/* Floating Technical HUD elements (Static/Subtle) */}
         <div className="mt-20 grid grid-cols-3 gap-8 opacity-20">
-           {[1, 2, 3].map((i) => (
-             <div key={i} className="space-y-2">
-                <div className="h-1 w-12 bg-white/40 rounded-full" />
-                <div className="h-1 w-8 bg-white/20 rounded-full" />
-             </div>
-           ))}
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="space-y-2">
+              <div className="h-1 w-12 bg-white/40 rounded-full" />
+              <div className="h-1 w-8 bg-white/20 rounded-full" />
+            </div>
+          ))}
         </div>
       </div>
 

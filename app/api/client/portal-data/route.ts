@@ -16,7 +16,7 @@ export async function GET() {
     if (!client) throw new Error("Client not found");
 
     const [agreements, invoices, projects] = await Promise.all([
-      supabaseAdmin.from("agreements").select("*").eq("client_id", client.id).order("created_at", { ascending: false }),
+      supabaseAdmin.from("agreements").select("*, clients(*)").eq("client_id", client.id).order("created_at", { ascending: false }),
       supabaseAdmin.from("invoices").select("*").eq("client_id", client.id).order("created_at", { ascending: false }),
       supabaseAdmin.from("projects").select("*").eq("client_id", client.id).order("created_at", { ascending: false }),
     ]);

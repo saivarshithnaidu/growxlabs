@@ -80,7 +80,7 @@ const allServices = [
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  
+
   const languages: Record<string, string> = {
     'x-default': 'https://growxlabs.tech/en-IN/services',
   };
@@ -163,13 +163,13 @@ export default function ServicesPage() {
         </Reveal>
 
         {/* AEO Layer - Services */}
-        <section className="mt-40 max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Service Deep Dive</h2>
-            <p className="text-[#A0A0A0]">Answers to specific problems we solve for our clients.</p>
+        <section className="mt-48 max-w-5xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-6 tracking-tight">Service Deep Dive</h2>
+            <p className="text-[#A0A0A0] text-lg font-medium">Answers to specific problems we solve for our clients.</p>
           </div>
 
-          <AEOBlock 
+          <AEOBlock
             question="What problem does Web Engineering solve?"
             answer="It eliminates slow, fragile websites that lose customers and replaces them with high-performance engines built for conversion."
             explanation="Modern users expect instant results. We engineer systems using Next.js and TypeScript that load in milliseconds and guide users directly to your offer."
@@ -178,7 +178,7 @@ export default function ServicesPage() {
             ctaHref="/contact"
           />
 
-          <AEOBlock 
+          <AEOBlock
             question="What problem does AI & Automation solve?"
             answer="It removes the bottleneck of manual, repetitive work that prevents your team from scaling."
             explanation="We build custom AI agents and automated workflows that handle lead triage, scheduling, and data processing 24/7."
@@ -187,7 +187,7 @@ export default function ServicesPage() {
             ctaHref="/contact"
           />
 
-          <AEOBlock 
+          <AEOBlock
             question="What problem does Technical SEO solve?"
             answer="It solves the 'hidden business' problem by ensuring AI engines and search platforms actively recommend you to high-intent buyers."
             explanation="We optimize your site's schema, performance, and structure to meet the strict standards of SGE and ChatGPT-style search."
@@ -196,7 +196,7 @@ export default function ServicesPage() {
             ctaHref="/contact"
           />
 
-          <AEOBlock 
+          <AEOBlock
             question="What problem does Cloud Infrastructure solve?"
             answer="It eliminates the risk of downtime and data loss that can destroy business continuity and reputation."
             explanation="We deploy enterprise-grade cloud environments with automated scaling, daily backups, and 24/7 proactive monitoring."
@@ -205,7 +205,7 @@ export default function ServicesPage() {
             ctaHref="/contact"
           />
 
-          <AEOBlock 
+          <AEOBlock
             question="What problem does Product Design solve?"
             answer="It solves high drop-off rates by making complex digital actions feel simple and intuitive for the end-user."
             explanation="We use psychological design principles to remove friction and guide the user's eye toward the most important actions."
@@ -216,19 +216,21 @@ export default function ServicesPage() {
         </section>
 
         {/* FAQ Section */}
-        <section className="mt-40 max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">Service FAQ</h2>
+        <section className="mt-48 max-w-4xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-[clamp(28px,4vw,36px)] font-bold text-white mb-6 tracking-tight">Service FAQ</h2>
+            <p className="text-[#A0A0A0] font-medium">Clear answers to help you understand our engineering process.</p>
           </div>
 
           <div className="space-y-6">
             {faqData.map((faq, index) => (
               <Reveal key={index} delay={index * 0.1}>
-                <div className="p-8 rounded-2xl border border-white/5 bg-white/[0.02]">
-                  <h4 className="text-white font-bold text-lg mb-3">
+                <div className="p-8 md:p-10 rounded-3xl border border-white/5 bg-white/[0.02] shadow-xl hover:bg-white/[0.04] transition-all">
+                  <h4 className="text-white font-bold text-xl mb-4 tracking-tight flex items-center gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                     {faq.question}
                   </h4>
-                  <p className="text-[#A0A0A0] leading-relaxed">
+                  <p className="text-[#A0A0A0] leading-relaxed pl-4 border-l border-white/10 font-medium">
                     {faq.answer}
                   </p>
                 </div>

@@ -35,17 +35,17 @@ export default function Error({
         >
           <div className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-red-500/10 border border-red-500/20 mb-8 relative">
             <AlertTriangle className="w-10 h-10 text-red-500" />
-            <motion.div 
+            <motion.div
               animate={{ opacity: [0.2, 0.5, 0.2] }}
               transition={{ duration: 2, repeat: Infinity }}
               className="absolute inset-0 rounded-3xl bg-red-500/10 blur-xl"
             />
           </div>
-          
+
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter mb-6 italic uppercase">
             System <span className="text-[#00b894]">Crash.</span>
           </h1>
-          
+
           <p className="text-lg md:text-xl text-white/50 font-medium leading-relaxed mb-10 max-w-md mx-auto">
             An unexpected error has disrupted the GrowX Labs intelligence matrix. Our systems are currently recalibrating.
           </p>
@@ -59,7 +59,7 @@ export default function Error({
               <RefreshCcw className="mr-2 w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
               RETRY CONNECTION
             </Button>
-            
+
             <Link href="/">
               <Button
                 variant="outline"
@@ -75,7 +75,7 @@ export default function Error({
 
         {/* Error Code/Digest - Technical Detail */}
         {error.digest && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.3 }}
             className="mt-12 p-4 rounded-xl border border-white/5 bg-white/[0.02]"
@@ -92,11 +92,11 @@ export default function Error({
         <div className="space-y-1">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-0.5 w-32 bg-white rounded-full overflow-hidden">
-               <motion.div 
-                 animate={{ x: ['-100%', '200%'] }}
-                 transition={{ duration: 1.5 + i, repeat: Infinity, ease: "linear" }}
-                 className="h-full bg-red-500 w-10"
-               />
+              <motion.div
+                animate={{ x: ['-100%', '200%'] }}
+                transition={{ duration: 1.5 + i, repeat: Infinity, ease: "linear" }}
+                className="h-full bg-red-500 w-10"
+              />
             </div>
           ))}
         </div>

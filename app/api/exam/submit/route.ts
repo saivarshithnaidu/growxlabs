@@ -90,17 +90,16 @@ export async function POST(req: Request) {
       // For now we'll use a placeholder or lookup in data
       const courseName = courseId.replace(/-/g, ' ').toUpperCase(); 
 
-      const certId = `GXL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const certId = `GXL-${courseId.toUpperCase().slice(0, 4)}-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
+      const verificationCode = `VER-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // Save to certificates
       await supabaseAdmin.from("certificates").insert({
-        cert_id: certId,
-        student_name: userData?.name || "Student",
-        student_email: userData?.email || "",
-        course_name: courseName,
+        id: certId,
+        user_id: userId,
+        course_id: courseId,
         grade: grade,
-        issue_date: new Date().toISOString(),
-        verified: true
+        issued_at: new Date().toISOString(),
+        verification_code: verificationCode
       });
 
       // Send Email

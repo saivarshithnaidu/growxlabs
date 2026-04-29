@@ -1,5 +1,6 @@
+import React from "react";
 import { RealEstateNavbar } from "@/components/realestate/Navbar";
-import { RestaurantFooter } from "@/components/restaurant/Footer";
+import { RealEstateFooter } from "@/components/realestate/Footer";
 
 export default function RealEstateLayout({
   children,
@@ -12,7 +13,7 @@ export default function RealEstateLayout({
       <main className="flex-grow">
         {children}
       </main>
-      <RestaurantFooter />
+      <RealEstateFooter />
     </div>
   );
 }

@@ -67,8 +67,8 @@ export function Navbar() {
       <nav
         className={cn(
           "fixed top-0 w-full z-50 transition-all duration-500 py-4",
-          isScrolled 
-            ? "bg-black/80 backdrop-blur-md border-b border-white/10" 
+          isScrolled
+            ? "bg-black/80 backdrop-blur-md border-b border-white/10"
             : "bg-transparent border-b border-transparent"
         )}
       >
@@ -76,10 +76,10 @@ export function Navbar() {
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center group">
               <div className="relative h-12 w-48 transition-transform group-hover:scale-[1.02] duration-300">
-                <Image 
-                  src="/logo.svg" 
-                  alt="GrowX Labs" 
-                  fill 
+                <Image
+                  src="/logo.svg"
+                  alt="GrowX Labs"
+                  fill
                   className="object-contain"
                   priority
                 />
@@ -135,14 +135,14 @@ export function Navbar() {
       <div
         className={cn(
           "fixed inset-0 z-[55] lg:hidden transition-all duration-500 ease-in-out",
-          isMobileMenuOpen 
-            ? "opacity-100 pointer-events-auto" 
+          isMobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         )}
       >
         {/* Backdrop */}
         <div className="absolute inset-0 bg-black/98 backdrop-blur-xl" />
-        
+
         {/* Menu Content — slides from right */}
         <div
           className={cn(
@@ -160,19 +160,19 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          
+
           <div className="pt-10 flex flex-col items-center space-y-4 w-full max-w-[280px]">
             <Link href={isLoggedIn ? dashboardPath : "/register"} className="block w-full">
-              <Button 
-                className="w-full bg-[#00A86B] hover:bg-[#00A86B]/90 shadow-none text-white font-semibold h-14 rounded-full text-lg" 
+              <Button
+                className="w-full bg-[#00A86B] hover:bg-[#00A86B]/90 shadow-none text-white font-semibold h-14 rounded-full text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {isLoggedIn ? t("dashboard") : t("get_started")}
               </Button>
             </Link>
             {isLoggedIn && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full border-white/10 text-white/40 h-14 rounded-full"
                 onClick={() => {
                   signOut();

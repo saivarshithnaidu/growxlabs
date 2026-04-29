@@ -10,7 +10,7 @@ import Script from "next/script";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  
+
   const languages: Record<string, string> = {
     'x-default': 'https://growxlabs.tech/en-IN',
   };
@@ -131,7 +131,7 @@ export default function Home() {
           </Reveal>
         </div>
 
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[400px] sm:h-[500px] bg-[#00A86B]/[0.04] blur-[100px] sm:blur-[150px] -z-10 rounded-full" />
+
       </section>
 
       {/* AEO Layer - Homepage */}
@@ -144,7 +144,7 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Direct Solutions for Your Business</h2>
           </div>
 
-          <AEOBlock 
+          <AEOBlock
             question="What does GrowX Labs actually do?"
             answer="GrowX Labs builds complete digital systems that help businesses generate leads, automate workflows, and convert visitors into paying customers."
             explanation="Most websites only display information. We build systems that guide users to take action and turn traffic into revenue."
@@ -153,7 +153,7 @@ export default function Home() {
             ctaHref="/contact"
           />
 
-          <AEOBlock 
+          <AEOBlock
             question="Why most business websites fail to get clients?"
             answer="Most websites are built as digital brochures that lack conversion triggers, lead capture systems, and automated follow-ups."
             explanation="A website without a growth system is just a cost. We transform it into an asset by engineering every element to drive user intent toward a conversion."
@@ -162,7 +162,7 @@ export default function Home() {
             ctaHref="/contact"
           />
 
-          <AEOBlock 
+          <AEOBlock
             question="How does GrowX Labs help you get clients?"
             answer="We deploy a 4-step growth engine: Build performance foundation → Integrate lead capture → Automate follow-ups → Optimize for scale."
             explanation="This end-to-end approach ensures no lead is wasted and your sales process runs 24/7 without manual effort."

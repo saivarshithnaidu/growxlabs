@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Menu, X, BedDouble, Calendar } from 'lucide-react';
+import { Menu, X, BedDouble } from 'lucide-react';
 import { Link } from '@/navigation';
 import { Button } from '@/components/ui/Button';
 
@@ -11,42 +11,58 @@ export const HotelNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navLinks = [
+    { name: 'Suites', href: '/hotel/rooms' },
+    { name: 'Amenities', href: '/hotel/amenities' },
+    { name: 'Experience', href: '/hotel/gallery' },
+  ];
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${isScrolled ? 'bg-black/90 backdrop-blur-2xl border-b border-white/10 py-4' : 'bg-transparent py-8'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      isScrolled 
+        ? 'bg-black/80 backdrop-blur-xl border-b border-white/5 py-4' 
+        : 'bg-transparent py-8'
+    }`}>
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <Link href="/hotel" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center border border-primary/50 group-hover:bg-primary transition-all duration-500">
-            <BedDouble className="text-primary group-hover:text-white w-6 h-6" />
+        <Link href="/hotel" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/20 group-hover:bg-primary transition-all duration-500">
+            <BedDouble className="text-primary group-hover:text-black w-5 h-5 transition-colors" />
           </div>
-          <span className="text-2xl font-black tracking-tighter text-white">GrowX <span className="text-primary italic">Hotels</span></span>
+          <span className="text-xl font-black tracking-tighter text-white uppercase italic">
+            GrowX <span className="text-primary not-italic">Hotels</span>
+          </span>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-10">
-          {['Rooms', 'Amenities', 'Gallery', 'Booking'].map((item) => (
+        <div className="hidden md:flex items-center gap-12">
+          {navLinks.map((link) => (
             <Link 
-              key={item} 
-              href={`/hotel/${item.toLowerCase()}`}
-              className="text-sm font-black uppercase tracking-[0.2em] text-white/50 hover:text-white transition-all hover:translate-y-[-2px]"
+              key={link.name} 
+              href={link.href}
+              className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 hover:text-primary transition-all relative group"
             >
-              {item}
+              {link.name}
+              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary transition-all group-hover:w-full" />
             </Link>
           ))}
           <Link href="/hotel/rooms">
-            <Button className="h-12 px-8 rounded-full bg-white text-black hover:bg-primary hover:text-white transition-all font-black text-xs uppercase tracking-widest">
-              Reserve Now
+            <Button size="sm" className="rounded-full px-8 h-12 font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-primary/10">
+              Reserve
             </Button>
           </Link>
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X /> : <Menu />}
+        <button 
+          className="md:hidden w-10 h-10 flex items-center justify-center bg-white/5 rounded-full text-white" 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
@@ -54,26 +70,37 @@ export const HotelNavbar = () => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="bg-black/95 backdrop-blur-2xl border-b border-white/10 overflow-hidden md:hidden"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 top-[72px] bg-black/95 backdrop-blur-2xl z-40 md:hidden flex flex-col justify-center items-center gap-8 p-12"
           >
-            <div className="flex flex-col gap-8 p-12">
-              {['Rooms', 'Amenities', 'Gallery', 'Booking'].map((item) => (
+            {navLinks.map((link) => (
+              <motion.div
+                key={link.name}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
                 <Link 
-                  key={item} 
-                  href={`/hotel/${item.toLowerCase()}`}
-                  className="text-4xl font-black text-white hover:text-primary"
+                  href={link.href}
+                  className="text-5xl font-black text-white hover:text-primary transition-colors uppercase italic"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {item}
+                  {link.name}
                 </Link>
-              ))}
-            </div>
+              </motion.div>
+            ))}
+            <Link href="/hotel/rooms" className="mt-8" onClick={() => setMobileMenuOpen(false)}>
+              <Button size="lg" className="rounded-full px-12 h-16 font-black uppercase tracking-widest">
+                Book a Suite
+              </Button>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
     </nav>
   );
 };
+
+
+

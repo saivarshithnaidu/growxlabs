@@ -38,7 +38,13 @@ export class EnrichmentService {
           },
           body: JSON.stringify({
             name: lead.business_name,
-            domain: lead.website_url ? new URL(lead.website_url).hostname : undefined
+            domain: lead.website_url ? (() => {
+              try {
+                return new URL(lead.website_url).hostname;
+              } catch {
+                return undefined;
+              }
+            })() : undefined
           })
         });
 

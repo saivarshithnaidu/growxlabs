@@ -1,13 +1,13 @@
-import { 
-  Code, 
-  Settings, 
-  TrendingUp, 
-  Server, 
-  Globe, 
-  Zap, 
-  Shield, 
+import {
+  Code,
+  Settings,
+  TrendingUp,
+  Server,
+  Globe,
+  Zap,
+  Shield,
   Clock,
-  LucideIcon 
+  LucideIcon
 } from "lucide-react";
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -29,7 +29,7 @@ interface ServiceCardProps {
 
 export function ServiceCard({ title, description, iconName }: ServiceCardProps) {
   const Icon = ICON_MAP[iconName] || Settings;
-  
+
   return (
     <div className="group h-full transition-transform duration-300 hover:-translate-y-1">
       <div className="h-full flex flex-col space-y-4 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-2xl p-6 transition-all duration-300 group-hover:border-[rgba(0,168,107,0.3)] group-hover:border-l-2 group-hover:border-l-[#00A86B]">
