@@ -56,8 +56,8 @@ export function Footer() {
               <a href="mailto:hello@growxlabs.tech" className="flex items-center gap-2 text-[13px] text-[#A0A0A0] hover:text-white transition-colors justify-center md:justify-start">
                 <Mail size={12} /> hello@growxlabs.tech
               </a>
-              <a href="tel:+919121600000" className="flex items-center gap-2 text-[13px] text-[#A0A0A0] hover:text-white transition-colors justify-center md:justify-start">
-                <Phone size={12} /> +91 91216 00000
+              <a href="tel:+918185958336" className="flex items-center gap-2 text-[13px] text-[#A0A0A0] hover:text-white transition-colors justify-center md:justify-start">
+                <Phone size={12} /> +91 81859 58336
               </a>
             </div>
 

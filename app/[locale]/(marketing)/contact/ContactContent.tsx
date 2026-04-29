@@ -89,7 +89,7 @@ export function ContactContent() {
             <div className="space-y-8">
               {[
                 { icon: Mail, label: "Email", value: "hello@growxlabs.tech", href: "mailto:hello@growxlabs.tech" },
-                { icon: Phone, label: "Phone", value: "+91 91216 00000", href: "tel:+919121600000" },
+                { icon: Phone, label: "Phone", value: "+91 81859 58336", href: "tel:+918185958336" },
                 { icon: MapPin, label: "Location", value: "Guntur, Andhra Pradesh, India" },
               ].map((item, i) => (
                 <div key={i} className="flex items-center space-x-6 group">
