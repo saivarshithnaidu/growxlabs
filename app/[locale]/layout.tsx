@@ -10,6 +10,7 @@ import { CookieConsent } from "@/components/layout/CookieConsent";
 import { Toaster } from "sonner";
 import dynamic from "next/dynamic";
 import { locales } from "@/navigation";
+import { Analytics } from '@vercel/analytics/next';
 import "../globals.css";
 
 const inter = Inter({ 
@@ -85,6 +86,7 @@ export default async function LocaleLayout({
             
           </AuthProvider>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );
