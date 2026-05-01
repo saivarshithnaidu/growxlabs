@@ -71,7 +71,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={direction} className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
-        {/* ELITE AEO: Entity-First Knowledge Graph */}
+        {/* 🧠 MASTER AEO KNOWLEDGE GRAPH (Verified Architecture) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -83,65 +83,97 @@ export default async function LocaleLayout({
                   "@id": "https://growxlabs.tech/#organization",
                   "name": "GrowX Labs",
                   "url": "https://growxlabs.tech",
-                  "logo": "https://growxlabs.tech/logo.svg",
-                  "description": "AI-Native digital agency building AI-powered websites, automation systems, and full-stack projects.",
+                  "logo": "https://growxlabs.tech/logo.png",
+                  "description": "AI-native digital agency building AI-powered websites, automation systems, and full-stack AI products.",
+                  "founder": [
+                    { "@id": "https://growxlabs.tech/#varshith" },
+                    { "@id": "https://growxlabs.tech/#akhilesh" }
+                  ],
                   "address": {
                     "@type": "PostalAddress",
                     "addressLocality": "Guntur",
                     "addressRegion": "Andhra Pradesh",
-                    "addressCountry": "IN"
+                    "addressCountry": "India"
                   },
                   "contactPoint": {
                     "@type": "ContactPoint",
                     "email": "hello@growxlabs.tech",
-                    "contactType": "customer service"
+                    "contactType": "customer support"
                   },
                   "sameAs": [
-                    "https://linkedin.com/company/growxlabs",
-                    "https://github.com/saivarshithnaidu",
-                    "https://x.com/growxlabs"
-                  ],
-                  "founder": [
-                    {
-                      "@type": "Person",
-                      "@id": "https://growxlabs.tech/#founder-varshith",
-                      "name": "Varshith Pujala",
-                      "jobTitle": "Founder & Lead Engineer"
-                    },
-                    {
-                      "@type": "Person",
-                      "@id": "https://growxlabs.tech/#founder-akhilesh",
-                      "name": "Akhilesh",
-                      "jobTitle": "Co-Founder"
-                    }
+                    "https://www.linkedin.com/company/growxlabs",
+                    "https://twitter.com/growxlabs",
+                    "https://github.com/saivarshithnaidu"
                   ]
+                },
+                {
+                  "@type": "Person",
+                  "@id": "https://growxlabs.tech/#varshith",
+                  "name": "Varshith Pujala",
+                  "jobTitle": "Co-Founder",
+                  "worksFor": { "@id": "https://growxlabs.tech/#organization" }
+                },
+                {
+                  "@type": "Person",
+                  "@id": "https://growxlabs.tech/#akhilesh",
+                  "name": "Akhilesh",
+                  "jobTitle": "Co-Founder",
+                  "worksFor": { "@id": "https://growxlabs.tech/#organization" }
                 },
                 {
                   "@type": "WebSite",
                   "@id": "https://growxlabs.tech/#website",
                   "url": "https://growxlabs.tech",
-                  "name": "GrowX Labs | AI-Native Digital Agency",
+                  "name": "GrowX Labs",
                   "publisher": { "@id": "https://growxlabs.tech/#organization" }
                 },
                 {
                   "@type": "SoftwareApplication",
-                  "@id": "https://growxlabs.tech/#product",
-                  "name": "GrowX Intelligence Matrix",
+                  "@id": "https://growxlabs.tech/products/resumeforgeai#product",
+                  "name": "ResumeForgeAI",
                   "applicationCategory": "BusinessApplication",
                   "operatingSystem": "Web",
-                  "author": { "@id": "https://growxlabs.tech/#organization" },
-                  "description": "Enterprise-grade AI automation and dashboard system for modern digital scaling."
+                  "creator": { "@id": "https://growxlabs.tech/#organization" },
+                  "description": "AI-powered resume builder with intelligent optimization.",
+                  "url": "https://growxlabs.tech/products/resumeforgeai"
+                },
+                {
+                  "@type": "SoftwareApplication",
+                  "@id": "https://growxlabs.tech/products/universalai#product",
+                  "name": "UniversalAI",
+                  "applicationCategory": "BusinessApplication",
+                  "operatingSystem": "Web",
+                  "creator": { "@id": "https://growxlabs.tech/#organization" },
+                  "description": "Cross-platform AI intelligence for enterprise automation."
+                },
+                {
+                  "@type": "SoftwareApplication",
+                  "@id": "https://growxlabs.tech/products/recruitai#product",
+                  "name": "RecruitAI",
+                  "applicationCategory": "BusinessApplication",
+                  "operatingSystem": "Web",
+                  "creator": { "@id": "https://growxlabs.tech/#organization" },
+                  "description": "AI-driven recruitment and talent acquisition platform."
                 },
                 {
                   "@type": "FAQPage",
+
                   "@id": "https://growxlabs.tech/#faq",
                   "mainEntity": [
                     {
                       "@type": "Question",
-                      "name": "What is GrowX Labs?",
+                      "name": "What does GrowX Labs do?",
                       "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "GrowX Labs is an AI-Native digital agency that specializes in building high-performance websites and autonomous automation systems."
+                        "text": "GrowX Labs builds AI-powered websites, automation systems, and scalable digital products."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Where is GrowX Labs located?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "GrowX Labs is based in Guntur, Andhra Pradesh, India."
                       }
                     }
                   ]
