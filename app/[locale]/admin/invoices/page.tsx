@@ -90,10 +90,10 @@ export default function InvoicesPage() {
       setLoading(true);
       const res = await fetch("/api/invoice/list");
       const data = await res.json();
-      setInvoices(data || []);
+      setInvoices(Array.isArray(data) ? data : []);
       
       // Auto-increment invoice number
-      if (data && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         setForm(prev => ({
           ...prev,
           invoiceNumber: `INV-2026-${String(data.length + 1).padStart(3, '0')}`
@@ -101,6 +101,7 @@ export default function InvoicesPage() {
       }
     } catch (e) {
       console.error(e);
+      setInvoices([]);
     } finally {
       setLoading(false);
     }

@@ -121,8 +121,11 @@ export default function ProposalsPage() {
       setLoading(true);
       const res = await fetch("/api/proposals/list");
       const data = await res.json();
-      setProposals(data || []);
-    } catch (e) { console.error(e); }
+      setProposals(Array.isArray(data) ? data : []);
+    } catch (e) { 
+      console.error(e);
+      setProposals([]);
+    }
     finally { setLoading(false); }
   };
 

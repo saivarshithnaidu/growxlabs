@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from '@/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Home, ArrowLeft, Zap, ShieldAlert } from 'lucide-react';
 
