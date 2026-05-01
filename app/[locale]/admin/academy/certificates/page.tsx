@@ -21,14 +21,15 @@ export default async function CertificateManagement() {
   return (
     <div className="space-y-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-black text-white tracking-tighter italic uppercase">Registry Admin.</h1>
-          <p className="text-white/40 font-medium tracking-tight">Audit and verify globally recognized student credentials.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold text-white tracking-tight">Registry Admin</h1>
+          <p className="text-white/40 font-medium">Audit and verify globally recognized student credentials.</p>
         </div>
         <div className="flex gap-3">
-           <Button variant="outline" className="h-14 px-8 border-white/5 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white">
-              <RefreshCcw size={16} className="mr-2" /> REGENERATE BATCH
+           <Button variant="outline" className="border-white/10 text-white/80 hover:text-white hover:bg-white/5 px-6 py-2 h-11 font-medium rounded-md flex items-center gap-2">
+              <RefreshCcw size={16} />
+              Regenerate Batch
            </Button>
         </div>
       </div>
@@ -36,80 +37,80 @@ export default async function CertificateManagement() {
       {/* Stats Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
          {[
-           { label: "Total Issued", value: certificates?.length || 0, icon: Award, color: "text-primary" },
-           { label: "Active Verifications", value: certificates?.length || 0, icon: ShieldAlert, color: "text-blue-400" },
-           { label: "Revoked Logs", value: "0", icon: CheckCircle2, color: "text-[#00A86B]" },
-           { label: "Pending Print", value: "0", icon: FileCheck, color: "text-white/20" }
+           { label: "Total Issued", value: certificates?.length || 0, icon: Award, color: "text-white" },
+           { label: "Active Verifications", value: certificates?.length || 0, icon: ShieldAlert, color: "text-white/60" },
+           { label: "Revoked Logs", value: "0", icon: CheckCircle2, color: "text-white/60" },
+           { label: "Pending Print", value: "0", icon: FileCheck, color: "text-white/40" }
          ].map((stat, i) => (
-           <div key={i} className="bg-[#0A0A0A] border border-white/5 p-8 rounded-[32px]">
-              <div className="flex items-center justify-between mb-4">
-                 <div className={cn("p-3 bg-white/5 rounded-2xl", stat.color)}>
-                    <stat.icon size={20} />
-                 </div>
+           <div key={i} className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex items-center justify-between">
+              <div>
+                 <p className="text-white/40 text-sm font-medium mb-1">{stat.label}</p>
+                 <h3 className="text-2xl font-bold text-white tracking-tight">{stat.value}</h3>
               </div>
-              <p className="text-white/20 text-[9px] font-black uppercase tracking-widest mb-1">{stat.label}</p>
-              <h3 className="text-3xl font-black text-white tracking-tighter italic">{stat.value}</h3>
+              <div className={cn("p-3 bg-white/5 rounded-xl", stat.color)}>
+                 <stat.icon size={20} />
+              </div>
            </div>
          ))}
       </div>
 
       {/* Certificates Table */}
-      <div className="bg-[#0A0A0A] border border-white/10 rounded-[40px] overflow-hidden">
-         <div className="p-8 border-b border-white/5 flex items-center justify-between gap-4">
-            <div className="flex-1 relative">
-               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+      <div className="bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden">
+         <div className="p-6 border-b border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="w-full sm:flex-1 relative">
+               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" size={16} />
                <input 
                  type="text" 
                  placeholder="Search student name or certificate ID..." 
-                 className="w-full bg-white/5 border border-white/5 rounded-xl py-4 pl-14 pr-6 text-xs text-white focus:border-primary/20 outline-none transition-all"
+                 className="w-full bg-white/5 border border-white/5 rounded-lg py-2.5 pl-10 pr-4 text-sm text-white focus:border-white/20 outline-none transition-all"
                />
             </div>
          </div>
 
          <div className="overflow-x-auto">
-            <table className="w-full text-left">
+            <table className="w-full text-left border-collapse">
                <thead>
-                  <tr className="border-b border-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-white/20">
-                     <th className="px-10 py-6">Certificate ID</th>
-                     <th className="px-10 py-6">Student</th>
-                     <th className="px-10 py-6">Mastery Track</th>
-                     <th className="px-10 py-6">Issued Date</th>
-                     <th className="px-10 py-6 text-right">Actions</th>
+                  <tr className="border-b border-white/5 text-xs font-semibold text-white/40 tracking-wider uppercase bg-white/[0.01]">
+                     <th className="px-6 py-4">Certificate ID</th>
+                     <th className="px-6 py-4">Student</th>
+                     <th className="px-6 py-4">Mastery Track</th>
+                     <th className="px-6 py-4">Issued Date</th>
+                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                </thead>
                <tbody className="divide-y divide-white/5">
                   {certificates?.map((cert) => (
                      <tr key={cert.id} className="group hover:bg-white/[0.02] transition-all">
-                        <td className="px-10 py-6">
-                           <span className="text-[10px] font-mono font-bold text-white/40 tracking-widest uppercase">
-                              {cert.id}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                           <span className="text-xs font-mono text-white/60">
+                              {cert.id.slice(0, 13)}...
                            </span>
                         </td>
-                        <td className="px-10 py-6">
+                        <td className="px-6 py-4">
                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center font-black text-[10px] text-primary">
+                              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center font-bold text-xs text-white/80 shrink-0">
                                  {cert.clients?.name?.charAt(0) || 'S'}
                               </div>
-                              <div>
-                                 <p className="text-white font-bold text-sm tracking-tight">{cert.clients?.name || 'Unknown Student'}</p>
-                                 <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest">{cert.clients?.email}</p>
+                              <div className="min-w-0">
+                                 <p className="text-white font-medium text-sm truncate">{cert.clients?.name || 'Unknown Student'}</p>
+                                 <p className="text-xs text-white/40 truncate">{cert.clients?.email}</p>
                               </div>
                            </div>
                         </td>
-                        <td className="px-10 py-6">
-                           <span className="text-[10px] font-bold text-primary bg-primary/5 px-3 py-1 rounded-full border border-primary/20">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                           <span className="text-xs font-medium text-white/80 bg-white/5 px-2.5 py-1 rounded-md border border-white/10">
                               {cert.courses?.title || 'Unknown Course'}
                            </span>
                         </td>
-                        <td className="px-10 py-6">
-                           <span className="text-[10px] font-black uppercase tracking-widest text-white/20">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                           <span className="text-xs text-white/60">
                               {new Date(cert.issued_at).toLocaleDateString()}
                            </span>
                         </td>
-                        <td className="px-10 py-6 text-right">
-                           <button className="p-3 text-white/20 hover:text-primary transition-all">
-                              <Download size={18} />
-                           </button>
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-white/40 hover:text-white hover:bg-white/10">
+                              <Download size={16} />
+                           </Button>
                         </td>
                      </tr>
                   ))}
@@ -117,9 +118,9 @@ export default async function CertificateManagement() {
             </table>
 
             {!certificates?.length && (
-               <div className="py-24 text-center opacity-30 flex flex-col items-center">
-                  < Award className="mb-4" size={48} />
-                  <p className="text-sm font-medium tracking-tight">No credentials found in the registry.</p>
+               <div className="py-16 flex flex-col items-center justify-center text-center">
+                  <Award className="mb-4 text-white/20" size={24} />
+                  <p className="text-sm text-white/40">No credentials found in the registry.</p>
                </div>
             )}
          </div>

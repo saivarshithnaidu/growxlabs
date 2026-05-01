@@ -159,16 +159,15 @@ export default function CoursesPage() {
       <div className="max-w-[1600px] mx-auto">
         {/* Header Section */}
         <section className="mb-24">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
             <div className="flex items-center gap-4 justify-center md:justify-start">
               <div className="h-px w-8 bg-primary/30" />
-              <span className="text-primary font-black uppercase tracking-[0.5em] text-[10px]">GrowX Labs Academy</span>
+              <span className="text-primary font-bold uppercase tracking-widest text-xs">GrowX Labs Academy</span>
             </div>
-            <h1 className="text-white font-bold text-[clamp(44px,8vw,100px)] leading-[0.9] tracking-tighter max-w-4xl">
-              Learn AI <br />
-              <span className="text-white/20 italic">Engineering.</span>
+            <h1 className="text-white font-bold text-5xl md:text-7xl tracking-tight max-w-4xl">
+              Learn AI Engineering
             </h1>
-            <p className="text-[#A0A0A0] text-xl md:text-2xl max-w-2xl leading-relaxed font-medium">
+            <p className="text-[#A0A0A0] text-lg md:text-xl max-w-2xl leading-relaxed font-medium">
               Hands-on courses built by engineers who ship real AI products. Every course ends with a GrowX Labs certification.
             </p>
           </motion.div>
@@ -181,51 +180,51 @@ export default function CoursesPage() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="lg:col-span-8 group relative rounded-[48px] overflow-hidden border border-white/5 bg-gradient-to-br from-white/[0.04] to-transparent p-10 md:p-16 transition-all duration-700 hover:border-primary/20 shadow-2xl"
+              className="lg:col-span-8 group relative rounded-3xl overflow-hidden border border-white/5 bg-gradient-to-br from-white/[0.04] to-transparent p-10 md:p-14 transition-all duration-500 hover:border-white/10"
             >
               {/* AI Engineering AEO Section */}
-              <div className="mb-12 p-8 rounded-3xl bg-primary/[0.03] border border-primary/10">
-                <h4 className="text-primary font-bold text-lg mb-6 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5" /> Direct Track Outcome
+              <div className="mb-12 p-8 rounded-2xl bg-white/[0.02] border border-white/5">
+                <h4 className="text-white font-semibold text-lg mb-6 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" /> Direct Track Outcome
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
-                    <p className="text-white font-bold text-sm uppercase tracking-widest opacity-50">What will you become?</p>
-                    <p className="text-white text-lg leading-snug">{flagshipAEO.become}</p>
+                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">What will you become?</p>
+                    <p className="text-white text-base leading-snug">{flagshipAEO.become}</p>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-white font-bold text-sm uppercase tracking-widest opacity-50">What problem does this solve?</p>
-                    <p className="text-white text-lg leading-snug">{flagshipAEO.problemSolved}</p>
+                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">What problem does this solve?</p>
+                    <p className="text-white text-base leading-snug">{flagshipAEO.problemSolved}</p>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-white font-bold text-sm uppercase tracking-widest opacity-50">What will you build?</p>
-                    <p className="text-white text-lg leading-snug">{flagshipAEO.willBuild}</p>
+                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">What will you build?</p>
+                    <p className="text-white text-base leading-snug">{flagshipAEO.willBuild}</p>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-white font-bold text-sm uppercase tracking-widest opacity-50">Who is this for?</p>
-                    <p className="text-white text-lg leading-snug">{flagshipAEO.forWho}</p>
+                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">Who is this for?</p>
+                    <p className="text-white text-base leading-snug">{flagshipAEO.forWho}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="absolute top-0 right-0 p-10">
-                <span className="px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
+              <div className="absolute top-0 right-0 p-8">
+                <span className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold uppercase tracking-wider">
                   Flagship Program
                 </span>
               </div>
 
               <div className="relative z-10">
-                <h2 className="text-primary font-black uppercase tracking-widest text-[11px] mb-6 flex items-center gap-3">
+                <h2 className="text-primary font-semibold uppercase tracking-wider text-sm mb-4 flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                   Core AI Track — Enrollment Open
                 </h2>
-                <h3 className="text-6xl md:text-8xl font-bold text-white mb-6 tracking-tighter leading-none">AI Engineering</h3>
-                <p className="text-2xl md:text-3xl text-white/40 font-medium mb-12">From Scratch to Production</p>
+                <h3 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight leading-tight">AI Engineering</h3>
+                <p className="text-xl md:text-2xl text-white/60 font-medium mb-12">From Scratch to Production</p>
 
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-16 mb-16">
-                  <div className="space-y-8">
-                    <p className="text-white font-black text-xs uppercase tracking-[0.3em] opacity-40">Terminal Skills:</p>
-                    <ul className="space-y-5">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 mb-16">
+                  <div className="space-y-6">
+                    <p className="text-white/40 font-semibold text-xs uppercase tracking-widest">Terminal Skills:</p>
+                    <ul className="space-y-4">
                       {[
                         "How LLMs and AI models actually work",
                         "Prompt engineering from basics to advanced",
@@ -237,44 +236,44 @@ export default function CoursesPage() {
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-4 group">
                           <CheckCircle2
-                            className="text-primary mt-0.5 shrink-0 transition-transform group-hover:scale-125 duration-500"
-                            size={20}
+                            className="text-primary mt-0.5 shrink-0 transition-transform group-hover:scale-110 duration-300"
+                            size={18}
                           />
-                          <span className="text-white/70 font-medium text-lg leading-snug tracking-tight">{item}</span>
+                          <span className="text-white/80 font-medium text-base leading-snug">{item}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="flex flex-col justify-end gap-8 bg-white/[0.02] rounded-[32px] p-10 border border-white/5">
-                    <div className="space-y-6">
-                      <div className="flex items-center gap-4 text-white/50 text-xs font-black uppercase tracking-[0.2em]">
-                        <Clock size={18} className="text-primary" />
+                  <div className="flex flex-col justify-end gap-6 bg-white/[0.02] rounded-2xl p-8 border border-white/5">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4 text-white/60 text-xs font-semibold uppercase tracking-wider">
+                        <Clock size={16} className="text-white/40" />
                         12 Weeks Self-paced
                       </div>
-                      <div className="flex items-center gap-4 text-white/50 text-xs font-black uppercase tracking-[0.2em]">
-                        <GraduationCap size={18} className="text-primary" />
+                      <div className="flex items-center gap-4 text-white/60 text-xs font-semibold uppercase tracking-wider">
+                        <GraduationCap size={16} className="text-white/40" />
                         GrowX Labs Certified
                       </div>
                     </div>
-                    <div className="pt-8 border-t border-white/5">
+                    <div className="pt-6 border-t border-white/5">
                       <div className="flex items-end justify-between mb-6">
                         <div>
-                          <p className="text-white/20 text-[10px] font-black uppercase tracking-widest mb-2">Tuition Fees</p>
-                          <p className="text-4xl font-black text-white">₹1,999</p>
+                          <p className="text-white/40 text-xs font-medium uppercase tracking-widest mb-1">Tuition Fees</p>
+                          <p className="text-4xl font-bold text-white tracking-tight">₹1,999</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-primary text-[10px] font-black uppercase tracking-widest mb-2 line-through opacity-30">
+                          <p className="text-white/40 text-xs font-medium uppercase tracking-widest mb-1 line-through">
                             ₹4,999
                           </p>
-                          <p className="text-primary text-xs font-black uppercase">60% OFF</p>
+                          <p className="text-green-500 text-sm font-bold uppercase">60% OFF</p>
                         </div>
                       </div>
 
                       <Button
                         onClick={() => handleEnroll("ai-engineering")}
                         disabled={loading === "ai-engineering"}
-                        className="w-full h-16 rounded-[20px] bg-primary text-white hover:bg-white hover:text-black font-black uppercase text-xs tracking-[0.3em] transition-all duration-500 shadow-xl shadow-primary/10"
+                        className="w-full h-14 rounded-xl bg-white text-black hover:bg-white/90 font-bold uppercase text-sm tracking-widest transition-all duration-300 shadow-[0_0_15px_rgba(255,255,255,0.1)]"
                       >
                         {loading === "ai-engineering" ? "Processing..." : "Enroll Now"}
                       </Button>
@@ -283,24 +282,24 @@ export default function CoursesPage() {
                 </div>
 
                 {/* Modules Accordion */}
-                <div className="space-y-6 mt-20">
-                  <div className="flex items-center gap-6 mb-10">
-                    <h4 className="text-white font-bold text-3xl tracking-tighter shrink-0">Detailed Curriculum</h4>
-                    <div className="h-px flex-grow bg-white/5" />
+                <div className="space-y-4 mt-16">
+                  <div className="flex items-center gap-6 mb-8">
+                    <h4 className="text-white font-bold text-2xl tracking-tight shrink-0">Detailed Curriculum</h4>
+                    <div className="h-px flex-grow bg-white/10" />
                   </div>
                   {MODULES.map((mod) => (
-                    <div key={mod.id} className="border border-white/5 rounded-3xl overflow-hidden bg-white/[0.01]">
+                    <div key={mod.id} className="border border-white/5 rounded-2xl overflow-hidden bg-white/[0.02]">
                       <button
                         onClick={() => setOpenModule(openModule === mod.id ? null : mod.id)}
-                        className="w-full p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group"
+                        className="w-full p-6 flex items-center justify-between hover:bg-white/[0.04] transition-colors group"
                       >
-                        <span className="text-white font-bold text-xl text-left tracking-tight group-hover:text-primary transition-colors">
+                        <span className="text-white font-medium text-lg text-left tracking-tight group-hover:text-primary transition-colors">
                           {mod.title}
                         </span>
                         <ChevronDown
                           className={cn(
-                            "text-white/20 transition-transform duration-500",
-                            openModule === mod.id && "rotate-180 text-primary"
+                            "text-white/40 transition-transform duration-300",
+                            openModule === mod.id && "rotate-180 text-white"
                           )}
                           size={20}
                         />
@@ -311,10 +310,10 @@ export default function CoursesPage() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white/[0.02] border-t border-white/5"
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="bg-white/[0.01] border-t border-white/5"
                           >
-                            <div className="p-10 text-white/50 leading-relaxed font-medium text-lg">{mod.content}</div>
+                            <div className="p-6 text-white/60 leading-relaxed font-medium text-base">{mod.content}</div>
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -325,29 +324,29 @@ export default function CoursesPage() {
             </motion.div>
 
             {/* Registration Sidebar */}
-            <div className="lg:col-span-4 space-y-12">
+            <div className="lg:col-span-4 space-y-8">
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white/[0.02] border border-white/5 rounded-[48px] p-10 shadow-2xl relative overflow-hidden flex flex-col items-center"
+                className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 relative overflow-hidden flex flex-col items-center"
               >
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[120px] -z-10" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -z-10" />
                 <div className="w-full">
-                  <h4 className="text-white font-bold text-2xl mb-10 flex items-center gap-4 tracking-tighter self-start">
-                    <ShieldCheck className="text-primary" size={26} />
+                  <h4 className="text-white font-bold text-xl mb-8 flex items-center gap-3 tracking-tight self-start">
+                    <ShieldCheck className="text-primary" size={22} />
                     Global Credentials
                   </h4>
                 </div>
 
                 <CertificatePreview />
 
-                <div className="text-center mt-8">
-                  <div className="bg-primary/10 border border-primary/20 rounded-full py-1.5 px-6 inline-flex items-center gap-2 mb-6">
-                    <ShieldCheck size={14} className="text-primary" />
-                    <span className="text-[10px] font-black text-primary uppercase tracking-widest">Institutional Verification</span>
+                <div className="text-center mt-6">
+                  <div className="bg-white/5 border border-white/10 rounded-full py-1.5 px-4 inline-flex items-center gap-2 mb-4">
+                    <ShieldCheck size={14} className="text-white/60" />
+                    <span className="text-xs font-semibold text-white/60 uppercase tracking-widest">Institutional Verification</span>
                   </div>
-                  <p className="text-white/20 text-xs font-medium max-w-[260px] mx-auto leading-relaxed italic">
+                  <p className="text-white/40 text-sm font-medium max-w-[260px] mx-auto leading-relaxed">
                     This certificate is cryptographically signed and globally verifiable via the GrowX Trust Protocol.
                   </p>
                 </div>
@@ -357,26 +356,26 @@ export default function CoursesPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-primary rounded-[48px] p-12 text-black relative overflow-hidden group shadow-2xl shadow-primary/20"
+                className="bg-white rounded-3xl p-10 text-black relative overflow-hidden group shadow-xl"
               >
-                <div className="absolute top-[-20%] right-[-20%] w-[100%] h-[100%] bg-white/30 blur-[120px] rounded-full group-hover:scale-125 transition-transform duration-1000 rotate-12 pointer-events-none" />
+                <div className="absolute top-[-20%] right-[-20%] w-[100%] h-[100%] bg-black/5 blur-[80px] rounded-full pointer-events-none" />
                 <div className="relative z-10">
-                  <h4 className="text-4xl font-black tracking-tighter mb-6 leading-[1.1]">Claim Early Access.</h4>
-                  <p className="text-black/70 font-bold mb-12 text-lg leading-snug">
+                  <h4 className="text-3xl font-bold tracking-tight mb-4">Claim Early Access</h4>
+                  <p className="text-black/60 font-medium mb-8 text-base leading-snug">
                     The first 100 registrations receive a 100% scholarship for life. Secure your track.
                   </p>
-                  <form onSubmit={handleWaitlist} className="space-y-6">
+                  <form onSubmit={handleWaitlist} className="space-y-4">
                     <Input
                       type="email"
                       placeholder="Your professional email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="bg-white/95 border-none rounded-2xl h-16 px-8 text-lg text-black font-semibold placeholder:text-black/30 shadow-none focus:bg-white transition-all"
+                      className="bg-black/5 border-none rounded-xl h-14 px-6 text-base text-black font-medium placeholder:text-black/40 focus:bg-black/10 transition-all"
                     />
                     <Button
                       type="submit"
-                      className="w-full h-16 rounded-2xl bg-black text-white font-black uppercase text-xs tracking-[0.3em] hover:bg-black/90 active:scale-[0.98] transition-all shadow-xl shadow-black/20"
+                      className="w-full h-14 rounded-xl bg-black text-white font-bold uppercase text-xs tracking-widest hover:bg-black/80 transition-all"
                     >
                       Join the Waitlist — Free
                     </Button>
@@ -397,61 +396,56 @@ export default function CoursesPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1, duration: 0.6 }}
-                className="group relative bg-[#060606] border border-white/10 rounded-[32px] overflow-hidden hover:border-primary/40 transition-all duration-700 flex flex-col md:flex-row"
+                className="group relative bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden hover:bg-white/[0.04] transition-all duration-300 flex flex-col md:flex-row"
               >
                 {/* Horizontal Image Section */}
-                <div className="relative w-full md:w-2/5 h-64 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent z-10" />
+                <div className="relative w-full md:w-2/5 h-56 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent z-10" />
                   {course.image && (
-                    <Image
-                      src={course.image}
-                      alt={course.title}
-                      fill
-                      className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                    />
+                     <div className="absolute inset-0 bg-white/5" />
                   )}
                   {/* Difficulty Badge */}
-                  <div className="absolute top-6 left-6 z-20">
-                    <span className="px-4 py-1 bg-black/60 backdrop-blur-xl rounded-full text-[9px] font-black uppercase text-primary border border-primary/20 tracking-widest">
+                  <div className="absolute top-4 left-4 z-20">
+                    <span className="px-3 py-1 bg-black/60 backdrop-blur-md rounded-md text-xs font-semibold uppercase text-white/80 border border-white/10">
                       {course.difficulty}
                     </span>
                   </div>
                 </div>
 
                 {/* Horizontal Content Section */}
-                <div className="flex-1 p-10 flex flex-col justify-between bg-gradient-to-br from-white/[0.02] to-transparent">
+                <div className="flex-1 p-8 flex flex-col justify-between">
                   <div>
-                    <div className="flex justify-between items-start mb-4">
-                      <h5 className="text-primary font-bold text-2xl group-hover:text-white transition-colors leading-tight tracking-tight max-w-[70%]">
+                    <div className="flex justify-between items-start mb-2">
+                      <h5 className="text-white font-bold text-xl group-hover:text-primary transition-colors leading-tight tracking-tight max-w-[75%]">
                         {course.title}
                       </h5>
                       <div className="text-right">
-                        <span className="text-white font-black text-xl block">₹{COURSE_PRICES[course.id]?.inr || "???"}</span>
+                        <span className="text-white font-bold text-lg block">₹{COURSE_PRICES[course.id]?.inr || "???"}</span>
                       </div>
                     </div>
-                    <p className="text-white/30 text-sm leading-relaxed mb-8 line-clamp-2 font-medium">
+                    <p className="text-white/60 text-sm leading-relaxed mb-6 line-clamp-2 font-medium">
                       {course.description}
                     </p>
 
-                    <div className="grid grid-cols-2 gap-y-4 gap-x-2 mb-10">
-                      <div className="flex items-center gap-3 text-white/40 text-[10px] font-black uppercase tracking-widest">
-                        <BookOpen size={16} className="text-primary/60" />
+                    <div className="grid grid-cols-2 gap-y-3 gap-x-2 mb-8">
+                      <div className="flex items-center gap-2 text-white/40 text-xs font-medium">
+                        <BookOpen size={14} className="text-white/20" />
                         {course.modules.length} Modules
                       </div>
-                      <div className="flex items-center gap-3 text-white/40 text-[10px] font-black uppercase tracking-widest">
-                        <Clock size={16} className="text-primary/60" />
+                      <div className="flex items-center gap-2 text-white/40 text-xs font-medium">
+                        <Clock size={14} className="text-white/20" />
                         {course.duration}
                       </div>
                     </div>
 
                     {/* COURSE AEO Section */}
-                    <div className="mb-8">
+                    <div className="mb-6">
                       <button 
                         onClick={(e) => {
                           e.preventDefault();
                           setOpenAEO(openAEO === course.id ? null : course.id);
                         }}
-                        className="flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-widest hover:text-white transition-colors"
+                        className="flex items-center gap-2 text-white/60 font-semibold text-xs hover:text-white transition-colors"
                       >
                         <HelpCircle size={14} /> 
                         {openAEO === course.id ? "Hide Summary" : "Show Direct Outcomes"}
@@ -466,22 +460,22 @@ export default function CoursesPage() {
                             exit={{ height: 0, opacity: 0 }}
                             className="overflow-hidden"
                           >
-                            <div className="pt-4 space-y-4 border-t border-white/5 mt-4">
+                            <div className="pt-4 space-y-3 border-t border-white/5 mt-3">
                               <div className="space-y-1">
-                                <p className="text-[9px] font-black uppercase text-white/30 tracking-widest">Outcome</p>
-                                <p className="text-white/70 text-xs leading-snug">{course.become}</p>
+                                <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Outcome</p>
+                                <p className="text-white/80 text-sm leading-snug">{course.become}</p>
                               </div>
                               <div className="space-y-1">
-                                <p className="text-[9px] font-black uppercase text-white/30 tracking-widest">Problem Solved</p>
-                                <p className="text-white/70 text-xs leading-snug">{course.problemSolved}</p>
+                                <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Problem Solved</p>
+                                <p className="text-white/80 text-sm leading-snug">{course.problemSolved}</p>
                               </div>
                               <div className="space-y-1">
-                                <p className="text-[9px] font-black uppercase text-white/30 tracking-widest">Project</p>
-                                <p className="text-white/70 text-xs leading-snug">{course.willBuild}</p>
+                                <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Project</p>
+                                <p className="text-white/80 text-sm leading-snug">{course.willBuild}</p>
                               </div>
                               <div className="space-y-1">
-                                <p className="text-[9px] font-black uppercase text-white/30 tracking-widest">For Who</p>
-                                <p className="text-white/70 text-xs leading-snug">{course.forWho}</p>
+                                <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">For Who</p>
+                                <p className="text-white/80 text-sm leading-snug">{course.forWho}</p>
                               </div>
                             </div>
                           </motion.div>
@@ -490,17 +484,17 @@ export default function CoursesPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3">
                     <Button
                       onClick={() => handleEnroll(course.id)}
                       disabled={loading === course.id}
-                      className="w-full bg-white text-black hover:bg-primary hover:text-white rounded-[16px] h-14 font-black text-[11px] uppercase tracking-[0.2em] transition-all duration-500 shadow-none border-none outline-none"
+                      className="w-full bg-white text-black hover:bg-white/90 rounded-lg h-12 font-bold text-sm tracking-widest transition-all"
                     >
                       {loading === course.id ? "Processing..." : "Enroll Now"}
                     </Button>
                     <Link
                       href={`/courses/${course.slug}`}
-                      className="text-center text-white/20 hover:text-primary text-[10px] font-black uppercase tracking-widest transition-colors"
+                      className="text-center text-white/40 hover:text-white text-xs font-semibold tracking-widest transition-colors mt-2"
                     >
                       Explore Curriculum
                     </Link>
@@ -515,49 +509,48 @@ export default function CoursesPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="group relative bg-primary/5 border border-primary/20 rounded-[32px] overflow-hidden hover:border-primary/60 transition-all duration-700 flex flex-col md:flex-row lg:col-span-2"
+              className="group relative bg-white/[0.02] border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.04] transition-all duration-500 flex flex-col md:flex-row lg:col-span-2"
             >
-              <div className="relative w-full md:w-1/3 h-64 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-primary/10">
-                <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                  <div className="relative w-40 h-40 flex items-center justify-center">
-                    <Star size={120} className="text-primary animate-spin-slow opacity-20 absolute" />
-                    <Award className="text-primary relative z-10" size={60} />
+              <div className="relative w-full md:w-1/3 h-56 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
+                <div className="absolute inset-0 bg-white/5 flex items-center justify-center">
+                  <div className="relative w-32 h-32 flex items-center justify-center">
+                    <Star size={100} className="text-white/10 animate-spin-slow absolute" />
+                    <Award className="text-white/60 relative z-10" size={48} />
                   </div>
                 </div>
-                <div className="absolute top-6 left-6 z-20">
-                  <span className="px-4 py-1 bg-primary text-white rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl shadow-primary/20">
+                <div className="absolute top-4 left-4 z-20">
+                  <span className="px-3 py-1 bg-white/10 border border-white/10 text-white rounded-md text-xs font-semibold uppercase tracking-widest">
                     Value Bundle
                   </span>
                 </div>
               </div>
 
-              <div className="flex-1 p-10 flex flex-col justify-between">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="flex-1 p-8 flex flex-col justify-between">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <div>
-                    <h5 className="text-primary font-black text-3xl mb-4 tracking-tighter italic">Double Mastery Bundle</h5>
-                    <p className="text-white/40 text-sm leading-relaxed mb-6 font-medium">
-                      Secure both Java and Python tracks at a significant discount. Perfect for engineers aiming for polyglot
-                      backend expertise.
+                    <h5 className="text-white font-bold text-2xl mb-3 tracking-tight">Double Mastery Bundle</h5>
+                    <p className="text-white/60 text-sm leading-relaxed mb-6 font-medium">
+                      Secure both Java and Python tracks at a significant discount. Perfect for engineers aiming for polyglot backend expertise.
                     </p>
-                    <div className="flex items-center gap-6">
-                      <div className="flex items-center gap-2 text-white/60 text-[10px] font-black uppercase tracking-widest">
-                        <CheckCircle2 size={16} className="text-primary" />
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-3 text-white/80 text-sm font-medium">
+                        <CheckCircle2 size={16} className="text-green-500" />
                         Java Mastery
                       </div>
-                      <div className="flex items-center gap-2 text-white/60 text-[10px] font-black uppercase tracking-widest">
-                        <CheckCircle2 size={16} className="text-primary" />
+                      <div className="flex items-center gap-3 text-white/80 text-sm font-medium">
+                        <CheckCircle2 size={16} className="text-green-500" />
                         Python Mastery
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center md:items-end p-8 bg-black/40 rounded-[24px]">
-                    <p className="text-white/20 text-xs font-black uppercase tracking-widest mb-2 line-through">₹1,298 Combined</p>
-                    <p className="text-5xl font-black text-white mb-8 tracking-tighter">₹999</p>
+                  <div className="flex flex-col justify-center items-center md:items-end p-8 bg-black/20 rounded-xl">
+                    <p className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-1 line-through">₹1,298 Combined</p>
+                    <p className="text-4xl font-bold text-white mb-6 tracking-tight">₹999</p>
 
                     <Button
                       onClick={() => handleEnroll("java-python-bundle")}
                       disabled={loading === "java-python-bundle"}
-                      className="w-full md:w-64 h-16 rounded-[20px] bg-primary text-white hover:bg-white hover:text-black font-black uppercase text-xs tracking-[0.3em] transition-all duration-500"
+                      className="w-full md:w-56 h-12 rounded-lg bg-white text-black hover:bg-white/90 font-bold uppercase text-sm tracking-widest transition-all"
                     >
                       {loading === "java-python-bundle" ? "Processing..." : "Get Bundle"}
                     </Button>
@@ -569,20 +562,20 @@ export default function CoursesPage() {
         </section>
 
         {/* FAQ Section */}
-        <section className="mt-40 max-w-4xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4 italic tracking-tighter">Academy FAQ</h2>
-            <p className="text-white/30 text-lg">Direct answers to common enrollment questions.</p>
+        <section className="mt-32 max-w-4xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">Academy FAQ</h2>
+            <p className="text-white/60 text-lg">Direct answers to common enrollment questions.</p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {faqData.map((faq, index) => (
-              <div key={index} className="p-8 rounded-[32px] border border-white/5 bg-white/[0.01]">
-                <h4 className="text-white font-bold text-lg mb-3 flex items-center gap-3">
-                  <HelpCircle size={18} className="text-primary" />
+              <div key={index} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
+                <h4 className="text-white font-semibold text-lg mb-2 flex items-center gap-3">
+                  <HelpCircle size={18} className="text-white/40" />
                   {faq.question}
                 </h4>
-                <p className="text-white/40 leading-relaxed pl-7 border-l border-white/5">
+                <p className="text-white/60 leading-relaxed pl-7 border-l border-white/5">
                   {faq.answer}
                 </p>
               </div>
@@ -591,17 +584,17 @@ export default function CoursesPage() {
         </section>
 
         {/* Expansion Roadmap Section */}
-        <section className="pb-20 mt-40">
-          <div className="text-center mb-24">
-            <div className="flex items-center justify-center gap-4 mb-6">
+        <section className="pb-20 mt-32">
+          <div className="text-center mb-16">
+            <div className="flex items-center justify-center gap-4 mb-4">
               <div className="h-px w-6 bg-white/10" />
-              <span className="text-white/30 text-[11px] font-black uppercase tracking-[0.4em]">Academic Pipeline</span>
+              <span className="text-white/40 text-xs font-semibold uppercase tracking-widest">Academic Pipeline</span>
               <div className="h-px w-6 bg-white/10" />
             </div>
-            <h3 className="text-white font-bold text-5xl md:text-6xl tracking-tighter">Growth Roadmap</h3>
+            <h3 className="text-white font-bold text-4xl md:text-5xl tracking-tight">Growth Roadmap</h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {COMING_SOON.map((course, i) => (
               <motion.div
                 key={i}
@@ -609,19 +602,19 @@ export default function CoursesPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="group relative bg-[#060606] border border-white/5 rounded-[48px] p-10 min-h-[280px] flex flex-col justify-end transition-all duration-700 overflow-hidden hover:border-white/10 shadow-2xl"
+                className="group relative bg-white/[0.02] border border-white/5 rounded-2xl p-8 min-h-[240px] flex flex-col justify-end transition-all duration-500 overflow-hidden hover:bg-white/[0.04]"
               >
-                <div className="absolute inset-0 bg-black/70 backdrop-blur-[3px] flex flex-col items-center justify-center pointer-events-none z-20 transition-all duration-700 group-hover:backdrop-blur-[1px]">
-                  <div className="w-16 h-16 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center mb-6 shadow-inner">
-                    <Lock className="text-white/10 group-hover:text-primary/40 transition-colors duration-500" size={28} />
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none z-20 transition-all duration-500 group-hover:backdrop-blur-0">
+                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+                    <Lock className="text-white/40 transition-colors duration-300" size={20} />
                   </div>
-                  <span className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[9px] font-black uppercase text-white/30 tracking-[0.3em]">
+                  <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-md text-xs font-medium uppercase text-white/60 tracking-wider">
                     Enrollment Locked
                   </span>
                 </div>
-                <div className="relative blur-[5px] group-hover:blur-[2px] transition-all duration-1000 pointer-events-none scale-[1.02] group-hover:scale-100">
-                  <h5 className="text-white font-bold text-2xl mb-4 tracking-tight leading-tight">{course.title}</h5>
-                  <p className="text-white/20 text-xs leading-relaxed font-medium line-clamp-3">{course.description}</p>
+                <div className="relative blur-[4px] group-hover:blur-0 transition-all duration-500 pointer-events-none">
+                  <h5 className="text-white font-bold text-xl mb-2 tracking-tight leading-tight">{course.title}</h5>
+                  <p className="text-white/60 text-sm leading-relaxed font-medium line-clamp-3">{course.description}</p>
                 </div>
               </motion.div>
             ))}

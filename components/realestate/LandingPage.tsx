@@ -21,14 +21,13 @@ const Hero = () => {
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         className="text-center max-w-7xl mx-auto mb-16 relative z-10"
       >
-        <span className="inline-block py-2 px-6 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.5em] text-primary mb-12 italic">
+        <span className="inline-block py-1.5 px-4 rounded-full bg-white/5 border border-white/10 text-xs font-semibold uppercase tracking-widest text-primary mb-8">
           Architectural Legacy
         </span>
-        <h1 className="text-5xl md:text-8xl lg:text-9xl font-black text-white leading-[0.8] mb-12 tracking-tighter uppercase italic">
-          Future <br />
-          <span className="text-primary not-italic">Living</span>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight mb-8 tracking-tight">
+          Future Living
         </h1>
-        <p className="text-lg md:text-2xl text-white/40 max-w-xl mx-auto mb-12 font-light leading-relaxed">
+        <p className="text-lg md:text-xl text-white/60 max-w-xl mx-auto mb-12 font-medium leading-relaxed">
           Access a curated portfolio of world-class real estate. From high-tech urban studios to expansive beachfront villas.
         </p>
       </motion.div>
@@ -38,32 +37,32 @@ const Hero = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="w-full max-w-5xl bg-white/[0.02] backdrop-blur-2xl p-2 rounded-3xl md:rounded-full border border-white/5 flex flex-col md:flex-row gap-2 relative z-10"
+        className="w-full max-w-5xl bg-white/[0.02] backdrop-blur-2xl p-2 rounded-2xl md:rounded-full border border-white/5 flex flex-col md:flex-row gap-2 relative z-10 shadow-2xl"
       >
         <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-2 p-2">
-          <div className="flex items-center gap-4 px-6 md:border-r border-white/5 py-4">
+          <div className="flex items-center gap-4 px-6 md:border-r border-white/5 py-3">
             <MapPin className="text-primary w-5 h-5 shrink-0" />
             <div className="flex flex-col min-w-0">
-              <span className="text-[9px] font-black uppercase text-white/30 tracking-widest">Location</span>
-              <input type="text" placeholder="Search City..." className="bg-transparent text-white focus:outline-none font-black text-sm uppercase truncate placeholder:text-white/20" />
+              <span className="text-xs font-semibold uppercase text-white/40 tracking-widest">Location</span>
+              <input type="text" placeholder="Search City..." className="bg-transparent text-white focus:outline-none font-semibold text-sm truncate placeholder:text-white/20" />
             </div>
           </div>
-          <div className="flex items-center gap-4 px-6 md:border-r border-white/5 py-4">
+          <div className="flex items-center gap-4 px-6 md:border-r border-white/5 py-3">
             <DollarSign className="text-primary w-5 h-5 shrink-0" />
             <div className="flex flex-col w-full">
-              <span className="text-[9px] font-black uppercase text-white/30 tracking-widest">Budget</span>
-              <select className="bg-transparent text-white focus:outline-none font-black text-sm uppercase appearance-none cursor-pointer w-full">
+              <span className="text-xs font-semibold uppercase text-white/40 tracking-widest">Budget</span>
+              <select className="bg-transparent text-white focus:outline-none font-semibold text-sm appearance-none cursor-pointer w-full">
                 <option className="bg-black">₹1Cr - ₹5Cr</option>
                 <option className="bg-black">₹5Cr - ₹20Cr</option>
                 <option className="bg-black">₹20Cr+</option>
               </select>
             </div>
           </div>
-          <div className="flex items-center gap-4 px-6 py-4">
+          <div className="flex items-center gap-4 px-6 py-3">
             <Building className="text-primary w-5 h-5 shrink-0" />
             <div className="flex flex-col w-full">
-              <span className="text-[9px] font-black uppercase text-white/30 tracking-widest">Category</span>
-              <select className="bg-transparent text-white focus:outline-none font-black text-sm uppercase appearance-none cursor-pointer w-full">
+              <span className="text-xs font-semibold uppercase text-white/40 tracking-widest">Category</span>
+              <select className="bg-transparent text-white focus:outline-none font-semibold text-sm appearance-none cursor-pointer w-full">
                 <option className="bg-black">Luxury Villa</option>
                 <option className="bg-black">Sky Apartment</option>
                 <option className="bg-black">Commercial</option>
@@ -71,8 +70,8 @@ const Hero = () => {
             </div>
           </div>
         </div>
-        <Link href="/realestate/properties">
-          <Button size="lg" className="h-full px-12 rounded-2xl md:rounded-full bg-white text-black hover:bg-primary hover:text-white transition-all font-black text-[10px] uppercase tracking-[0.2em] py-6 md:py-0">
+        <Link href="/realestate/properties" className="md:ml-auto">
+          <Button size="lg" className="w-full md:w-auto h-full px-10 rounded-xl md:rounded-full bg-white text-black hover:bg-white/90 transition-all font-semibold text-sm tracking-wide py-4 md:py-0">
             Search Assets
           </Button>
         </Link>
@@ -85,14 +84,14 @@ const Portfolio = () => {
   return (
     <section className="py-24 md:py-40 bg-black">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-12">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div className="max-w-xl">
-             <span className="text-primary font-black uppercase tracking-[0.4em] text-[10px] mb-6 block font-mono italic">The Collection</span>
-             <h2 className="text-4xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-[0.8] uppercase">Modern <br /><span className="text-primary italic">Estates</span></h2>
-             <p className="text-lg text-white/30 font-light max-w-sm italic">Exceptional listings verified by our world-class audit team.</p>
+             <span className="text-primary font-semibold uppercase tracking-widest text-xs mb-4 block">The Collection</span>
+             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">Modern Estates</h2>
+             <p className="text-lg text-white/60 font-medium max-w-sm">Exceptional listings verified by our world-class audit team.</p>
           </div>
           <Link href="/realestate/properties">
-            <Button variant="ghost" className="text-primary font-black text-[10px] uppercase tracking-[0.3em] group">
+            <Button variant="ghost" className="text-white hover:text-primary font-semibold text-sm tracking-wide group">
               Explore All <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
@@ -108,25 +107,25 @@ const Portfolio = () => {
               transition={{ delay: i * 0.1 }}
               className="group"
             >
-              <div className="relative aspect-[3/4] rounded-[2.5rem] overflow-hidden mb-8 border border-white/5 bg-white/[0.01]">
-                <img src={prop.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-                <div className="absolute top-8 left-8 px-4 py-2 bg-primary text-black text-[9px] font-black uppercase rounded-lg tracking-widest">
+              <div className="relative aspect-[3/4] rounded-3xl overflow-hidden mb-6 border border-white/5 bg-white/[0.02]">
+                <img src={prop.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute top-6 left-6 px-3 py-1.5 bg-black/60 backdrop-blur-md text-white/80 text-xs font-semibold uppercase rounded-md tracking-wider border border-white/10">
                   {prop.type}
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-10 left-10">
-                  <div className="flex items-center gap-2 text-primary font-black text-2xl mb-4 tracking-tighter">
-                    ₹{(prop.price / 10000000).toFixed(1)} <span className="text-[10px] uppercase opacity-70">Cr</span>
+                <div className="absolute bottom-8 left-8 right-8">
+                  <div className="flex items-center gap-2 text-white font-bold text-2xl mb-2 tracking-tight">
+                    ₹{(prop.price / 10000000).toFixed(1)} <span className="text-sm font-semibold opacity-70">Cr</span>
                   </div>
-                  <h3 className="text-2xl font-black text-white mb-4 leading-tight uppercase italic">{prop.title}</h3>
-                  <div className="flex items-center gap-2 text-white/20 text-[10px] font-black uppercase tracking-widest">
-                    <MapPin size={12} className="text-primary" /> {prop.location}
+                  <h3 className="text-xl font-bold text-white mb-3 leading-tight tracking-tight">{prop.title}</h3>
+                  <div className="flex items-center gap-2 text-white/60 text-xs font-semibold uppercase tracking-widest">
+                    <MapPin size={14} className="text-primary" /> {prop.location}
                   </div>
                 </div>
               </div>
               <Link href={`/realestate/property/${prop.id}`}>
-                <Button className="w-full h-16 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white hover:text-black font-black uppercase text-[10px] tracking-widest transition-all">
-                  Asset Intelligence
+                <Button className="w-full h-12 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white hover:text-black font-semibold text-sm transition-all gap-2">
+                  Asset Intelligence <ArrowRight size={16} />
                 </Button>
               </Link>
             </motion.div>
@@ -138,34 +137,33 @@ const Portfolio = () => {
 };
 
 const MarketIntelligence = () => (
-  <section className="py-24 md:py-40 bg-black overflow-hidden border-y border-white/5">
+  <section className="py-24 md:py-32 bg-white/[0.02] border-y border-white/5">
     <div className="max-w-7xl mx-auto px-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div>
-          <span className="text-primary font-black uppercase tracking-[0.4em] text-[10px] mb-8 block font-mono italic">Live Data Matrix</span>
-          <h2 className="text-4xl md:text-8xl font-black text-white mb-10 tracking-tighter leading-[0.8] uppercase">Market <br /><span className="text-primary italic">Pulse</span></h2>
-          <p className="text-lg text-white/30 font-light leading-relaxed mb-12 max-w-md italic">
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-6 block">Live Data Matrix</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Market Pulse</h2>
+          <p className="text-lg text-white/60 font-medium leading-relaxed mb-10 max-w-md">
             Our proprietary algorithm provides you with real-time analytics on asset appreciation and rental yields.
           </p>
-          <div className="grid grid-cols-2 gap-12">
+          <div className="grid grid-cols-2 gap-8">
             <div>
-              <p className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tighter">12.4%</p>
-              <p className="text-[10px] font-black uppercase text-white/20 tracking-[0.2em]">Appreciation</p>
+              <p className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">12.4%</p>
+              <p className="text-xs font-semibold uppercase text-white/40 tracking-widest">Appreciation</p>
             </div>
             <div>
-              <p className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tighter">₹4.2Cr</p>
-              <p className="text-[10px] font-black uppercase text-white/20 tracking-[0.2em]">Median Value</p>
+              <p className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">₹4.2Cr</p>
+              <p className="text-xs font-semibold uppercase text-white/40 tracking-widest">Median Value</p>
             </div>
           </div>
         </div>
-        <div className="bg-primary/5 border border-primary/20 p-12 aspect-square flex flex-col items-center justify-center relative overflow-hidden group rounded-[4rem]">
-           <div className="absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-primary/20 to-transparent" />
+        <div className="bg-white/5 border border-white/10 p-12 aspect-square flex flex-col items-center justify-center relative overflow-hidden group rounded-3xl shadow-2xl">
+           <div className="absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-primary/10 to-transparent" />
            <div className="relative z-10 flex flex-col items-center">
-              <div className="w-[2px] h-32 md:h-48 bg-primary/40 rounded-full mb-8 animate-pulse" />
-              <p className="text-7xl md:text-9xl font-black text-white group-hover:scale-110 transition-transform duration-700 leading-none">98%</p>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mt-6">Retention Rate</p>
+              <div className="w-[2px] h-24 md:h-32 bg-primary/40 rounded-full mb-6 animate-pulse" />
+              <p className="text-6xl md:text-8xl font-bold text-white group-hover:scale-105 transition-transform duration-500 leading-none">98%</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mt-4">Retention Rate</p>
            </div>
-           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         </div>
       </div>
     </div>
@@ -179,10 +177,10 @@ export default function RealEstateLanding() {
       <Portfolio />
       <MarketIntelligence />
       <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto bg-primary/5 border border-primary/20 rounded-[3rem] md:rounded-[4rem] text-center py-24 md:py-32 px-10 relative overflow-hidden">
-          <h2 className="text-4xl md:text-8xl font-black text-white mb-10 tracking-tighter uppercase leading-none italic">Secure Your <br /><span className="text-primary not-italic">Legacy</span></h2>
+        <div className="max-w-5xl mx-auto bg-white/[0.02] border border-white/5 rounded-3xl text-center py-16 md:py-24 px-8 relative overflow-hidden">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8 tracking-tight">Secure Your Legacy</h2>
           <Link href="/realestate/properties">
-            <Button size="lg" className="h-16 md:h-20 px-12 md:px-20 text-sm md:text-xl rounded-full font-black bg-white text-black hover:bg-primary hover:text-white transition-all uppercase tracking-widest shadow-2xl shadow-primary/20">
+            <Button size="lg" className="h-14 px-10 rounded-xl font-semibold bg-white text-black hover:bg-white/90 transition-all tracking-wide shadow-xl shadow-white/5">
               Start Acquisition
             </Button>
           </Link>
