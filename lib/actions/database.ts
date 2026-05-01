@@ -1,14 +1,14 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
 /* --- LEADS / CONTACT --- */
 
 export async function submitLead(formData: { name: string; email: string; message: string }) {
-  const supabase = await createClient();
-  
-  const { error } = await supabase.from("leads").insert([formData]);
+  const { error } = await supabaseAdmin.from("leads").insert([formData]);
+
   
   if (error) {
     console.error("Error submitting lead:", error);

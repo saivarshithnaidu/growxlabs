@@ -1,52 +1,69 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
     const { name, email, password } = await req.json();
-    const supabase = await createClient();
 
     // 1. Validation
     if (!name || !email || !password) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+    // 2. Initialize Admin Client inside the request to ensure fresh env vars
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("SUPABASE CONFIG MISSING: Ensure URL and SERVICE_ROLE_KEY are set in Vercel.");
+      return NextResponse.json({ error: "Server configuration error. Please contact support." }, { status: 500 });
     }
 
-    if (password.length < 8) {
-      return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
-    }
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
 
-    // 2. Check if user exists
-    const { data: existingUser } = await supabase
+    // 3. Check if user exists (Bypassing RLS)
+    const { data: existingUser, error: checkError } = await supabaseAdmin
       .from("users")
       .select("id")
       .eq("email", email)
-      .single();
+      .maybeSingle();
+
+    if (checkError) {
+      console.error("Signup Check Error:", checkError);
+      return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
+    }
 
     if (existingUser) {
       return NextResponse.json({ error: "User already registered" }, { status: 409 });
     }
 
-    // 3. Hash Password
+    // 4. Hash Password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4. Create User
-    const { data, error } = await supabase.from("users").insert([
+    // 5. Create User (Bypassing RLS)
+    const { error: insertError } = await supabaseAdmin.from("users").insert([
       {
         name,
         email,
         password: hashedPassword,
-        role: "CLIENT" // Default production role
+        role: "CLIENT"
       }
-    ]).select().single();
+    ]);
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (insertError) {
+      console.error("Signup Insert Error:", insertError);
+      // If we still get RLS error here, the SERVICE_ROLE_KEY is definitely invalid for this project
+      return NextResponse.json({ 
+        error: insertError.message.includes("row-level security") 
+          ? "System permission error. The admin key provided is invalid." 
+          : insertError.message 
+      }, { status: 500 });
     }
 
     return NextResponse.json({ 
@@ -55,7 +72,8 @@ export async function POST(req: Request) {
     });
 
   } catch (error: any) {
-    console.error("Signup System Failure:", error);
+    console.error("Signup Critical Failure:", error);
     return NextResponse.json({ error: "Account initialization failed" }, { status: 500 });
   }
 }
+
