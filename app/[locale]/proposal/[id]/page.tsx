@@ -186,7 +186,7 @@ export default function PublicProposalView() {
               <a href={`mailto:hello@growxlabs.tech?subject=Accepted Proposal for ${proposal.business_name}`} className="px-12 py-6 bg-[#0D1B4B] text-white rounded-full font-black uppercase text-[11px] tracking-[0.3em] shadow-2xl hover:bg-black transition-all">
                  Accept Architecture →
               </a>
-              <a href="#" className="font-black text-[11px] uppercase tracking-widest text-neutral-400 hover:text-black transition-all underline underline-offset-8">
+              <a href="mailto:hello@growxlabs.tech?subject=Strategy Sync Request" className="font-black text-[11px] uppercase tracking-widest text-neutral-400 hover:text-black transition-all underline underline-offset-8">
                  Book Final Strategy Sync
               </a>
            </div>

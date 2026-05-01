@@ -95,6 +95,7 @@ export default function ProposalsPage() {
   const [loading, setLoading] = useState(true);
   const [showGenerator, setShowGenerator] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("all");
 
   // --- Form State ---
   const [form, setForm] = useState({
@@ -124,6 +125,10 @@ export default function ProposalsPage() {
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
   };
+
+  const filteredProposals = useMemo(() => {
+    return proposals.filter(p => activeFilter === "all" || p.status === activeFilter);
+  }, [proposals, activeFilter]);
 
   const handleCreate = async () => {
     setSubmitting(true);
@@ -202,7 +207,7 @@ export default function ProposalsPage() {
             {/* FORM SIDE */}
             <Card className="p-8 border-[var(--border-subtle)] bg-[var(--surface-1)] rounded-2xl space-y-8 h-fit sticky top-10 max-h-[90vh] overflow-y-auto scrollbar-hide">
                <div className="space-y-6">
-                  <h2 className="text-xs font-black uppercase tracking-[0.3em] text-white/20 border-b border-[var(--border-subtle)] pb-4 italic">Lead Intelligence</h2>
+                  <h2 className="text-xs font-black uppercase tracking-[0.3em] text-[var(--text-muted)] border-b border-[var(--border-subtle)] pb-4 italic">Lead Intelligence</h2>
                   
                   <div className="grid grid-cols-2 gap-4">
                      <div className="space-y-2">
@@ -517,12 +522,17 @@ export default function ProposalsPage() {
           <div className="space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 no-print">
                <h2 className="text-2xl font-black text-white italic tracking-tighter flex items-center gap-3">
-                  Proposal Repositories <span className="h-6 px-3 bg-white/5 rounded-full text-[10px] font-bold flex items-center non-italic tracking-widest border border-[var(--border-subtle)]">{proposals.length} TOTAL</span>
+                  Proposal Repositories <span className="h-6 px-3 bg-white/5 rounded-full text-[10px] font-bold flex items-center non-italic tracking-widest border border-[var(--border-subtle)]">{filteredProposals.length} TOTAL</span>
                </h2>
-               <div className="flex bg-white/5 p-1.5 rounded-2xl border border-[var(--border-subtle)]">
+               <div className="flex bg-white/5 p-1.5 rounded-2xl border border-[var(--border-subtle)] overflow-x-auto scrollbar-hide max-w-full">
                   {["all", "sent", "viewed", "accepted", "rejected"].map((st) => (
                     <button 
-                      key={st} className={cn("h-9 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", st === "all" ? "bg-white text-black" : "text-white/40 hover:text-white")}
+                      key={st} 
+                      onClick={() => setActiveFilter(st)}
+                      className={cn(
+                        "h-9 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap", 
+                        activeFilter === st ? "bg-white text-black" : "text-white/40 hover:text-white"
+                      )}
                     >
                       {st}
                     </button>
@@ -535,8 +545,8 @@ export default function ProposalsPage() {
                  <div className="h-64 flex items-center justify-center border border-[var(--border-subtle)] border-dashed rounded-[3rem]">
                     <Loader2 className="animate-spin text-white/20" />
                  </div>
-              ) : proposals.length > 0 ? (
-                 proposals.map((p, i) => {
+              ) : filteredProposals.length > 0 ? (
+                 filteredProposals.map((p, i) => {
                     const statusColors: any = { sent: "text-blue-500", viewed: "text-purple-500", accepted: "text-green-500", rejected: "text-red-500" };
                     return (
                        <motion.div key={p.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>

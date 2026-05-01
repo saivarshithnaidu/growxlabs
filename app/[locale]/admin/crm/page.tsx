@@ -189,7 +189,7 @@ export default function AdminCRMPage() {
                <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mt-2">Maximum file size 5MB</div>
             </div>
             <div className="text-center">
-              <a href="#" className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline">Download Template</a>
+              <button type="button" onClick={() => alert('Template download is being generated...')} className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline bg-transparent border-none p-0 cursor-pointer">Download Template</button>
             </div>
             <div className="mt-8 flex justify-end gap-3">
               <Button onClick={() => setShowImport(false)} variant="ghost" className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-white">Cancel</Button>

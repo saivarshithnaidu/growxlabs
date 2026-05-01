@@ -7,17 +7,20 @@ import {
   BarChart3, Users, Target, Inbox,
   FileText, Zap, ShieldCheck, Rocket, FileCheck, LogOut, PanelLeftClose, PanelLeft,
   GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
-  TicketPercent, ListOrdered
+  TicketPercent, ListOrdered, Database, UserCog, Settings
 } from "lucide-react";
 
 const navItems = [
   { name: "Overview", href: "/admin", icon: BarChart3 },
+  { name: "CRM", href: "/admin/crm", icon: Database },
+  { name: "Team", href: "/admin/team", icon: UserCog },
   { name: "Leads", href: "/admin/leads", icon: Target },
   { name: "Scraper", href: "/admin/leads/scrape", icon: Zap },
   { name: "Apollo Leads", href: "/admin/apollo", icon: Rocket },
   { name: "Clients", href: "/admin/clients", icon: Users },
   { name: "Outreach", href: "/admin/outreach", icon: Inbox },
   { name: "Onboarding", href: "/admin/onboarding", icon: Rocket },
+  { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 const academyItems = [
