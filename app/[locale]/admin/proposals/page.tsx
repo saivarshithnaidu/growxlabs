@@ -120,8 +120,13 @@ export default function ProposalsPage() {
     try {
       setLoading(true);
       const res = await fetch("/api/proposals/list");
+      if (!res.ok) {
+        console.error(`API Error: ${res.status}`);
+        setProposals([]);
+        return;
+      }
       const data = await res.json();
-      setProposals(Array.isArray(data) ? data : []);
+      setProposals(Array.isArray(data) ? data.filter(Boolean) : []);
     } catch (e) { 
       console.error(e);
       setProposals([]);
@@ -130,7 +135,8 @@ export default function ProposalsPage() {
   };
 
   const filteredProposals = useMemo(() => {
-    return proposals.filter(p => activeFilter === "all" || p.status === activeFilter);
+    if (!Array.isArray(proposals)) return [];
+    return proposals.filter(p => p && typeof p === 'object' && (activeFilter === "all" || p.status === activeFilter));
   }, [proposals, activeFilter]);
 
   const handleCreate = async () => {
@@ -550,9 +556,10 @@ export default function ProposalsPage() {
                  </div>
               ) : filteredProposals.length > 0 ? (
                  filteredProposals.map((p, i) => {
+                    if (!p || typeof p !== 'object') return null;
                     const statusColors: any = { sent: "text-blue-500", viewed: "text-purple-500", accepted: "text-green-500", rejected: "text-red-500" };
                     return (
-                       <motion.div key={p.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>
+                       <motion.div key={p.id || `proposal-${i}`} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>
                           <Card className="p-8 border-[var(--border-subtle)] bg-[var(--surface-1)] hover:border-[var(--border-hover)] transition-all group rounded-2xl">
                              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                                 <div className="flex items-center gap-8">
@@ -562,17 +569,17 @@ export default function ProposalsPage() {
                                    <div>
                                       <div className="flex items-center gap-3 mb-2">
                                          <h3 className="text-xl font-black text-white tracking-tighter leading-none hover:italic transition-all cursor-pointer">{p.business_name || "Unidentified Niche"}</h3>
-                                         <span className={cn("h-4 px-2 bg-white/5 rounded text-[8px] font-black uppercase tracking-widest flex items-center", statusColors[p.status])}>
-                                            {p.status}
+                                         <span className={cn("h-4 px-2 bg-white/5 rounded text-[8px] font-black uppercase tracking-widest flex items-center", statusColors[p.status || ""])}>
+                                            {p.status || "UNKNOWN"}
                                          </span>
                                          {p.viewed_at && <span className="h-4 px-2 bg-green-500/10 text-green-500 text-[8px] font-black rounded flex items-center">VIEWED</span>}
                                       </div>
                                       <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-[0.2em]">
-                                         <span className="text-white/40">{p.client_name}</span>
+                                         <span className="text-white/40">{p.client_name || "Unknown"}</span>
                                          <span className="w-1 h-1 bg-white/10 rounded-full" />
-                                         <span className="text-primary italic tracking-normal font-bold">{p.selected_package?.toUpperCase()} PKG</span>
+                                         <span className="text-primary italic tracking-normal font-bold">{p.selected_package && typeof p.selected_package === 'string' ? p.selected_package.toUpperCase() : "UNKNOWN"} PKG</span>
                                          <span className="w-1 h-1 bg-white/10 rounded-full" />
-                                         <span className="text-white/20 font-medium tracking-normal italic">Valid until: {new Date(p.valid_until).toLocaleDateString()}</span>
+                                         <span className="text-white/20 font-medium tracking-normal italic">Valid until: {p.valid_until ? new Date(p.valid_until).toLocaleDateString() : "N/A"}</span>
                                       </div>
                                    </div>
                                 </div>
