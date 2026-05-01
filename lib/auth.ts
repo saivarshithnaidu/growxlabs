@@ -74,10 +74,10 @@ export const authOptions: AuthOptions = {
         sameSite: 'lax',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? '.growxlabs.tech' : 'localhost'
       },
     },
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
 

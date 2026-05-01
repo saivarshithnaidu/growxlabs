@@ -20,18 +20,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (status === "authenticated" && session?.user) {
-      const role = (session.user as any).role;
-      const locale = window.location.pathname.split('/')[1] || 'en-IN';
-      
-      if (role === "ADMIN" || role === "CO_ADMIN") {
-        router.push(`/${locale}/admin/leads`);
-      } else {
-        router.push(`/${locale}/client/dashboard`);
-      }
-    }
-  }, [status, session, router]);
 
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -40,23 +28,31 @@ export default function LoginPage() {
     setError("");
 
     try {
+      const locale = window.location.pathname.split('/')[1] || 'en-IN';
+      
+      // We'll determine the target based on the email for now, 
+      // or just redirect to a middle-man route if needed.
+      // Most robust: Redirect to the dashboard and let middleware handle roles.
+      const callbackUrl = email.includes('admin') 
+        ? `/${locale}/admin/leads` 
+        : `/${locale}/client/dashboard`;
+
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: false,
+        redirect: true,
+        callbackUrl: callbackUrl
       });
 
       if (result?.error) {
         throw new Error("Invalid email or password. Please try again.");
       }
-
-      // The useEffect will handle redirection once the session is updated
-      router.refresh();
     } catch (err: any) {
       setError(err.message);
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-[#030303]">

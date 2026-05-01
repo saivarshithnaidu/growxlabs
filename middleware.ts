@@ -133,23 +133,27 @@ export default async function middleware(req: NextRequest) {
       cookieName: cookieName
     });
 
+    const isLoginPage = pathname.includes('/login');
     
-    if (!token) {
+    if (!token && !isLoginPage) {
       const loginUrl = new URL(`/${matchedLocale || 'en-IN'}/login`, req.url);
       return NextResponse.redirect(loginUrl);
     }
 
     // Role verification
-    if (isAdminPath && token.role !== 'ADMIN' && token.role !== 'CO_ADMIN') {
-      const homeUrl = new URL(`/${matchedLocale || 'en-IN'}`, req.url);
-      return NextResponse.redirect(homeUrl);
-    }
+    if (token) {
+      if (isAdminPath && token.role !== 'ADMIN' && token.role !== 'CO_ADMIN') {
+        const homeUrl = new URL(`/${matchedLocale || 'en-IN'}`, req.url);
+        return NextResponse.redirect(homeUrl);
+      }
 
-    if (isClientPath && token.role !== 'CLIENT' && token.role !== 'ADMIN' && token.role !== 'CO_ADMIN') {
-      const homeUrl = new URL(`/${matchedLocale || 'en-IN'}`, req.url);
-      return NextResponse.redirect(homeUrl);
+      if (isClientPath && token.role !== 'CLIENT' && token.role !== 'ADMIN' && token.role !== 'CO_ADMIN') {
+        const homeUrl = new URL(`/${matchedLocale || 'en-IN'}`, req.url);
+        return NextResponse.redirect(homeUrl);
+      }
     }
   }
+
 
 
   return intlMiddleware(req);
