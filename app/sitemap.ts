@@ -19,10 +19,23 @@ const marketingRoutes = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return marketingRoutes.map((route) => ({
-    url: `${baseUrl}/en-IN${route.path}`,
-    lastModified: new Date(),
-    changeFrequency: route.changefreq,
-    priority: route.priority,
-  }));
+  const routes = marketingRoutes.flatMap((route) => [
+    // Root version (Canonical)
+    {
+      url: `${baseUrl}${route.path}`,
+      lastModified: new Date(),
+      changeFrequency: route.changefreq,
+      priority: route.priority,
+    },
+    // en-IN version
+    {
+      url: `${baseUrl}/en-IN${route.path}`,
+      lastModified: new Date(),
+      changeFrequency: route.changefreq,
+      priority: route.priority,
+    }
+  ]);
+
+  return routes;
 }
+
