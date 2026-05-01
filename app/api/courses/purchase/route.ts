@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { RazorpayService } from "@/lib/services/razorpay.service";
 
 const COURSE_PRICES: Record<string, number> = {
