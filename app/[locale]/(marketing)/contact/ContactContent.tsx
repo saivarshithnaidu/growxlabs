@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Mail, Phone, MapPin, CheckCircle2, AlertCircle, MessageCircle, ShieldCheck, Clock, Sparkles } from "lucide-react";
 import React from "react";
 import { usePostHog } from 'posthog-js/react';
+import { Turnstile } from "@marsidev/react-turnstile";
 
 
 export function ContactContent() {
@@ -21,6 +22,7 @@ export function ContactContent() {
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const posthog = usePostHog();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,7 +34,7 @@ export function ContactContent() {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, turnstileToken }),
       });
 
       if (!response.ok) {
@@ -256,6 +258,13 @@ export function ContactContent() {
                       <span className="font-bold">{errorMessage}</span>
                     </motion.div>
                   )}
+
+                  <div className="flex justify-center py-2">
+                    <Turnstile
+                      siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+                      onSuccess={(token) => setTurnstileToken(token)}
+                    />
+                  </div>
 
                   <Button
                     type="submit"

@@ -4,9 +4,28 @@ import { submitLead } from "@/lib/actions/database";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, message } = body;
+    const { name, email, message, turnstileToken } = body;
+    
+    // 1. Bot Protection (Turnstile)
+    if (process.env.TURNSTILE_SECRET_KEY) {
+      const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: process.env.TURNSTILE_SECRET_KEY,
+          response: turnstileToken,
+        }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        return NextResponse.json(
+          { error: "Security check failed. Please refresh and try again." },
+          { status: 403 }
+        );
+      }
+    }
 
-    // 1. Basic Validation
+    // 2. Basic Validation
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: "Missing required fields" },

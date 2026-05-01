@@ -2,6 +2,25 @@ import createMiddleware from 'next-intl/middleware';
 import { locales, localePrefix } from './navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+// Initialize Redis only if env vars are present (fallback for local dev)
+const redis = (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+  ? new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    })
+  : null;
+
+// Rate limit: 10 requests per minute per IP
+const apiLimiter = redis 
+  ? new Ratelimit({
+      redis: redis,
+      limiter: Ratelimit.slidingWindow(10, '1 m'),
+      analytics: true,
+    })
+  : null;
 
 const intlMiddleware = createMiddleware({
   locales,
@@ -12,8 +31,19 @@ const intlMiddleware = createMiddleware({
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const hostname = req.headers.get('host') || '';
+  const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? '127.0.0.1';
 
-  // 1. Skip paths that should not be localized or processed
+  // 1. Enterprise Rate Limiting for sensitive API routes
+  if (pathname.startsWith('/api/contact') || pathname.startsWith('/api/auth') || pathname.startsWith('/api/login') || pathname.startsWith('/api/signup')) {
+    if (apiLimiter) {
+      const { success } = await apiLimiter.limit(`ratelimit_${ip}`);
+      if (!success) {
+        return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+      }
+    }
+  }
+
+  // 2. Skip paths that should not be localized or processed
   if (
     pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
@@ -92,5 +122,6 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)']
+  // We removed 'api' from the ignore list so our rate limiter can process API requests
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)']
 };

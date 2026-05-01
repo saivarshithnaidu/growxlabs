@@ -60,4 +60,14 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 };
 
-export default withNextIntl(nextConfig);
+import { withSentryConfig } from "@sentry/nextjs";
+
+export default withSentryConfig(withNextIntl(nextConfig), {
+  silent: true,
+  org: "grow-x",
+  project: "grow-x",
+});
+
+
+
+
