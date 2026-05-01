@@ -1,8 +1,8 @@
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { CouponManagementClient } from "@/components/admin/CouponManagementClient";
 
 export default async function CouponManagement() {
-  const supabase = await createClient();
+  const supabase = supabaseAdmin;
   const { data: coupons } = await supabase
     .from("coupons")
     .select("*")

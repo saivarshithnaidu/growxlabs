@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { 
   ShoppingBag, 
   Search, 
@@ -13,7 +13,7 @@ import {
 import { Link } from "@/navigation";
 
 export default async function OrderManagement() {
-  const supabase = await createClient();
+  const supabase = supabaseAdmin;
   const { data: orders } = await supabase
     .from("orders")
     .select("*, coupons(code)")

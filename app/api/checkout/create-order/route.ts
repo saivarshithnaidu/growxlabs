@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { RazorpayService } from "@/lib/services/razorpay.service";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       billingDetails 
     } = await req.json();
 
-    const supabase = await createClient();
+    const supabase = supabaseAdmin;
 
     // 1. Save / Update Billing Details
     await supabase.from("billing_details").upsert({

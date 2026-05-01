@@ -1,9 +1,15 @@
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const supabase = await createClient();
+    const token = await getToken({ req: req as any, secret: process.env.NEXTAUTH_SECRET });
+    if (!token || (token.role !== 'ADMIN' && token.role !== 'CO_ADMIN')) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const supabase = supabaseAdmin;
     const body = await req.json();
     
     const { code, discount_type, discount_value, min_purchase, expires_at } = body;
@@ -38,7 +44,12 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const supabase = await createClient();
+    const token = await getToken({ req: req as any, secret: process.env.NEXTAUTH_SECRET });
+    if (!token || (token.role !== 'ADMIN' && token.role !== 'CO_ADMIN')) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const supabase = supabaseAdmin;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -59,7 +70,12 @@ export async function DELETE(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const supabase = await createClient();
+    const token = await getToken({ req: req as any, secret: process.env.NEXTAUTH_SECRET });
+    if (!token || (token.role !== 'ADMIN' && token.role !== 'CO_ADMIN')) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const supabase = supabaseAdmin;
     const body = await req.json();
     const { id, is_active } = body;
 
