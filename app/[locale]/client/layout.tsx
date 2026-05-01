@@ -21,20 +21,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     );
   }
 
-  if (status === "unauthenticated" || (session?.user as any).role !== "CLIENT") {
-    // For now, allowing access in dev if needed, but keeping the check UI
-    /*
-    return (
-      <div className="min-h-screen bg-[var(--background)] flex flex-col items-center justify-center p-6 text-center">
-        <h1 className="heading-md text-white mb-4">Authentication Required</h1>
-        <p className="text-[var(--text-secondary)] max-w-md">Please sign in to your client account to access this project portal.</p>
-        <Button onClick={() => router.push("/login")} className="mt-8 h-12 px-8 rounded-xl">
-          Sign In
-        </Button>
-      </div>
-    );
-    */
+  const userRole = (session?.user as any)?.role;
+
+  if (status === "unauthenticated" || (userRole !== "CLIENT" && userRole !== "ADMIN" && userRole !== "CO_ADMIN")) {
+    // Gracefully handle unauthorized access instead of crashing
+    if (status === "unauthenticated") {
+       router.push(`/${window.location.pathname.split('/')[1] || 'en-IN'}/login`);
+       return null;
+    }
   }
+
 
   return (
     <div className="min-h-screen bg-[var(--background)] pt-28 pb-20">
