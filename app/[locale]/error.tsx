@@ -22,8 +22,8 @@ export default function Error({
     <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center overflow-hidden relative font-sans">
       {/* Background Ambience */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#00b894]/5 blur-[150px] rounded-full" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-red-500/5 blur-[120px] rounded-full" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-red-500/5 blur-[150px] rounded-full" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-red-500/10 blur-[120px] rounded-full" />
       </div>
 
       <div className="relative z-10 max-w-2xl mx-auto">
@@ -43,10 +43,10 @@ export default function Error({
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter mb-6 italic uppercase">
-            System <span className="text-[#00b894]">Crash.</span>
+            System <span className="text-red-500">Crash.</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-white/50 font-medium leading-relaxed mb-10 max-w-md mx-auto">
+          <p className="text-lg md:text-xl text-[var(--text-secondary)] font-medium leading-relaxed mb-10 max-w-md mx-auto">
             An unexpected error has disrupted the GrowX Labs intelligence matrix. Our systems are currently recalibrating.
           </p>
 
@@ -54,9 +54,9 @@ export default function Error({
             <Button
               onClick={() => reset()}
               size="lg"
-              className="h-14 px-8 rounded-2xl bg-[#00b894] text-white font-bold hover:bg-[#00b894]/90 transition-all group"
+              className="h-14 px-8 rounded-2xl bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-red-500 hover:text-white transition-all group"
             >
-              <RefreshCcw className="mr-2 w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
+              <RefreshCcw className="mr-3 w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
               RETRY CONNECTION
             </Button>
 

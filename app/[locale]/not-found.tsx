@@ -55,8 +55,8 @@ export default function NotFound() {
                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary italic">System Signal Lost</span>
                  <div className="h-[1px] w-12 bg-primary/40 md:w-24" />
               </div>
-              <h1 className="text-[12rem] md:text-[20rem] font-black text-white tracking-tighter leading-[0.8] italic select-none opacity-5 absolute -top-[100px] left-1/2 -translate-x-1/2">404</h1>
-              <h2 className="text-6xl md:text-[10rem] font-black text-white tracking-tighter leading-[0.9] italic relative z-20">
+              <h1 className="text-[10rem] md:text-[16rem] font-black text-white tracking-tighter leading-[0.8] italic select-none opacity-5 absolute -top-[50px] md:-top-[100px] left-1/2 -translate-x-1/2">404</h1>
+              <h2 className="text-5xl md:text-8xl lg:text-[9rem] font-black text-white tracking-tighter leading-[0.9] italic relative z-20">
                  PHANTOM <br/>
                  <span className="text-primary">SECTOR.</span>
               </h2>
