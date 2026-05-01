@@ -123,8 +123,16 @@ export default async function middleware(req: NextRequest) {
 
   if (isAdminPath || isClientPath) {
     const secret = process.env.NEXTAUTH_SECRET;
-    // getToken handles cookie names automatically based on environment
-    const token = await getToken({ req, secret });
+    const cookieName = process.env.NODE_ENV === 'production' 
+      ? '__Secure-next-auth.session-token' 
+      : 'next-auth.session-token';
+
+    const token = await getToken({ 
+      req, 
+      secret,
+      cookieName: cookieName
+    });
+
     
     if (!token) {
       const loginUrl = new URL(`/${matchedLocale || 'en-IN'}/login`, req.url);
