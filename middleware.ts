@@ -31,27 +31,37 @@ const intlMiddleware = createMiddleware({
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const hostname = req.headers.get('host') || '';
-  const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? '127.0.0.1';
 
-  // 1. Enterprise Rate Limiting for sensitive API routes
-  if (pathname.startsWith('/api/contact') || pathname.startsWith('/api/auth') || pathname.startsWith('/api/login') || pathname.startsWith('/api/signup')) {
-    if (apiLimiter) {
-      const { success } = await apiLimiter.limit(`ratelimit_${ip}`);
-      if (!success) {
-        return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
-      }
-    }
-  }
-
-  // 2. Skip paths that should not be localized or processed
+  // 1. PERFORMANCE: Immediate skip for static assets and Next.js internals
   if (
-    pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/_vercel') ||
     pathname.includes('.')
   ) {
     return NextResponse.next();
   }
+
+  // 2. ENTERPRISE RATE LIMITING (Optimized)
+  // Only rate limit sensitive POST actions to protect against brute force/spam
+  // Skip for GET requests (like session checks) to maintain UI snappiness
+  if (req.method === 'POST') {
+    const sensitiveRoutes = ['/api/contact', '/api/auth', '/api/login', '/api/signup'];
+    if (sensitiveRoutes.some(route => pathname.startsWith(route))) {
+      if (apiLimiter) {
+        const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? '127.0.0.1';
+        const { success } = await apiLimiter.limit(`ratelimit_${ip}`);
+        if (!success) {
+          return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+        }
+      }
+    }
+  }
+
+  // 3. Skip localization for general API routes after rate limiting check
+  if (pathname.startsWith('/api')) {
+    return NextResponse.next();
+  }
+
 
   // 2. Identify Subdomain Target
   const isProd = !hostname.includes('localhost') && !hostname.includes('.vercel.app');
