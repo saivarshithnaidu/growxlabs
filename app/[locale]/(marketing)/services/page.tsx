@@ -8,6 +8,7 @@ import { Reveal } from "@/components/marketing/Reveal";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
 import { locales } from "@/navigation";
 import Script from "next/script";
+import { DynamicSchema } from "@/components/marketing/DynamicSchema";
 
 const faqData = [
   {
@@ -100,146 +101,169 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default function ServicesPage() {
   return (
-    <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
-      <Script
-        id="faq-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    <>
+      <DynamicSchema 
+        graph={[
+          {
+            "@type": "Service",
+            "@id": "https://growxlabs.tech/services/ai#service",
+            "name": "AI Development",
+            "provider": { "@id": "https://growxlabs.tech/#organization" },
+            "areaServed": "Global",
+            "description": "Custom AI systems, automation workflows, and intelligent applications."
+          },
+          {
+            "@type": "Service",
+            "@id": "https://growxlabs.tech/services/web#service",
+            "name": "Web Engineering",
+            "provider": { "@id": "https://growxlabs.tech/#organization" },
+            "areaServed": "Global",
+            "description": "High-performance websites with native AI integration."
+          }
+        ]} 
       />
-      <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-        <div className="text-center mb-20">
-          <Reveal>
-            <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B] mb-4 block">
-              WHAT WE BUILD
-            </span>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <h1 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-6 tracking-tight">
-              Core Capabilities
-            </h1>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p className="text-[#A0A0A0] max-w-[640px] mx-auto text-lg leading-relaxed">
-              Direct results oriented technical solutions for businesses that prioritize speed and reliability.
-            </p>
-          </Reveal>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-24">
-          {allServices.map((service, index) => (
-            <Reveal key={index} delay={index * 0.05}>
-              <ServiceCard {...service} />
+      <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
+        <Script
+          id="faq-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
+          <div className="text-center mb-20">
+            <Reveal>
+              <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B] mb-4 block">
+                WHAT WE BUILD
+              </span>
             </Reveal>
-          ))}
-        </div>
-
-        {/* Value Props */}
-        <Reveal y={40}>
-          <div className="rounded-2xl p-10 md:p-16 border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] relative overflow-hidden shadow-2xl backdrop-blur-sm">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16 text-center relative z-10">
-              <div className="space-y-4">
-                <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
-                  <Shield className="text-[#00A86B] h-7 w-7" aria-hidden="true" />
-                </div>
-                <h3 className="text-xl font-semibold text-white">Enterprise Security</h3>
-                <p className="text-[#A0A0A0] text-base leading-relaxed">Every solution is built with rigorous security standards to protect your business data.</p>
-              </div>
-              <div className="space-y-4">
-                <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
-                  <Clock className="text-[#00A86B] h-7 w-7" aria-hidden="true" />
-                </div>
-                <h3 className="text-xl font-semibold text-white">On Time Delivery</h3>
-                <p className="text-[#A0A0A0] text-base leading-relaxed">We respect your timeline. Fixed price, fixed date projects delivered with absolute precision.</p>
-              </div>
-              <div className="space-y-4">
-                <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
-                  <Zap className="text-[#00A86B] h-7 w-7" aria-hidden="true" />
-                </div>
-                <h3 className="text-xl font-semibold text-white">Precision Performance</h3>
-                <p className="text-[#A0A0A0] text-base leading-relaxed">We optimize for speed and reliability, ensuring your systems perform under massive traffic.</p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* AEO Layer - Services */}
-        <section className="mt-48 max-w-5xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-6 tracking-tight">Service Deep Dive</h2>
-            <p className="text-[#A0A0A0] text-lg font-medium">Answers to specific problems we solve for our clients.</p>
+            <Reveal delay={0.1}>
+              <h1 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-6 tracking-tight">
+                Core Capabilities
+              </h1>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <p className="text-[#A0A0A0] max-w-[640px] mx-auto text-lg leading-relaxed">
+                Direct results oriented technical solutions for businesses that prioritize speed and reliability.
+              </p>
+            </Reveal>
           </div>
 
-          <AEOBlock
-            question="What problem does Web Engineering solve?"
-            answer="It eliminates slow, fragile websites that lose customers and replaces them with high-performance engines built for conversion."
-            explanation="Modern users expect instant results. We engineer systems using Next.js and TypeScript that load in milliseconds and guide users directly to your offer."
-            example="A slow e-commerce site fixes its loading speed and navigation → bounce rate drops by 40% → sales increase."
-            ctaText="Optimize your web engineering"
-            ctaHref="/contact"
-          />
-
-          <AEOBlock
-            question="What problem does AI & Automation solve?"
-            answer="It removes the bottleneck of manual, repetitive work that prevents your team from scaling."
-            explanation="We build custom AI agents and automated workflows that handle lead triage, scheduling, and data processing 24/7."
-            example="A service business automates lead follow-ups → response time drops from 4 hours to 4 seconds → conversion rate doubles."
-            ctaText="Start automating"
-            ctaHref="/contact"
-          />
-
-          <AEOBlock
-            question="What problem does Technical SEO solve?"
-            answer="It solves the 'hidden business' problem by ensuring AI engines and search platforms actively recommend you to high-intent buyers."
-            explanation="We optimize your site's schema, performance, and structure to meet the strict standards of SGE and ChatGPT-style search."
-            example="A B2B company optimizes for specific answer queries → Google AI features them in a summary → they get high-quality organic leads."
-            ctaText="Boost your visibility"
-            ctaHref="/contact"
-          />
-
-          <AEOBlock
-            question="What problem does Cloud Infrastructure solve?"
-            answer="It eliminates the risk of downtime and data loss that can destroy business continuity and reputation."
-            explanation="We deploy enterprise-grade cloud environments with automated scaling, daily backups, and 24/7 proactive monitoring."
-            example="A major marketing launch causes a 10x traffic spike → the infrastructure scales instantly → the site stays fast and online."
-            ctaText="Secure your hosting"
-            ctaHref="/contact"
-          />
-
-          <AEOBlock
-            question="What problem does Product Design solve?"
-            answer="It solves high drop-off rates by making complex digital actions feel simple and intuitive for the end-user."
-            explanation="We use psychological design principles to remove friction and guide the user's eye toward the most important actions."
-            example="A complex software tool simplifies its onboarding flow → user completion rate jumps from 30% to 85%."
-            ctaText="Redesign for conversion"
-            ctaHref="/contact"
-          />
-        </section>
-
-        {/* FAQ Section */}
-        <section className="mt-48 max-w-4xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-[clamp(28px,4vw,36px)] font-bold text-white mb-6 tracking-tight">Service FAQ</h2>
-            <p className="text-[#A0A0A0] font-medium">Clear answers to help you understand our engineering process.</p>
-          </div>
-
-          <div className="space-y-6">
-            {faqData.map((faq, index) => (
-              <Reveal key={index} delay={index * 0.1}>
-                <div className="p-8 md:p-10 rounded-3xl border border-white/5 bg-white/[0.02] shadow-xl hover:bg-white/[0.04] transition-all">
-                  <h4 className="text-white font-bold text-xl mb-4 tracking-tight flex items-center gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    {faq.question}
-                  </h4>
-                  <p className="text-[#A0A0A0] leading-relaxed pl-4 border-l border-white/10 font-medium">
-                    {faq.answer}
-                  </p>
-                </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-24">
+            {allServices.map((service, index) => (
+              <Reveal key={index} delay={index * 0.05}>
+                <ServiceCard {...service} />
               </Reveal>
             ))}
           </div>
-        </section>
+
+          {/* Value Props */}
+          <Reveal y={40}>
+            <div className="rounded-2xl p-10 md:p-16 border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] relative overflow-hidden shadow-2xl backdrop-blur-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16 text-center relative z-10">
+                <div className="space-y-4">
+                  <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
+                    <Shield className="text-[#00A86B] h-7 w-7" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">Enterprise Security</h3>
+                  <p className="text-[#A0A0A0] text-base leading-relaxed">Every solution is built with rigorous security standards to protect your business data.</p>
+                </div>
+                <div className="space-y-4">
+                  <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
+                    <Clock className="text-[#00A86B] h-7 w-7" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">On Time Delivery</h3>
+                  <p className="text-[#A0A0A0] text-base leading-relaxed">We respect your timeline. Fixed price, fixed date projects delivered with absolute precision.</p>
+                </div>
+                <div className="space-y-4">
+                  <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
+                    <Zap className="text-[#00A86B] h-7 w-7" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">Precision Performance</h3>
+                  <p className="text-[#A0A0A0] text-base leading-relaxed">We optimize for speed and reliability, ensuring your systems perform under massive traffic.</p>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* AEO Layer - Services */}
+          <section className="mt-48 max-w-5xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-6 tracking-tight">Service Deep Dive</h2>
+              <p className="text-[#A0A0A0] text-lg font-medium">Answers to specific problems we solve for our clients.</p>
+            </div>
+
+            <AEOBlock
+              question="What problem does Web Engineering solve?"
+              answer="It eliminates slow, fragile websites that lose customers and replaces them with high-performance engines built for conversion."
+              explanation="Modern users expect instant results. We engineer systems using Next.js and TypeScript that load in milliseconds and guide users directly to your offer."
+              example="A slow e-commerce site fixes its loading speed and navigation → bounce rate drops by 40% → sales increase."
+              ctaText="Optimize your web engineering"
+              ctaHref="/contact"
+            />
+
+            <AEOBlock
+              question="What problem does AI & Automation solve?"
+              answer="It removes the bottleneck of manual, repetitive work that prevents your team from scaling."
+              explanation="We build custom AI agents and automated workflows that handle lead triage, scheduling, and data processing 24/7."
+              example="A service business automates lead follow-ups → response time drops from 4 hours to 4 seconds → conversion rate doubles."
+              ctaText="Start automating"
+              ctaHref="/contact"
+            />
+
+            <AEOBlock
+              question="What problem does Technical SEO solve?"
+              answer="It solves the 'hidden business' problem by ensuring AI engines and search platforms actively recommend you to high-intent buyers."
+              explanation="We optimize your site's schema, performance, and structure to meet the strict standards of SGE and ChatGPT-style search."
+              example="A B2B company optimizes for specific answer queries → Google AI features them in a summary → they get high-quality organic leads."
+              ctaText="Boost your visibility"
+              ctaHref="/contact"
+            />
+
+            <AEOBlock
+              question="What problem does Cloud Infrastructure solve?"
+              answer="It eliminates the risk of downtime and data loss that can destroy business continuity and reputation."
+              explanation="We deploy enterprise-grade cloud environments with automated scaling, daily backups, and 24/7 proactive monitoring."
+              example="A major marketing launch causes a 10x traffic spike → the infrastructure scales instantly → the site stays fast and online."
+              ctaText="Secure your hosting"
+              ctaHref="/contact"
+            />
+
+            <AEOBlock
+              question="What problem does Product Design solve?"
+              answer="It solves high drop-off rates by making complex digital actions feel simple and intuitive for the end-user."
+              explanation="We use psychological design principles to remove friction and guide the user's eye toward the most important actions."
+              example="A complex software tool simplifies its onboarding flow → user completion rate jumps from 30% to 85%."
+              ctaText="Redesign for conversion"
+              ctaHref="/contact"
+            />
+          </section>
+
+          {/* FAQ Section */}
+          <section className="mt-48 max-w-4xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-[clamp(28px,4vw,36px)] font-bold text-white mb-6 tracking-tight">Service FAQ</h2>
+              <p className="text-[#A0A0A0] font-medium">Clear answers to help you understand our engineering process.</p>
+            </div>
+
+            <div className="space-y-6">
+              {faqData.map((faq, index) => (
+                <Reveal key={index} delay={index * 0.1}>
+                  <div className="p-8 md:p-10 rounded-3xl border border-white/5 bg-white/[0.02] shadow-xl hover:bg-white/[0.04] transition-all">
+                    <h4 className="text-white font-bold text-xl mb-4 tracking-tight flex items-center gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      {faq.question}
+                    </h4>
+                    <p className="text-[#A0A0A0] leading-relaxed pl-4 border-l border-white/10 font-medium">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
+
 

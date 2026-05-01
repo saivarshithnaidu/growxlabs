@@ -22,6 +22,22 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
+import { DynamicSchema } from "@/components/marketing/DynamicSchema";
+
 export default function ContactPage() {
-  return <ContactContent />;
+  return (
+    <>
+      <DynamicSchema 
+        graph={[
+          {
+            "@type": "ContactPage",
+            "@id": "https://growxlabs.tech/contact#page",
+            "about": { "@id": "https://growxlabs.tech/#organization" }
+          }
+        ]} 
+      />
+      <ContactContent />
+    </>
+  );
 }
+

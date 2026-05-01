@@ -22,6 +22,32 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
+import { DynamicSchema } from "@/components/marketing/DynamicSchema";
+
 export default function AboutPage() {
-  return <AboutContent />;
+  return (
+    <>
+      <DynamicSchema 
+        graph={[
+          {
+            "@type": "Organization",
+            "@id": "https://growxlabs.tech/#organization",
+            "description": "AI-native digital agency building AI-powered systems and products.",
+            "founder": [
+              { "@id": "https://growxlabs.tech/#varshith" },
+              { "@id": "https://growxlabs.tech/#akhilesh" }
+            ],
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Guntur",
+              "addressRegion": "Andhra Pradesh",
+              "addressCountry": "India"
+            }
+          }
+        ]} 
+      />
+      <AboutContent />
+    </>
+  );
 }
+
