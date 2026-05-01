@@ -88,25 +88,26 @@ export default function ClientDashboard() {
         <DashboardStat 
           icon={<FileText size={18} />} 
           label="Latest Agreement" 
-          status={data.agreements[0]?.status || "Active"} 
-          link={data.agreements[0] ? `/client/dashboard/agreements/${data.agreements[0].id}` : "#"}
+          status={data?.agreements?.[0]?.status || "No Active Agreement"} 
+          link={data?.agreements?.[0] ? `/client/dashboard/agreements/${data.agreements[0].id}` : "#"}
           accent="blue"
         />
         <DashboardStat 
           icon={<CreditCard size={18} />} 
           label="Billing Status" 
-          status={data.invoices.some(inv => inv.status === 'pending') ? "Invoice Due" : "Settled"} 
+          status={(data?.invoices || []).some(inv => inv.status === 'pending') ? "Invoice Due" : "Settled"} 
           link="/client/invoices"
           accent="amber"
         />
         <DashboardStat 
           icon={<Rocket size={18} />} 
           label="Project Phase" 
-          status={data.projects[0]?.status || "Operational"} 
+          status={data?.projects?.[0]?.status || "Operational"} 
           link="/client/project"
           accent="green"
         />
       </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Project Progress */}
