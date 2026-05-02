@@ -236,21 +236,16 @@ export default function AdminCRMPage() {
             <h2 className="text-xl font-bold text-white tracking-tight mb-2">Import Leads</h2>
             <p className="text-[var(--text-secondary)] text-sm mb-8">Upload a CSV file containing lead data.</p>
             
-            <input 
-              type="file" 
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept=".csv"
-              className="hidden"
-            />
-
-            <div 
-              onClick={() => fileInputRef.current?.click()}
-              className={cn(
-                "border-2 border-dashed rounded-xl p-8 text-center bg-[var(--surface-2)] mb-4 hover:border-[var(--border-hover)] hover:bg-white/[0.02] transition-colors cursor-pointer",
-                selectedFile ? "border-primary/40 bg-primary/5" : "border-[var(--border-subtle)]"
-              )}
-            >
+            <div className={cn(
+              "relative border-2 border-dashed rounded-xl p-8 text-center bg-[var(--surface-2)] mb-4 hover:border-[var(--border-hover)] hover:bg-white/[0.02] transition-colors",
+              selectedFile ? "border-primary/40 bg-primary/5" : "border-[var(--border-subtle)]"
+            )}>
+               <input 
+                 type="file" 
+                 onChange={handleFileChange}
+                 accept=".csv"
+                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+               />
                <Upload className={cn("w-8 h-8 mx-auto mb-3", selectedFile ? "text-primary" : "text-[var(--text-muted)]")} />
                <div className="text-sm font-semibold text-white">
                  {selectedFile ? selectedFile.name : "Click to upload CSV"}

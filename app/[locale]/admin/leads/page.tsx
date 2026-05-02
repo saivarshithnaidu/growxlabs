@@ -739,21 +739,18 @@ export default function LeadsAdminPage() {
             <h2 className="text-xl font-bold text-white tracking-tight mb-2">Import Leads</h2>
             <p className="text-white/40 text-sm mb-8">Upload a CSV file to bulk import leads.</p>
             
-            <input 
-              type="file" 
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept=".csv"
-              className="hidden"
-            />
-
             <div 
-              onClick={() => fileInputRef.current?.click()}
               className={cn(
-                "border-2 border-dashed rounded-2xl p-12 text-center transition-all cursor-pointer",
+                "relative border-2 border-dashed rounded-2xl p-12 text-center transition-all",
                 selectedFile ? "border-[#00A86B]/40 bg-[#00A86B]/5" : "border-white/5 bg-white/[0.02] hover:bg-white/[0.04]"
               )}
             >
+              <input 
+                type="file" 
+                onChange={handleFileChange}
+                accept=".csv"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              />
               <Upload size={32} className={cn("mx-auto mb-4", selectedFile ? "text-[#00A86B]" : "text-white/20")} />
               <p className="text-xs font-bold text-white uppercase tracking-widest">
                 {selectedFile ? selectedFile.name : "Drop CSV File Here"}
