@@ -7,7 +7,7 @@ import { DynamicSchema } from "@/components/marketing/DynamicSchema";
 
 export async function generateMetadata() {
   return {
-    title: "Portfolio | GrowX Labs",
+    title: "Portfolio | GrowXLabsTech",
     description: "Case studies of our successful AI-native digital systems, from full-stack platforms to complex automation workflows.",
     alternates: {
       canonical: "https://growxlabs.tech/portfolio",

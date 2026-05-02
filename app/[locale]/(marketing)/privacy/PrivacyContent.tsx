@@ -7,7 +7,7 @@ import React from "react";
 export function PrivacyContent() {
   const points = [
     { title: "Data Collection", desc: "We only collect essential data: Contact details, project specifications, payment info, and usage analytics.", icon: Eye },
-    { title: "Zero Data Sale", desc: "GrowX Labs will NEVER sell your data to third parties. We value your privacy as a fundamental engineering principle.", icon: Shield },
+    { title: "Zero Data Sale", desc: "GrowXLabsTech will NEVER sell your data to third parties. We value your privacy as a fundamental engineering principle.", icon: Shield },
     { title: "Storage & Security", desc: "All data is stored on Supabase using enterprise-grade encryption and secure access protocols.", icon: Lock },
     { title: "Your Rights", desc: "You have full rights to access, correct, or request deletion of your data at any time.", icon: CheckCircle }
   ];
@@ -24,7 +24,7 @@ export function PrivacyContent() {
             Privacy <span className="text-gradient">Policy.</span>
           </h1>
           <p className="text-xl text-white/40 font-light leading-relaxed text-center max-w-2xl mx-auto">
-            How we protect your digital identity and project intelligence within the GrowX ecosystem.
+            How we protect your digital identity and project intelligence within the GrowXLabsTech ecosystem.
           </p>
         </motion.div>
 

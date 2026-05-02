@@ -7,11 +7,11 @@ export function TermsContent() {
   const sections = [
     {
       title: "1. Introduction & Acceptance",
-      content: "By accessing and using the services of GrowX Labs, you agree to be bound by these Terms and Conditions. Our services are designed for businesses seeking high-performance digital engineering and automation solutions."
+      content: "By accessing and using the services of GrowXLabsTech, you agree to be bound by these Terms and Conditions. Our services are designed for businesses seeking high-performance digital engineering and automation solutions."
     },
     {
       title: "2. Services Offered",
-      content: "GrowX Labs provides specialized expertise in: Web Development (Next.js/React), Automation Systems (n8n/Custom Logic), Premium Hosting, AI Strategy & Integration, and Technical SEO."
+      content: "GrowXLabsTech provides specialized expertise in: Web Development (Next.js/React), Automation Systems (n8n/Custom Logic), Premium Hosting, AI Strategy & Integration, and Technical SEO."
     },
     {
       title: "3. Project Commencement",
@@ -23,7 +23,7 @@ export function TermsContent() {
     },
     {
       title: "5. Intellectual Property",
-      content: "Full ownership and intellectual property rights of the final deliverables are transferred to the client upon receipt of the final payment. GrowX Labs retains the right to showcase the project in our portfolio unless otherwise agreed in writing."
+      content: "Full ownership and intellectual property rights of the final deliverables are transferred to the client upon receipt of the final payment. GrowXLabsTech retains the right to showcase the project in our portfolio unless otherwise agreed in writing."
     },
     {
       title: "6. Prohibited Uses",
@@ -47,7 +47,7 @@ export function TermsContent() {
             Terms of <span className="text-gradient">Service.</span>
           </h1>
           <p className="text-xl text-white/40 font-light leading-relaxed max-w-2xl">
-            Legal framework governing the engineering and operational standards of GrowX Labs.
+            Legal framework governing the engineering and operational standards of GrowXLabsTech.
           </p>
         </motion.div>
 
@@ -69,7 +69,7 @@ export function TermsContent() {
         </div>
 
         <div className="mt-20 text-center lg:text-left text-white/20 text-[11px] font-black uppercase tracking-[0.4em]">
-          Last Updated: April 2026 • GrowX Labs
+          Last Updated: April 2026 • GrowXLabsTech
         </div>
       </div>
     </div>

@@ -16,7 +16,7 @@ export default function ClientAgreementPage() {
             Master <br /><span className="text-gradient">Agreement.</span>
           </h1>
           <p className="text-xl text-white/40 font-light max-w-2xl mx-auto">
-            Standard contractual framework for all GrowX Labs partnerships and engineering cycles.
+            Standard contractual framework for all GrowXLabsTech partnerships and engineering cycles.
           </p>
         </motion.div>
 

@@ -36,17 +36,17 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     metadataBase: new URL('https://growxlabs.tech'),
     title: {
-      default: "GrowX Labs — AI-Native Digital Agency",
-      template: "%s | GrowX Labs"
+      default: "GrowXLabsTech — AI Native Digital Agency",
+      template: "%s | GrowXLabsTech"
     },
-    description: "We build AI-powered websites, automation systems, and full-stack products that help businesses grow faster. Based in India, serving globally.",
+    description: "GrowXLabsTech is a global AI native digital agency building AI-powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow-ups and intelligent lead capture. 7-day delivery. Serving USA, UK, Australia, UAE, Canada, and India.",
     alternates: {
-      canonical: `https://growxlabs.tech/en-IN`,
+      canonical: `https://growxlabs.tech/${locale}`,
       languages
     },
     openGraph: {
-      url: `https://growxlabs.tech/en-IN/`,
-      siteName: 'GrowX Labs',
+      url: `https://growxlabs.tech/${locale}/`,
+      siteName: 'GrowXLabsTech',
       type: 'website',
       images: [{ url: 'https://growxlabs.tech/og-image.png', width: 1200, height: 630 }],
     },
@@ -81,7 +81,7 @@ export default async function LocaleLayout({
                 {
                   "@type": "Organization",
                   "@id": "https://growxlabs.tech/#organization",
-                  "name": "GrowX Labs",
+                  "name": "GrowXLabsTech",
                   "url": "https://growxlabs.tech",
                   "logo": "https://growxlabs.tech/logo.png",
                   "description": "AI-native digital agency building AI-powered websites, automation systems, and full-stack AI products.",
@@ -98,8 +98,30 @@ export default async function LocaleLayout({
                   "contactPoint": {
                     "@type": "ContactPoint",
                     "email": "hello@growxlabs.tech",
-                    "contactType": "customer support"
+                    "contactType": "customer support",
+                    "availableLanguage": ["English", "Telugu", "Hindi", "Arabic"]
                   },
+                  "areaServed": "Worldwide",
+                  "serviceArea": {
+                    "@type": "GeoShape",
+                    "description": "Worldwide — USA, UK, Australia, UAE, Canada, Singapore, India and all countries"
+                  },
+                  "knowsAbout": [
+                    "Web Development",
+                    "AI Integration", 
+                    "Business Automation",
+                    "n8n Workflows",
+                    "Restaurant Technology",
+                    "Real Estate CRM",
+                    "WhatsApp Automation",
+                    "Lead Generation",
+                    "E-commerce Development",
+                    "SaaS Development",
+                    "AI Chatbots",
+                    "Generative AI",
+                    "Prompt Engineering",
+                    "RAG Systems"
+                  ],
                   "sameAs": [
                     "https://www.linkedin.com/company/growxlabs",
                     "https://twitter.com/growxlabs",
@@ -124,7 +146,7 @@ export default async function LocaleLayout({
                   "@type": "WebSite",
                   "@id": "https://growxlabs.tech/#website",
                   "url": "https://growxlabs.tech",
-                  "name": "GrowX Labs",
+                  "name": "GrowXLabsTech",
                   "publisher": { "@id": "https://growxlabs.tech/#organization" }
                 },
                 {
@@ -157,23 +179,22 @@ export default async function LocaleLayout({
                 },
                 {
                   "@type": "FAQPage",
-
                   "@id": "https://growxlabs.tech/#faq",
                   "mainEntity": [
                     {
                       "@type": "Question",
-                      "name": "What does GrowX Labs do?",
+                      "name": "What is GrowXLabsTech?",
                       "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "GrowX Labs builds AI-powered websites, automation systems, and scalable digital products."
+                        "text": "GrowXLabsTech is a global AI native digital agency that builds AI-powered websites, n8n automation systems, and business growth tools for businesses worldwide. We deliver projects in 7-21 days and serve clients across USA, UK, Australia, UAE, Canada, and globally."
                       }
                     },
                     {
                       "@type": "Question",
-                      "name": "Where is GrowX Labs located?",
+                      "name": "Where is GrowXLabsTech based?",
                       "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "GrowX Labs is based in Guntur, Andhra Pradesh, India."
+                        "text": "GrowXLabsTech is headquartered in India and operates globally. We serve clients across USA, UK, Australia, UAE, Canada, Singapore, and worldwide. All client work is done remotely with full transparency and daily updates."
                       }
                     }
                   ]
@@ -202,6 +223,35 @@ export default async function LocaleLayout({
         )}
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans relative" suppressHydrationWarning>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "GrowXLabsTech",
+              "url": "https://growxlabs.tech",
+              "logo": "https://growxlabs.tech/logo.png",
+              "description": "Global AI native digital agency building AI-powered websites, n8n automation, and business growth tools worldwide.",
+              "foundingDate": "2026",
+              "email": "hello@growxlabs.tech",
+              "areaServed": "Worldwide",
+              "sameAs": [
+                "https://linkedin.com/company/growxlabstech",
+                "https://instagram.com/growxlabstech"
+              ],
+              "knowsAbout": [
+                "Web Development",
+                "AI Integration",
+                "n8n Automation",
+                "Restaurant Technology",
+                "Real Estate CRM",
+                "WhatsApp Automation",
+                "Lead Generation"
+              ]
+            })
+          }}
+        />
         <PHProvider>
           <NextIntlClientProvider messages={messages} locale={locale}>
           <AuthProvider>

@@ -13,10 +13,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 
   return {
-    title: "Contact GrowX Labs | Get a Custom AI Strategy",
-    description: "Ready to automate your business and grow faster? Contact GrowX Labs today for a custom AI and automation strategy. Response within 4 hours.",
+    title: "Work With GrowXLabsTech | Book a Free Global Call",
+    description: "Book a free 15-minute discovery call with GrowXLabsTech. We work with businesses globally — USA, UK, Australia, UAE, Canada, India. hello@growxlabs.tech",
     alternates: {
-      canonical: `https://growxlabs.tech/en-IN/${path}`,
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages
     }
   };

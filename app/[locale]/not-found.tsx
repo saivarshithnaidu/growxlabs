@@ -70,7 +70,7 @@ export default function NotFound() {
           className="space-y-12"
         >
           <p className="text-lg md:text-xl text-white/40 max-w-xl mx-auto font-medium tracking-tight leading-relaxed">
-            The data coordinates you requested do not exist in the current GrowX Labs intelligence matrix. 
+            The data coordinates you requested do not exist in the current GrowXLabsTech intelligence matrix. 
             The path has been redacted or never initialized.
           </p>
           

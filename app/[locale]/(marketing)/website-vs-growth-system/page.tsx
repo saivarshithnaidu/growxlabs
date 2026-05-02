@@ -16,10 +16,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 
   return {
-    title: "Website vs. Growth System: What's the Difference? | GrowX Labs",
-    description: "Discover why a traditional website is no longer enough. Learn how a GrowX Labs Growth System actively drives revenue and scales your business.",
+    title: "What is an AI Native Digital Agency — And Why Your Business Needs One | GrowXLabsTech",
+    description: "Discover why traditional digital agencies are failing and why your business needs an AI-native approach to survive and thrive in 2026.",
     alternates: {
-      canonical: `https://growxlabs.tech/en-IN/${path}`,
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages
     }
   };
@@ -93,7 +93,7 @@ export default function WebsiteVsSystemPage() {
                 </ul>
               </div>
               <div className="p-8 rounded-[32px] border border-primary/20 bg-primary/[0.03] space-y-6">
-                <h3 className="text-primary font-bold text-xl uppercase tracking-widest text-center">GrowX Growth System</h3>
+                <h3 className="text-primary font-bold text-xl uppercase tracking-widest text-center">GrowXLabsTech Growth System</h3>
                 <ul className="space-y-4">
                   <li className="text-white flex items-center gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" /> Dynamic Value Blocks

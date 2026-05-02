@@ -90,10 +90,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 
   return {
-    title: "Our Services | GrowX Labs",
-    description: "Explore our AI-powered web engineering, automation, and technical SEO services designed for high-growth businesses.",
+    title: "Global Web Development & Automation Services | GrowXLabsTech",
+    description: "AI-powered websites, n8n automation workflows, WhatsApp integration, and AI chatbots for businesses globally. Trusted by restaurants, real estate agencies, and growing businesses across USA, UK, Australia, and UAE.",
     alternates: {
-      canonical: "https://growxlabs.tech/en-IN/services",
+      canonical: `https://growxlabs.tech/${locale}/services`,
       languages
     }
   };

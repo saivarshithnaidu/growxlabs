@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: "Terms of Service | GrowX Labs",
     description: "Read the terms and conditions governing the professional digital engineering and automation services provided by GrowX Labs.",
     alternates: {
-      canonical: `https://growxlabs.tech/en-IN/${path}`,
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages
     }
   };

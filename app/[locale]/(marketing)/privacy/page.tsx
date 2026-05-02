@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: "Privacy Policy | GrowX Labs",
     description: "Learn how we protect your digital identity and project intelligence within the GrowX ecosystem.",
     alternates: {
-      canonical: `https://growxlabs.tech/en-IN/${path}`,
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages
     }
   };

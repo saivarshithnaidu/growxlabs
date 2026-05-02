@@ -52,7 +52,7 @@ export class FollowUpService {
     if (!lead.email) return;
 
     await resend.emails.send({
-      from: "GrowX Labs <outreach@growxlabs.tech>",
+      from: "GrowXLabsTech <outreach@growxlabs.tech>",
       to: lead.email,
       subject: `Re: Question about ${lead.business_name}'s website`,
       html: `<p>Hi team, following up on my previous email. Just wanted to see if you received it.</p>`,

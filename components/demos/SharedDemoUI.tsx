@@ -104,7 +104,7 @@ export function DemoFooter({ brand }: { brand: string }) {
         </div>
 
         <div className="space-y-6 flex flex-col justify-between items-end">
-           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9CA3AF]/20 border border-white/5 py-2 px-4 rounded-full italic">A GrowX Asset</div>
+           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9CA3AF]/20 border border-white/5 py-2 px-4 rounded-full italic">A GrowXLabsTech Asset</div>
            <p className="text-[10px] font-black text-[#9CA3AF]/40 uppercase tracking-widest italic">© 2026 {brand}</p>
         </div>
       </div>

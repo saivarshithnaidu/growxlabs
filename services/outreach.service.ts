@@ -29,12 +29,12 @@ export class OutreachService {
           <p>Would you be open to a quick 5-minute chat about how we can help you grow?</p>
           <br />
           <p>Best regards,</p>
-          <strong>GrowX Labs Team</strong>
+          <strong>GrowXLabsTech Team</strong>
         </div>
       `;
 
       const { data, error: sendError } = await resend.emails.send({
-        from: "GrowX Labs <outreach@growxlabs.tech>",
+        from: "GrowXLabsTech <outreach@growxlabs.tech>",
         to: lead.email,
         subject,
         html,

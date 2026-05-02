@@ -12,7 +12,7 @@ export default function Loading() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
-        {/* GrowX Labs Custom Loader */}
+        {/* GrowXLabsTech Custom Loader */}
         <div className="relative w-24 h-24 mb-12">
           {/* Rotating outer rings */}
           <motion.div
@@ -73,7 +73,7 @@ export default function Loading() {
 
       {/* Background HUD numbers */}
       <div className="absolute top-10 left-10 font-mono text-[10px] text-white/5 space-y-1 select-none pointer-events-none">
-        <p>GROWX_LABS_v2.0.4</p>
+        <p>GROWXLABSTECH_v2.0.4</p>
         <p>SYSTEM_ID: GX-9921</p>
         <p>ENCRYPTION: ACTIVE</p>
       </div>

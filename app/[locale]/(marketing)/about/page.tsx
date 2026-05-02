@@ -13,10 +13,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 
   return {
-    title: "About GrowX Labs | AI-Native Growth Engineering",
-    description: "Learn about the founding engineers and the mission of GrowX Labs to deliver enterprise-grade digital infrastructure through AI and automation.",
+    title: "About GrowXLabsTech | Global AI Native Digital Agency",
+    description: "GrowXLabsTech is a global AI native digital agency. We build websites, automation systems, and AI products for businesses in USA, UK, Australia, UAE, Canada, and India. MSME registered. Founded 2026.",
     alternates: {
-      canonical: `https://growxlabs.tech/en-IN/${path}`,
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages
     }
   };

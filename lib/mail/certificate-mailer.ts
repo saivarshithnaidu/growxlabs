@@ -15,9 +15,9 @@ export async function sendCertificateEmail(
 
   try {
     const { data, error } = await getResendClient().emails.send({
-      from: "GrowX Labs Academy <academy@growxlabs.tech>",
+      from: "GrowXLabsTech Academy <academy@growxlabs.tech>",
       to: [email],
-      subject: "Your GrowX Labs Certificate is Ready!",
+      subject: "Your GrowXLabsTech Certificate is Ready!",
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
           <h2 style="color: #1a1a1a;">Congratulations, ${studentName}!</h2>
@@ -35,7 +35,7 @@ export async function sendCertificateEmail(
           </div>
           <p style="font-size: 14px; color: #888; margin-top: 40px; border-top: 1px solid #eee; pt-20;">
             Certificate ID: ${certId}<br/>
-            Verified by GrowX Labs Academy
+            Verified by GrowXLabsTech Academy
           </p>
         </div>
       `,

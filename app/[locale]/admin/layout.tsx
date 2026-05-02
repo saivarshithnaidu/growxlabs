@@ -85,7 +85,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
          </div>
 
          <footer className="mt-20 border-t border-[var(--border-subtle)] p-10 text-center opacity-30 print:hidden">
-            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-[var(--text-muted)]">GrowX Labs · Administrative Suite · 2026</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-[var(--text-muted)]">GrowXLabsTech · Administrative Suite · 2026</p>
          </footer>
       </main>
     </div>

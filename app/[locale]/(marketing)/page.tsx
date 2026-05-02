@@ -19,6 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 
   return {
+    title: "GrowXLabsTech — AI Native Digital Agency | Websites & Automation for Businesses Worldwide",
+    description: "GrowXLabsTech is a global AI native digital agency building AI-powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow-ups and intelligent lead capture. 7-day delivery. Serving USA, UK, Australia, UAE, Canada, and India.",
+    keywords: "AI agency, AI native digital agency, web agency, n8n automation agency, restaurant automation, real estate CRM, WhatsApp automation business, business automation agency, AI web agency, lead capture automation, automated follow up system, GrowXLabsTech",
     alternates: {
       canonical: "https://growxlabs.tech/en-IN",
       languages
@@ -29,24 +32,28 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default function Home() {
   const faqData = [
     {
-      question: "What does GrowX Labs do?",
-      answer: "GrowX Labs builds digital systems including websites, AI automation, and lead generation tools to help businesses scale."
+      question: "What is GrowXLabsTech?",
+      answer: "GrowXLabsTech is a global AI native digital agency that builds AI-powered websites, n8n automation systems, and business growth tools for businesses worldwide. We specialize in helping restaurants, real estate agencies, and growing businesses stop losing customers through automated follow-ups and intelligent systems. We deliver projects in 7-21 days and serve clients across USA, UK, Australia, UAE, Canada, and globally."
     },
     {
-      question: "Is this different from a normal website?",
-      answer: "Yes. A normal website is just a digital brochure. We build growth systems that actively capture leads and automate follow-ups."
+      question: "Where is GrowXLabsTech based?",
+      answer: "GrowXLabsTech is headquartered in India and operates globally. We serve clients across USA, UK, Australia, UAE, Canada, Singapore, and worldwide. All client work is done remotely with full transparency and daily updates."
     },
     {
-      question: "Do I need automation?",
-      answer: "If you spend more than 2 hours a day on repetitive tasks like follow-ups or manual data entry, you need automation."
+      question: "What industries does GrowXLabsTech serve?",
+      answer: "GrowXLabsTech serves restaurants, real estate agencies, clinics, salons, hotels, e-commerce businesses, SaaS companies, and any growing business that needs digital systems. We have particular expertise in Indian-owned businesses operating in USA, UK, and Australia."
     },
     {
-      question: "How long does it take?",
-      answer: "A typical system build takes 2–4 weeks. We focus on speed and high-performance delivery."
+      question: "How does GrowXLabsTech work with international clients?",
+      answer: "GrowXLabsTech works fully remotely with clients worldwide. Discovery calls are on Google Meet or Zoom. Payments are accepted via bank transfer, Stripe, Razorpay, or PayPal. Project updates are sent every 3 days via WhatsApp or email. All projects are delivered to a staging URL for review before going live."
     },
     {
-      question: "Who is this for?",
-      answer: "This is for business owners and founders who want to stop manual work and start growing with automated systems."
+      question: "What currency does GrowXLabsTech charge?",
+      answer: "GrowXLabsTech charges in USD for international clients (USA, UK, Australia, UAE, Canada) and INR for Indian clients. Pricing is project-based after a free discovery call."
+    },
+    {
+      question: "How fast does GrowXLabsTech deliver?",
+      answer: "GrowXLabsTech delivers standard websites in 7 days, growth websites with automation in 14 days, and enterprise systems in 21 days — regardless of client location. We use AI-powered development tools that are 3x faster than traditional agencies."
     }
   ];
 
@@ -98,7 +105,7 @@ export default function Home() {
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto text-center relative z-10 w-full">
           <Reveal scale={0.9} className="mb-6 sm:mb-8">
             <span className="text-[10px] sm:text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B]">
-              AI Native Digital Agency
+              GROWXLABSTECH
             </span>
           </Reveal>
 
@@ -112,8 +119,8 @@ export default function Home() {
           </Reveal>
 
           <Reveal y={20} delay={0.1}>
-            <p className="text-[16px] sm:text-[18px] text-[#A0A0A0] max-w-[520px] mx-auto mb-10 sm:mb-14 leading-[1.6] sm:leading-[1.7] px-4">
-              We build high performance websites and automation systems that help businesses grow faster.
+            <p className="text-[16px] sm:text-[18px] text-[#A0A0A0] max-w-[620px] mx-auto mb-10 sm:mb-14 leading-[1.6] sm:leading-[1.7] px-4">
+              Your business is losing customers to slow follow-ups and broken processes. We fix that with AI-powered websites and automation systems that work while you sleep — for businesses across USA, UK, Australia, UAE, and worldwide.
             </p>
           </Reveal>
 
@@ -145,19 +152,93 @@ export default function Home() {
 
       </section>
 
+      {/* Global Reach Section */}
+      <section className="w-full py-12 border-y border-white/5 bg-white/[0.02]">
+        <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-center items-center gap-8 md:gap-16">
+          {[
+            { name: "USA", flag: "🇺🇸" },
+            { name: "UK", flag: "🇬🇧" },
+            { name: "Australia", flag: "🇦🇺" },
+            { name: "UAE", flag: "🇦🇪" },
+            { name: "Canada", flag: "🇨🇦" },
+            { name: "Singapore", flag: "🇸🇬" },
+            { name: "India", flag: "🇮🇳" },
+            { name: "Worldwide", flag: "🌍" }
+          ].map((country) => (
+            <div key={country.name} className="flex items-center gap-2 grayscale hover:grayscale-0 opacity-40 hover:opacity-100 transition-all cursor-default group">
+              <span className="text-2xl group-hover:scale-125 transition-transform">{country.flag}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-white">{country.name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="w-full py-24 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+          {[
+            { value: "7 Days", label: "Average project delivery", color: "text-[#00A86B]" },
+            { value: "60 Sec", label: "Lead response time with automation", color: "text-blue-500" },
+            { value: "Global", label: "Clients across USA UK Australia UAE", color: "text-purple-500" }
+          ].map((stat, i) => (
+            <Reveal key={i} delay={i * 0.1} y={20}>
+              <div className="text-center space-y-2 p-10 rounded-3xl bg-white/[0.02] border border-white/5">
+                <div className={`text-5xl font-black italic tracking-tighter ${stat.color}`}>{stat.value}</div>
+                <div className="text-xs font-bold uppercase tracking-[0.2em] text-[#A0A0A0]">{stat.label}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* How We Work Section */}
+      <section className="w-full py-24 px-6 bg-white/[0.01]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B] mb-4 block">
+              EXECUTION FRAMEWORK
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">How We Work Worldwide</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {[
+              { step: "01", title: "Discovery Call", desc: "15-minute remote call via Google Meet/Zoom to understand your scope." },
+              { step: "02", title: "Same-Day Proposal", desc: "We send a custom technical architecture and transparent pricing proposal." },
+              { step: "03", title: "7-Day Delivery", desc: "Rapid engineering cycles using AI-powered development tools." },
+              { step: "04", title: "Ongoing Support", desc: "Timezone-flexible maintenance and updates via WhatsApp and email." }
+            ].map((step, i) => (
+              <Reveal key={i} delay={i * 0.1} scale={0.95}>
+                <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.02] space-y-4 h-full relative overflow-hidden group hover:border-[#00A86B]/30 transition-all">
+                  <div className="text-4xl font-black text-white/5 absolute -top-2 -right-2 group-hover:text-[#00A86B]/10 transition-colors">{step.step}</div>
+                  <h3 className="text-xl font-bold text-white italic">{step.title}</h3>
+                  <p className="text-sm text-[#A0A0A0] leading-relaxed">{step.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center">
+            <p className="text-white/40 text-sm font-medium italic">
+              Available across all timezones. Project updates every 3 days.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* AEO Layer - Homepage */}
       <section className="w-full py-24 px-6 md:px-10 xl:px-16 2xl:px-24 bg-white/[0.01]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B] mb-4 block">
-              THE GROWX DIFFERENCE
+              THE GROWXLABSTECH DIFFERENCE
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Direct Solutions for Your Business</h2>
           </div>
 
           <AEOBlock
-            question="What does GrowX Labs actually do?"
-            answer="GrowX Labs builds complete digital systems that help businesses generate leads, automate workflows, and convert visitors into paying customers."
+            question="What does GrowXLabsTech actually do?"
+            answer="GrowXLabsTech builds complete digital systems that help businesses generate leads, automate workflows, and convert visitors into paying customers."
             explanation="Most websites only display information. We build systems that guide users to take action and turn traffic into revenue."
             example="A visitor lands → fills form → automation follows up → business closes the lead."
             ctaText="Start building your system"
@@ -174,7 +255,7 @@ export default function Home() {
           />
 
           <AEOBlock
-            question="How does GrowX Labs help you get clients?"
+            question="How does GrowXLabsTech help you get clients?"
             answer="We deploy a 4-step growth engine: Build performance foundation → Integrate lead capture → Automate follow-ups → Optimize for scale."
             explanation="This end-to-end approach ensures no lead is wasted and your sales process runs 24/7 without manual effort."
             example="Instead of manually emailing leads, our system qualifies them and books meetings while you sleep."
@@ -229,7 +310,7 @@ export default function Home() {
             Currently Onboarding First Clients
           </h2>
           <p className="text-[#A0A0A0] max-w-[640px] mx-auto text-lg leading-relaxed mb-12">
-            Be among the first businesses to experience AI powered digital growth with GrowX Labs.
+            Be among the first businesses to experience AI powered digital growth with GrowXLabsTech.
           </p>
 
           <div className="max-w-xl mx-auto p-10 rounded-2xl border border-[#00A86B]/30 bg-[rgba(255,255,255,0.03)] shadow-2xl backdrop-blur-sm">

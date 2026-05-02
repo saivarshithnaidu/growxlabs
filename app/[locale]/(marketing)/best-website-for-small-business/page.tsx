@@ -16,10 +16,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 
   return {
-    title: "The Best Website for Small Business in 2026 | GrowX Labs",
-    description: "Discover the essential features of a high-converting small business website. Learn why automation and performance are the keys to outcompeting local rivals.",
+    title: "How to Get a Professional Website in 7 Days for Your Business | GrowXLabsTech",
+    description: "Get a high-converting professional website in just 7 days. GrowXLabsTech builds AI-powered websites that capture leads and drive growth for businesses worldwide.",
     alternates: {
-      canonical: `https://growxlabs.tech/en-IN/${path}`,
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages
     }
   };
@@ -76,7 +76,7 @@ export default function SmallBusinessWebsitePage() {
             <div className="space-y-6">
               <h2 className="text-white font-bold text-3xl">Why "Pretty" Isn't Enough</h2>
               <p className="text-white/50 leading-relaxed">
-                Many agencies sell small businesses beautiful websites that are invisible to search engines and useless for conversions. At GrowX Labs, we focus on the metrics that matter:
+                Many agencies sell small businesses beautiful websites that are invisible to search engines and useless for conversions. At GrowXLabsTech, we focus on the metrics that matter:
               </p>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">

@@ -47,7 +47,7 @@ export default function Error({
           </h1>
 
           <p className="text-lg md:text-xl text-[var(--text-secondary)] font-medium leading-relaxed mb-10 max-w-md mx-auto">
-            An unexpected error has disrupted the GrowX Labs intelligence matrix. Our systems are currently recalibrating.
+            An unexpected error has disrupted the GrowXLabsTech intelligence matrix. Our systems are currently recalibrating.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

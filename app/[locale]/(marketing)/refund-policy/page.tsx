@@ -34,7 +34,7 @@ export default function RefundPage() {
           <PolicyCard 
             icon={<Clock className="text-white" />} 
             title="Failure to Deliver" 
-            text="A full or partial refund will be provided if GrowX Labs fails to meet the agreed architectural deliverables within a reasonable grace period." 
+            text="A full or partial refund will be provided if GrowXLabsTech fails to meet the agreed architectural deliverables within a reasonable grace period." 
           />
         </div>
 

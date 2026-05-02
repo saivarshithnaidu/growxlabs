@@ -32,24 +32,20 @@ export function Footer() {
           {/* Brand Column */}
           <div className="space-y-6">
             <Link href="/" className="flex items-center justify-center md:justify-start group">
-              <div className="relative h-10 w-40 transition-transform group-hover:scale-[1.02] duration-300">
-                <Image
-                  src="/logo.svg"
-                  alt="GrowX Labs"
-                  fill
-                  className="object-contain"
-                />
+              <div className="flex items-center text-xl font-bold tracking-tighter transition-transform group-hover:scale-[1.02] duration-300">
+                <span className="text-white">GrowX</span>
+                <span className="text-white">Labs</span>
+                <span className="text-[#00A86B]">Tech</span>
               </div>
             </Link>
             <p className="text-[#A0A0A0] text-[13px] leading-relaxed">
-              We build AI-powered websites and automation systems that help businesses grow faster.
+              GrowXLabsTech builds AI-powered websites and automation systems that help businesses grow faster.
             </p>
 
-            {/* MSME & Contact Details */}
             <div className="space-y-2 pt-2">
-              <p className="text-[12px] text-[#A0A0A0]/60">MSME Registered</p>
-              <p className="text-[12px] text-[#A0A0A0]/60">UDYAM-AP-22-0063260</p>
-              <p className="text-[12px] text-[#A0A0A0]/60">Guntur, Andhra Pradesh, India</p>
+              <p className="text-[12px] text-[#A0A0A0]/60">MSME Registered · UDYAM-AP-22-0063260</p>
+              <p className="text-[12px] text-white/40 font-medium">Serving clients globally — USA · UK · Australia · UAE · Canada · Singapore · India · Worldwide</p>
+              <p className="text-[11px] text-[#00A86B] font-bold uppercase tracking-widest">Available across all timezones · Response within 4 hours</p>
             </div>
 
             <div className="space-y-2 pt-2">
@@ -104,10 +100,10 @@ export function Footer() {
 
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-white/20 text-[11px] font-semibold uppercase tracking-widest">
-            © 2026 GrowX Labs. All rights reserved.
+            © 2026 GrowXLabsTech. All rights reserved.
           </p>
           <p className="text-white/20 text-[11px] font-semibold uppercase tracking-widest">
-            Guntur, Andhra Pradesh, India
+            Global Operations · Worldwide
           </p>
         </div>
       </div>

@@ -75,14 +75,10 @@ export function Navbar() {
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-6 md:px-10 xl:px-16 2xl:px-24">
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center group">
-              <div className="relative h-12 w-48 transition-transform group-hover:scale-[1.02] duration-300">
-                <Image
-                  src="/logo.svg"
-                  alt="GrowX Labs"
-                  fill
-                  className="object-contain"
-                  priority
-                />
+              <div className="flex items-center text-xl md:text-2xl font-bold tracking-tighter transition-transform group-hover:scale-[1.02] duration-300">
+                <span className="text-white">GrowX</span>
+                <span className="text-white">Labs</span>
+                <span className="text-[#00A86B]">Tech</span>
               </div>
             </Link>
 

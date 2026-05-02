@@ -16,10 +16,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 
   return {
-    title: "How to Get Clients From Your Website | GrowX Labs",
-    description: "Learn how to transform your website from a passive brochure into an active conversion engine and generate high-quality leads automatically.",
+    title: "Real Estate Lead Automation — Never Miss a Follow-Up Again | GrowXLabsTech",
+    description: "Learn how real estate agencies worldwide use AI and automation to capture, qualify, and follow up with leads 24/7. Never lose a deal to slow response again.",
     alternates: {
-      canonical: `https://growxlabs.tech/en-IN/${path}`,
+      canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages
     }
   };

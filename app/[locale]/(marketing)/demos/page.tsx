@@ -33,7 +33,7 @@ const DEMOS = [
 export default function DemoHub() {
   return (
     <div className="bg-[#0B0F1A] text-[#DFE5F3] min-h-screen selection:bg-[#6C63FF]/30">
-      <DemoNavbar brand="GrowX Demos" />
+      <DemoNavbar brand="GrowXLabsTech Demos" />
       <DemoBadge />
       <FloatingWhatsApp phone="910000000000" />
 
@@ -92,7 +92,7 @@ export default function DemoHub() {
         </div>
       </section>
 
-      <DemoFooter brand="GrowX Demos" />
+      <DemoFooter brand="GrowXLabsTech Demos" />
     </div>
   );
 }

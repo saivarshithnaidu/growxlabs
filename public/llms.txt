@@ -1,0 +1,36 @@
+# GrowXLabsTech
+
+> Global AI Native Digital Agency | growxlabs.tech
+
+GrowXLabsTech builds AI-powered websites, 
+n8n automation systems, and business growth 
+tools for businesses worldwide.
+
+## Services
+- AI-powered website development (7-day delivery)
+- n8n business automation workflows
+- WhatsApp automated follow-up systems
+- AI chatbots and recommendation engines
+- E-commerce with AI features
+- CRM and lead management systems
+
+## Who We Serve
+Restaurants, real estate agencies, clinics, 
+salons, hotels, and e-commerce businesses.
+Specialization: Businesses in USA, UK, 
+Australia, UAE, Canada, and globally.
+
+## Live Products
+- ResumeForgeAI: AI career platform, 500+ users
+- UniversalAI: Multi-model AI chat platform
+- RecruitAI: AI recruitment automation
+
+## Contact
+Email: hello@growxlabs.tech
+Website: https://growxlabs.tech
+
+## Company
+Founded: April 2026
+Registration: UDYAM-AP-22-0063260
+Headquarters: Guntur, India
+Operations: Worldwide

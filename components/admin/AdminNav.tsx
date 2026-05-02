@@ -114,7 +114,7 @@ export function AdminNav({ isCollapsed, onToggle }: AdminNavProps) {
               </div>
               {!isCollapsed && (
                   <div className="flex flex-col overflow-hidden whitespace-nowrap">
-                      <span className="text-lg font-bold tracking-tighter text-white leading-none">GrowX Labs</span>
+                      <span className="text-lg font-bold tracking-tighter text-white leading-none">GrowXLabsTech</span>
                       <span className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] mt-1.5">Admin Central</span>
                   </div>
               )}

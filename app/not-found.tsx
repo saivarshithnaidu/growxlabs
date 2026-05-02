@@ -33,7 +33,7 @@ export default function GlobalNotFound() {
                   Unknown <span className="text-[#00b894]">Territory.</span>
                 </h2>
                 <p className="text-white/50 text-lg mb-10 max-w-md mx-auto leading-relaxed font-medium">
-                  The coordinates you've accessed are outside the mapped GrowX Labs network. 
+                  The coordinates you've accessed are outside the mapped GrowXLabsTech network. 
                 </p>
                 
                 <a 

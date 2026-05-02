@@ -31,14 +31,14 @@ export const AgreementPDF = ({ data }: { data: any }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
-        <Text style={styles.title}>GrowX Labs</Text>
+        <Text style={styles.title}>GrowXLabsTech</Text>
         <Text style={styles.subtitle}>Master Service Agreement & Project Charter</Text>
       </View>
 
       <View style={styles.grid}>
         <View style={styles.gridItem}>
           <Text style={styles.label}>Service Provider</Text>
-          <Text style={styles.value}>GrowX Labs Engineering</Text>
+          <Text style={styles.value}>GrowXLabsTech Engineering</Text>
           <Text style={styles.text}>contact@growxlabs.tech</Text>
         </View>
         <View style={styles.gridItem}>
@@ -99,7 +99,7 @@ export const AgreementPDF = ({ data }: { data: any }) => (
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>8. Liability</Text>
         <Text style={styles.text}>
-          GrowX Labs shall not be liable for any indirect, incidental, or consequential damages arising from the use or inability to use the delivered products.
+          GrowXLabsTech shall not be liable for any indirect, incidental, or consequential damages arising from the use or inability to use the delivered products.
         </Text>
       </View>
 
@@ -113,7 +113,7 @@ export const AgreementPDF = ({ data }: { data: any }) => (
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>10. Third-Party Disclaimer</Text>
         <Text style={styles.text}>
-          GrowX Labs is not responsible for the performance or uptime of third-party services (e.g., AWS, OpenAI, Razorpay) used within the project.
+          GrowXLabsTech is not responsible for the performance or uptime of third-party services (e.g., AWS, OpenAI, Razorpay) used within the project.
         </Text>
       </View>
 
@@ -126,7 +126,7 @@ export const AgreementPDF = ({ data }: { data: any }) => (
 
       <View style={styles.signatureSection}>
         <View style={styles.signatureBox}>
-          <Text style={styles.label}>For GrowX Labs</Text>
+          <Text style={styles.label}>For GrowXLabsTech</Text>
           <Text style={styles.value}>Authorized Signatory</Text>
         </View>
         <View style={styles.signatureBox}>
@@ -136,7 +136,7 @@ export const AgreementPDF = ({ data }: { data: any }) => (
       </View>
 
       <Text style={styles.footer}>
-        GrowX Labs Engineering | Confidential Document | Generated on {new Date().toLocaleDateString()}
+        GrowXLabsTech Engineering | Confidential Document | Generated on {new Date().toLocaleDateString()}
       </Text>
     </Page>
   </Document>
@@ -147,13 +147,13 @@ export const InvoicePDF = ({ data }: { data: any }) => (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
         <Text style={styles.title}>INVOICE</Text>
-        <Text style={styles.subtitle}>GrowX Labs Internal Billing System</Text>
+        <Text style={styles.subtitle}>GrowXLabsTech Internal Billing System</Text>
       </View>
 
       <View style={styles.grid}>
         <View style={styles.gridItem}>
           <Text style={styles.label}>From</Text>
-          <Text style={styles.value}>GrowX Labs</Text>
+          <Text style={styles.value}>GrowXLabsTech</Text>
           <Text style={styles.text}>Engineering HQ</Text>
         </View>
         <View style={styles.gridItem}>
