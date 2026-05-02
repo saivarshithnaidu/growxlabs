@@ -188,7 +188,7 @@ export default function ClientDashboard() {
 
           <Reveal delay={0.2}>
             <a
-              href="https://wa.me/919121600000"
+              href="https://wa.me/918185958336"
               target="_blank"
               rel="noopener noreferrer"
               className="block"

@@ -87,7 +87,7 @@ export function ContactContent() {
         {/* WhatsApp CTA */}
         <div className="flex justify-center mb-16">
           <a
-            href="https://wa.me/919121600000"
+            href="https://wa.me/918185958336"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-4 px-10 py-5 bg-[#00A86B] text-white font-bold rounded-full hover:bg-[#00A86B]/90 hover:scale-105 transition-all text-lg shadow-2xl"
