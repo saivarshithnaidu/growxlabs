@@ -73,9 +73,33 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { data, error } = await supabaseAdmin.from("crm_leads").insert([body]).select().single();
-    if (error) throw error;
-    return NextResponse.json({ lead: data });
+    const { business_name, contact_name, email, phone, city, status, assigned_to } = body;
+
+    // 1. Insert into leads table
+    const { error: e1 } = await supabaseAdmin.from("leads").insert([{
+      business_name,
+      name: contact_name || business_name,
+      email,
+      phone,
+      city,
+      status: status || 'new',
+      assigned_to
+    }]);
+
+    // 2. Insert into crm_leads table
+    const { data: lead, error: e2 } = await supabaseAdmin.from("crm_leads").insert([{
+      business_name,
+      contact_name: contact_name || business_name,
+      email,
+      phone,
+      city,
+      status: status || 'new',
+      assigned_to
+    }]).select().single();
+
+    if (e1 && e2) throw e2 || e1;
+
+    return NextResponse.json({ lead });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

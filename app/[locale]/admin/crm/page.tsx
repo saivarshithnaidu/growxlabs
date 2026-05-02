@@ -14,7 +14,16 @@ export default function AdminCRMPage() {
   const [loading, setLoading] = useState(true);
   const [showExport, setShowExport] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [showAddLead, setShowAddLead] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newLead, setNewLead] = useState({
+    business_name: "",
+    contact_name: "",
+    email: "",
+    phone: "",
+    city: "",
+    status: "new"
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -47,6 +56,28 @@ export default function AdminCRMPage() {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+    }
+  };
+
+  const handleAddLead = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/crm/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newLead)
+      });
+      if (!res.ok) throw new Error("Failed to add lead");
+      
+      alert("Lead added successfully");
+      setShowAddLead(false);
+      setNewLead({ business_name: "", contact_name: "", email: "", phone: "", city: "", status: "new" });
+      fetchLeads();
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -130,17 +161,15 @@ export default function AdminCRMPage() {
             <p className="text-[var(--text-secondary)] text-sm">Manage leads, track pipeline, and monitor agent performance.</p>
           </div>
           <div className="flex items-center gap-3">
+            <Button onClick={() => setShowAddLead(true)} className="h-10 px-4 bg-primary text-white hover:bg-primary/90">
+              <Plus className="w-4 h-4 mr-2" /> Add Lead
+            </Button>
             <Button onClick={() => setShowImport(true)} variant="outline" className="h-10 px-4 bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-white hover:border-[var(--border-hover)]">
               <Upload className="w-4 h-4 mr-2" /> Import CSV
             </Button>
             <Button onClick={() => setShowExport(true)} variant="outline" className="h-10 px-4 bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-white hover:border-[var(--border-hover)]">
               <Download className="w-4 h-4 mr-2" /> Export Data
             </Button>
-            <Link href="/admin/crm/sources">
-              <Button variant="outline" className="h-10 px-4 bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-white hover:border-[var(--border-hover)]">
-                Lead Sources
-              </Button>
-            </Link>
           </div>
         </div>
       </Reveal>
@@ -289,6 +318,71 @@ export default function AdminCRMPage() {
                 {isSubmitting ? "Importing..." : "Import Data"}
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ADD LEAD MODAL */}
+      {showAddLead && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-2xl w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h2 className="text-xl font-bold text-white tracking-tight mb-2">Add New Lead</h2>
+            <p className="text-[var(--text-secondary)] text-sm mb-8">Manually enter a new lead into the CRM.</p>
+            
+            <form onSubmit={handleAddLead} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Business Name</label>
+                <input 
+                  required
+                  value={newLead.business_name}
+                  onChange={(e) => setNewLead({...newLead, business_name: e.target.value})}
+                  className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl h-12 px-4 text-white focus:border-primary transition-colors outline-none"
+                  placeholder="Company name..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Contact Name</label>
+                <input 
+                  required
+                  value={newLead.contact_name}
+                  onChange={(e) => setNewLead({...newLead, contact_name: e.target.value})}
+                  className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl h-12 px-4 text-white focus:border-primary transition-colors outline-none"
+                  placeholder="Founder or person name..."
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Email</label>
+                  <input 
+                    type="email"
+                    value={newLead.email}
+                    onChange={(e) => setNewLead({...newLead, email: e.target.value})}
+                    className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl h-12 px-4 text-white focus:border-primary transition-colors outline-none"
+                    placeholder="email@example.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Phone</label>
+                  <input 
+                    value={newLead.phone}
+                    onChange={(e) => setNewLead({...newLead, phone: e.target.value})}
+                    className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl h-12 px-4 text-white focus:border-primary transition-colors outline-none"
+                    placeholder="+1 234..."
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-end gap-3">
+                <Button type="button" onClick={() => setShowAddLead(false)} variant="ghost" className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-white">Cancel</Button>
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-white text-black hover:bg-gray-200 text-[10px] font-bold uppercase tracking-widest h-10 px-6 min-w-[120px]"
+                >
+                  {isSubmitting ? "Saving..." : "Save Lead"}
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
       )}
