@@ -17,28 +17,55 @@ export const authOptions: AuthOptions = {
           throw new Error("Missing credentials");
         }
 
-        const { data: user, error } = await supabaseAdmin
+        // 1. Try finding in 'users' table (Clients/Admins)
+        let { data: user, error } = await supabaseAdmin
           .from("users")
           .select("*")
           .eq("email", credentials.email)
           .single();
 
-        if (error || !user) {
+        let isValid = false;
+        let userData = null;
+
+        if (user && !error) {
+          isValid = await bcrypt.compare(credentials.password, user.password);
+          if (isValid) {
+            userData = {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              role: user.role,
+            };
+          }
+        }
+
+        // 2. If not found or invalid in 'users', try 'team_members' table (CRM Agents)
+        if (!userData) {
+          const { data: member, error: memberError } = await supabaseAdmin
+            .from("team_members")
+            .select("*")
+            .eq("email", credentials.email)
+            .eq("is_active", true)
+            .single();
+
+          if (member && !memberError) {
+            isValid = await bcrypt.compare(credentials.password, member.password_hash);
+            if (isValid) {
+              userData = {
+                id: member.id,
+                email: member.email,
+                name: member.name,
+                role: member.role || "crm_agent",
+              };
+            }
+          }
+        }
+
+        if (!userData) {
           throw new Error("Invalid email or password");
         }
 
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-
-        if (!isValid) {
-          throw new Error("Invalid email or password");
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
+        return userData;
       }
     })
   ],
