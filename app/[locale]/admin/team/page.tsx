@@ -2,14 +2,24 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
-import { Plus, Search, Shield, UserX, Key, Clock, Activity } from "lucide-react";
+import { Plus, Search, Shield, UserX, Key, Clock, Activity, Loader2 } from "lucide-react";
 import { Reveal } from "@/components/marketing/Reveal";
+import { toast } from "sonner";
 
 export default function AdminTeamPage() {
   const [team, setTeam] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    role: "crm_agent"
+  });
 
   useEffect(() => {
     fetchTeam();
@@ -22,8 +32,57 @@ export default function AdminTeamPage() {
       setTeam(data.team || []);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to fetch team members");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddAgent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.password) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/admin/team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create agent");
+
+      toast.success("Agent created successfully");
+      setShowAddModal(false);
+      setFormData({ name: "", email: "", phone: "", password: "", role: "crm_agent" });
+      fetchTeam();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeactivate = async (id: string, currentStatus: boolean) => {
+    if (!confirm(`Are you sure you want to ${currentStatus ? 'deactivate' : 'activate'} this agent?`)) return;
+
+    try {
+      const res = await fetch(`/api/admin/team?id=${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_active: !currentStatus })
+      });
+
+      if (!res.ok) throw new Error("Failed to update status");
+      
+      toast.success(`Agent ${currentStatus ? 'deactivated' : 'activated'} successfully`);
+      fetchTeam();
+    } catch (err: any) {
+      toast.error(err.message);
     }
   };
 
@@ -111,8 +170,14 @@ export default function AdminTeamPage() {
                     <Button onClick={() => setSelectedMember(member)} variant="outline" size="sm" className="flex-1 bg-transparent border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-white text-[10px] font-bold uppercase tracking-widest h-9">
                        <Clock className="w-3 h-3 mr-2" /> Logs
                     </Button>
-                    <Button variant="outline" size="sm" className="px-3 bg-transparent border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-red-400 hover:border-red-500/30 transition-colors h-9" title="Deactivate">
-                       <UserX className="w-4 h-4" />
+                    <Button 
+                      onClick={() => handleDeactivate(member.id, member.is_active)} 
+                      variant="outline" 
+                      size="sm" 
+                      className={`px-3 bg-transparent border-[var(--border-subtle)] ${member.is_active ? 'text-[var(--text-muted)] hover:text-red-400 hover:border-red-500/30' : 'text-green-400 border-green-500/30 hover:bg-green-500/10'} transition-colors h-9`} 
+                      title={member.is_active ? "Deactivate" : "Activate"}
+                    >
+                       {member.is_active ? <UserX className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
                     </Button>
                  </div>
               </div>
@@ -158,15 +223,56 @@ export default function AdminTeamPage() {
           <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-2xl w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <h2 className="text-xl font-bold text-white tracking-tight mb-2">Add CRM Agent</h2>
             <p className="text-[var(--text-secondary)] text-sm mb-8">Create a new team member account.</p>
-            <form className="space-y-5">
-              <div className="space-y-2"><label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Full Name</label><input type="text" className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--border-hover)] transition-colors text-sm" /></div>
-              <div className="space-y-2"><label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Email Address</label><input type="email" className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--border-hover)] transition-colors text-sm" /></div>
-              <div className="space-y-2"><label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Phone</label><input type="text" className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--border-hover)] transition-colors text-sm" /></div>
-              <div className="space-y-2"><label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Temporary Password</label><input type="text" className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--border-hover)] transition-colors text-sm" /></div>
+            <form onSubmit={handleAddAgent} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Full Name</label>
+                <input 
+                  type="text" 
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--border-hover)] transition-colors text-sm" 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Email Address</label>
+                <input 
+                  type="email" 
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--border-hover)] transition-colors text-sm" 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Phone</label>
+                <input 
+                  type="text" 
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--border-hover)] transition-colors text-sm" 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Temporary Password</label>
+                <input 
+                  type="text" 
+                  required
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--border-hover)] transition-colors text-sm" 
+                />
+              </div>
               
               <div className="pt-6 flex justify-end gap-3 border-t border-[var(--border-subtle)] mt-8">
                  <Button type="button" onClick={() => setShowAddModal(false)} variant="ghost" className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-white">Cancel</Button>
-                 <Button type="button" className="bg-white text-black hover:bg-gray-200 text-[10px] font-bold uppercase tracking-widest h-10 px-6">Create Agent</Button>
+                 <Button 
+                   type="submit" 
+                   disabled={isSubmitting}
+                   className="bg-white text-black hover:bg-gray-200 text-[10px] font-bold uppercase tracking-widest h-10 px-6 min-w-[120px]"
+                 >
+                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create Agent"}
+                 </Button>
               </div>
             </form>
           </div>
