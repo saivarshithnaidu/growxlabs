@@ -20,19 +20,23 @@ export async function POST(req: Request) {
 
     // Process leads: assign to agent if needed
     const processedLeads = leads
-      .filter(l => l.business_name || l.name) // Skip completely empty rows
-      .map(lead => ({
-        business_name: lead.business_name || lead.name || "Unknown",
-        name: lead.name || lead.contact_name || lead.business_name || null,
-        contact_name: lead.name || lead.contact_name || null,
-        email: lead.email || null,
-        phone: lead.phone || null,
-        city: lead.city || null,
-        status: lead.status || "new",
-        assigned_to: role === 'crm_agent' ? userId : lead.assigned_to || null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }));
+      .filter(l => l.business_name || l.name || l.contact_name) // Skip completely empty rows
+      .map(lead => {
+        const bName = lead.business_name || lead.company || lead.name || "Unknown Business";
+        const cName = lead.name || lead.contact_name || lead.founder || bName; // Fallback to business name if no person name
+        
+        return {
+          business_name: bName,
+          name: cName,
+          contact_name: cName,
+          email: lead.email || null,
+          phone: lead.phone || null,
+          city: lead.city || null,
+          status: lead.status || "new",
+          assigned_to: role === 'crm_agent' ? userId : lead.assigned_to || null,
+          created_at: new Date().toISOString()
+        };
+      });
 
     if (processedLeads.length === 0) {
       return NextResponse.json({ error: "No valid leads found in file. Ensure columns match Business Name, Email, or Phone." }, { status: 400 });
@@ -41,7 +45,7 @@ export async function POST(req: Request) {
     console.log(`[IMPORT] Attempting to insert ${processedLeads.length} leads`);
 
     // Insert into 'leads' table
-    const { data: d1, error: e1 } = await supabaseAdmin.from("leads").insert(processedLeads.map(l => ({
+    const { error: e1 } = await supabaseAdmin.from("leads").insert(processedLeads.map(l => ({
       business_name: l.business_name,
       name: l.name,
       email: l.email,
@@ -52,8 +56,8 @@ export async function POST(req: Request) {
       created_at: l.created_at
     })));
 
-    // Try to insert into 'crm_leads' table as well for the CRM dashboard
-    const { data: d2, error: e2 } = await supabaseAdmin.from("crm_leads").insert(processedLeads.map(l => ({
+    // Insert into 'crm_leads' table
+    const { error: e2 } = await supabaseAdmin.from("crm_leads").insert(processedLeads.map(l => ({
       business_name: l.business_name,
       contact_name: l.contact_name,
       email: l.email,
@@ -64,11 +68,12 @@ export async function POST(req: Request) {
       created_at: l.created_at
     })));
 
-    if (e1 && e2) {
+    if (e1 || e2) {
+      const err = e2 || e1;
       console.error("[DATABASE ERROR]:", { e1, e2 });
       return NextResponse.json({ 
-        error: `Database Error: ${e1.message}`,
-        details: e1.details
+        error: `Database Error: ${err?.message}`,
+        details: err?.details
       }, { status: 500 });
     }
 
