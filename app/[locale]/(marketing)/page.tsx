@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     title: "GrowXLabsTech — AI Native Digital Agency | Websites & Automation for Businesses Worldwide",
-    description: "GrowXLabsTech is a global AI native digital agency building AI-powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow-ups and intelligent lead capture. 7-day delivery. Serving USA, UK, Australia, UAE, Canada, and India.",
+    description: "GrowXLabsTech is a global AI native digital agency building AI powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow ups and intelligent lead capture. 7-day delivery. Serving India, USA, UK, Australia, UAE, and Canada.",
     keywords: "AI agency, AI native digital agency, web agency, n8n automation agency, restaurant automation, real estate CRM, WhatsApp automation business, business automation agency, AI web agency, lead capture automation, automated follow up system, GrowXLabsTech",
     alternates: {
       canonical: "https://growxlabs.tech/en-IN",
@@ -33,7 +33,7 @@ export default function Home() {
   const faqData = [
     {
       question: "What is GrowXLabsTech?",
-      answer: "GrowXLabsTech is a global AI native digital agency that builds AI-powered websites, n8n automation systems, and business growth tools for businesses worldwide. We specialize in helping restaurants, real estate agencies, and growing businesses stop losing customers through automated follow-ups and intelligent systems. We deliver projects in 7-21 days and serve clients across USA, UK, Australia, UAE, Canada, and globally."
+      answer: "GrowXLabsTech is a global AI native digital agency that builds AI powered websites, n8n automation systems, and business growth tools for businesses worldwide. We specialize in helping restaurants, real estate agencies, and growing businesses stop losing customers through automated follow ups and intelligent systems. We deliver projects in 7-21 days and serve clients across India, USA, UK, Australia, UAE, Canada, and globally."
     },
     {
       question: "Where is GrowXLabsTech based?",
@@ -112,7 +112,7 @@ export default function Home() {
           <Reveal y={20}>
             <h1
               className="text-white font-bold mb-8 sm:mb-10 leading-[1.1] max-w-[1100px] mx-auto px-2"
-              style={{ fontSize: "clamp(40px, 8vw, 96px)", fontWeight: 700 }}
+              style={{ fontSize: "clamp(40px, 8vw, 96px)", fontWeight: 800 }}
             >
               Digital Systems That Drive Growth.
             </h1>
@@ -120,7 +120,7 @@ export default function Home() {
 
           <Reveal y={20} delay={0.1}>
             <p className="text-[16px] sm:text-[18px] text-[#A0A0A0] max-w-[620px] mx-auto mb-10 sm:mb-14 leading-[1.6] sm:leading-[1.7] px-4">
-              Your business is losing customers to slow follow-ups and broken processes. We fix that with AI-powered websites and automation systems that work while you sleep — for businesses across USA, UK, Australia, UAE, and worldwide.
+              GrowXLabsTech builds elite digital systems for forward-thinking businesses worldwide. We transform standard websites into high-performance growth engines using AI powered automation.
             </p>
           </Reveal>
 
@@ -152,24 +152,29 @@ export default function Home() {
 
       </section>
 
-      {/* Global Reach Section */}
-      <section className="w-full py-12 border-y border-white/5 bg-white/[0.02]">
-        <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-center items-center gap-8 md:gap-16">
-          {[
-            { name: "USA", flag: "🇺🇸" },
-            { name: "UK", flag: "🇬🇧" },
-            { name: "Australia", flag: "🇦🇺" },
-            { name: "UAE", flag: "🇦🇪" },
-            { name: "Canada", flag: "🇨🇦" },
-            { name: "Singapore", flag: "🇸🇬" },
-            { name: "India", flag: "🇮🇳" },
-            { name: "Worldwide", flag: "🌍" }
-          ].map((country) => (
-            <div key={country.name} className="flex items-center gap-2 grayscale hover:grayscale-0 opacity-40 hover:opacity-100 transition-all cursor-default group">
-              <span className="text-2xl group-hover:scale-125 transition-transform">{country.flag}</span>
-              <span className="text-[10px] font-black uppercase tracking-widest text-white">{country.name}</span>
-            </div>
-          ))}
+      <section className="w-full py-12 border-y border-white/5 bg-white/[0.02] overflow-hidden">
+        <div className="max-w-[2000px] mx-auto overflow-hidden relative">
+          <div className="flex animate-scroll hover:[animation-play-state:paused] whitespace-nowrap w-fit">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="flex items-center gap-16 px-8">
+                {[
+                  { name: "India", flag: "🇮🇳" },
+                  { name: "USA", flag: "🇺🇸" },
+                  { name: "UK", flag: "🇬🇧" },
+                  { name: "Australia", flag: "🇦🇺" },
+                  { name: "UAE", flag: "🇦🇪" },
+                  { name: "Canada", flag: "🇨🇦" },
+                  { name: "Singapore", flag: "🇸🇬" },
+                  { name: "Worldwide", flag: "🌍" }
+                ].map((country) => (
+                  <div key={country.name} className="flex items-center gap-3 grayscale hover:grayscale-0 opacity-40 hover:opacity-100 transition-all cursor-default group shrink-0">
+                    <span className="text-3xl group-hover:scale-125 transition-transform">{country.flag}</span>
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white">{country.name}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -198,7 +203,7 @@ export default function Home() {
             <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B] mb-4 block">
               EXECUTION FRAMEWORK
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">How We Work Worldwide</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">How We Work</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
