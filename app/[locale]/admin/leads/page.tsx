@@ -7,7 +7,7 @@ import {
   MessageSquare, Zap, Target,
   MapPin, Star, X, Copy, Loader2,
   CheckCircle, AlertCircle, Phone, Mail,
-  RefreshCw, Send, PhoneCall, Info
+  RefreshCw, Send, PhoneCall, Info, Plus, Upload, Download
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Textarea";
@@ -51,6 +51,18 @@ export default function LeadsAdminPage() {
 
   // Toast State
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+  // New Lead Modal State
+  const [showAddLead, setShowAddLead] = useState(false);
+  const [showImportLead, setShowImportLead] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newLead, setNewLead] = useState({
+    business_name: "",
+    email: "",
+    phone: "",
+    city: "",
+    status: "new" as Lead['status']
+  });
 
   const fetchLeads = useCallback(async () => {
     try {
@@ -147,6 +159,31 @@ export default function LeadsAdminPage() {
     }
   };
 
+  const handleAddLead = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/leads/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newLead)
+      });
+      if (!res.ok) throw new Error("Failed to create lead");
+      showToast("Lead added successfully");
+      setShowAddLead(false);
+      setNewLead({ business_name: "", email: "", phone: "", city: "", status: "new" });
+      fetchLeads();
+    } catch (e: any) {
+      showToast(e.message, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleExportCSV = () => {
+    window.location.href = "/api/crm/export?format=csv";
+  };
+
   const handleOpenOutreach = (lead: Lead) => {
     setOutreachLead(lead);
     setGeneratedContent(lead.outreach_content || null);
@@ -211,6 +248,15 @@ export default function LeadsAdminPage() {
             <p className="text-white/40 font-medium">Real-time Business Intelligence</p>
           </div>
           <div className="flex gap-3">
+            <Button onClick={() => setShowImportLead(true)} variant="outline" className="border-white/10 text-white/40 hover:text-white h-11 px-6 font-bold text-[10px] uppercase tracking-widest">
+              <Upload size={14} className="mr-2" /> Import CSV
+            </Button>
+            <Button onClick={handleExportCSV} variant="outline" className="border-white/10 text-white/40 hover:text-white h-11 px-6 font-bold text-[10px] uppercase tracking-widest">
+              <Download size={14} className="mr-2" /> Export
+            </Button>
+            <Button onClick={() => setShowAddLead(true)} variant="outline" className="border-white/10 text-white/40 hover:text-white h-11 px-6 font-bold text-[10px] uppercase tracking-widest">
+              <Plus size={14} className="mr-2" /> Add Lead
+            </Button>
             <Link href="/admin/leads/scrape">
               <Button className="bg-[#00A86B] text-white hover:bg-[#00A86B]/90 shadow-lg shadow-[#00A86B]/10 px-8 h-11 font-bold">
                 <Zap size={16} className="mr-2 fill-current" /> Hunt Leads
@@ -570,6 +616,87 @@ export default function LeadsAdminPage() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* ADD LEAD MODAL */}
+      {showAddLead && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+          <div className="bg-[#121212] border border-white/10 rounded-2xl w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h2 className="text-xl font-bold text-white tracking-tight mb-2">Add New Lead</h2>
+            <p className="text-white/40 text-sm mb-8">Manually enter lead information into the pipeline.</p>
+            <form onSubmit={handleAddLead} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Business Name</label>
+                <input 
+                  type="text" 
+                  required
+                  value={newLead.business_name}
+                  onChange={(e) => setNewLead({ ...newLead, business_name: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/20 transition-colors text-sm" 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Email Address</label>
+                <input 
+                  type="email" 
+                  value={newLead.email}
+                  onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/20 transition-colors text-sm" 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Phone Number</label>
+                <input 
+                  type="text" 
+                  value={newLead.phone}
+                  onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/20 transition-colors text-sm" 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">City</label>
+                <input 
+                  type="text" 
+                  value={newLead.city}
+                  onChange={(e) => setNewLead({ ...newLead, city: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/20 transition-colors text-sm" 
+                />
+              </div>
+              
+              <div className="pt-6 flex justify-end gap-3 border-t border-white/5 mt-8">
+                 <Button type="button" onClick={() => setShowAddLead(false)} variant="ghost" className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white">Cancel</Button>
+                 <Button 
+                   type="submit" 
+                   disabled={isSubmitting}
+                   className="bg-white text-black hover:bg-neutral-200 text-[10px] font-bold uppercase tracking-widest h-10 px-6 min-w-[120px]"
+                 >
+                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Lead"}
+                 </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* IMPORT CSV MODAL */}
+      {showImportLead && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+          <div className="bg-[#121212] border border-white/10 rounded-2xl w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h2 className="text-xl font-bold text-white tracking-tight mb-2">Import Leads</h2>
+            <p className="text-white/40 text-sm mb-8">Upload a CSV file to bulk import leads.</p>
+            
+            <div className="border-2 border-dashed border-white/5 rounded-2xl p-12 text-center bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer">
+              <Upload size={32} className="mx-auto text-white/20 mb-4" />
+              <p className="text-xs font-bold text-white uppercase tracking-widest">Drop CSV File Here</p>
+              <p className="text-[10px] text-white/20 mt-2 uppercase tracking-tight">or click to browse local files</p>
+            </div>
+
+            <div className="mt-8 flex justify-end gap-3">
+               <Button type="button" onClick={() => setShowImportLead(false)} variant="ghost" className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white">Cancel</Button>
+               <Button className="bg-[#00A86B] text-white hover:bg-[#00A86B]/90 text-[10px] font-bold uppercase tracking-widest h-10 px-6">Process File</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

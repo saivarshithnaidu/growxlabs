@@ -1,45 +1,39 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-export async function POST(req: Request) {
+export async function GET(req: Request) {
   try {
-    const body = await req.json();
-    const { format, date_range, status_filter, source_filter } = body;
-    
-    let query = supabaseAdmin.from("crm_leads").select("*");
-    
-    if (status_filter && status_filter !== 'all') {
-      query = query.eq('status', status_filter);
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const { role, id } = session.user as any;
+    const { searchParams } = new URL(req.url);
+    const format = searchParams.get('format') || 'csv';
     
-    if (source_filter && source_filter !== 'all') {
-      query = query.eq('source', source_filter);
+    let query = supabaseAdmin.from("leads").select("*");
+    
+    // Filter by assigned agent if it's a CRM Agent
+    if (role === "crm_agent") {
+      query = query.eq("assigned_to", id);
     }
-    
-    // Simplistic date filtering
-    if (date_range === 'this_week') {
-      const date = new Date();
-      date.setDate(date.getDate() - 7);
-      query = query.gte('created_at', date.toISOString());
-    } else if (date_range === 'this_month') {
-      const date = new Date();
-      date.setMonth(date.getMonth() - 1);
-      query = query.gte('created_at', date.toISOString());
-    }
-    
-    const { data: leads, error } = await query;
+
+    const { data: leads, error } = await query.order("created_at", { ascending: false });
     if (error) throw error;
     
     if (format === 'csv') {
       const headers = ["Business Name", "Contact Name", "Phone", "Email", "City", "Status", "Score", "Created At"];
-      const rows = leads.map(l => [
-        `"${l.business_name || ''}"`,
-        `"${l.contact_name || ''}"`,
+      const rows = (leads || []).map(l => [
+        `"${l.business_name || l.name || ''}"`,
+        `"${l.name || ''}"`,
         `"${l.phone || ''}"`,
         `"${l.email || ''}"`,
         `"${l.city || ''}"`,
         `"${l.status || ''}"`,
-        l.score,
+        l.lead_score || 0,
         l.created_at
       ].join(","));
       
@@ -48,13 +42,12 @@ export async function POST(req: Request) {
       return new NextResponse(csvContent, {
         headers: {
           'Content-Type': 'text/csv',
-          'Content-Disposition': 'attachment; filename="leads_export.csv"',
+          'Content-Disposition': 'attachment; filename="growx_leads_export.csv"',
         }
       });
     }
     
-    // Future implementation for PDF and DOCX
-    return NextResponse.json({ message: `Export in ${format} is generating...`, data: leads });
+    return NextResponse.json({ data: leads });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
