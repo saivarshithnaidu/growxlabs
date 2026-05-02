@@ -35,3 +35,15 @@ VALUES (
 )
 ON CONFLICT (email) DO UPDATE 
 SET role = 'ADMIN', password = '$2b$10$ieErAoR7OmFW2nMRVY74mezt/WH7.Hv3eBj/lV6990gA119SpwOp2';
+
+-- Insert Default Co-Admin User
+-- Password is: GrowXCoAdmin2026!
+INSERT INTO users (name, email, password, role)
+VALUES (
+    'GrowX Co-Admin', 
+    'coadmin@growxlabs.tech', 
+    '$2b$10$/xCkP/vbrTbkDNMco9L2R.y2yk3qN8vjarZHipHCoYWQR/S3ASZNK', 
+    'CO_ADMIN'
+)
+ON CONFLICT (email) DO UPDATE 
+SET role = 'CO_ADMIN', password = '$2b$10$/xCkP/vbrTbkDNMco9L2R.y2yk3qN8vjarZHipHCoYWQR/S3ASZNK';
