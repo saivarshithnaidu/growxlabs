@@ -60,7 +60,7 @@ export function AdminNav({ isCollapsed, onToggle }: AdminNavProps) {
   const isCrmAgent = role === "crm_agent";
 
   const filteredNavItems = isCrmAgent 
-    ? navItems.filter(i => ["Leads", "Outreach"].includes(i.name))
+    ? navItems.filter(i => ["CRM", "Leads", "Outreach"].includes(i.name)).map(i => i.name === "CRM" ? { ...i, href: "/admin/leads" } : i)
     : navItems;
 
   const renderLink = (item: any) => {

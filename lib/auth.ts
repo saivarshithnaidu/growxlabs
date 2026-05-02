@@ -57,6 +57,13 @@ export const authOptions: AuthOptions = {
                 name: member.name,
                 role: member.role || "crm_agent",
               };
+
+              // Record Session
+              await supabaseAdmin.from("team_sessions").insert([{
+                team_member_id: member.id,
+                login_at: new Date().toISOString(),
+                is_active: true
+              }]);
             }
           }
         }

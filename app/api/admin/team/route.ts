@@ -1,9 +1,22 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import bcrypt from "bcryptjs";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+
+async function checkAdmin() {
+  const session = await getServerSession(authOptions);
+  if (!session || ((session.user as any).role !== "ADMIN" && (session.user as any).role !== "CO_ADMIN")) {
+    return false;
+  }
+  return true;
+}
 
 export async function GET(req: Request) {
   try {
+    if (!await checkAdmin()) {
+      return NextResponse.json({ error: "Access Denied" }, { status: 403 });
+    }
     const { data, error } = await supabaseAdmin.from("team_members").select(`
       id, name, email, phone, role, is_active, accepted_terms, created_at,
       sessions:team_sessions(login_at, logout_at, ip_address, device)
@@ -19,6 +32,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    if (!await checkAdmin()) {
+      return NextResponse.json({ error: "Access Denied" }, { status: 403 });
+    }
     const body = await req.json();
     const { name, email, phone, role, password } = body;
     
@@ -42,6 +58,9 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
+    if (!await checkAdmin()) {
+      return NextResponse.json({ error: "Access Denied" }, { status: 403 });
+    }
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
     const body = await req.json();
