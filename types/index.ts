@@ -18,6 +18,9 @@ export interface Lead {
   assigned_to?: string;
   city?: string;
   created_at?: string;
+  source?: string;
+  created_by?: string;
+  created_by_name?: string;
   outreach_generated?: boolean;
   outreach_sent?: boolean;
   outreach_content?: {

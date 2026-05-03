@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/Card";
 import {
   MessageSquare, Zap, Target,
   MapPin, Star, X, Copy, Loader2,
-  CheckCircle, AlertCircle, Phone, Mail,
+  CheckCircle, AlertCircle, Phone, Mail, Users,
   RefreshCw, Send, PhoneCall, Info, Plus, Upload, Download
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -353,6 +353,17 @@ export default function LeadsAdminPage() {
                 const priority = getPriority(lead.lead_score || 0);
                 const isExpanded = activeLeadId === lead.id;
 
+                // Fallback parsing for source/creator from notes
+                let displaySource = lead.source;
+                let displayCreator = lead.created_by_name;
+                
+                if (!displaySource && lead.notes?.includes("[Source:")) {
+                  displaySource = lead.notes.match(/\[Source:\s*(.*?)\]/)?.[1];
+                }
+                if (!displayCreator && lead.notes?.includes("[Created By:")) {
+                  displayCreator = lead.notes.match(/\[Created By:\s*(.*?)\]/)?.[1];
+                }
+
                 return (
                   <motion.div
                     key={lead.id}
@@ -382,7 +393,15 @@ export default function LeadsAdminPage() {
                               <MapPin size={10} /> {lead.city || "Unknown Location"}
                             </span>
                             {lead.outreach_sent && (
-                              <span className="bg-green-500/10 text-green-500 text-[10px] font-black px-2 py-0.5 rounded border border-green-500/20">CONTACTED</span>
+                              <span className="bg-green-500/10 text-green-500 text-[10px] font-black px-2 py-0.5 rounded border border-green-500/20 uppercase">CONTACTED</span>
+                            )}
+                            {displaySource === "Admin Manual" && (
+                              <span className="bg-blue-500/10 text-blue-400 text-[10px] font-black px-2 py-0.5 rounded border border-blue-500/20 uppercase tracking-widest">Admin Saved</span>
+                            )}
+                            {displayCreator && (
+                              <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-1.5 bg-white/[0.03] px-3 py-1 rounded-md border border-white/5">
+                                <Users size={10} /> Uploaded By: {displayCreator}
+                              </span>
                             )}
                           </div>
 
