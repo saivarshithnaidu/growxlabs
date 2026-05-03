@@ -1,54 +1,18 @@
 "use client";
 
 import React from "react";
-import dynamic from "next/dynamic";
-import { useState, useEffect } from "react";
 import { usePathname } from "@/navigation";
-
-// Dynamic import of the heavy ParticleWave component
-const ParticleWave = dynamic(
-  () => import("@/components/ui/particle-wave").then(mod => mod.ParticleWave), 
-  { 
-    ssr: false,
-    loading: () => <div className="fixed inset-0 bg-black -z-50" /> 
-  }
-);
 
 /**
  * GlobalBackground Component
  * 
- * Style: Particle Wave Surface (Three.js)
- * Aesthetic: Kinetic particle waves for a premium AI-native feel.
+ * Style: Deep Mesh (CSS only)
+ * Aesthetic: High-performance, near-zero JS background.
  */
 export function GlobalBackground() {
-  const [shouldLoad, setShouldLoad] = useState(false);
   const pathname = usePathname();
   
   const isDashboard = pathname?.includes("/admin") || pathname?.includes("/client") || pathname?.includes("/demos");
-
-  useEffect(() => {
-    if (isDashboard) return;
-
-    // Performance Guard: 
-    // We defer the loading of 40,000 particles to ensure 95+ PageSpeed scores.
-    const loadBackground = () => {
-      const delay = window.innerWidth < 768 ? 3000 : 2000;
-      setTimeout(() => {
-        if ('requestIdleCallback' in window) {
-          (window as any).requestIdleCallback(() => setShouldLoad(true));
-        } else {
-          setShouldLoad(true);
-        }
-      }, delay);
-    };
-
-    if (document.readyState === 'complete') {
-      loadBackground();
-    } else {
-      window.addEventListener('load', loadBackground);
-      return () => window.removeEventListener('load', loadBackground);
-    }
-  }, [isDashboard]);
 
   if (isDashboard) {
     return <div className="fixed inset-0 -z-50 bg-black pointer-events-none" />;
@@ -56,8 +20,19 @@ export function GlobalBackground() {
 
   return (
     <div className="fixed inset-0 -z-50 pointer-events-none bg-black overflow-hidden">
-      {shouldLoad && <ParticleWave className="opacity-40" />}
-      {!shouldLoad && <div className="fixed inset-0 bg-black" />}
+      <div 
+        className="absolute inset-0 opacity-[0.15]" 
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 50% 50%, rgba(0, 168, 107, 0.1) 0%, transparent 50%),
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '100% 100%, 40px 40px, 40px 40px',
+          maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)'
+        }}
+      />
     </div>
   );
 }

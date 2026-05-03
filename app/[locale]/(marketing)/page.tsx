@@ -3,7 +3,6 @@ import { ServiceCard } from "@/components/ui/ServiceCard";
 import { Link } from "@/navigation";
 import { projects } from "@/lib/data/projects";
 import { ProjectCard } from "@/components/ui/ProjectCard";
-import { Reveal } from "@/components/marketing/Reveal";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
 import { locales } from "@/navigation";
 import Script from "next/script";
@@ -103,28 +102,28 @@ export default function Home() {
       {/* Hero Section */}
       <section className="w-full relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden px-4 sm:px-6 md:px-10 xl:px-16 2xl:px-24 pt-20">
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto text-center relative z-10 w-full">
-          <Reveal scale={0.9} className="mb-6 sm:mb-8">
+          <div className="mb-6 sm:mb-8 animate-fade-in-up">
             <span className="text-[10px] sm:text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B]">
               GROWXLABSTECH
             </span>
-          </Reveal>
+          </div>
 
-          <Reveal y={20}>
+          <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
             <h1
               className="text-white font-bold mb-8 sm:mb-10 leading-[1.1] max-w-[1100px] mx-auto px-2"
               style={{ fontSize: "clamp(40px, 8vw, 96px)", fontWeight: 800 }}
             >
               Digital Systems That Drive Growth.
             </h1>
-          </Reveal>
+          </div>
 
-          <Reveal y={20} delay={0.1}>
+          <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
             <p className="text-[16px] sm:text-[18px] text-[#A0A0A0] max-w-[620px] mx-auto mb-10 sm:mb-14 leading-[1.6] sm:leading-[1.7] px-4">
               GrowXLabsTech builds elite digital systems for forward-thinking businesses worldwide. We transform standard websites into high-performance growth engines using AI powered automation.
             </p>
-          </Reveal>
+          </div>
 
-          <Reveal y={20} delay={0.2} className="flex flex-col sm:flex-row justify-center gap-4 px-6">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 px-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
             <Link href="/contact" className="w-full sm:w-auto">
               <Button 
                 size="lg" 
@@ -146,7 +145,7 @@ export default function Home() {
                 View Portfolio
               </Button>
             </Link>
-          </Reveal>
+          </div>
         </div>
 
 
@@ -186,12 +185,12 @@ export default function Home() {
             { value: "60 Sec", label: "Lead response time with automation", color: "text-blue-500" },
             { value: "Global", label: "Clients across USA UK Australia UAE", color: "text-purple-500" }
           ].map((stat, i) => (
-            <Reveal key={i} delay={i * 0.1} y={20}>
+            <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
               <div className="text-center space-y-2 p-10 rounded-3xl bg-white/[0.02] border border-white/5">
                 <div className={`text-5xl font-black italic tracking-tighter ${stat.color}`}>{stat.value}</div>
                 <div className="text-xs font-bold uppercase tracking-[0.2em] text-[#A0A0A0]">{stat.label}</div>
               </div>
-            </Reveal>
+            </div>
           ))}
         </div>
       </section>
@@ -213,13 +212,13 @@ export default function Home() {
               { step: "03", title: "7-Day Delivery", desc: "Rapid engineering cycles using AI-powered development tools." },
               { step: "04", title: "Ongoing Support", desc: "Timezone-flexible maintenance and updates via WhatsApp and email." }
             ].map((step, i) => (
-              <Reveal key={i} delay={i * 0.1} scale={0.95}>
+              <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
                 <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.02] space-y-4 h-full relative overflow-hidden group hover:border-[#00A86B]/30 transition-all">
                   <div className="text-4xl font-black text-white/5 absolute -top-2 -right-2 group-hover:text-[#00A86B]/10 transition-colors">{step.step}</div>
                   <h3 className="text-xl font-bold text-white italic">{step.title}</h3>
                   <p className="text-sm text-[#A0A0A0] leading-relaxed">{step.desc}</p>
                 </div>
-              </Reveal>
+              </div>
             ))}
           </div>
 
@@ -348,7 +347,7 @@ export default function Home() {
 
           <div className="space-y-6">
             {faqData.map((faq, index) => (
-              <Reveal key={index} delay={index * 0.1}>
+              <div key={index} className="animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
                 <div className="p-8 rounded-2xl border border-white/5 bg-white/[0.02]">
                   <h4 className="text-white font-bold text-lg mb-3 flex items-center gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#00A86B]" />
@@ -358,7 +357,7 @@ export default function Home() {
                     {faq.answer}
                   </p>
                 </div>
-              </Reveal>
+              </div>
             ))}
           </div>
         </div>

@@ -166,3 +166,13 @@
 .layout-content {
   @apply max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto;
 }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
