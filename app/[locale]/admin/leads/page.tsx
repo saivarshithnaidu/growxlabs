@@ -171,7 +171,9 @@ export default function LeadsAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newLead)
       });
-      if (!res.ok) throw new Error("Failed to create lead");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create lead");
+      
       showToast("Lead added successfully");
       setShowAddLead(false);
       setNewLead({ business_name: "", email: "", phone: "", city: "", status: "new" });
