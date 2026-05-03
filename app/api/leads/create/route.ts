@@ -63,12 +63,17 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error("Lead Create DB Error:", error);
-      throw error;
+      return NextResponse.json({ 
+        error: error.message, 
+        details: error.details,
+        code: error.code,
+        hint: error.hint
+      }, { status: 500 });
     }
 
     // 2. Sync with 'crm_leads'
     try {
-      await supabaseAdmin.from("crm_leads").insert([{
+      await supabaseAdmin.from("crm_leads").insert({
         business_name: leadData.business_name,
         contact_name: leadData.name,
         email: leadData.email,
@@ -79,7 +84,7 @@ export async function POST(req: Request) {
         created_by: userId,
         added_manually: true,
         assigned_to: assignedTo
-      }]);
+      });
     } catch (e) {
       console.error("CRM Sync Error (non-fatal):", e);
     }
@@ -87,6 +92,9 @@ export async function POST(req: Request) {
     return NextResponse.json(data);
   } catch (error: any) {
     console.error("Lead Create Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ 
+      error: error.message || "Internal Server Error",
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    }, { status: 500 });
   }
 }
