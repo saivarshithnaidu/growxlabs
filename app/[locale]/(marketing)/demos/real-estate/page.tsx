@@ -2,161 +2,352 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Building2, Home, MapPin, TrendingUp, ArrowUpRight, ShieldCheck, CheckCircle2, Star } from "lucide-react";
+import { Building2, MapPin, TrendingUp, ArrowUpRight, ShieldCheck, Star, Phone, ChevronRight, Ruler, BedDouble, Bath, Car } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { DemoNavbar, DemoFooter, FloatingWhatsApp, DemoBadge } from "@/components/demos/SharedDemoUI";
 
-const SERVICES = [
-  { title: "Asset Intelligence", desc: "Engineering high-liquidity real estate portfolios.", icon: Building2 },
-  { title: "Strategic Growth", desc: "Properties with highest appreciation vectors in the city.", icon: TrendingUp },
-  { title: "Accountable Delivery", desc: "RERA-first approach with full institutional verification.", icon: ShieldCheck }
+const ACCENT = "#10B981";
+
+const STATS = [
+  { value: "200+", label: "Properties Sold" },
+  { value: "₹500 Cr+", label: "Total Value" },
+  { value: "98%", label: "Client Satisfaction" },
+  { value: "15+", label: "Years Experience" },
 ];
 
 const LISTINGS = [
-  { name: "Urban Sky Villa", price: "₹2.4 Cr", type: "LUXURY ASSET", area: "3,200 SQFT", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" },
-  { name: "Neon Heights", price: "₹1.1 Cr", type: "PRIME UNIT", area: "1,850 SQFT", img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" },
-  { name: "The Emerald", price: "₹4.8 Cr", type: "ESTATE CLASS", area: "5,500 SQFT", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" }
+  {
+    name: "Skyline Penthouse",
+    price: "₹2.4 Cr",
+    location: "Financial District, Hyd",
+    beds: 4,
+    baths: 3,
+    area: "3,200",
+    tag: "Premium",
+    img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    name: "Neon Heights Apartment",
+    price: "₹1.1 Cr",
+    location: "Gachibowli, Hyd",
+    beds: 3,
+    baths: 2,
+    area: "1,850",
+    tag: "Best Seller",
+    img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    name: "The Emerald Villa",
+    price: "₹4.8 Cr",
+    location: "Jubilee Hills, Hyd",
+    beds: 5,
+    baths: 4,
+    area: "5,500",
+    tag: "Exclusive",
+    img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+  },
 ];
+
+const FEATURES = [
+  {
+    title: "Verified Listings",
+    desc: "Every property is RERA-verified and legally vetted. No hidden surprises — just transparent, trustworthy deals.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Prime Locations",
+    desc: "Handpicked properties in Hyderabad's fastest-growing corridors — close to IT hubs, schools, and hospitals.",
+    icon: MapPin,
+  },
+  {
+    title: "Investment Growth",
+    desc: "Our portfolio averages 15% YoY appreciation. We help you build wealth through smart real estate choices.",
+    icon: TrendingUp,
+  },
+];
+
+const REVIEWS = [
+  {
+    quote: "Nexus Prime helped us find our dream home in just 2 weeks. Their team was professional, transparent, and incredibly supportive throughout.",
+    author: "Vikrant & Neha Singh",
+    role: "Homeowners, Gachibowli",
+    rating: 5,
+  },
+  {
+    quote: "As an investor, I've worked with many realtors. Nexus Prime stands out for their market knowledge and genuine commitment to client success.",
+    author: "Rajesh Menon",
+    role: "Real Estate Investor",
+    rating: 5,
+  },
+];
+
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.5 },
+};
 
 export default function RealEstateDemo() {
   return (
-    <div className="bg-[#0B0F1A] text-[#DFE5F3] min-h-screen selection:bg-[#6C63FF]/30">
-      <DemoNavbar brand="Nexus Prime Realty" />
+    <div className="bg-[#09090B] text-zinc-100 min-h-screen antialiased">
+      <DemoNavbar brand="Nexus Prime Realty" accent={ACCENT} />
       <DemoBadge />
       <FloatingWhatsApp phone="910000000000" />
 
-      {/* 2. Hero Section - REVERTED TO FULL IMAGE PREMIUM LOOK */}
-      <section className="relative h-[100vh] flex items-center justify-center pt-24 pb-24 px-6 overflow-hidden">
-        {/* Background Layer */}
-        <div className="absolute inset-0 z-0">
-           <Image 
-             src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
-             alt="Real Estate Hero" 
-             fill
-             className="object-cover brightness-[0.2]" 
-             priority
-           />
-           <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F1A]/80 via-transparent to-[#0B0F1A]" />
-           <div className="absolute inset-0 bg-[#6C63FF]/5 mix-blend-overlay" />
+      {/* ── HERO ── */}
+      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+            alt="Nexus Prime Realty — Premium Properties"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#09090B] via-transparent to-transparent" />
         </div>
 
-        <div className="max-w-7xl mx-auto text-center space-y-12 relative z-10">
-           <motion.div whileInView={{ opacity: 1, scale: 1 }} initial={{ opacity: 0, scale: 0.9 }} viewport={{ once: true }} className="inline-flex items-center gap-3 px-6 py-3 bg-[#111827]/40 backdrop-blur-3xl rounded-2xl border border-white/10 mx-auto">
-              <Building2 size={18} className="text-[#6C63FF]" />
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#DFE5F3]/40">Strategic Asset Acquisition Group</span>
-           </motion.div>
-           <motion.h1 whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 30 }} viewport={{ once: true }} className="text-7xl md:text-[12rem] font-black tracking-tighter leading-[0.75] italic">
-              Wealth <br /> <span className="text-[#6C63FF]">Architected.</span>
-           </motion.h1>
-           <motion.p whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-2xl text-[#9CA3AF] max-w-2xl mx-auto font-medium leading-relaxed">
-              Engineering generational wealth through high-performance real estate infrastructure and elite asset class logic.
-           </motion.p>
-           <motion.div whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex flex-col md:flex-row items-center justify-center gap-10 pt-8">
-              <Button className="h-16 px-16 rounded-2xl bg-[#6C63FF] text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-[#6C63FF]/40 border-none hover:scale-105 transition-all">Secure Final Asset</Button>
-              <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]/20 italic">
-                 Institutional Verification Active
-                 <div className="h-[1px] w-8 bg-white/10" />
-              </div>
-           </motion.div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full py-20 sm:py-32">
+          <div className="max-w-2xl space-y-8">
+            <motion.div {...fadeUp} className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.08] backdrop-blur-sm rounded-full border border-white/[0.08]">
+              <Building2 size={14} style={{ color: ACCENT }} />
+              <span className="text-xs font-medium text-zinc-300">Premium Real Estate · Hyderabad</span>
+            </motion.div>
+
+            <motion.h1 {...fadeUp} transition={{ delay: 0.1 }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
+              Find Your{" "}
+              <span style={{ color: ACCENT }}>Dream Home.</span>
+            </motion.h1>
+
+            <motion.p {...fadeUp} transition={{ delay: 0.2 }} className="text-lg sm:text-xl text-zinc-400 leading-relaxed max-w-lg">
+              Discover premium properties in Hyderabad&apos;s most sought-after neighborhoods. RERA-verified, legally vetted, and ready for you.
+            </motion.p>
+
+            <motion.div {...fadeUp} transition={{ delay: 0.3 }} className="flex flex-col sm:flex-row items-start gap-4">
+              <Button
+                className="h-13 px-8 rounded-xl text-white text-sm font-semibold border-none hover:opacity-90 transition-all shadow-lg"
+                style={{ backgroundColor: ACCENT, boxShadow: `0 8px 32px ${ACCENT}40` }}
+              >
+                Browse Properties
+              </Button>
+              <Button variant="outline" className="h-13 px-8 rounded-xl text-zinc-300 border-white/10 hover:bg-white/[0.04] text-sm font-semibold">
+                <Phone size={16} className="mr-2" /> Schedule a Visit
+              </Button>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* 3. Services / Features */}
-      <section className="py-20 px-6 mt-20">
-         <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
-            {SERVICES.map((s, i) => (
-               <div key={i} className="bg-[#111827] p-10 rounded-[2.5rem] border border-white/[0.08] space-y-8 hover:bg-white/[0.02] transition-all group">
-                  <div className="h-16 w-16 bg-[#6C63FF]/10 rounded-3xl flex items-center justify-center text-[#6C63FF] group-hover:scale-110 transition-transform shadow-lg shadow-[#6C63FF]/5">
-                     <s.icon size={32} />
-                  </div>
-                  <div className="space-y-4">
-                     <h3 className="text-2xl font-black tracking-tight">{s.title}</h3>
-                     <p className="text-[#9CA3AF] font-medium leading-relaxed">{s.desc}</p>
-                  </div>
-               </div>
+      {/* ── STATS BAR ── */}
+      <section className="border-y border-white/[0.04] bg-zinc-900/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
+            {STATS.map((s) => (
+              <motion.div key={s.label} {...fadeUp} className="text-center space-y-1">
+                <p className="text-2xl sm:text-3xl font-bold" style={{ color: ACCENT }}>
+                  {s.value}
+                </p>
+                <p className="text-xs sm:text-sm text-zinc-500">{s.label}</p>
+              </motion.div>
             ))}
-         </div>
+          </div>
+        </div>
       </section>
 
-      {/* 4. Cards Section (Grid) */}
-      <section className="py-20 px-6 mt-20">
-         <div className="max-w-7xl mx-auto space-y-20">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-8">
-               <div className="space-y-6">
-                  <span className="text-[#6C63FF] font-black uppercase tracking-widest text-xs italic underline underline-offset-8">Listing Repositories</span>
-                  <h2 className="text-5xl md:text-7xl font-black tracking-tighter italic leading-none">High-Yield Assets.</h2>
-               </div>
-               <Button variant="outline" className="border-white/[0.08] font-black uppercase text-[10px] tracking-widest h-14 px-12 rounded-full">Explore Database</Button>
+      {/* ── WHY NEXUS ── */}
+      <section id="about" className="py-20 sm:py-28 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-16 space-y-4">
+            <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: ACCENT }}>
+              Why Nexus Prime
+            </span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+              Real Estate, Done Right
+            </h2>
+            <p className="text-zinc-500 max-w-2xl mx-auto text-base sm:text-lg">
+              We combine deep local expertise with a client-first approach to make buying your next property stress-free.
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {FEATURES.map((f, i) => (
+              <motion.div
+                key={i}
+                {...fadeUp}
+                transition={{ delay: i * 0.1 }}
+                className="bg-zinc-900/60 border border-white/[0.06] rounded-2xl p-8 space-y-5 hover:bg-zinc-800/40 transition-colors group"
+              >
+                <div
+                  className="h-12 w-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
+                  style={{ backgroundColor: `${ACCENT}15`, color: ACCENT }}
+                >
+                  <f.icon size={24} />
+                </div>
+                <h3 className="text-xl font-bold tracking-tight">{f.title}</h3>
+                <p className="text-sm text-zinc-500 leading-relaxed">{f.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FEATURED PROPERTIES ── */}
+      <section id="gallery" className="py-20 sm:py-28 px-4 sm:px-6 bg-zinc-950/50">
+        <div className="max-w-7xl mx-auto">
+          <motion.div {...fadeUp} className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-12">
+            <div className="space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: ACCENT }}>
+                Featured Listings
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+                Handpicked Properties
+              </h2>
             </div>
-            
-            <div className="grid md:grid-cols-3 gap-10">
-               {LISTINGS.map((l, i) => (
-                  <div key={i} className="group cursor-pointer space-y-8">
-                     <div className="relative aspect-[1/1.25] rounded-[3.5rem] overflow-hidden border border-white/[0.08] shadow-2xl">
-                        <Image src={l.img} alt={l.name} fill className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75" />
-                        <div className="absolute top-8 left-8 px-5 py-2.5 bg-black/60 backdrop-blur-xl border border-white/5 rounded-full text-[9px] font-black uppercase tracking-widest">{l.type}</div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F1A] via-transparent to-transparent opacity-80" />
-                     </div>
-                     <div className="space-y-6 px-4">
-                        <div className="flex justify-between items-start">
-                           <div>
-                              <h3 className="text-3xl font-black italic tracking-tighter group-hover:text-[#6C63FF] transition-colors leading-none">{l.name}</h3>
-                              <p className="text-[#9CA3AF] text-[10px] uppercase font-black tracking-widest mt-3 italic underline underline-offset-4 decoration-[#6C63FF]/30">Verified Listing</p>
-                           </div>
-                           <div className="h-12 w-12 bg-white/[0.02] border border-white/10 rounded-2xl flex items-center justify-center text-[#9CA3AF] group-hover:bg-[#6C63FF] group-hover:text-white transition-all shadow-xl shadow-[#6C63FF]/10"><ArrowUpRight size={24} /></div>
-                        </div>
-                        <div className="flex items-center gap-6 text-[11px] font-black uppercase tracking-[0.4em] border-t border-white/5 pt-8">
-                           <span className="text-[#6C63FF]">{l.price}</span>
-                           <span className="h-1 w-1 bg-white/10 rounded-full" />
-                           <span className="text-[#9CA3AF]/40 italic">{l.area}</span>
-                        </div>
-                     </div>
+            <Button variant="outline" className="border-white/[0.08] text-zinc-400 hover:text-white text-sm font-medium h-11 px-6 rounded-xl">
+              View All <ChevronRight size={16} className="ml-1" />
+            </Button>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {LISTINGS.map((l, i) => (
+              <motion.div
+                key={i}
+                {...fadeUp}
+                transition={{ delay: i * 0.1 }}
+                className="group bg-zinc-900/60 border border-white/[0.06] rounded-2xl overflow-hidden hover:border-white/[0.12] transition-all"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={l.img}
+                    alt={l.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span
+                      className="text-[10px] font-semibold uppercase tracking-wide px-3 py-1.5 rounded-full text-white"
+                      style={{ backgroundColor: `${ACCENT}CC` }}
+                    >
+                      {l.tag}
+                    </span>
                   </div>
-               ))}
-            </div>
-         </div>
+                  <div className="absolute top-4 right-4">
+                    <div className="h-10 w-10 bg-black/40 backdrop-blur-sm rounded-xl flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-all cursor-pointer">
+                      <ArrowUpRight size={18} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 space-y-4">
+                  <div>
+                    <h3 className="text-lg font-bold tracking-tight">{l.name}</h3>
+                    <p className="text-sm text-zinc-500 flex items-center gap-1.5 mt-1">
+                      <MapPin size={12} /> {l.location}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 text-xs text-zinc-500">
+                    <span className="flex items-center gap-1.5 bg-white/[0.04] px-3 py-1.5 rounded-lg">
+                      <BedDouble size={12} /> {l.beds} Beds
+                    </span>
+                    <span className="flex items-center gap-1.5 bg-white/[0.04] px-3 py-1.5 rounded-lg">
+                      <Bath size={12} /> {l.baths} Baths
+                    </span>
+                    <span className="flex items-center gap-1.5 bg-white/[0.04] px-3 py-1.5 rounded-lg">
+                      <Ruler size={12} /> {l.area} sqft
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2 border-t border-white/[0.04]">
+                    <span className="text-xl font-bold" style={{ color: ACCENT }}>
+                      {l.price}
+                    </span>
+                    <Button
+                      variant="outline"
+                      className="h-9 px-4 rounded-lg text-xs font-semibold border-white/[0.08] text-zinc-400 hover:text-white"
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* 5. Testimonials / Trust */}
-      <section className="py-20 px-6 mt-20">
-         <div className="max-w-7xl mx-auto">
-            <div className="bg-[#111827] rounded-[4rem] p-16 md:p-24 border border-white/[0.08] text-center space-y-12 overflow-hidden relative group">
-               <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#6C63FF]/5 blur-[120px] -z-0" />
-               <div className="flex items-center justify-center gap-2">
-                  <Star className="fill-[#6C63FF] text-[#6C63FF]" size={18} />
-                  <Star className="fill-[#6C63FF] text-[#6C63FF]" size={18} />
-                  <Star className="fill-[#6C63FF] text-[#6C63FF]" size={18} />
-                  <Star className="fill-[#6C63FF] text-[#6C63FF]" size={18} />
-                  <Star className="fill-[#6C63FF] text-[#6C63FF]" size={18} />
-               </div>
-               <blockquote className="text-4xl md:text-6xl font-black tracking-tighter leading-[0.9] italic max-w-5xl mx-auto">
-                  "Nexus Prime isn't just a real estate group. They are elite wealth engineers. Every deal they present is an asset ready for the future."
-               </blockquote>
-               <div className="space-y-4">
-                  <p className="text-lg font-black text-[#6C63FF] tracking-tighter italic">Vikrant Singh</p>
-                  <p className="text-[10px] uppercase tracking-widest text-[#9CA3AF] font-bold">Strategic Portfolio Partner</p>
-               </div>
-            </div>
-         </div>
+      {/* ── REVIEWS ── */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-16 space-y-4">
+            <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: ACCENT }}>
+              Client Stories
+            </span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+              Trusted by Homebuyers
+            </h2>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {REVIEWS.map((r, i) => (
+              <motion.div
+                key={i}
+                {...fadeUp}
+                transition={{ delay: i * 0.1 }}
+                className="bg-zinc-900/60 border border-white/[0.06] rounded-2xl p-8 space-y-6"
+              >
+                <div className="flex gap-1">
+                  {[...Array(r.rating)].map((_, j) => (
+                    <Star key={j} size={16} className="fill-amber-500 text-amber-500" />
+                  ))}
+                </div>
+                <blockquote className="text-base sm:text-lg font-medium leading-relaxed text-zinc-300">
+                  &ldquo;{r.quote}&rdquo;
+                </blockquote>
+                <div>
+                  <p className="font-semibold text-sm text-white">{r.author}</p>
+                  <p className="text-xs text-zinc-500">{r.role}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* 6. CTA Section */}
-      <section className="py-20 px-6 mt-20 mb-20">
-         <div className="max-w-7xl mx-auto text-center space-y-12">
-            <h2 className="text-6xl md:text-[9.5rem] font-black tracking-tighter italic leading-[0.8]">Wealth <br /> <span className="text-[#6C63FF]">Unlocked.</span></h2>
-            <p className="text-2xl text-[#9CA3AF] max-w-2xl mx-auto font-medium leading-relaxed">Early-stage vault access is strictly invitation only. Dispatch your intent to acquire prime infrastructure.</p>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-10">
-               <Button className="h-16 px-16 rounded-2xl bg-[#6C63FF] text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-[#6C63FF]/40 border-none hover:scale-105 transition-all">Acquire Asset</Button>
-               <div className="flex items-center gap-4 text-[#9CA3AF]/40">
-                  <div className="h-[1px] w-12 bg-white/10" />
-                  <p className="text-[10px] font-black uppercase tracking-widest italic">Institutional Verification Active</p>
-                  <div className="h-[1px] w-12 bg-white/10" />
-               </div>
+      {/* ── CTA ── */}
+      <section id="contact" className="py-20 sm:py-28 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            {...fadeUp}
+            className="relative bg-zinc-900/80 border border-white/[0.06] rounded-3xl p-10 sm:p-16 text-center space-y-8 overflow-hidden"
+          >
+            <div
+              className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-[100px] opacity-20"
+              style={{ backgroundColor: ACCENT }}
+            />
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight relative z-10">
+              Ready to{" "}
+              <span style={{ color: ACCENT }}>Move In?</span>
+            </h2>
+            <p className="text-zinc-500 max-w-lg mx-auto text-base sm:text-lg relative z-10">
+              Whether you&apos;re buying your first home or expanding your portfolio, our experts are here to guide you every step of the way.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+              <Button
+                className="h-13 px-10 rounded-xl text-white text-sm font-semibold border-none hover:opacity-90 shadow-lg"
+                style={{ backgroundColor: ACCENT, boxShadow: `0 8px 32px ${ACCENT}40` }}
+              >
+                Get Free Consultation
+              </Button>
+              <span className="text-sm text-zinc-500">or call +91 00000 00000</span>
             </div>
-         </div>
+          </motion.div>
+        </div>
       </section>
 
-      <DemoFooter brand="Nexus Prime Realty" />
+      <DemoFooter brand="Nexus Prime Realty" accent={ACCENT} />
     </div>
   );
 }
