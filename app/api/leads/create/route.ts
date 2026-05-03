@@ -25,7 +25,8 @@ export async function POST(req: Request) {
       phone: body.phone || null,
       city: body.city || null,
       status: body.status || 'new',
-      assigned_to: assignedTo
+      assigned_to: assignedTo,
+      created_at: now
     };
 
     // 1. Try to insert with tracking columns

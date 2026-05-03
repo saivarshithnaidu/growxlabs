@@ -72,7 +72,11 @@ export default function LeadsAdminPage() {
       setLoading(true);
       const res = await fetch("/api/leads/list");
       const data = await res.json();
-      setLeads(data || []);
+      // Ensure leads are sorted by created_at descending (newest first)
+      const sortedData = (data || []).sort((a: any, b: any) => {
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+      });
+      setLeads(sortedData);
     } catch (e) {
       console.error(e);
       showToast("Failed to fetch leads", "error");
