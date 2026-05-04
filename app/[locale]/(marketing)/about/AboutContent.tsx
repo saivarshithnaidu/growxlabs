@@ -25,7 +25,7 @@ export function AboutContent() {
                 GrowXLabsTech is a global AI native digital agency founded by engineers with one belief: most businesses are losing customers online because their technology hasn't caught up with their ambition.
               </p>
               <p>
-                We bridge that gap. We build AI-powered websites, intelligent automation, and full-stack products for businesses in USA, UK, Australia, UAE, Canada, and globally.
+                We bridge that gap. We build AI powered websites, intelligent automation, and full stack products for businesses in USA, UK, Australia, UAE, Canada, and globally.
               </p>
               <p>
                 We don't just build for clients. We build and operate our own products — ResumeForgeAI, UniversalAI, and RecruitAI — serving 500+ real users every day.
@@ -119,7 +119,7 @@ export function AboutContent() {
           <p className="text-[11px] font-black text-[#A0A0A0] uppercase tracking-[0.4em] mb-6">Global Operations</p>
           <h3 className="text-3xl font-black text-white mb-6 italic tracking-tighter">GrowXLabsTech</h3>
           <div className="flex flex-col items-center gap-3">
-            <p className="text-white font-bold text-lg tracking-wide uppercase">Serving USA · UK · Australia · UAE · Canada · Singapore · India</p>
+            <p className="text-white font-bold text-lg tracking-wide uppercase">Serving India · USA · UK · Australia · UAE · Canada · Singapore</p>
             <p className="text-[#A0A0A0] text-base font-medium italic">Available Across All Timezones</p>
           </div>
         </div>

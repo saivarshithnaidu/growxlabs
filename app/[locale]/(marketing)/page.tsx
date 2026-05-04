@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     title: "GrowXLabsTech — AI Native Digital Agency | Websites & Automation for Businesses Worldwide",
-    description: "GrowXLabsTech is a global AI native digital agency building AI powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow ups and intelligent lead capture. 7-day delivery. Serving India, USA, UK, Australia, UAE, and Canada.",
+    description: "GrowXLabsTech is a global AI native digital agency building AI powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow ups and intelligent lead capture. 7 day delivery. Serving India, USA, UK, Australia, UAE, and Canada.",
     keywords: "AI agency, AI native digital agency, web agency, n8n automation agency, restaurant automation, real estate CRM, WhatsApp automation business, business automation agency, AI web agency, lead capture automation, automated follow up system, GrowXLabsTech",
     alternates: {
       canonical: "https://growxlabs.tech/en-IN",
@@ -32,7 +32,7 @@ export default function Home() {
   const faqData = [
     {
       question: "What is GrowXLabsTech?",
-      answer: "GrowXLabsTech is a global AI native digital agency that builds AI powered websites, n8n automation systems, and business growth tools for businesses worldwide. We specialize in helping restaurants, real estate agencies, and growing businesses stop losing customers through automated follow ups and intelligent systems. We deliver projects in 7-21 days and serve clients across India, USA, UK, Australia, UAE, Canada, and globally."
+      answer: "GrowXLabsTech is a global AI native digital agency that builds AI powered websites, n8n automation systems, and business growth tools for businesses worldwide. We specialize in helping restaurants, real estate agencies, and growing businesses stop losing customers through automated follow ups and intelligent systems. We deliver projects in 7 to 21 days and serve clients across India, USA, UK, Australia, UAE, Canada, and globally."
     },
     {
       question: "Where is GrowXLabsTech based?",
@@ -40,7 +40,7 @@ export default function Home() {
     },
     {
       question: "What industries does GrowXLabsTech serve?",
-      answer: "GrowXLabsTech serves restaurants, real estate agencies, clinics, salons, hotels, e-commerce businesses, SaaS companies, and any growing business that needs digital systems. We have particular expertise in Indian-owned businesses operating in USA, UK, and Australia."
+      answer: "GrowXLabsTech serves restaurants, real estate agencies, clinics, salons, hotels, ecommerce businesses, SaaS companies, and any growing business that needs digital systems. We have particular expertise in Indian owned businesses operating in USA, UK, and Australia."
     },
     {
       question: "How does GrowXLabsTech work with international clients?",
@@ -48,11 +48,11 @@ export default function Home() {
     },
     {
       question: "What currency does GrowXLabsTech charge?",
-      answer: "GrowXLabsTech charges in USD for international clients (USA, UK, Australia, UAE, Canada) and INR for Indian clients. Pricing is project-based after a free discovery call."
+      answer: "GrowXLabsTech charges in USD for international clients (USA, UK, Australia, UAE, Canada) and INR for Indian clients. Pricing is project based after a free discovery call."
     },
     {
       question: "How fast does GrowXLabsTech deliver?",
-      answer: "GrowXLabsTech delivers standard websites in 7 days, growth websites with automation in 14 days, and enterprise systems in 21 days — regardless of client location. We use AI-powered development tools that are 3x faster than traditional agencies."
+      answer: "GrowXLabsTech delivers standard websites in 7 days, growth websites with automation in 14 days, and enterprise systems in 21 days — regardless of client location. We use AI powered development tools that are 3x faster than traditional agencies."
     }
   ];
 
@@ -183,7 +183,7 @@ export default function Home() {
           {[
             { value: "7 Days", label: "Average project delivery", color: "text-[#00A86B]" },
             { value: "60 Sec", label: "Lead response time with automation", color: "text-blue-500" },
-            { value: "Global", label: "Clients across USA UK Australia UAE", color: "text-purple-500" }
+            { value: "Global", label: "Clients across India USA UK Australia UAE", color: "text-purple-500" }
           ].map((stat, i) => (
             <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
               <div className="text-center space-y-2 p-10 rounded-3xl bg-white/[0.02] border border-white/5">
@@ -207,10 +207,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-              { step: "01", title: "Discovery Call", desc: "15-minute remote call via Google Meet/Zoom to understand your scope." },
-              { step: "02", title: "Same-Day Proposal", desc: "We send a custom technical architecture and transparent pricing proposal." },
-              { step: "03", title: "7-Day Delivery", desc: "Rapid engineering cycles using AI-powered development tools." },
-              { step: "04", title: "Ongoing Support", desc: "Timezone-flexible maintenance and updates via WhatsApp and email." }
+              { step: "01", title: "Discovery Call", desc: "15 minute remote call via Google Meet/Zoom to understand your scope." },
+              { step: "02", title: "Same Day Proposal", desc: "We send a custom technical architecture and transparent pricing proposal." },
+              { step: "03", title: "7 Day Delivery", desc: "Rapid engineering cycles using AI powered development tools." },
+              { step: "04", title: "Ongoing Support", desc: "Timezone flexible maintenance and updates via WhatsApp and email." }
             ].map((step, i) => (
               <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
                 <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.02] space-y-4 h-full relative overflow-hidden group hover:border-[#00A86B]/30 transition-all">

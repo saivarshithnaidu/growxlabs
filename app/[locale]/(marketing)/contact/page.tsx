@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     title: "Work With GrowXLabsTech | Book a Free Global Call",
-    description: "Book a free 15-minute discovery call with GrowXLabsTech. We work with businesses globally — USA, UK, Australia, UAE, Canada, India. hello@growxlabs.tech",
+    description: "Book a free 15 minute discovery call with GrowXLabsTech. We work with businesses globally — India, USA, UK, Australia, UAE, Canada. hello@growxlabs.tech",
     alternates: {
       canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages

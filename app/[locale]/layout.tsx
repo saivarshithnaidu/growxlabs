@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       default: "GrowXLabsTech — AI Native Digital Agency",
       template: "%s | GrowXLabsTech"
     },
-    description: "GrowXLabsTech is a global AI native digital agency building AI-powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow-ups and intelligent lead capture. 7-day delivery. Serving USA, UK, Australia, UAE, Canada, and India.",
+    description: "GrowXLabsTech is a global AI native digital agency building AI powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow ups and intelligent lead capture. 7 day delivery. Serving India, USA, UK, Australia, UAE, and Canada.",
     alternates: {
       canonical: `https://growxlabs.tech/${locale}`,
       languages
@@ -84,7 +84,7 @@ export default async function LocaleLayout({
                   "name": "GrowXLabsTech",
                   "url": "https://growxlabs.tech",
                   "logo": "https://growxlabs.tech/logo.png",
-                  "description": "AI-native digital agency building AI-powered websites, automation systems, and full-stack AI products.",
+                  "description": "AI native digital agency building AI powered websites, automation systems, and full stack AI products.",
                   "founder": [
                     { "@id": "https://growxlabs.tech/#varshith" },
                     { "@id": "https://growxlabs.tech/#akhilesh" }
@@ -104,7 +104,7 @@ export default async function LocaleLayout({
                   "areaServed": "Worldwide",
                   "serviceArea": {
                     "@type": "GeoShape",
-                    "description": "Worldwide — USA, UK, Australia, UAE, Canada, Singapore, India and all countries"
+                    "description": "Worldwide — India, USA, UK, Australia, UAE, Canada, Singapore and all countries"
                   },
                   "knowsAbout": [
                     "Web Development",
@@ -132,14 +132,14 @@ export default async function LocaleLayout({
                   "@type": "Person",
                   "@id": "https://growxlabs.tech/#varshith",
                   "name": "Varshith Pujala",
-                  "jobTitle": "Co-Founder",
+                  "jobTitle": "Co Founder",
                   "worksFor": { "@id": "https://growxlabs.tech/#organization" }
                 },
                 {
                   "@type": "Person",
                   "@id": "https://growxlabs.tech/#akhilesh",
                   "name": "Akhilesh",
-                  "jobTitle": "Co-Founder",
+                  "jobTitle": "Co Founder",
                   "worksFor": { "@id": "https://growxlabs.tech/#organization" }
                 },
                 {
@@ -156,7 +156,7 @@ export default async function LocaleLayout({
                   "applicationCategory": "BusinessApplication",
                   "operatingSystem": "Web",
                   "creator": { "@id": "https://growxlabs.tech/#organization" },
-                  "description": "AI-powered resume builder with intelligent optimization.",
+                  "description": "AI powered resume builder with intelligent optimization.",
                   "url": "https://growxlabs.tech/products/resumeforgeai"
                 },
                 {
@@ -175,7 +175,7 @@ export default async function LocaleLayout({
                   "applicationCategory": "BusinessApplication",
                   "operatingSystem": "Web",
                   "creator": { "@id": "https://growxlabs.tech/#organization" },
-                  "description": "AI-driven recruitment and talent acquisition platform."
+                  "description": "AI driven recruitment and talent acquisition platform."
                 },
                 {
                   "@type": "FAQPage",
@@ -186,7 +186,7 @@ export default async function LocaleLayout({
                       "name": "What is GrowXLabsTech?",
                       "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "GrowXLabsTech is a global AI native digital agency that builds AI-powered websites, n8n automation systems, and business growth tools for businesses worldwide. We deliver projects in 7-21 days and serve clients across USA, UK, Australia, UAE, Canada, and globally."
+                         "text": "GrowXLabsTech is a global AI native digital agency that builds AI powered websites, n8n automation systems, and business growth tools for businesses worldwide. We deliver projects in 7 to 21 days and serve clients across India, USA, UK, Australia, UAE, Canada, and globally."
                       }
                     },
                     {
@@ -232,7 +232,7 @@ export default async function LocaleLayout({
               "name": "GrowXLabsTech",
               "url": "https://growxlabs.tech",
               "logo": "https://growxlabs.tech/logo.png",
-              "description": "Global AI native digital agency building AI-powered websites, n8n automation, and business growth tools worldwide.",
+              "description": "Global AI native digital agency building AI powered websites, n8n automation, and business growth tools worldwide.",
               "foundingDate": "2026",
               "email": "hello@growxlabs.tech",
               "areaServed": "Worldwide",

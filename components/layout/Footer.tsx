@@ -39,12 +39,12 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-[#A0A0A0] text-[13px] leading-relaxed">
-              GrowXLabsTech builds AI-powered websites and automation systems that help businesses grow faster.
+              GrowXLabsTech builds AI powered websites and automation systems that help businesses grow faster.
             </p>
 
             <div className="space-y-2 pt-2">
               <p className="text-[12px] text-[#A0A0A0]/60">MSME Registered · UDYAM-AP-22-0063260</p>
-              <p className="text-[12px] text-white/40 font-medium">Serving clients globally — USA · UK · Australia · UAE · Canada · Singapore · India · Worldwide</p>
+              <p className="text-[12px] text-white/40 font-medium">Serving clients globally — India · USA · UK · Australia · UAE · Canada · Singapore · Worldwide</p>
               <p className="text-[11px] text-[#00A86B] font-bold uppercase tracking-widest">Available across all timezones · Response within 4 hours</p>
             </div>
 
