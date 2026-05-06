@@ -22,13 +22,13 @@ export function AboutContent() {
             </h1>
             <div className="space-y-6 text-[18px] text-[#A0A0A0] leading-[1.7]">
               <p>
-                GrowXLabsTech is a global AI native digital agency founded by engineers with one belief: most businesses are losing customers online because their technology hasn't caught up with their ambition.
+                GrowXLabsTech is a global AI-native digital systems engineering firm. Headquartered in Guntur, Andhra Pradesh, India, we were founded with a singular mandate: to empower businesses with technology that matches their global ambitions.
               </p>
               <p>
-                We bridge that gap. We build AI powered websites, intelligent automation, and full stack products for businesses in USA, UK, Australia, UAE, Canada, and globally.
+                We serve as the primary engineering partner for enterprises across India, the USA, UK, Australia, UAE, Canada, and Singapore. We specialize in building AI-integrated websites, autonomous workflow systems, and proprietary deep-tech products that drive measurable revenue.
               </p>
               <p>
-                We don't just build for clients. We build and operate our own products — ResumeForgeAI, UniversalAI, and RecruitAI — serving 500+ real users every day.
+                Unlike traditional agencies, we are product owners ourselves. We engineered and operate the **Forge Product Suite** — including JobForge, SalaryForge, and ResumeForgeAI — proving our systems' stability and performance with real users in global markets every day.
               </p>
             </div>
           </motion.div>
@@ -55,8 +55,7 @@ export function AboutContent() {
             </div>
             <h3 className="text-2xl font-bold text-white">Our Mission</h3>
             <p className="text-[#A0A0A0] text-[16px] leading-[1.8] font-medium">
-              To deliver enterprise grade digital infrastructure to businesses worldwide through AI powered development
-              and intelligent automation. faster, smarter, and more affordably than anyone else.
+              To deliver elite-tier digital infrastructure to businesses worldwide through AI-native development and autonomous engineering. We strive to make digital transformation faster, smarter, and more accessible for the next generation of global industry leaders.
             </p>
           </Card>
           <Card className="p-12 space-y-6 rounded-2xl border-white/5 bg-white/[0.02] shadow-2xl backdrop-blur-md">
@@ -82,12 +81,11 @@ export function AboutContent() {
                 <span className="text-2xl font-black text-white italic">VP</span>
               </div>
               <div>
-                <h3 className="text-3xl font-bold text-white tracking-tight">Varshith Pujala</h3>
-                <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Co Founder & Full Stack Engineer</p>
+                <h3 className="text-3xl font-bold text-white tracking-tight">Sai Varshith Pujala</h3>
+                <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Founder & Principal Systems Engineer</p>
               </div>
               <p className="text-[#A0A0A0] leading-[1.8] text-[16px] font-medium">
-                Builder of ResumeForgeAI. a live AI career platform serving 500 plus users.
-                Specializes in Next.js, TypeScript, AI API integrations, and scalable SaaS architecture.
+                The lead architect behind **ResumeForgeAI** and the **JobForge** ecosystem. Sai specializes in full-stack AI engineering, high-performance SaaS architecture, and building systems that scale from India to global markets.
               </p>
               <a href="https://linkedin.com/in/sai-varshith-pujala" target="_blank" rel="noopener noreferrer" className="inline-block text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-[#00A86B] transition-colors">
                 LinkedIn →
@@ -100,14 +98,13 @@ export function AboutContent() {
                 <span className="text-2xl font-black text-white italic">AK</span>
               </div>
               <div>
-                <h3 className="text-3xl font-bold text-white tracking-tight">Akhilesh</h3>
-                <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Co Founder & Automation Engineer</p>
+                <h3 className="text-3xl font-bold text-white tracking-tight">Lakshmi Akhilesh Pasupuleti</h3>
+                <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Co-Founder & Automation Architect</p>
               </div>
               <p className="text-[#A0A0A0] leading-[1.8] text-[16px] font-medium">
-                n8n automation specialist building enterprise workflow systems. Expert in connecting business tools
-                and deploying scalable automation infrastructure.
+                Enterprise automation specialist focused on autonomous workflow infrastructure. Akhilesh masters the art of business logic automation, connecting disparate systems into a unified, AI-driven engine for growth.
               </p>
-              <a href="https://linkedin.com/in/akhilesh" target="_blank" rel="noopener noreferrer" className="inline-block text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-[#00A86B] transition-colors">
+              <a href="https://linkedin.com/in/akhilesh-pasupuleti" target="_blank" rel="noopener noreferrer" className="inline-block text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-[#00A86B] transition-colors">
                 LinkedIn →
               </a>
             </div>
