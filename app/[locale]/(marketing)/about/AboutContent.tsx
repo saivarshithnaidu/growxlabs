@@ -22,13 +22,13 @@ export function AboutContent() {
             </h1>
             <div className="space-y-6 text-[18px] text-[#A0A0A0] leading-[1.7]">
               <p>
-                GrowXLabsTech is a global AI-native digital systems engineering firm. Headquartered in Guntur, Andhra Pradesh, India, we were founded with a singular mandate: to empower businesses with technology that matches their global ambitions.
+                GrowXLabsTech is a premier AI-native systems engineering firm headquartered in Guntur, Andhra Pradesh, India. We specialize in architecting high-performance digital ecosystems for businesses that demand engineering precision and global scalability.
               </p>
               <p>
-                We serve as the primary engineering partner for enterprises across India, the USA, UK, Australia, UAE, Canada, and Singapore. We specialize in building AI-integrated websites, autonomous workflow systems, and proprietary deep-tech products that drive measurable revenue.
+                Our mission is to bridge the gap between complex AI technology and real-world business growth. We serve as a strategic technology partner for enterprises across India, the USA, UK, Australia, UAE, Canada, and Singapore.
               </p>
               <p>
-                Unlike traditional agencies, we are product owners ourselves. We engineered and operate the **Forge Product Suite** — including JobForge, SalaryForge, and ResumeForgeAI — proving our systems' stability and performance with real users in global markets every day.
+                From building intelligent automation workflows to deploying full-stack digital systems, we ensure every solution we ship is battle-tested, secure, and built to lead in the global market.
               </p>
             </div>
           </motion.div>
@@ -85,7 +85,7 @@ export function AboutContent() {
                 <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Founder & Principal Systems Engineer</p>
               </div>
               <p className="text-[#A0A0A0] leading-[1.8] text-[16px] font-medium">
-                The lead architect behind **ResumeForgeAI** and the **JobForge** ecosystem. Sai specializes in full-stack AI engineering, high-performance SaaS architecture, and building systems that scale from India to global markets.
+                Founder and Lead Systems Architect. Sai specializes in full-stack AI engineering, high-performance architecture, and building digital systems that scale across global markets.
               </p>
               <a href="https://linkedin.com/in/sai-varshith-pujala" target="_blank" rel="noopener noreferrer" className="inline-block text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-[#00A86B] transition-colors">
                 LinkedIn →
@@ -102,7 +102,7 @@ export function AboutContent() {
                 <p className="text-[#00A86B] font-black text-[10px] uppercase tracking-[0.3em] mt-3">Co-Founder & Automation Architect</p>
               </div>
               <p className="text-[#A0A0A0] leading-[1.8] text-[16px] font-medium">
-                Enterprise automation specialist focused on autonomous workflow infrastructure. Akhilesh masters the art of business logic automation, connecting disparate systems into a unified, AI-driven engine for growth.
+                Co-Founder and Automation Architect. Akhilesh masters the art of autonomous business logic, connecting complex systems into unified, AI-driven engines for efficiency and growth.
               </p>
               <a href="https://linkedin.com/in/akhilesh-pasupuleti" target="_blank" rel="noopener noreferrer" className="inline-block text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-[#00A86B] transition-colors">
                 LinkedIn →
