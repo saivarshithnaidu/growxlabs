@@ -13,8 +13,11 @@ import Script from "next/script";
 import { PHProvider } from "@/components/providers/PostHogProvider";
 import "../globals.css";
 
-const inter = Inter({ 
-  subsets: ["latin"], 
+// System Font Stack for Build Stability
+const interStack = "'Inter', system-ui, -apple-system, sans-serif";
+
+const inter = Inter({
+  subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
 });
@@ -25,7 +28,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  
+
   const languages: Record<string, string> = {
     'x-default': 'https://growxlabs.tech/en-IN',
   };
@@ -108,7 +111,7 @@ export default async function LocaleLayout({
                   },
                   "knowsAbout": [
                     "Web Development",
-                    "AI Integration", 
+                    "AI Integration",
                     "Business Automation",
                     "n8n Workflows",
                     "Restaurant Technology",
@@ -186,7 +189,7 @@ export default async function LocaleLayout({
                       "name": "What is GrowXLabsTech?",
                       "acceptedAnswer": {
                         "@type": "Answer",
-                         "text": "GrowXLabsTech is a global AI native digital agency that builds AI powered websites, n8n automation systems, and business growth tools for businesses worldwide. We deliver projects in 7 to 21 days and serve clients across India, USA, UK, Australia, UAE, Canada, and globally."
+                        "text": "GrowXLabsTech is a global AI native digital agency that builds AI powered websites, n8n automation systems, and business growth tools for businesses worldwide. We deliver projects in 7 to 21 days and serve clients across India, USA, UK, Australia, UAE, Canada, and globally."
                       }
                     },
                     {
@@ -254,22 +257,22 @@ export default async function LocaleLayout({
         />
         <PHProvider>
           <NextIntlClientProvider messages={messages} locale={locale}>
-          <AuthProvider>
-            <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false} disableTransitionOnChange>
-              <GlobalBackground />
-              
-              <ConditionalLayout>
-                {children}
-              </ConditionalLayout>
+            <AuthProvider>
+              <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false} disableTransitionOnChange>
+                <GlobalBackground />
 
-              <CookieConsent />
-              <Toaster position="top-right" expand={false} richColors />
-            </ThemeProvider>
-            
-          </AuthProvider>
-        </NextIntlClientProvider>
-      </PHProvider>
-    </body>
+                <ConditionalLayout>
+                  {children}
+                </ConditionalLayout>
+
+                <CookieConsent />
+                <Toaster position="top-right" expand={false} richColors />
+              </ThemeProvider>
+
+            </AuthProvider>
+          </NextIntlClientProvider>
+        </PHProvider>
+      </body>
     </html>
   );
 }

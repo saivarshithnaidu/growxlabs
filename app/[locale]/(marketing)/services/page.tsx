@@ -102,7 +102,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default function ServicesPage() {
   return (
     <>
-      <DynamicSchema 
+      <DynamicSchema
         graph={[
           {
             "@type": "Service",
@@ -120,7 +120,7 @@ export default function ServicesPage() {
             "areaServed": "Global",
             "description": "High-performance websites with native AI integration."
           }
-        ]} 
+        ]}
       />
       <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
         <Script

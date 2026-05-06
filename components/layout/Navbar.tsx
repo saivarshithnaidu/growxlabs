@@ -21,6 +21,7 @@ export function Navbar() {
   const navLinks = [
     { name: t("services"), href: "/services" },
     { name: t("portfolio"), href: "/portfolio" },
+    { name: t("products"), href: "/products" },
     { name: "Courses", href: "/courses" },
     { name: t("pricing"), href: "/pricing" },
     { name: t("subscriptions"), href: "/subscriptions" },

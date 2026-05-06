@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 // --- Hardcoded Company Details ---
 const COMPANY = {
-  name: "GrowX Labs",
+  name: "GrowXLabsTech",
   website: "growxlabs.tech",
   email: "hello@growxlabs.tech",
   address: "Guntur, Andhra Pradesh, India",
@@ -69,7 +69,7 @@ export default function InvoicesPage() {
     razorpayLink: "",
     notes: "Payment due within 3 days. Work paused if overdue. No refund after work started.",
     lineItems: [
-      { id: '1', description: 'Technical Engineering - Sprint 1', qty: 1, rate: 25000 }
+      { id: '1', description: 'Project Work - Phase 1', qty: 1, rate: 25000 }
     ] as LineItem[],
     status: "pending" as InvoiceStatus
   });
@@ -151,6 +151,7 @@ export default function InvoicesPage() {
           notes: form.notes,
           payment_type: form.paymentType,
           razorpay_link: form.razorpayLink,
+          balance_due: balanceDue,
           status: form.status
         })
       });
@@ -220,9 +221,9 @@ export default function InvoicesPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 no-print">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-             <CreditCard className="text-primary" /> Financial System
+             <CreditCard className="text-primary" /> Billing & Invoices
           </h1>
-          <p className="text-white/40 font-medium tracking-tight">Enterprise Invoicing · GrowX Labs v2.0</p>
+          <p className="text-white/40 font-medium tracking-tight">Project Payments · GrowXLabsTech</p>
         </div>
         <div className="flex gap-3">
           <Button
@@ -284,7 +285,7 @@ export default function InvoicesPage() {
 
                  {/* Project Info */}
                  <div className="space-y-4">
-                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[var(--text-muted)] border-b border-[var(--border-subtle)] pb-2">Project Metrics</h3>
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[var(--text-muted)] border-b border-[var(--border-subtle)] pb-2">Project Details</h3>
                     <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] ml-1">Project Name</label>
                        <input 
@@ -338,12 +339,12 @@ export default function InvoicesPage() {
                              />
                              <input 
                                type="number" placeholder="Qty" value={item.qty}
-                               onChange={e => updateLineItem(item.id, 'qty', parseInt(e.target.value) || 0)}
+                               onChange={e => updateLineItem(item.id, 'qty', parseFloat(e.target.value) || 0)}
                                className="flex-1 bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl h-11 px-4 text-xs text-center text-white outline-none focus:border-primary/50"
                              />
                              <input 
                                type="number" placeholder="Rate" value={item.rate}
-                               onChange={e => updateLineItem(item.id, 'rate', parseInt(e.target.value) || 0)}
+                               onChange={e => updateLineItem(item.id, 'rate', parseFloat(e.target.value) || 0)}
                                className="flex-[1.5] bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl h-11 px-4 text-xs text-right text-white outline-none focus:border-primary/50"
                              />
                              <Button onClick={() => removeLineItem(item.id)} variant="ghost" className="h-11 w-11 p-0 text-white/20 hover:text-red-500 hover:bg-red-500/10 rounded-xl">
@@ -360,7 +361,16 @@ export default function InvoicesPage() {
                        <div className="space-y-2">
                           <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Payment Type</label>
                           <select 
-                            value={form.paymentType} onChange={e => setForm({...form, paymentType: e.target.value})}
+                            value={form.paymentType} 
+                            onChange={e => {
+                               const type = e.target.value;
+                               let newPaid = form.amountPaid;
+                               if (type === "Advance 50%") newPaid = total * 0.5;
+                               if (type === "Full Payment") newPaid = total;
+                               if (type === "Final Balance 50%") newPaid = total;
+                               
+                               setForm({...form, paymentType: type, amountPaid: newPaid});
+                            }}
                             className="w-full bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl h-11 px-4 text-sm font-bold text-white outline-none appearance-none"
                           >
                              <option value="Full Payment" className="bg-neutral-900">100% Full Payment</option>
@@ -434,7 +444,7 @@ export default function InvoicesPage() {
                   <div className="bg-[#0D1B4B] p-16 text-white flex justify-between items-end">
                      <div className="space-y-2">
                         <h2 className="text-4xl font-black tracking-tighter leading-none">{COMPANY.name}</h2>
-                        <p className="text-[10px] font-black tracking-[0.5em] uppercase opacity-40">Financial Settlement</p>
+                        <p className="text-[10px] font-black tracking-[0.5em] uppercase opacity-40">Project Invoice</p>
                      </div>
                      <div className="text-right">
                         <h1 className="text-7xl font-black tracking-tighter opacity-10 mb-2">INVOICE</h1>
@@ -449,7 +459,7 @@ export default function InvoicesPage() {
                      {/* Entity Info */}
                      <div className="grid grid-cols-2 gap-16">
                         <div className="space-y-4">
-                           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300">Bill Of Settlement To</p>
+                           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300">Bill To</p>
                            <div className="space-y-1">
                               <p className="text-2xl font-black tracking-tight">{form.businessName || "Dynamic Client Entity"}</p>
                               <p className="font-bold text-neutral-500">{form.clientName}</p>
@@ -458,7 +468,7 @@ export default function InvoicesPage() {
                            </div>
                         </div>
                         <div className="text-right space-y-4">
-                           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300">Originating Firm</p>
+                           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300">From</p>
                            <div className="space-y-1">
                               <p className="text-2xl font-black tracking-tight">{COMPANY.name}</p>
                               <p className="font-bold text-neutral-500">{COMPANY.address}</p>
@@ -472,15 +482,15 @@ export default function InvoicesPage() {
                      {/* Metrics Bar */}
                      <div className="grid grid-cols-3 gap-1 px-1 bg-neutral-100 rounded-3xl overflow-hidden py-1">
                         <div className="bg-white p-6 text-center">
-                           <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400 mb-2">Project Directive</p>
+                           <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400 mb-2">Project Description</p>
                            <p className="font-black text-sm">{form.projectName || "Standard Engineering"}</p>
                         </div>
                         <div className="bg-white p-6 text-center">
-                           <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400 mb-2">Issuance Cycle</p>
+                           <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400 mb-2">Date Issued</p>
                            <p className="font-black text-sm">{new Date(form.invoiceDate).toLocaleDateString()}</p>
                         </div>
                         <div className="bg-[#00A86B]/5 p-6 text-center">
-                           <p className="text-[9px] font-black uppercase tracking-widest text-[#00A86B] mb-2">Maturity Window</p>
+                           <p className="text-[9px] font-black uppercase tracking-widest text-[#00A86B] mb-2">Due Date</p>
                            <p className="font-black text-sm text-[#00A86B]">{new Date(form.dueDate).toLocaleDateString()}</p>
                         </div>
                      </div>
@@ -513,20 +523,20 @@ export default function InvoicesPage() {
                      <div className="flex justify-between items-start">
                         <div className="space-y-8 max-w-sm">
                            <div className="space-y-4">
-                              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300">Approved Settlement Channels</h4>
+                              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300">Payment Details</h4>
                               <div className="flex gap-4 items-center">
                                  <div className="h-16 w-16 bg-neutral-50 border border-neutral-100 rounded-2xl flex items-center justify-center opacity-40">
                                     <Globe size={32} strokeWidth={1} />
                                  </div>
                                  <div className="space-y-1">
-                                    <p className="text-[10px] font-black uppercase text-neutral-400 tracking-widest">Unified Payments Interface (UPI)</p>
+                                    <p className="text-[10px] font-black uppercase text-neutral-400 tracking-widest">UPI ID</p>
                                     <p className="font-black text-lg text-primary">{COMPANY.upi}</p>
                                  </div>
                               </div>
                            </div>
                            
                            <div className="space-y-2">
-                              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300">Contractual Clauses</h4>
+                              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300">Notes & Terms</h4>
                               <p className="text-[10px] text-neutral-400 font-bold leading-relaxed pr-8 italic">{form.notes}</p>
                            </div>
                         </div>
@@ -534,21 +544,21 @@ export default function InvoicesPage() {
                         <div className="w-80 space-y-1">
                            <div className="bg-neutral-50 p-8 rounded-[2rem] space-y-4 border border-neutral-100">
                               <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-neutral-400">
-                                 <span>Milestone Valuation</span>
+                                 <span>Subtotal</span>
                                  <span className="text-black">{currency.symbol}{subtotal.toLocaleString()}</span>
                               </div>
                               {form.gstEnabled && (
                                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-neutral-400">
-                                    <span>Engineering GST (18%)</span>
+                                    <span>GST (18%)</span>
                                     <span className="text-black">{currency.symbol}{gstAmount.toLocaleString()}</span>
                                  </div>
                               )}
                               <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-neutral-400">
-                                 <span>Capital Already Settled</span>
+                                 <span>Paid Amount</span>
                                  <span className="text-blue-600">-{currency.symbol}{form.amountPaid.toLocaleString()}</span>
                               </div>
                               <div className="pt-6 border-t border-neutral-200 mt-2 flex justify-between items-center">
-                                 <span className="text-xs font-black uppercase tracking-[0.3em]">Net Balance Due</span>
+                                 <span className="text-xs font-black uppercase tracking-[0.3em]">Balance Due</span>
                                  <span className="text-4xl font-black text-[#00A86B] tracking-tighter">{currency.symbol}{balanceDue.toLocaleString()}</span>
                               </div>
                            </div>
@@ -560,14 +570,14 @@ export default function InvoicesPage() {
                   {/* PDF Footer */}
                   <div className="bg-neutral-50 p-12 text-center border-t border-neutral-100 flex flex-col items-center gap-4">
                      <p className="text-[10px] font-black uppercase tracking-[0.5em] text-neutral-200 italic">This is a system generated digital settlement certificate</p>
-                     <p className="text-[10px] font-black tracking-widest text-black/20">GROWX LABS · MSME UDYAM-AP-22-0063260</p>
+                     <p className="text-[10px] font-black tracking-widest text-black/20">GROWXLABSTECH · MSME UDYAM-AP-22-0063260</p>
                   </div>
 
                   {/* PAID STAMP */}
                   {form.status === 'paid' && (
                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-[16px] border-[#00A86B] rounded-[3rem] px-20 py-10 rotate-[-15deg] opacity-20 pointer-events-none z-50">
-                        <h1 className="text-[10rem] font-black text-[#00A86B] tracking-tighter leading-none mb-4">SETTLED</h1>
-                        <p className="text-center font-black text-[#00A86B] tracking-[1.5em] text-2xl">GROWX LABS SYSTEM</p>
+                        <h1 className="text-[10rem] font-black text-[#00A86B] tracking-tighter leading-none mb-4">PAID</h1>
+                        <p className="text-center font-black text-[#00A86B] tracking-[1.5em] text-2xl">GROWXLABSTECH SYSTEM</p>
                      </div>
                   )}
                </div>
@@ -580,7 +590,7 @@ export default function InvoicesPage() {
       <div className="space-y-6 no-print">
          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <h2 className="text-2xl font-black text-white tracking-tighter flex items-center gap-3 italic">
-               Historical Ledger <span className="h-6 px-3 bg-white/5 rounded-full text-[10px] font-bold flex items-center non-italic tracking-widest border border-white/5">{invoices.length} CERTIFICATES</span>
+               Invoice History <span className="h-6 px-3 bg-white/5 rounded-full text-[10px] font-bold flex items-center non-italic tracking-widest border border-white/5">{invoices.length} INVOICES</span>
             </h2>
             <div className="flex items-center gap-4 w-full md:w-auto">
                <div className="relative flex-1 md:w-64">

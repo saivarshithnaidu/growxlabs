@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // @ts-ignore
+  optimizeFonts: false,
   compress: true,
   async headers() {
     return [

@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         amount: data.amount,
         subtotal: data.subtotal,
         currency: data.currency,
-        balance_due: data.amount, // Default balance due to total amount initially
+        balance_due: data.balance_due ?? data.amount, // Use provided balance or default to total
         status: data.status || "pending",
         due_date: data.due_date,
         items: data.items,

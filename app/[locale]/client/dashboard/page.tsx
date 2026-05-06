@@ -14,7 +14,7 @@ import { Agreement, Invoice, Project } from "@/types/lifecycle";
 import { Reveal } from "@/components/marketing/Reveal";
 import { cn } from "@/lib/utils";
 
-const PROJECT_STAGES = ["Onboarding", "Design", "Development", "Review", "Delivered"];
+const PROJECT_STAGES = ["Getting Started", "Styling", "Building", "Checking", "Live"];
 
 function getStageIndex(progress: number) {
   if (progress >= 100) return 4;
@@ -68,17 +68,10 @@ export default function ClientDashboard() {
       <Reveal y={-20}>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-white tracking-tight">Project Portal</h1>
+            <h1 className="text-3xl font-bold text-white tracking-tight">Welcome to GrowXLabsTech</h1>
             <p className="text-[var(--text-secondary)] text-sm max-w-xl">
-              Track your build, manage financials, and communicate with your dedicated project lead.
+              Check your project progress, pay bills, and chat with us.
             </p>
-          </div>
-          <div className="flex items-center gap-3 bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl px-5 py-3">
-            <Clock size={16} className="text-primary" />
-            <div>
-              <p className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-wider leading-none mb-1">Response Time</p>
-              <p className="text-xs font-bold text-white leading-none">&lt; 4 Hours</p>
-            </div>
           </div>
         </div>
       </Reveal>
@@ -87,22 +80,22 @@ export default function ClientDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <DashboardStat 
           icon={<FileText size={18} />} 
-          label="Latest Agreement" 
-          status={data?.agreements?.[0]?.status || "No Active Agreement"} 
+          label="Working Plan" 
+          status={data?.agreements?.[0]?.status || "No Active Plan"} 
           link={data?.agreements?.[0] ? `/client/dashboard/agreements/${data.agreements[0].id}` : "#"}
           accent="blue"
         />
         <DashboardStat 
           icon={<CreditCard size={18} />} 
-          label="Billing Status" 
-          status={(data?.invoices || []).some(inv => inv.status === 'pending') ? "Invoice Due" : "Settled"} 
+          label="Payments" 
+          status={(data?.invoices || []).some(inv => inv.status === 'pending') ? "Pending" : "All Paid"} 
           link="/client/invoices"
           accent="amber"
         />
         <DashboardStat 
           icon={<Rocket size={18} />} 
-          label="Project Phase" 
-          status={data?.projects?.[0]?.status || "Operational"} 
+          label="Current Stage" 
+          status={data?.projects?.[0]?.status || "Active"} 
           link="/client/project"
           accent="green"
         />
@@ -113,19 +106,17 @@ export default function ClientDashboard() {
         {/* Main Project Progress */}
         <Reveal className="lg:col-span-2">
           <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-2xl p-8 h-full">
-             <div className="flex justify-between items-center mb-8">
-                <h3 className="text-lg font-bold text-white tracking-tight">Active Infrastructure Build</h3>
-             </div>
+             <h3 className="text-lg font-bold text-white tracking-tight mb-8">Project Progress</h3>
              
              <div className="space-y-8">
-                {(data.projects.length ? data.projects : [{ id: 'mock', title: 'GrowX Custom Build', progress: 35, status: 'Active' }]).map(p => {
+                {(data.projects.length ? data.projects : []).map(p => {
                   const stageIndex = getStageIndex(p.progress);
                   return (
                     <div key={p.id} className="space-y-8">
                       <div className="flex justify-between items-end">
                          <div>
                             <p className="text-xl font-bold text-white mb-1">{p.title}</p>
-                            <p className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-widest">Phase: {PROJECT_STAGES[stageIndex]}</p>
+                            <p className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-widest">Currently: {PROJECT_STAGES[stageIndex]}</p>
                          </div>
                          <div className="text-right">
                             <span className="text-2xl font-bold text-white leading-none">{p.progress}%</span>
@@ -157,8 +148,8 @@ export default function ClientDashboard() {
                             <CheckCircle2 size={20} className="text-primary" />
                          </div>
                          <div>
-                            <p className="text-xs font-bold text-white mb-0.5">Next Step</p>
-                            <p className="text-[10px] text-[var(--text-secondary)]">The engineering team is finalizing your mobile responsive layout.</p>
+                            <p className="text-xs font-bold text-white mb-0.5">What's Next</p>
+                            <p className="text-[10px] text-[var(--text-secondary)]">We are setting up your project and will update you soon.</p>
                          </div>
                       </div>
                     </div>
@@ -175,10 +166,10 @@ export default function ClientDashboard() {
                 <div className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
                    <ShieldCheck size={28} className="text-primary" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Secure Portal</h3>
-                <p className="text-[var(--text-tertiary)] text-[10px] uppercase tracking-widest font-bold mb-4">UDYAM-AP-22-0063260</p>
+                <h3 className="text-lg font-bold text-white mb-2">Project Agreement</h3>
+                <p className="text-[var(--text-tertiary)] text-[10px] uppercase tracking-widest font-bold mb-4">Safe & Private</p>
                 <p className="text-[var(--text-secondary)] text-xs leading-relaxed mb-6">
-                  Access your Master Service Agreement and project documentation at any time.
+                  Access your project agreement and documents at any time.
                 </p>
                 <Button variant="outline" className="w-full h-11 rounded-xl text-xs font-bold uppercase tracking-widest border-[var(--border-subtle)]">
                    View Documents
@@ -198,8 +189,8 @@ export default function ClientDashboard() {
                   <MessageCircle size={22} className="text-primary" />
                 </div>
                 <div>
-                  <p className="text-white font-bold text-sm leading-none mb-1.5">Direct Lead Chat</p>
-                  <p className="text-[var(--text-muted)] text-[10px] uppercase tracking-wider font-bold">Priority Support Active</p>
+                  <p className="text-white font-bold text-sm leading-none mb-1.5">Chat with us</p>
+                  <p className="text-[var(--text-muted)] text-[10px] uppercase tracking-wider font-bold">We are online</p>
                 </div>
                 <ArrowUpRight className="ml-auto text-[var(--text-muted)] group-hover:text-primary transition-colors" size={16} />
               </div>

@@ -45,7 +45,7 @@ const EditableText = ({ isEditing, value, onChange, placeholder, className, type
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`${className} bg-[#e8f8f5] border-b border-[#00b894] outline-none px-1 rounded transition-colors text-[#000] w-full min-h-[80px] font-bold`}
+        className={`${className} bg-[#f0fff4] border-2 border-[#00b894]/30 outline-none p-3 rounded-xl transition-all text-[#000] w-full min-h-[120px] focus:border-[#00b894]`}
       />
     );
   }
@@ -84,6 +84,13 @@ export default function AgreementContract({ data = {}, role = "admin", initialSi
     startDate: safeData.start_date || "",
     deliveryDate: safeData.delivery_date || "",
     selectedPlan: "Growth",
+    plans: [
+      { name: "Starter", cost: "₹10,000", maintenance: "₹3,500/mo", delivery: "7 Days" },
+      { name: "Growth", cost: "₹20,000", maintenance: "₹6,500/mo", delivery: "14 Days" },
+      { name: "Enterprise (Next.js)", cost: "₹40,000–60,000", maintenance: "₹10,000/mo", delivery: "21–30 Days" },
+      { name: "Enterprise (Microservices)", cost: "₹1,00,000+", maintenance: "₹20,000+/mo", delivery: "60–90 Days" },
+      { name: "Custom", cost: "Variable", maintenance: "Variable", delivery: "Variable" }
+    ],
     customBuildCost: "",
     customMaintenance: "",
     customDelivery: "",
@@ -93,20 +100,20 @@ export default function AgreementContract({ data = {}, role = "admin", initialSi
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const updatePlan = (index: number, field: string, value: string) => {
+    setFormData(prev => {
+      const newPlans = [...prev.plans];
+      newPlans[index] = { ...newPlans[index], [field]: value };
+      return { ...prev, plans: newPlans };
+    });
+  };
+
   const handlePrint = () => {
     window.print();
   };
 
-  const plans = [
-    { name: "Starter", cost: "₹10,000", maintenance: "₹3,500/mo", delivery: "7 Days" },
-    { name: "Growth", cost: "₹20,000", maintenance: "₹6,500/mo", delivery: "14 Days" },
-    { name: "Enterprise (Next.js)", cost: "₹40,000–60,000", maintenance: "₹10,000/mo", delivery: "21–30 Days" },
-    { name: "Enterprise (Microservices)", cost: "₹1,00,000+", maintenance: "₹20,000+/mo", delivery: "60–90 Days" },
-    { name: "Custom", cost: "Variable", maintenance: "Variable", delivery: "Variable" }
-  ];
-
   return (
-    <div className="min-h-screen bg-[#f4f4f4] py-12 px-4 print:bg-white print:py-0 print:px-0" style={{ fontFamily: 'Arial, sans-serif' }}>
+    <div className="min-h-screen bg-[#f4f4f4] py-12 px-4 print:bg-white print:py-0 print:px-0" style={{ fontFamily: '"Inter", "Segoe UI", Roboto, sans-serif' }}>
       {/* Control Panel (Hidden on Print) */}
       <div className="max-w-[900px] mx-auto mb-8 flex justify-between items-center print:hidden">
         <div className="flex items-center gap-2 text-[#666]">
@@ -159,14 +166,20 @@ export default function AgreementContract({ data = {}, role = "admin", initialSi
       <div className="max-w-[900px] mx-auto bg-white shadow-2xl print:shadow-none min-h-[1100px] flex flex-col border border-[#ddd] print:border-none p-10 md:p-20 text-[#000] text-[14px] leading-[1.7]">
         
         {/* HEADER */}
-        <div className="text-center border-b-[4px] border-[#00b894] pb-6 mb-10">
-           <h1 className="text-[32px] font-black text-[#00b894] tracking-[3px] uppercase m-0 leading-tight">GROWX LABS</h1>
-           <p className="text-[13px] text-[#333] mt-2 m-0 font-bold">AI-Native Digital Agency | growxlabs.tech | hello@growxlabs.tech</p>
+        <div className="flex justify-between items-start border-b-2 border-[#00b894] pb-8 mb-12">
+           <div className="text-left">
+              <h1 className="text-[36px] font-black text-[#00b894] tracking-tight m-0 leading-none">GrowXLabs<span className="text-[#222]">Tech</span></h1>
+              <p className="text-[12px] text-[#666] mt-2 m-0 font-medium tracking-wide uppercase">AI-Native Digital Systems Engineering</p>
+           </div>
+           <div className="text-right space-y-1">
+              <p className="text-[11px] font-bold text-[#222]">hello@growxlabs.tech</p>
+              <p className="text-[11px] font-medium text-[#666]">growxlabs.tech</p>
+           </div>
         </div>
 
         <div className="text-center mb-12">
            <div className="text-[22px] font-black text-[#000] mb-2 uppercase tracking-[2px]">CLIENT SERVICE AGREEMENT</div>
-           <div className="text-[13px] text-[#555] font-bold">This is a legally binding agreement between GrowX Labs and the Client.</div>
+           <div className="text-[13px] text-[#555] font-bold">This is a legally binding agreement between GrowXLabsTech and the Client.</div>
         </div>
 
         {/* 1. PARTY DETAILS */}
@@ -234,10 +247,10 @@ export default function AgreementContract({ data = {}, role = "admin", initialSi
                     <th className="p-4 text-left text-[13px] font-black uppercase">Delivery</th>
                  </tr>
               </thead>
-              <tbody className="text-[13px] text-[#000] font-bold">
-                 {plans.map((plan, idx) => (
-                    <tr key={idx} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-[#f9f9f9]'} border-b-2 border-[#eee]`}>
-                       <td className="p-4 border-r-2 border-[#eee] flex items-center gap-3">
+              <tbody className="text-[13px] text-[#000]">
+                 {formData.plans.map((plan, idx) => (
+                    <tr key={idx} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-[#fdfdfd]'} border-b border-[#eee]`}>
+                       <td className="p-4 border-r border-[#eee] flex items-center gap-3">
                           <input 
                              type="radio" 
                              name="plan"
@@ -245,11 +258,17 @@ export default function AgreementContract({ data = {}, role = "admin", initialSi
                              onChange={() => isEditing && update('selectedPlan', plan.name)}
                              className="h-5 w-5 accent-[#00b894] cursor-pointer"
                           />
-                          <span className="text-[#000]">{plan.name}</span>
+                          <span className="text-[#000] font-bold">{plan.name}</span>
                        </td>
-                       <td className="p-4 border-r-2 border-[#eee] text-[#000]">{plan.cost}</td>
-                       <td className="p-4 border-r-2 border-[#eee] text-[#000]">{plan.maintenance}</td>
-                       <td className="p-4 text-[#000]">{plan.delivery}</td>
+                       <td className="p-4 border-r border-[#eee] text-[#000] font-medium">
+                          <EditableText isEditing={isEditing} value={plan.cost} onChange={(v) => updatePlan(idx, 'cost', v)} />
+                       </td>
+                       <td className="p-4 border-r border-[#eee] text-[#000] font-medium">
+                          <EditableText isEditing={isEditing} value={plan.maintenance} onChange={(v) => updatePlan(idx, 'maintenance', v)} />
+                       </td>
+                       <td className="p-4 text-[#000] font-medium">
+                          <EditableText isEditing={isEditing} value={plan.delivery} onChange={(v) => updatePlan(idx, 'delivery', v)} />
+                       </td>
                     </tr>
                  ))}
               </tbody>
@@ -258,28 +277,30 @@ export default function AgreementContract({ data = {}, role = "admin", initialSi
 
         {/* 3. SCOPE OF WORK */}
         <h2 className="text-[16px] text-[#00b894] border-l-[6px] border-[#00b894] pl-[15px] my-8 uppercase font-black tracking-[1px]">3. Scope of Work</h2>
-        <p className="m-0 mb-3 font-bold text-[#000]">GrowX Labs agrees to deliver the following for the selected plan:</p>
-        <div className="border-2 border-[#ccc] min-h-[100px] p-4 mb-4 bg-[#fcfcfc] rounded-lg">
-           <EditableText isEditing={isEditing} value={formData.projectDescription} onChange={(v) => update('projectDescription', v)} multiline className="text-[14px] italic text-[#111] font-bold" />
+        <p className="m-0 mb-4 font-bold text-[#222]">GrowXLabsTech agrees to deliver the following for the selected plan:</p>
+        <div className="border border-[#ddd] min-h-[100px] p-6 mb-6 bg-[#fafafa] rounded-xl shadow-sm">
+           <EditableText isEditing={isEditing} value={formData.projectDescription} onChange={(v) => update('projectDescription', v)} multiline className="text-[14px] text-[#333] leading-relaxed" />
         </div>
         <p className="m-0 mb-8 text-[#444]"><strong>Out of Scope:</strong> Logo design, content writing, photography, domain purchase, third-party software licenses, or features not listed above.</p>
 
         {/* 4. PAYMENT TERMS */}
         <h2 className="text-[14px] text-[#00b894] border-l-[4px] border-[#00b894] pl-[10px] my-6 uppercase font-bold tracking-[1px]">4. Payment Terms</h2>
-        <div className="bg-[#e8f8f5] border-l-[3px] border-[#00b894] p-[14px] mb-4">
-           <p className="m-0 font-bold">50% advance required before project begins.</p>
-           <p className="m-0 font-bold">50% balance due before final delivery / go-live.</p>
-           <p className="m-0 font-bold">Monthly maintenance billed on the 1st of each month.</p>
+        <div className="bg-[#f0fff4] border-l-[4px] border-[#00b894] p-6 rounded-r-xl mb-6">
+           <div className="space-y-2">
+              <p className="m-0 font-bold text-[#222]">50% advance required before project begins.</p>
+              <p className="m-0 font-bold text-[#222]">50% balance due before final delivery / go-live.</p>
+              <p className="m-0 font-bold text-[#222]">Monthly maintenance billed on the 1st of each month.</p>
+           </div>
         </div>
-        <p className="m-0 mb-2">Payments via Bank Transfer / UPI / Razorpay. Invoice provided for all transactions.</p>
-        <p className="m-0 mb-6">Late payments (beyond 7 days) attract 2% monthly interest. GrowX Labs reserves the right to suspend services on overdue accounts.</p>
+        <p className="m-0 mb-2 text-[#555] font-medium">Payments via Bank Transfer / UPI / Razorpay. Invoice provided for all transactions.</p>
+        <p className="m-0 mb-8 text-[#555] text-xs leading-relaxed">Late payments (beyond 7 days) attract 2% monthly interest. GrowXLabsTech reserves the right to suspend services on overdue accounts.</p>
 
         {/* 5-12 LEGAL SECTIONS GRID */}
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 mb-10">
            {[
               { id: 5, title: "Revision Policy", content: "Starter: 2 revision rounds | Growth: 3 revision rounds | Enterprise: 5 revision rounds. Additional revisions billed at ₹500–₹2,000 per round." },
               { id: 6, title: "Client Responsibilities", content: "Client agrees to provide assets, content, and feedback within 48 hours of delivery milestones. Delays extend delivery timelines accordingly." },
-              { id: 7, title: "Intellectual Property", content: "Upon full payment, the client owns the final website/application. GrowX Labs retains rights to display work in its portfolio." },
+              { id: 7, title: "Intellectual Property", content: "Upon full payment, the client owns the final website/application. GrowXLabsTech retains rights to display work in its portfolio." },
               { id: 8, title: "Maintenance & Support", content: "Monthly maintenance covers: hosting, security, and minor content changes (2hrs/mo). Major features quoted separately." },
               { id: 9, title: "Termination", content: "Either party may terminate with 30 days written notice. Work completed is billable. Advance payments are non-refundable." },
               { id: 10, title: "Confidentiality", content: "Both parties agree to keep project details, pricing, and business information confidential. No data shared with third parties." },
@@ -312,10 +333,10 @@ export default function AgreementContract({ data = {}, role = "admin", initialSi
               <p className="text-[11px] text-[#666] m-0">Date: {clientSig ? formData.agreementDate : "_______________________"}</p>
            </div>
            <div className="flex-1 border-t-[2px] border-[#333] pt-2">
-              <p className="text-[11px] font-bold mb-4 uppercase">GrowX Labs Representative</p>
+              <p className="text-[11px] font-bold mb-4 uppercase">GrowXLabsTech Representative</p>
               <div className="min-h-[60px] flex items-center justify-center border border-dashed border-[#eee] rounded mb-2">
                  <SignaturePad 
-                   label="GrowX Labs"
+                   label="GrowXLabsTech"
                    disabled={role !== "admin"} 
                    initialSignature={adminSig}
                    onSign={(sig) => {
@@ -331,7 +352,7 @@ export default function AgreementContract({ data = {}, role = "admin", initialSi
 
         {/* FOOTER */}
         <div className="mt-auto pt-[14px] border-t border-[#eee] text-center text-[11px] text-[#aaa]">
-           GrowX Labs | growxlabs.tech | hello@growxlabs.tech | © 2025 GrowX Labs. All rights reserved.
+           GrowXLabsTech | growxlabs.tech | hello@growxlabs.tech | © 2025 GrowXLabsTech. All rights reserved.
         </div>
 
       </div>

@@ -90,7 +90,7 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
   const handlePrint = () => window.print();
 
   return (
-    <div className="min-h-screen bg-[#f4f4f4] py-12 px-4 print:bg-white print:py-0 print:px-0" style={{ fontFamily: 'Arial, sans-serif' }}>
+    <div className="min-h-screen bg-[#f4f4f4] py-12 px-4 print:bg-white print:py-0 print:px-0" style={{ fontFamily: '"Inter", "Segoe UI", Roboto, sans-serif' }}>
       {/* TOOLBAR */}
       <div className="max-w-[900px] mx-auto mb-8 flex justify-between items-center print:hidden">
         <div className="flex items-center gap-2 text-[#666]">
@@ -121,14 +121,20 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
       <div className="max-w-[900px] mx-auto bg-white shadow-2xl print:shadow-none min-h-[1100px] flex flex-col border border-[#ddd] print:border-none p-10 md:p-20 text-[#000] text-[14px] leading-[1.7]">
         
         {/* HEADER */}
-        <div className="text-center border-b-[4px] border-[#00b894] pb-6 mb-10">
-           <h1 className="text-[32px] font-black text-[#00b894] tracking-[3px] uppercase m-0 leading-tight">GROWX LABS</h1>
-           <p className="text-[13px] text-[#333] mt-2 m-0 font-bold">AI-Native Digital Agency | growxlabs.tech | hello@growxlabs.tech</p>
+        <div className="flex justify-between items-start border-b-2 border-[#00b894] pb-8 mb-12">
+           <div className="text-left">
+              <h1 className="text-[36px] font-black text-[#00b894] tracking-tight m-0 leading-none">GrowXLabs<span className="text-[#222]">Tech</span></h1>
+              <p className="text-[12px] text-[#666] mt-2 m-0 font-medium tracking-wide uppercase">AI-Native Digital Systems Engineering</p>
+           </div>
+           <div className="text-right space-y-1">
+              <p className="text-[11px] font-bold text-[#222]">billing@growxlabs.tech</p>
+              <p className="text-[11px] font-medium text-[#666]">growxlabs.tech</p>
+           </div>
         </div>
 
-        <div className="text-center mb-12">
-           <div className="text-[22px] font-black text-[#000] mb-2 uppercase tracking-[2px]">TAX INVOICE / BILL OF SUPPLY</div>
-           <div className="text-[14px] text-[#333] font-bold">Invoice # {metadata.invoiceNo}</div>
+        <div className="mb-12">
+           <div className="text-[22px] font-black text-[#000] mb-2 uppercase tracking-[2px]">TAX INVOICE</div>
+           <div className="text-[14px] text-[#555] font-bold uppercase tracking-widest">Reference # {metadata.invoiceNo}</div>
         </div>
 
         {/* ADDRESS MATRIX */}
@@ -136,7 +142,7 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
            <div className="space-y-4">
               <h3 className="text-[16px] text-[#00b894] border-l-[6px] border-[#00b894] pl-[15px] uppercase font-black tracking-[1px] m-0">Billed From</h3>
               <div className="space-y-1 text-[#000] font-bold">
-                 <p className="text-[15px]">GrowX Labs Engineering</p>
+                 <p className="text-[15px]">GrowXLabsTech Engineering</p>
                  <p>Guntur, Andhra Pradesh, India</p>
                  <p>Email: billing@growxlabs.tech</p>
                  <p className="text-[11px] text-[#666] mt-2 font-normal uppercase tracking-widest">UDYAM: UDYAM-AP-22-0063260</p>
@@ -275,13 +281,13 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
                  <div className="h-16 flex items-center justify-center text-[10px] text-neutral-300 font-bold uppercase tracking-[4px]">Verified</div>
               </div>
               <p className="text-[13px] font-black text-[#000] uppercase m-0">Authorized Signatory</p>
-              <p className="text-[11px] text-[#666] font-bold m-0 tracking-widest uppercase">GrowX Labs Engineering</p>
+              <p className="text-[11px] text-[#666] font-bold m-0 tracking-widest uppercase">GrowXLabsTech Engineering</p>
            </div>
         </div>
 
         {/* FOOTER */}
         <div className="mt-12 pt-6 border-t border-[#eee] text-center text-[12px] text-[#aaa] font-bold">
-           GrowX Labs | growxlabs.tech | hello@growxlabs.tech | © 2025 GrowX Labs. All rights reserved.
+           GrowXLabsTech | growxlabs.tech | hello@growxlabs.tech | © 2025 GrowXLabsTech. All rights reserved.
         </div>
 
       </div>

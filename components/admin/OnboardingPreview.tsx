@@ -69,7 +69,7 @@ export default function OnboardingPreview() {
   const handlePrint = () => window.print();
 
   return (
-    <div className="min-h-screen bg-neutral-100 py-12 px-4 print:bg-white print:py-0 print:px-0">
+    <div className="min-h-screen bg-neutral-100 py-12 px-4 print:bg-white print:py-0 print:px-0" style={{ fontFamily: '"Inter", "Segoe UI", Roboto, sans-serif' }}>
       {/* Toolbar */}
       <div className="max-w-[850px] mx-auto mb-8 flex justify-between items-center print:hidden">
         <div className="flex items-center gap-2 text-neutral-500">
@@ -109,27 +109,15 @@ export default function OnboardingPreview() {
       <div className="max-w-[850px] mx-auto bg-white shadow-2xl print:shadow-none min-h-[1100px] flex flex-col font-sans border border-neutral-200 print:border-none">
         
         {/* HEADER */}
-        <div className="bg-[#0D1B4B] text-white p-12 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
-          <div className="relative z-10 flex justify-between items-end">
-            <div>
-              <h1 className="text-4xl font-black tracking-tighter mb-2 italic">GROWX LABS</h1>
-              <p className="text-xs font-bold tracking-[0.3em] uppercase opacity-60">Engineering Excellence</p>
-            </div>
-            <div className="text-right">
-              <h2 className="text-2xl font-black text-[#00A86B] tracking-tight uppercase">Client Onboarding Brief</h2>
-              <div className="flex gap-4 mt-4 text-[10px] items-center justify-end font-bold opacity-80">
-                <div className="flex flex-col border-r border-white/10 pr-4">
-                  <span className="uppercase tracking-widest text-[#00A86B]">Document</span>
-                  <span className="text-sm mt-1">ONB-{new Date().getFullYear()}-001</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="uppercase tracking-widest text-[#00A86B]">Date</span>
-                  <span className="text-sm mt-1">{new Date().toLocaleDateString()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="flex justify-between items-start border-b-2 border-[#00b894] p-12 mb-8 bg-[#0D1B4B] text-white">
+           <div className="text-left">
+              <h1 className="text-[36px] font-black text-[#00b894] tracking-tight m-0 leading-none">GrowXLabs<span className="text-white">Tech</span></h1>
+              <p className="text-[12px] text-white/60 mt-2 m-0 font-medium tracking-wide uppercase italic">Onboarding & Strategic Brief</p>
+           </div>
+           <div className="text-right space-y-1">
+              <p className="text-[11px] font-bold text-white uppercase tracking-widest">Document Ref</p>
+              <p className="text-[14px] font-black text-[#00b894]">ONB-{new Date().getFullYear()}-001</p>
+           </div>
         </div>
 
         {/* CONTENT */}
@@ -138,11 +126,11 @@ export default function OnboardingPreview() {
           {/* Section 1: Business Identity */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-8">
-              <div className="h-8 w-8 rounded-lg bg-[#00A86B]/10 flex items-center justify-center">
-                <Building2 className="text-[#00A86B] h-4 w-4" />
+              <div className="h-10 w-10 rounded-xl bg-[#00A86B]/10 flex items-center justify-center">
+                <Building2 className="text-[#00A86B] h-5 w-5" />
               </div>
-              <h3 className="text-[11px] font-black uppercase tracking-widest text-[#0D1B4B]">Business Identity</h3>
-              <div className="h-px bg-[#00A86B] flex-1 opacity-10" />
+              <h3 className="text-[13px] font-black uppercase tracking-[0.2em] text-[#0D1B4B]">Business Identity</h3>
+              <div className="h-px bg-[#00b894]/20 flex-1" />
             </div>
 
             <div className="grid grid-cols-2 gap-8 mb-6">
@@ -313,7 +301,7 @@ export default function OnboardingPreview() {
             <div className="space-y-6">
               <div className="h-10 border-b-2 border-neutral-900" />
               <div>
-                <p className="text-[10px] font-black uppercase text-[#0D1B4B]">Authorized For GrowX Labs</p>
+                <p className="text-[10px] font-black uppercase text-[#0D1B4B]">Authorized For GrowXLabsTech</p>
                 <p className="text-[9px] font-bold text-neutral-400 mt-0.5 tracking-widest italic uppercase">Project Manager</p>
               </div>
             </div>
@@ -330,7 +318,7 @@ export default function OnboardingPreview() {
         {/* FOOTER */}
         <div className="mt-auto bg-[#0D1B4B] p-5 text-center">
           <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
-            GrowX Labs Onboarding Protocol | Confidential Client Brief
+            GrowXLabsTech Onboarding Protocol | GrowXLabsTech Confidential Brief
           </p>
         </div>
       </div>

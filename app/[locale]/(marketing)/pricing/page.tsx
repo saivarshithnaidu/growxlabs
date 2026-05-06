@@ -200,8 +200,8 @@ export default function PricingPage() {
 
             <div className="space-y-8 relative z-10">
               <Link href="/contact" className="w-full sm:w-auto">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="w-full sm:w-auto h-16 px-12 rounded-full bg-[#00A86B] text-white font-bold text-lg hover:bg-[#00A86B]/90 transition-all shadow-2xl group/btn border-none"
                   trackEvent="call_booked_intent"
                   trackProperties={{ location: 'pricing_footer' }}

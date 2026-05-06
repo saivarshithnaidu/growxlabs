@@ -79,7 +79,7 @@ export default function PublicProposalView() {
            <div className="relative z-10">
               <div className="flex justify-between items-start mb-24">
                  <div>
-                   <h2 className="text-4xl font-black tracking-tighter leading-none">GrowX Labs</h2>
+                   <h2 className="text-4xl font-black tracking-tighter leading-none">GrowXLabsTech</h2>
                    <p className="text-[10px] font-black tracking-[0.4em] uppercase opacity-40 italic mt-2">Engineering Digital Growth. Globally.</p>
                  </div>
                  <div className="px-8 py-3 bg-[#0D1B4B] text-white rounded-full">
@@ -158,7 +158,7 @@ export default function PublicProposalView() {
         {/* Trust Section */}
         <section className="bg-[#0D1B4B] text-white p-12 md:p-24 shadow-2xl rounded-3xl space-y-20 relative overflow-hidden">
            <div className="relative z-10 space-y-6 text-center">
-              <h2 className="text-[11px] font-black uppercase tracking-[0.6em] opacity-40 italic">03. The GrowX Labs Advantage</h2>
+              <h2 className="text-[11px] font-black uppercase tracking-[0.6em] opacity-40 italic">03. The GrowXLabsTech Advantage</h2>
               <h3 className="text-4xl md:text-6xl font-black tracking-tighter italic">We Build. We Operate.</h3>
               <p className="text-lg opacity-40 font-medium max-w-2xl mx-auto">Every solution we deploy is battle-tested on our own stack. We don't just build for clients; we build and operate 3 live AI products globally.</p>
            </div>

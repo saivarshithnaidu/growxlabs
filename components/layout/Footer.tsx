@@ -7,7 +7,7 @@ export function Footer() {
   const links = {
     services: [
       { name: "Web Engineering", href: "/services" },
-      { name: "Automation (n8n)", href: "/services" },
+      { name: "Automation Workflows", href: "/services" },
       { name: "Premium Hosting", href: "/services" },
       { name: "AI Integration", href: "/services" },
     ],

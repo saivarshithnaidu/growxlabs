@@ -56,7 +56,7 @@ export default function OnboardingFlow() {
           </div>
           <h2 className="text-2xl font-bold text-gray-900">Submission Received!</h2>
           <p className="text-gray-600">
-            Thank you for your onboarding details. Our team at GrowX Labs will review your information and get back to you within 24 hours via WhatsApp or Email.
+            Thank you for your onboarding details. Our team at GrowXLabsTech will review your information and get back to you within 24 hours via WhatsApp or Email.
           </p>
           <button 
             onClick={() => window.location.href = '/'}
@@ -175,8 +175,8 @@ export default function OnboardingFlow() {
 
       <form ref={formRef} onSubmit={handleSubmit} className="paper">
         <div className="header">
-          <h1>✕ GROWX LABS</h1>
-          <p>AI-Native Digital Agency | growxlabs.tech | hello@growxlabs.tech</p>
+          <h1>✕ GROWXLABSTECH</h1>
+          <p>AI Digital Agency | growxlabs.tech | hello@growxlabs.tech</p>
         </div>
 
         <div className="doc-title">CLIENT ONBOARDING FORM</div>
@@ -372,7 +372,7 @@ export default function OnboardingFlow() {
         </div>
 
         <br />
-        <p style={{fontSize:'12px', color:'#555', fontWeight: 600}}>By submitting this form, I confirm the information provided is accurate and I agree to GrowX Labs' Terms & Conditions.</p>
+        <p style={{fontSize:'12px', color:'#555', fontWeight: 600}}>By submitting this form, I confirm the information provided is accurate and I agree to GrowXLabsTech's Terms & Conditions.</p>
         
         <div className="field-row" style={{marginTop: '30px', alignItems: 'flex-end'}}>
           <div className="field" style={{maxWidth: '300px'}}>
@@ -400,7 +400,7 @@ export default function OnboardingFlow() {
         </button>
 
         <div className="footer">
-          GrowX Labs | growxlabs.tech | hello@growxlabs.tech | © {new Date().getFullYear()} GrowX Labs. All rights reserved.
+          GrowXLabsTech | growxlabs.tech | hello@growxlabs.tech | © {new Date().getFullYear()} GrowXLabsTech. All rights reserved.
         </div>
       </form>
     </div>

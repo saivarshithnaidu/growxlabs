@@ -32,7 +32,7 @@ export const AgreementPDF = ({ data }: { data: any }) => (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
         <Text style={styles.title}>GrowXLabsTech</Text>
-        <Text style={styles.subtitle}>Master Service Agreement & Project Charter</Text>
+        <Text style={styles.subtitle}>Project Service Agreement</Text>
       </View>
 
       <View style={styles.grid}>
@@ -147,7 +147,7 @@ export const InvoicePDF = ({ data }: { data: any }) => (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
         <Text style={styles.title}>INVOICE</Text>
-        <Text style={styles.subtitle}>GrowXLabsTech Internal Billing System</Text>
+        <Text style={styles.subtitle}>GrowXLabsTech Billing</Text>
       </View>
 
       <View style={styles.grid}>
@@ -165,24 +165,40 @@ export const InvoicePDF = ({ data }: { data: any }) => (
 
       <View style={{ marginVertical: 30, borderBottom: '1pt solid #EEE', paddingBottom: 20 }}>
         <View style={{ flexDirection: 'row', borderBottom: '1pt solid #000', paddingBottom: 5, marginBottom: 10 }}>
-          <Text style={{ flex: 2, fontSize: 10, fontWeight: 700 }}>Description</Text>
+          <Text style={{ flex: 3, fontSize: 10, fontWeight: 700 }}>Description</Text>
+          <Text style={{ flex: 0.5, fontSize: 10, fontWeight: 700, textAlign: 'center' }}>Qty</Text>
+          <Text style={{ flex: 1, fontSize: 10, fontWeight: 700, textAlign: 'right' }}>Rate</Text>
           <Text style={{ flex: 1, fontSize: 10, fontWeight: 700, textAlign: 'right' }}>Amount</Text>
         </View>
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={{ flex: 2, fontSize: 10 }}>{data.description}</Text>
-          <Text style={{ flex: 1, fontSize: 10, textAlign: 'right' }}>${data.amount}</Text>
-        </View>
+        {data.items?.map((item: any, i: number) => (
+          <View key={i} style={{ flexDirection: 'row', marginBottom: 5 }}>
+            <Text style={{ flex: 3, fontSize: 10 }}>{item.description}</Text>
+            <Text style={{ flex: 0.5, fontSize: 10, textAlign: 'center' }}>{item.qty}</Text>
+            <Text style={{ flex: 1, fontSize: 10, textAlign: 'right' }}>{item.rate}</Text>
+            <Text style={{ flex: 1, fontSize: 10, textAlign: 'right' }}>{(item.qty * item.rate).toFixed(2)}</Text>
+          </View>
+        ))}
       </View>
 
       <View style={{ alignItems: 'flex-end' }}>
         <View style={{ width: '40%', borderTop: '2pt solid #000', paddingTop: 10 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
             <Text style={{ fontSize: 10, color: '#666' }}>Subtotal</Text>
-            <Text style={{ fontSize: 10 }}>${data.amount}</Text>
+            <Text style={{ fontSize: 10 }}>{data.currency === 'INR' ? '₹' : '$'}{data.subtotal || data.amount}</Text>
           </View>
+          {data.subtotal && data.amount > data.subtotal && (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
+              <Text style={{ fontSize: 10, color: '#666' }}>GST (18%)</Text>
+              <Text style={{ fontSize: 10 }}>{data.currency === 'INR' ? '₹' : '$'}{(data.amount - data.subtotal).toFixed(2)}</Text>
+            </View>
+          )}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
             <Text style={{ fontSize: 12, fontWeight: 700 }}>TOTAL DUE</Text>
-            <Text style={{ fontSize: 12, fontWeight: 700 }}>${data.amount}</Text>
+            <Text style={{ fontSize: 12, fontWeight: 700 }}>{data.currency === 'INR' ? '₹' : '$'}{data.amount}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+            <Text style={{ fontSize: 10, fontWeight: 700, color: '#00A86B' }}>BALANCE DUE</Text>
+            <Text style={{ fontSize: 10, fontWeight: 700, color: '#00A86B' }}>{data.currency === 'INR' ? '₹' : '$'}{data.balance_due || data.amount}</Text>
           </View>
         </View>
       </View>
@@ -196,7 +212,7 @@ export const InvoicePDF = ({ data }: { data: any }) => (
       </View>
 
       <Text style={styles.footer}>
-        Invoice ID: {data.invoice_id} | Issued via GrowX Secure Portal
+        Invoice ID: {data.invoice_id} | Issued via GrowXLabsTech Portal
       </Text>
     </Page>
   </Document>

@@ -28,8 +28,8 @@ export default function ClientInvoicesPage() {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: invoice.amount,
       currency: "USD",
-      name: "GrowX Labs",
-      description: "Project Advance Payment",
+      name: "GrowXLabsTech",
+      description: "Project Payment",
       order_id: invoice.razorpay_order_id,
       handler: function (response: any) {
         // Razorpay success callback
@@ -56,11 +56,11 @@ export default function ClientInvoicesPage() {
       
       <div className="space-y-4">
         <h1 className="text-6xl font-black text-white tracking-tighter italic">
-          Financial Ledger.
+          Billing & Payments.
         </h1>
         <p className="text-xl text-white/40 font-light max-w-2xl leading-relaxed">
-          Secure payment orchestration via Razorpay. Track project capitalization 
-          and settlements in real-time.
+          Pay safely via Razorpay. Keep track of your invoices 
+          and payments here.
         </p>
       </div>
 
@@ -102,7 +102,7 @@ export default function ClientInvoicesPage() {
             
             {invoice.pdf_url && (
               <div className="mt-8 pt-8 border-t border-white/5 flex justify-between items-center">
-                 <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Financial Audit Document Ready</p>
+                 <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Invoice PDF ready for download</p>
                  <a href={invoice.pdf_url} className="text-white/40 hover:text-white transition-all text-xs font-bold flex items-center">
                     View PDF <ExternalLink size={14} className="ml-2" />
                  </a>

@@ -77,7 +77,7 @@ const PACKAGES = {
 };
 
 const COMPANY_DETAILS = {
-  name: "GrowX Labs",
+  name: "GrowXLabsTech",
   founder: "Varshith Pujala",
   website: "growxlabs.tech",
   email: "hello@growxlabs.tech",
@@ -343,7 +343,7 @@ export default function ProposalsPage() {
                         <div>
                            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">Architect</p>
                            <p className="font-bold text-lg">{COMPANY_DETAILS.founder}</p>
-                           <p className="text-[10px] font-black uppercase text-primary tracking-widest mt-1">Founding Engineer, GrowX Labs</p>
+                           <p className="text-[10px] font-black uppercase text-primary tracking-widest mt-1">Founding Engineer, GrowXLabsTech</p>
                         </div>
                         <div className="text-[9px] font-black uppercase tracking-[0.2em] space-y-1">
                            <p className="text-neutral-300">{COMPANY_DETAILS.website}</p>
@@ -381,7 +381,7 @@ export default function ProposalsPage() {
                      <div className="space-y-4 px-12">
                         <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-neutral-300 italic">Our Strategic Directive</h4>
                         <p className="text-lg text-neutral-500 leading-relaxed font-bold">
-                           GrowX Labs doesn't build simple websites. We engineer revenue assets. Our mission is to eliminate the friction between your business and your global growth.
+                           GrowXLabsTech doesn't build simple websites. We engineer revenue assets. Our mission is to eliminate the friction between your business and your global growth.
                         </p>
                      </div>
                   </div>
@@ -445,7 +445,7 @@ export default function ProposalsPage() {
                {/* PAGE 4 - WHY US */}
                <div className="proposal-page bg-white text-[#0D1B4B] p-24 flex flex-col justify-center shadow-2xl space-y-20 aspect-[1/1.414]">
                   <div className="space-y-6 text-center">
-                     <h2 className="text-sm font-black uppercase tracking-[0.5em] text-primary italic underline underline-offset-8">03. The GrowX Labs Advantage</h2>
+                     <h2 className="text-sm font-black uppercase tracking-[0.5em] text-primary italic underline underline-offset-8">03. The GrowXLabsTech Advantage</h2>
                      <h3 className="text-6xl font-black tracking-tighter">We Don't Just Build.<br /><span className="text-primary italic">We Operate.</span></h3>
                   </div>
 
