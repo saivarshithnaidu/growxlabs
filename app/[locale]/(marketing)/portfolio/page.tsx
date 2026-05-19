@@ -44,6 +44,12 @@ export async function generateMetadata() {
 }
 
 export default function PortfolioPage() {
+  const titleName = "AI PORTFOLIO";
+  const flickerDelays = [
+    0.2, 0.45, 0.1, 0.6, 0.3, 0.8, 0.15, 0.5, 0.7, 0.25, 0.9, 0.35, 0.05, 0.55, 0.4, 0.75,
+  ];
+  let letterIdx = 0;
+
   return (
     <>
       <DynamicSchema
@@ -73,18 +79,36 @@ export default function PortfolioPage() {
       />
 
       <section
-        className="w-full px-6 md:px-10 xl:px-16 2xl:px-24 pt-24 sm:pt-28 pb-14 md:pb-16 min-h-[min(52dvh,560px)] flex flex-col items-center justify-center text-center"
+        className="w-full px-6 md:px-10 xl:px-16 2xl:px-24 pt-32 pb-14 md:pb-16 min-h-[min(52dvh,560px)] flex flex-col items-center justify-center text-center"
         aria-labelledby="portfolio-hero-heading"
       >
         <div className="max-w-6xl mx-auto w-full">
-          <Reveal y={24} scale={0.98}>
-            <h1
-              id="portfolio-hero-heading"
-              className="text-[clamp(2.5rem,14vw,8.5rem)] font-black text-[#1A1A1A] tracking-[-0.04em] leading-[0.92] uppercase sm:whitespace-nowrap"
-            >
-              AI portfolio
-            </h1>
-          </Reveal>
+          <h1
+            id="portfolio-hero-heading"
+            className="text-[9.2vw] font-black text-[#1A1A1A] tracking-[-0.06em] leading-[0.8] uppercase whitespace-nowrap"
+          >
+            {titleName.split("").map((char, idx) => {
+              if (char === " ") {
+                return (
+                  <span key={idx} className="inline-block w-[0.25em]" />
+                );
+              }
+              const currentDelay = flickerDelays[letterIdx % flickerDelays.length];
+              letterIdx++;
+              return (
+                <span
+                  key={idx}
+                  className="inline-block animate-flicker"
+                  style={{
+                    opacity: 0,
+                    animationDelay: `${currentDelay}s`,
+                  }}
+                >
+                  {char}
+                </span>
+              );
+            })}
+          </h1>
         </div>
       </section>
 

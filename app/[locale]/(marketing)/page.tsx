@@ -12,7 +12,7 @@ import { HotlineConsole } from "@/components/marketing/HotlineConsole";
 import { locales } from "@/navigation";
 import Script from "next/script";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -57,6 +57,22 @@ export default function Home() {
     {
       question: "What makes GrowXLabsTech different from other agencies?",
       answer: "We combine AI-powered development tools with deep domain expertise to deliver projects faster and with higher quality than traditional agencies. Every system we build is engineered for measurable business growth."
+    },
+    {
+      question: "What tech stack and frameworks do you use to build projects?",
+      answer: "We build with a high-performance, future-proof stack: Next.js (React) as our primary framework, TypeScript for type safety, Tailwind CSS for clean responsive layouts, and Framer Motion for premium micro-animations. For backend automations, we leverage n8n, node.js, and cloud integrations. Everything is hosted on secure cloud infrastructure like AWS, Vercel, or highly optimized VPS setups."
+    },
+    {
+      question: "Can I cancel anytime?",
+      answer: "Yes. Cancel with 15 days notice. No lock-in."
+    },
+    {
+      question: "What if I need a website first?",
+      answer: "We build your website first (one-time), then you move to subscription."
+    },
+    {
+      question: "Do you serve outside India?",
+      answer: "Yes. USD pricing available."
     }
   ];
 
@@ -137,19 +153,101 @@ export default function Home() {
 
 
 
-      {/* ═══ CASE STUDIES ═══ */}
+      {/* ═══ EXPLORE NAVIGATIONS ═══ */}
       <section className="w-full py-24 px-6 md:px-10 xl:px-16 2xl:px-24 bg-white/60 border-y border-[#E5E2DC]">
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
           <AnimatedSection className="text-center mb-16">
             <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#355CFF] mb-3 block">OUR WORK</span>
-            <h2 className="text-[clamp(28px,4vw,42px)] font-bold text-[#1A1A1A] tracking-tight">Case Studies</h2>
+            <h2 className="text-[clamp(28px,4vw,42px)] font-bold text-[#1A1A1A] tracking-tight">Explore Our Systems</h2>
           </AnimatedSection>
-          <AnimatedStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.slice(0, 3).map((project, index) => (
-              <AnimatedItem key={index}>
-                <ProjectCard {...project} />
-              </AnimatedItem>
-            ))}
+          
+          <AnimatedStagger className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* PORTFOLIO CARD */}
+            <AnimatedItem>
+              <Link href="/portfolio" className="group block h-full">
+                <div className="relative h-full flex flex-col justify-between bg-[#111111] text-white border border-white/5 rounded-2xl p-8 md:p-10 overflow-hidden shadow-2xl transition-all duration-500 hover:border-[#355CFF]/30 hover:shadow-[#355CFF]/[0.02] min-h-[460px]">
+                  {/* Top line with title and circular arrow */}
+                  <div className="flex justify-between items-start z-10">
+                    <h3 className="text-[clamp(28px,3vw,38px)] font-black tracking-tight leading-[1.05] max-w-[280px]">
+                      Explore Our Portfolio
+                    </h3>
+                    <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:border-white shrink-0">
+                      <ArrowUpRight className="h-5 w-5" />
+                    </div>
+                  </div>
+
+                  {/* Central geometric SVG animation */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-transform duration-[800ms] group-hover:scale-105 group-hover:rotate-12">
+                    <svg viewBox="0 0 100 100" className="w-72 h-72 text-white/5 group-hover:text-[#355CFF]/15 transition-colors duration-500" fill="none" stroke="currentColor" strokeWidth="0.5">
+                      <path d="M50 10 L90 50 L50 90 L10 50 Z" />
+                      <path d="M50 20 L80 50 L50 80 L20 50 Z" />
+                      <path d="M50 30 L70 50 L50 70 L30 50 Z" />
+                      <path d="M50 40 L60 50 L50 60 L40 50 Z" />
+                      <line x1="50" y1="10" x2="50" y2="90" />
+                      <line x1="10" y1="50" x2="90" y2="50" />
+                      <line x1="20" y1="50" x2="50" y2="20" />
+                      <line x1="80" y1="50" x2="50" y2="20" />
+                      <line x1="20" y1="50" x2="50" y2="80" />
+                      <line x1="80" y1="50" x2="50" y2="80" />
+                    </svg>
+                  </div>
+
+                  {/* Bottom description & status indicators */}
+                  <div className="z-10 mt-auto pt-16">
+                    <div className="flex justify-between items-center border-b border-white/5 pb-4 mb-4 font-mono text-[10px] tracking-[0.18em] text-white/40 uppercase">
+                      <span>{`{ EXPLORE }`}</span>
+                      <span>{`{ CLIENT WORK }`}</span>
+                    </div>
+                    <p className="text-white/70 text-[15px] leading-relaxed max-w-md">
+                      Discover high-performance systems, custom automation pipelines, and high-converting websites engineered for global brands.
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </AnimatedItem>
+
+            {/* AI PRODUCTS CARD */}
+            <AnimatedItem>
+              <Link href="/products" className="group block h-full">
+                <div className="relative h-full flex flex-col justify-between bg-[#111111] text-white border border-white/5 rounded-2xl p-8 md:p-10 overflow-hidden shadow-2xl transition-all duration-500 hover:border-[#355CFF]/30 hover:shadow-[#355CFF]/[0.02] min-h-[460px]">
+                  {/* Top line with title and circular arrow */}
+                  <div className="flex justify-between items-start z-10">
+                    <h3 className="text-[clamp(28px,3vw,38px)] font-black tracking-tight leading-[1.05] max-w-[280px]">
+                      Explore AI Products
+                    </h3>
+                    <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:border-white shrink-0">
+                      <ArrowUpRight className="h-5 w-5" />
+                    </div>
+                  </div>
+
+                  {/* Central geometric SVG animation */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-transform duration-[800ms] group-hover:scale-105 group-hover:rotate-[-12deg]">
+                    <svg viewBox="0 0 100 100" className="w-72 h-72 text-white/5 group-hover:text-[#355CFF]/15 transition-colors duration-500" fill="none" stroke="currentColor" strokeWidth="0.5">
+                      <polygon points="50,10 85,30 85,70 50,90 15,70 15,30" />
+                      <line x1="50" y1="50" x2="50" y2="10" />
+                      <line x1="50" y1="50" x2="85" y2="30" />
+                      <line x1="50" y1="50" x2="85" y2="70" />
+                      <line x1="50" y1="50" x2="50" y2="90" />
+                      <line x1="50" y1="50" x2="15" y2="70" />
+                      <line x1="50" y1="50" x2="15" y2="30" />
+                      <polygon points="50,25 72,37 72,63 50,75 28,63 28,37" />
+                      <circle cx="50" cy="50" r="1.5" fill="currentColor" />
+                    </svg>
+                  </div>
+
+                  {/* Bottom description & status indicators */}
+                  <div className="z-10 mt-auto pt-16">
+                    <div className="flex justify-between items-center border-b border-white/5 pb-4 mb-4 font-mono text-[10px] tracking-[0.18em] text-white/40 uppercase">
+                      <span>{`{ EXPLORE }`}</span>
+                      <span>{`{ OWN PRODUCTS }`}</span>
+                    </div>
+                    <p className="text-white/70 text-[15px] leading-relaxed max-w-md">
+                      Test and use proprietary AI SaaS platforms, experimental research tools, and open-source models crafted by our studio.
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </AnimatedItem>
           </AnimatedStagger>
         </div>
       </section>

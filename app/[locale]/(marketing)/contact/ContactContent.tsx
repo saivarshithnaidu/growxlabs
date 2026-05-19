@@ -24,6 +24,12 @@ export function ContactContent() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const posthog = usePostHog();
 
+  const titleName = "CONTACT";
+  const flickerDelays = [
+    0.2, 0.45, 0.1, 0.6, 0.3, 0.8, 0.15, 0.5, 0.7, 0.25, 0.9, 0.35, 0.05, 0.55, 0.4, 0.75,
+  ];
+  let letterIdx = 0;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
@@ -79,16 +85,38 @@ export function ContactContent() {
     <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
         <div className="text-center mb-16">
+          {/* Massive Swiss Page Title with neon flickering */}
+          <div className="w-full overflow-hidden flex justify-center items-end select-none pointer-events-none mb-14">
+            <h1 className="font-black select-none tracking-[-0.06em] text-[#1A1A1A] leading-[0.8] text-[9.2vw] uppercase whitespace-nowrap">
+              {titleName.split("").map((char, idx) => {
+                const currentDelay = flickerDelays[letterIdx % flickerDelays.length];
+                letterIdx++;
+                return (
+                  <span
+                    key={idx}
+                    className="inline-block animate-flicker"
+                    style={{
+                      opacity: 0,
+                      animationDelay: `${currentDelay}s`,
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </h1>
+          </div>
+
           <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#355CFF] mb-4 block">
             Get in touch
           </span>
-          <motion.h1
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-[clamp(40px,7vw,76px)] font-black text-[#1A1A1A] mb-7 tracking-tight leading-[1]"
+            className="text-[clamp(32px,5vw,56px)] font-black text-[#1A1A1A] mb-7 tracking-tight leading-[1.1]"
           >
             Start your project with a clear plan.
-          </motion.h1>
+          </motion.h2>
           <p className="text-[clamp(16px,2vw,18px)] text-[#6B7280] max-w-[720px] mx-auto leading-[1.7]">
             Tell us what you want to build, automate, or improve. We will respond with next steps, rough scope, and the fastest sensible path forward.
           </p>

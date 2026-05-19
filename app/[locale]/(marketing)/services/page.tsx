@@ -128,6 +128,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 export default function ServicesPage() {
+  const titleName = "SERVICES";
+  const flickerDelays = [
+    0.2, 0.45, 0.1, 0.6, 0.3, 0.8, 0.15, 0.5, 0.7, 0.25, 0.9, 0.35, 0.05, 0.55, 0.4, 0.75,
+  ];
+  let letterIdx = 0;
+
   return (
     <>
       <DynamicSchema
@@ -159,20 +165,37 @@ export default function ServicesPage() {
       <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
           <div className="text-center mb-20">
+            {/* Massive Swiss Page Title with neon flickering */}
+            <div className="w-full overflow-hidden flex justify-center items-end select-none pointer-events-none mb-14">
+              <h1 className="font-black select-none tracking-[-0.06em] text-[#1A1A1A] leading-[0.8] text-[9.2vw] uppercase whitespace-nowrap">
+                {titleName.split("").map((char, idx) => {
+                  const currentDelay = flickerDelays[letterIdx % flickerDelays.length];
+                  letterIdx++;
+                  return (
+                    <span
+                      key={idx}
+                      className="inline-block animate-flicker"
+                      style={{
+                        opacity: 0,
+                        animationDelay: `${currentDelay}s`,
+                      }}
+                    >
+                      {char}
+                    </span>
+                  );
+                })}
+              </h1>
+            </div>
+
             <Reveal>
               <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#355CFF] mb-4 block">
                 What we build
               </span>
             </Reveal>
             <Reveal delay={0.1}>
-              <h1 className="text-[clamp(40px,7vw,76px)] font-black text-[#1A1A1A] mb-7 tracking-tight leading-[1]">
+              <h2 className="text-[clamp(32px,5vw,56px)] font-black text-[#1A1A1A] mb-12 tracking-tight leading-[1.1]">
                 Services that turn your website into a growth system.
-              </h1>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <p className="text-[#6B7280] max-w-[760px] mx-auto text-lg leading-relaxed">
-                We connect website engineering, automation, SEO, and cloud operations into one practical system: attract the right visitors, capture intent, follow up quickly, and measure what is working.
-              </p>
+              </h2>
             </Reveal>
           </div>
 
@@ -183,6 +206,22 @@ export default function ServicesPage() {
               </Reveal>
             ))}
           </div>
+
+          {/* The Unified Growth Stack editorial block */}
+          <Reveal y={24}>
+            <div className="w-full h-[1px] bg-[#E5E2DC] mb-16" />
+            <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-8 lg:gap-16 mb-24 items-center max-w-7xl mx-auto">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#355CFF]">The Blueprint</span>
+                <h3 className="text-3xl font-black text-[#1A1A1A] mt-2 tracking-tight">The Growth Engine</h3>
+              </div>
+              <div className="border-l-2 border-[#355CFF] pl-6 py-2">
+                <p className="text-lg md:text-xl text-[#4B5563] leading-relaxed font-semibold">
+                  We connect website engineering, automation, SEO, and cloud operations into one practical system: attract the right visitors, capture intent, follow up quickly, and measure what is working.
+                </p>
+              </div>
+            </div>
+          </Reveal>
 
           <Reveal y={40}>
             <div className="rounded-lg p-8 md:p-12 border border-[#E5E2DC] bg-white shadow-sm mb-24">

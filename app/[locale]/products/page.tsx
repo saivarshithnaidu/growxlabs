@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { Cpu, Users, ChevronRight, Binary, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -30,27 +30,60 @@ const products = [
   },
 ];
 
+const flickerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: (delay: number) => ({
+    opacity: [0, 0, 1, 0.3, 1, 0.7, 1],
+    transition: {
+      duration: 0.8,
+      delay: delay,
+      times: [0, 0.4, 0.5, 0.6, 0.7, 0.8, 1],
+      ease: "easeInOut",
+    },
+  }),
+};
+
 export default function ProductsPage() {
+  const titleName = "AI PRODUCTS";
+  const flickerDelays = [
+    0.2, 0.45, 0.1, 0.6, 0.3, 0.8, 0.15, 0.5, 0.7, 0.25, 0.9, 0.35, 0.05, 0.55, 0.4, 0.75,
+  ];
+  let letterIdx = 0;
+
   return (
     <>
       {/* Hero — largest emphasis on AI PRODUCTS */}
       <section
-        className="w-full px-6 md:px-10 xl:px-16 2xl:px-24 pt-24 sm:pt-28 pb-14 md:pb-18 min-h-[min(52dvh,560px)] flex flex-col items-center justify-center text-center"
+        className="w-full px-6 md:px-10 xl:px-16 2xl:px-24 pt-32 pb-14 md:pb-18 min-h-[min(52dvh,560px)] flex flex-col items-center justify-center text-center"
         aria-labelledby="products-hero-heading"
       >
         <div className="max-w-6xl mx-auto w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          <h1
+            id="products-hero-heading"
+            className="text-[9.2vw] font-black text-[#1A1A1A] tracking-[-0.06em] leading-[0.8] uppercase whitespace-nowrap"
           >
-            <h1
-              id="products-hero-heading"
-              className="text-[clamp(2.5rem,14vw,8.5rem)] font-black text-[#1A1A1A] tracking-[-0.04em] leading-[0.92] uppercase sm:whitespace-nowrap"
-            >
-              AI products
-            </h1>
-          </motion.div>
+            {titleName.split("").map((char, idx) => {
+              if (char === " ") {
+                return (
+                  <span key={idx} className="inline-block w-[0.25em]" />
+                );
+              }
+              const currentDelay = flickerDelays[letterIdx % flickerDelays.length];
+              letterIdx++;
+              return (
+                <motion.span
+                  key={idx}
+                  className="inline-block"
+                  variants={flickerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={currentDelay}
+                >
+                  {char}
+                </motion.span>
+              );
+            })}
+          </h1>
         </div>
       </section>
 
@@ -68,10 +101,7 @@ export default function ProductsPage() {
             <h2 className="text-[clamp(1.65rem,4vw,2.75rem)] font-black text-[#1A1A1A] tracking-tight mb-5 leading-[1.12] max-w-4xl mx-auto">
               Products that prove our engineering speed.
             </h2>
-            <p className="text-lg text-[#6B7280] leading-relaxed max-w-2xl mx-auto">
-              We build internal and public AI products alongside client work. The same product discipline powers the
-              websites and automation systems we ship for businesses.
-            </p>
+
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -34,8 +34,8 @@ const principles = [
 
 const leaders = [
   {
-    initials: "VP",
-    name: "Sai Varshith Pujala",
+    initials: "PSV",
+    name: "Pujala Sai Varshith",
     role: "Founder & Principal Systems Engineer",
     text: "Leads full-stack AI engineering, architecture, and performance-focused digital systems for global businesses.",
     href: "https://linkedin.com/in/sai-varshith-pujala"
@@ -50,18 +50,46 @@ const leaders = [
 ];
 
 export function AboutContent() {
+  const titleName = "ABOUT";
+  const flickerDelays = [
+    0.2, 0.45, 0.1, 0.6, 0.3, 0.8, 0.15, 0.5, 0.7, 0.25, 0.9, 0.35, 0.05, 0.55, 0.4, 0.75,
+  ];
+  let letterIdx = 0;
+
   return (
     <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
+        {/* Massive Swiss Page Title with neon flickering */}
+        <div className="w-full overflow-hidden flex justify-center items-end select-none pointer-events-none mb-14">
+          <h1 className="font-black select-none tracking-[-0.06em] text-[#1A1A1A] leading-[0.8] text-[9.2vw] uppercase whitespace-nowrap">
+            {titleName.split("").map((char, idx) => {
+              const currentDelay = flickerDelays[letterIdx % flickerDelays.length];
+              letterIdx++;
+              return (
+                <span
+                  key={idx}
+                  className="inline-block animate-flicker"
+                  style={{
+                    opacity: 0,
+                    animationDelay: `${currentDelay}s`,
+                  }}
+                >
+                  {char}
+                </span>
+              );
+            })}
+          </h1>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-[0.98fr_1.02fr] gap-14 lg:gap-20 items-center mb-28">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
             <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#355CFF]">Our story</span>
-            <h1 className="text-[clamp(40px,7vw,76px)] font-black text-[#1A1A1A] mt-5 mb-7 tracking-tight leading-[1]">
+            <h2 className="text-[clamp(32px,5vw,56px)] font-black text-[#1A1A1A] mt-5 mb-7 tracking-tight leading-[1.1]">
               Engineering digital growth, globally.
-            </h1>
+            </h2>
             <div className="space-y-5 text-[17px] text-[#6B7280] leading-[1.75]">
               <p>
                 GrowXLabsTech is an AI-native systems engineering agency headquartered in Guntur, Andhra Pradesh, India. We build websites, automations, and digital growth systems for businesses that need practical technology, not decorative complexity.

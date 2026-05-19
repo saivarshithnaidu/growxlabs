@@ -20,7 +20,7 @@ export function Footer() {
     resources: [
       { name: "Client Portal", href: "/client/dashboard" },
       { name: "Project Handover", href: "/handover" },
-      { name: "Pricing", href: "/pricing" },
+      { name: "Pricing", href: "/services#subscriptions" },
       { name: "Contact", href: "/contact" },
     ],
     legal: [
