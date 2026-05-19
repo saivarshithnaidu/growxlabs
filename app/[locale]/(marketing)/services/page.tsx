@@ -4,6 +4,7 @@ import { Reveal } from "@/components/marketing/Reveal";
 import { locales, Link } from "@/navigation";
 import Script from "next/script";
 import { DynamicSchema } from "@/components/marketing/DynamicSchema";
+import { SubscriptionPlansSection } from "@/components/marketing/SubscriptionPlansSection";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
 import { Button } from "@/components/ui/Button";
 
@@ -275,6 +276,8 @@ export default function ServicesPage() {
               ))}
             </div>
           </section>
+
+          <SubscriptionPlansSection />
 
           <section className="max-w-4xl mx-auto">
             <div className="text-center mb-12">

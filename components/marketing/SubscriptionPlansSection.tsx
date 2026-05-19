@@ -80,10 +80,7 @@ export function SubscriptionPlansSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
         <div className="bg-white border border-[#E5E2DC] rounded-2xl p-6 md:p-8 flex flex-col justify-between hover:border-[#355CFF]/30 transition-colors duration-300 h-full relative shadow-sm">
           <div>
-            <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Online Presence</h3>
-            <div className="text-3xl font-black text-[#1A1A1A] mb-8">
-              ₹3,999<span className="text-[#6B7280] text-lg font-semibold">/month</span>
-            </div>
+            <h3 className="text-xl font-bold text-[#1A1A1A] mb-8">Online Presence</h3>
             <div className="space-y-4 mb-8">
               {[
                 "Website hosting and monitoring",
@@ -114,10 +111,7 @@ export function SubscriptionPlansSection() {
             Most popular
           </div>
           <div>
-            <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Growth System</h3>
-            <div className="text-3xl font-black text-[#1A1A1A] mb-8">
-              ₹7,999<span className="text-[#6B7280] text-lg font-semibold">/month</span>
-            </div>
+            <h3 className="text-xl font-bold text-[#1A1A1A] mb-8">Growth System</h3>
             <div className="space-y-4 mb-8">
               {[
                 "Everything in Basic",
@@ -145,10 +139,7 @@ export function SubscriptionPlansSection() {
 
         <div className="bg-white border border-[#E5E2DC] rounded-2xl p-6 md:p-8 flex flex-col justify-between hover:border-[#355CFF]/30 transition-colors duration-300 h-full relative shadow-sm">
           <div>
-            <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Full Digital Growth</h3>
-            <div className="text-3xl font-black text-[#1A1A1A] mb-8">
-              ₹15,999<span className="text-[#6B7280] text-lg font-semibold">/month</span>
-            </div>
+            <h3 className="text-xl font-bold text-[#1A1A1A] mb-8">Full Digital Growth</h3>
             <div className="space-y-4 mb-8">
               {[
                 "Everything in Standard",
