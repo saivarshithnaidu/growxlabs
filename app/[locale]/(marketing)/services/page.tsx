@@ -1,11 +1,11 @@
 import { ServiceCard } from "@/components/ui/ServiceCard";
-import { Shield, Clock, Zap, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Shield, Clock, Zap, ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/marketing/Reveal";
-import { AEOBlock } from "@/components/marketing/AEOBlock";
 import { locales, Link } from "@/navigation";
 import Script from "next/script";
 import { DynamicSchema } from "@/components/marketing/DynamicSchema";
 import { SubscriptionPlansSection } from "@/components/marketing/SubscriptionPlansSection";
+import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
 import { Button } from "@/components/ui/Button";
 
 const faqData = [
@@ -267,61 +267,15 @@ export default function ServicesPage() {
 
           <SubscriptionPlansSection />
 
-          <section className="max-w-5xl mx-auto mb-24">
-            <div className="text-center mb-14">
-              <h2 className="text-[clamp(30px,5vw,48px)] font-black text-[#1A1A1A] mb-4 tracking-tight">Service deep dive</h2>
-              <p className="text-[#6B7280] text-lg">Specific business problems we solve for clients.</p>
-            </div>
-
-            <AEOBlock
-              question="What problem does Web Engineering solve?"
-              answer="It replaces slow, fragile websites with fast conversion engines built for trust and action."
-              explanation="Modern buyers expect instant loading, clear offers, and simple paths to contact. We engineer sites that meet those expectations."
-              example="A service page becomes faster and clearer, form completions increase, and the sales team gets cleaner leads."
-              ctaText="Improve your website"
-              ctaHref="/contact"
-            />
-
-            <AEOBlock
-              question="What problem does AI & Automation solve?"
-              answer="It removes repetitive manual work from lead handling, follow-ups, reporting, and customer communication."
-              explanation="We build workflows that respond quickly, route data accurately, and reduce the operational drag on your team."
-              example="A new inquiry triggers WhatsApp, CRM entry, email follow-up, and owner notification within seconds."
-              ctaText="Start automating"
-              ctaHref="/contact"
-            />
-
-            <AEOBlock
-              question="What problem does Technical SEO solve?"
-              answer="It makes your business easier for search engines and AI answer engines to understand, rank, and recommend."
-              explanation="We improve metadata, schema, page structure, speed, internal linking, and content clarity around high-intent searches."
-              example="A local business shifts from generic pages to intent-mapped service pages that attract better qualified organic leads."
-              ctaText="Boost visibility"
-              ctaHref="/contact"
-            />
-          </section>
-
           <section className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-[clamp(28px,4vw,40px)] font-black text-[#1A1A1A] mb-4 tracking-tight">Service FAQ</h2>
               <p className="text-[#6B7280]">Clear answers to help you understand the process.</p>
             </div>
 
-            <div className="space-y-4">
-              {faqData.map((faq, index) => (
-                <Reveal key={faq.question} delay={index * 0.06}>
-                  <div className="p-6 md:p-7 rounded-lg border border-[#E5E2DC] bg-white shadow-sm">
-                    <h4 className="text-[#1A1A1A] font-bold text-lg mb-3 flex items-center gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-[#355CFF] shrink-0" aria-hidden="true" />
-                      {faq.question}
-                    </h4>
-                    <p className="text-[#6B7280] leading-relaxed pl-8">
-                      {faq.answer}
-                    </p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+            <Reveal delay={0.1}>
+              <AccordionFAQ items={faqData} />
+            </Reveal>
           </section>
 
           <div className="mt-24 text-center rounded-lg bg-[#1A1A1A] p-8 md:p-12">
