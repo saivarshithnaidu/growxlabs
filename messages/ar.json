@@ -9,7 +9,11 @@
   },
   "Nav": {
     "services": "الخدمات",
+    "services_overview": "نظرة عامة",
+    "process": "العملية",
     "portfolio": "الأعمال",
+    "products": "AIProducts",
+    "courses": "الدورات",
     "pricing": "الأسعار",
     "subscriptions": "Subscriptions",
     "about": "من نحن",

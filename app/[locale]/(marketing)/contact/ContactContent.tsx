@@ -5,11 +5,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { Mail, Phone, MapPin, CheckCircle2, AlertCircle, MessageCircle, ShieldCheck, Clock, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, CheckCircle2, AlertCircle, MessageCircle, ShieldCheck, Clock, Sparkles, ArrowRight } from "lucide-react";
 import React from "react";
-import { usePostHog } from 'posthog-js/react';
+import { usePostHog } from "posthog-js/react";
 import { Turnstile } from "@marsidev/react-turnstile";
-
 
 export function ContactContent() {
   const [formData, setFormData] = useState({
@@ -41,7 +40,6 @@ export function ContactContent() {
         throw new Error("Our systems are currently experiencing a high volume of inquiries. Please try again or email us directly.");
       }
 
-      // PostHog Tracking
       if (posthog) {
         posthog.identify(formData.email, {
           name: formData.name,
@@ -50,8 +48,8 @@ export function ContactContent() {
           service: formData.service,
           budget: formData.budget,
         });
-        
-        posthog.capture('lead_submitted', {
+
+        posthog.capture("lead_submitted", {
           service: formData.service,
           budget: formData.budget,
         });
@@ -59,203 +57,203 @@ export function ContactContent() {
 
       setStatus("success");
       setFormData({ name: "", email: "", phone: "", service: "", budget: "", message: "" });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus("error");
-      setErrorMessage(err.message || "An unexpected error occurred. Please try again.");
+      setErrorMessage(err instanceof Error ? err.message : "An unexpected error occurred. Please try again.");
     }
   };
+
+  const contactItems = [
+    { icon: Mail, label: "Email", value: "hello@growxlabs.tech", href: "mailto:hello@growxlabs.tech" },
+    { icon: Phone, label: "Phone", value: "+91 81859 58336", href: "tel:+918185958336" },
+    { icon: MapPin, label: "Location", value: "Guntur, Andhra Pradesh, India" },
+  ];
+
+  const trustSignals = [
+    { icon: ShieldCheck, text: "Registered Business: UDYAM-AP-22-0063260" },
+    { icon: Clock, text: "Response within 4 business hours" },
+    { icon: Sparkles, text: "Free 15-minute discovery call" },
+  ];
 
   return (
     <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-        <div className="text-center mb-20">
-          <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B] mb-4 block">
-            GET IN TOUCH
+        <div className="text-center mb-16">
+          <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#355CFF] mb-4 block">
+            Get in touch
           </span>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-[clamp(32px,6vw,72px)] font-bold text-white mb-8 tracking-tight leading-[1.1]"
+            className="text-[clamp(40px,7vw,76px)] font-black text-[#1A1A1A] mb-7 tracking-tight leading-[1]"
           >
-            Start Your <span className="text-gradient">Project.</span>
+            Start your project with a clear plan.
           </motion.h1>
-          <p className="text-[clamp(16px,2vw,18px)] text-[#A0A0A0] max-w-[640px] mx-auto leading-[1.7]">
-            Tell us about your project and we will respond within 4 hours with a custom plan.
+          <p className="text-[clamp(16px,2vw,18px)] text-[#6B7280] max-w-[720px] mx-auto leading-[1.7]">
+            Tell us what you want to build, automate, or improve. We will respond with next steps, rough scope, and the fastest sensible path forward.
           </p>
         </div>
 
-        {/* WhatsApp CTA */}
-        <div className="flex justify-center mb-16">
+        <div className="flex justify-center mb-14">
           <a
             href="https://wa.me/918185958336"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-4 px-10 py-5 bg-[#00A86B] text-white font-bold rounded-full hover:bg-[#00A86B]/90 hover:scale-105 transition-all text-lg shadow-2xl"
+            className="inline-flex items-center gap-3 px-6 py-4 bg-[#355CFF] text-white font-semibold rounded-md hover:bg-[#2A4AD4] transition-all shadow-sm"
           >
-            <MessageCircle size={24} />
+            <MessageCircle size={21} aria-hidden="true" />
             Chat on WhatsApp
           </a>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-          {/* Contact Information */}
-          <div className="space-y-12">
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-6">Direct Contact</h2>
-              <p className="text-[#A0A0A0] leading-[1.8] text-lg font-medium">
-                We are currently accepting new projects. Use the form or contact us directly.
+        <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-14">
+          <div className="space-y-8">
+            <div className="rounded-lg border border-[#E5E2DC] bg-white p-8 shadow-sm">
+              <h2 className="text-2xl font-black text-[#1A1A1A] mb-4">Direct contact</h2>
+              <p className="text-[#6B7280] leading-[1.75]">
+                We are currently accepting new builds, redesigns, and automation projects. Use the form or reach us directly.
               </p>
             </div>
 
-            <div className="space-y-8">
-              {[
-                { icon: Mail, label: "Email", value: "hello@growxlabs.tech", href: "mailto:hello@growxlabs.tech" },
-                { icon: Phone, label: "Phone", value: "+91 81859 58336", href: "tel:+918185958336" },
-                { icon: MapPin, label: "Location", value: "Guntur, Andhra Pradesh, India" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center space-x-6 group">
-                  <div className="w-14 h-14 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-2xl flex items-center justify-center transition-all group-hover:border-[rgba(0,168,107,0.3)] shadow-xl">
-                    <item.icon className="text-[#00A86B] h-6 w-6" />
+            <div className="space-y-4">
+              {contactItems.map((item) => (
+                <div key={item.label} className="flex items-center gap-5 rounded-lg border border-[#E5E2DC] bg-white p-5 shadow-sm">
+                  <div className="w-12 h-12 bg-[#EDEAE4] rounded-md flex items-center justify-center shrink-0">
+                    <item.icon className="text-[#355CFF] h-5 w-5" aria-hidden="true" />
                   </div>
                   <div>
-                    <p className="text-[11px] text-[#A0A0A0]/60 uppercase tracking-widest font-black mb-1">{item.label}</p>
+                    <p className="text-[11px] text-[#6B7280] uppercase tracking-widest font-bold mb-1">{item.label}</p>
                     {item.href ? (
-                      <a href={item.href} className="text-white font-bold text-lg hover:text-[#00A86B] transition-colors">{item.value}</a>
+                      <a href={item.href} className="text-[#1A1A1A] font-bold hover:text-[#355CFF] transition-colors">{item.value}</a>
                     ) : (
-                      <p className="text-white font-bold text-lg">{item.value}</p>
+                      <p className="text-[#1A1A1A] font-bold">{item.value}</p>
                     )}
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Trust Signals */}
-            <div className="pt-10 border-t border-white/5 space-y-6">
-              {[
-                { icon: ShieldCheck, text: "Registered Business — UDYAM-AP-22-0063260" },
-                { icon: Clock, text: "Response within 4 hours" },
-                { icon: Sparkles, text: "Free 15-minute discovery call" },
-              ].map((signal, i) => (
-                <div key={i} className="flex items-center gap-4 text-[15px] text-white/50 font-medium">
-                  <signal.icon size={20} className="text-[#00A86B] shrink-0" />
+            <div className="rounded-lg border border-[#E5E2DC] bg-white p-6 shadow-sm space-y-4">
+              {trustSignals.map((signal) => (
+                <div key={signal.text} className="flex items-center gap-3 text-[14px] text-[#6B7280] font-medium">
+                  <signal.icon size={18} className="text-[#355CFF] shrink-0" aria-hidden="true" />
                   <span>{signal.text}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Contact Form */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
           >
-            <div className="p-10 md:p-12 rounded-3xl border border-[rgba(255,255,255,0.08)] bg-white/[0.02] shadow-2xl backdrop-blur-md">
+            <div className="p-6 md:p-8 rounded-lg border border-[#E5E2DC] bg-white shadow-sm">
               {status === "success" ? (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12 space-y-8"
+                  className="text-center py-12 space-y-7"
                 >
-                  <div className="w-24 h-24 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-3xl flex items-center justify-center mx-auto shadow-xl">
-                    <CheckCircle2 className="text-[#00A86B] w-12 h-12" />
+                  <div className="w-20 h-20 bg-[#355CFF]/10 border border-[#355CFF]/15 rounded-lg flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="text-[#355CFF] w-10 h-10" aria-hidden="true" />
                   </div>
-                  <div className="space-y-4">
-                    <h3 className="text-3xl font-bold text-white">Message Sent!</h3>
-                    <p className="text-[#A0A0A0] text-lg font-medium">
-                      We will get back to you within 4 hours.
+                  <div className="space-y-3">
+                    <h3 className="text-3xl font-black text-[#1A1A1A]">Message sent</h3>
+                    <p className="text-[#6B7280] text-lg">
+                      We will get back to you within 4 business hours.
                     </p>
                   </div>
-                  <Button onClick={() => setStatus("idle")} variant="outline" className="rounded-full px-10 h-14 border-white/10 hover:bg-white/5 text-white font-bold transition-all shadow-none">
-                    Send Another Message
+                  <Button onClick={() => setStatus("idle")} variant="outline" className="rounded-md px-8 h-12 font-semibold">
+                    Send another message
                   </Button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-3">
-                    <label className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Full Name</label>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Full name</label>
                     <Input
                       required
                       placeholder="Your name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="h-14 rounded-2xl bg-white/[0.03] border-white/5 pl-6 text-white focus:border-[#00A86B]/40 transition-all text-base shadow-inner"
+                      className="h-12 rounded-md"
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Email Address</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Email address</label>
                       <Input
                         required
                         type="email"
                         placeholder="you@company.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="h-14 rounded-2xl bg-white/[0.03] border-white/5 pl-6 text-white focus:border-[#00A86B]/40 transition-all text-base shadow-inner"
+                        className="h-12 rounded-md"
                       />
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Phone Number</label>
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Phone number</label>
                       <Input
                         type="tel"
                         placeholder="+91 98765 43210"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="h-14 rounded-2xl bg-white/[0.03] border-white/5 pl-6 text-white focus:border-[#00A86B]/40 transition-all text-base shadow-inner"
+                        className="h-12 rounded-md"
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Service Needed</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Service needed</label>
                       <select
                         required
                         value={formData.service}
                         onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                        className="w-full h-14 rounded-2xl bg-black/40 border border-white/5 pl-6 pr-6 text-white focus:border-[#00A86B]/40 transition-all text-base appearance-none cursor-pointer shadow-inner"
+                        className="w-full h-12 rounded-md bg-white border border-[#E5E2DC] px-4 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#355CFF] transition-all"
                       >
-                        <option value="" className="bg-black">Select a service</option>
-                        <option value="website" className="bg-black">Website Development</option>
-                        <option value="automation" className="bg-black">n8n Automation</option>
-                        <option value="hosting" className="bg-black">Hosting and Maintenance</option>
-                        <option value="ai" className="bg-black">AI Integration</option>
-                        <option value="bundle" className="bg-black">Full Bundle</option>
+                        <option value="">Select a service</option>
+                        <option value="website">Website Development</option>
+                        <option value="automation">n8n Automation</option>
+                        <option value="hosting">Hosting and Maintenance</option>
+                        <option value="ai">AI Integration</option>
+                        <option value="bundle">Full Bundle</option>
                       </select>
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Estimated Budget</label>
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Estimated budget</label>
                       <select
                         value={formData.budget}
                         onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                        className="w-full h-14 rounded-2xl bg-black/40 border border-white/5 pl-6 pr-6 text-white focus:border-[#00A86B]/40 transition-all text-base appearance-none cursor-pointer shadow-inner"
+                        className="w-full h-12 rounded-md bg-white border border-[#E5E2DC] px-4 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#355CFF] transition-all"
                       >
-                        <option value="" className="bg-black">Select budget range</option>
-                        <option value="under-15k" className="bg-black">Under ₹15,000</option>
-                        <option value="15k-35k" className="bg-black">₹15,000 – ₹35,000</option>
-                        <option value="35k-70k" className="bg-black">₹35,000 – ₹70,000</option>
-                        <option value="above-70k" className="bg-black">Above ₹70,000</option>
-                        <option value="overseas" className="bg-black">Overseas (USD)</option>
+                        <option value="">Select budget range</option>
+                        <option value="under-15k">Under INR 15,000</option>
+                        <option value="15k-35k">INR 15,000 - INR 35,000</option>
+                        <option value="35k-70k">INR 35,000 - INR 70,000</option>
+                        <option value="above-70k">Above INR 70,000</option>
+                        <option value="overseas">Overseas (USD)</option>
                       </select>
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <label className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Project Brief</label>
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Project brief</label>
                     <Textarea
                       required
                       placeholder="Tell us about your project goals, timeline, and requirements..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="min-h-[160px] rounded-2xl bg-white/[0.03] border-white/5 p-6 text-white focus:border-[#00A86B]/40 transition-all leading-relaxed text-base shadow-inner"
+                      className="min-h-[150px] rounded-md leading-relaxed"
                     />
                   </div>
 
                   {status === "error" && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="flex items-center space-x-4 text-red-500 text-sm bg-red-500/10 p-5 rounded-2xl border border-red-500/20 shadow-lg"
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="flex items-center gap-3 text-red-600 text-sm bg-red-50 p-4 rounded-md border border-red-100"
                     >
-                      <AlertCircle size={20} className="shrink-0" />
-                      <span className="font-bold">{errorMessage}</span>
+                      <AlertCircle size={18} className="shrink-0" aria-hidden="true" />
+                      <span className="font-semibold">{errorMessage}</span>
                     </motion.div>
                   )}
 
@@ -268,10 +266,11 @@ export function ContactContent() {
 
                   <Button
                     type="submit"
-                    className="w-full h-16 text-lg font-black bg-[#00A86B] text-white hover:bg-[#00A86B]/90 rounded-2xl shadow-2xl transition-all hover:scale-[1.02] active:scale-95 uppercase tracking-widest"
+                    className="w-full h-14 text-base font-semibold rounded-md inline-flex items-center gap-2"
                     disabled={status === "loading"}
                   >
-                    {status === "loading" ? "Processing..." : "Get Started Now →"}
+                    {status === "loading" ? "Processing..." : "Send project brief"}
+                    {status !== "loading" && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
                   </Button>
                 </form>
               )}

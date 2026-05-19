@@ -1,42 +1,40 @@
 import { ServiceCard } from "@/components/ui/ServiceCard";
-import {
-  Shield,
-  Clock,
-  Zap
-} from "lucide-react";
+import { Shield, Clock, Zap, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Reveal } from "@/components/marketing/Reveal";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
-import { locales } from "@/navigation";
+import { locales, Link } from "@/navigation";
 import Script from "next/script";
 import { DynamicSchema } from "@/components/marketing/DynamicSchema";
+import { SubscriptionPlansSection } from "@/components/marketing/SubscriptionPlansSection";
+import { Button } from "@/components/ui/Button";
 
 const faqData = [
   {
     question: "How do your digital systems improve revenue?",
-    answer: "Our systems focus on capturing high-intent traffic and automating the conversion path so no lead is lost."
+    answer: "Our systems capture high-intent traffic, qualify leads quickly, and automate the conversion path so fewer opportunities are lost."
   },
   {
     question: "Do I need to manage the automation myself?",
-    answer: "No. We build, deploy, and maintain the automation workflows for you."
+    answer: "No. We build, deploy, document, and maintain the workflows so your team can focus on sales and delivery."
   },
   {
     question: "What is Technical SEO?",
-    answer: "It is engineering your website structure so AI and search engines can easily find and recommend your business."
+    answer: "It is engineering your site structure, content model, speed, and schema so search engines and AI assistants can understand and recommend your business."
   },
   {
     question: "Can your systems scale with my business?",
-    answer: "Yes. We use cloud-native infrastructure that scales automatically based on your user volume."
+    answer: "Yes. We use modern cloud infrastructure and modular workflows so your site, CRM, and automations can grow with demand."
   },
   {
     question: "What is the typical ROI timeline?",
-    answer: "Most businesses see efficiency gains immediately and revenue improvements within 3-6 months."
+    answer: "Most clients see operational savings immediately, while revenue improvements typically appear after the system has collected and converted traffic for several weeks."
   }
 ];
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "mainEntity": faqData.map(faq => ({
+  "mainEntity": faqData.map((faq) => ({
     "@type": "Question",
     "name": faq.question,
     "acceptedAnswer": {
@@ -49,41 +47,59 @@ const jsonLd = {
 const allServices = [
   {
     title: "Web Engineering",
-    description: "High performance applications built for speed and conversion. We use Next.js and TypeScript to create stable, scalable digital platforms.",
+    description: "High performance websites and applications built for speed, clarity, and conversion using modern full-stack architecture.",
     iconName: "code",
   },
   {
     title: "AI & Automations",
-    description: "Remove manual tasks from your workflow. We deploy custom AI and automation systems that save your team hundreds of hours per month.",
+    description: "Lead follow-up, routing, reporting, and task automation that keeps your business responsive around the clock.",
     iconName: "settings",
   },
   {
     title: "Technical SEO",
-    description: "Data driven search strategy designed to put your business in front of the right customers and dominate your market rankings.",
+    description: "Schema, content architecture, metadata, and performance improvements that help your business get discovered.",
     iconName: "trending",
   },
   {
     title: "Cloud Infrastructure",
-    description: "Global hosting solutions with 100% uptime monitoring and proactive maintenance. Built for businesses that cannot afford downtime.",
+    description: "Reliable hosting, monitoring, deployment, backups, and maintenance for sites that need to stay online.",
     iconName: "server",
   },
   {
     title: "Product Design",
-    description: "Premium user interfaces that prioritize clarity and ease of use. We design systems that make complex software feel simple.",
+    description: "Clean interfaces and user journeys that make complex services feel simple, credible, and easy to buy.",
     iconName: "globe",
   },
   {
     title: "Strategic Growth",
-    description: "Comprehensive audits and technical roadmaps to identify bottlenecks and unlock new revenue streams through technology.",
+    description: "Audits, roadmaps, and experiments that reveal the fastest path from traffic to qualified revenue.",
     iconName: "zap",
   },
+];
+
+const proofPoints = [
+  {
+    icon: Shield,
+    title: "Secure by default",
+    text: "Authentication, data handling, and deployment decisions are reviewed before launch."
+  },
+  {
+    icon: Clock,
+    title: "Fast delivery rhythm",
+    text: "Short build cycles, visible progress, and handover documentation keep momentum high."
+  },
+  {
+    icon: Zap,
+    title: "Built for action",
+    text: "Every section, form, and automation is tied to a measurable business outcome."
+  }
 ];
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
 
   const languages: Record<string, string> = {
-    'x-default': 'https://growxlabs.tech/en-IN/services',
+    "x-default": "https://growxlabs.tech/en-IN/services",
   };
   locales.forEach((l) => {
     languages[l] = `https://growxlabs.tech/${l}/services`;
@@ -122,137 +138,184 @@ export default function ServicesPage() {
           }
         ]}
       />
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
-        <Script
-          id="faq-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
           <div className="text-center mb-20">
             <Reveal>
-              <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B] mb-4 block">
-                WHAT WE BUILD
+              <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#355CFF] mb-4 block">
+                What we build
               </span>
             </Reveal>
             <Reveal delay={0.1}>
-              <h1 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-6 tracking-tight">
-                Core Capabilities
+              <h1 className="text-[clamp(40px,7vw,76px)] font-black text-[#1A1A1A] mb-7 tracking-tight leading-[1]">
+                Services that turn your website into a growth system.
               </h1>
             </Reveal>
             <Reveal delay={0.2}>
-              <p className="text-[#A0A0A0] max-w-[640px] mx-auto text-lg leading-relaxed">
-                Direct results oriented technical solutions for businesses that prioritize speed and reliability.
+              <p className="text-[#6B7280] max-w-[760px] mx-auto text-lg leading-relaxed">
+                We connect website engineering, automation, SEO, and cloud operations into one practical system: attract the right visitors, capture intent, follow up quickly, and measure what is working.
               </p>
             </Reveal>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-24">
             {allServices.map((service, index) => (
-              <Reveal key={index} delay={index * 0.05}>
+              <Reveal key={service.title} delay={index * 0.05}>
                 <ServiceCard {...service} />
               </Reveal>
             ))}
           </div>
 
-          {/* Value Props */}
           <Reveal y={40}>
-            <div className="rounded-2xl p-10 md:p-16 border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] relative overflow-hidden shadow-2xl backdrop-blur-sm">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16 text-center relative z-10">
-                <div className="space-y-4">
-                  <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
-                    <Shield className="text-[#00A86B] h-7 w-7" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">Enterprise Security</h3>
-                  <p className="text-[#A0A0A0] text-base leading-relaxed">Every solution is built with rigorous security standards to protect your business data.</p>
+            <div className="rounded-lg p-8 md:p-12 border border-[#E5E2DC] bg-white shadow-sm mb-24">
+              <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 items-start">
+                <div>
+                  <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#355CFF]">Our delivery promise</span>
+                  <h2 className="mt-4 text-[clamp(28px,4vw,44px)] font-black text-[#1A1A1A] tracking-tight leading-tight">
+                    Serious engineering without agency fog.
+                  </h2>
+                  <p className="mt-5 text-[#6B7280] leading-relaxed">
+                    You get clear scope, visible milestones, performance-first builds, and automations designed around your real business workflow.
+                  </p>
                 </div>
-                <div className="space-y-4">
-                  <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
-                    <Clock className="text-[#00A86B] h-7 w-7" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">On Time Delivery</h3>
-                  <p className="text-[#A0A0A0] text-base leading-relaxed">We respect your timeline. Fixed price, fixed date projects delivered with absolute precision.</p>
-                </div>
-                <div className="space-y-4">
-                  <div className="w-14 h-14 bg-[#00A86B]/10 border border-[#00A86B]/20 rounded-2xl flex items-center justify-center mx-auto">
-                    <Zap className="text-[#00A86B] h-7 w-7" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">Precision Performance</h3>
-                  <p className="text-[#A0A0A0] text-base leading-relaxed">We optimize for speed and reliability, ensuring your systems perform under massive traffic.</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {proofPoints.map((point) => (
+                    <div key={point.title} className="rounded-lg bg-[#F5F3EE] border border-[#E5E2DC] p-5">
+                      <div className="w-11 h-11 rounded-md bg-white flex items-center justify-center mb-4">
+                        <point.icon className="text-[#355CFF] h-5 w-5" aria-hidden="true" />
+                      </div>
+                      <h3 className="font-bold text-[#1A1A1A] mb-2">{point.title}</h3>
+                      <p className="text-sm text-[#6B7280] leading-relaxed">{point.text}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </Reveal>
 
-          {/* AEO Layer - Services */}
-          <section className="mt-48 max-w-5xl mx-auto">
-            <div className="text-center mb-20">
-              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-6 tracking-tight">Service Deep Dive</h2>
-              <p className="text-[#A0A0A0] text-lg font-medium">Answers to specific problems we solve for our clients.</p>
+          <section id="process" className="scroll-mt-28 mb-24">
+            <Reveal>
+              <div className="text-center mb-12 max-w-2xl mx-auto">
+                <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.2em] text-[#355CFF] mb-3 block">
+                  Process
+                </span>
+                <h2 className="text-[clamp(1.65rem,4vw,2.5rem)] font-black text-[#1A1A1A] tracking-tight leading-tight mb-3">
+                  Idea to live system—three clear gates.
+                </h2>
+                <p className="text-[#6B7280] text-base leading-relaxed">
+                  No fog: each step has a visible artifact you can forward to your team.
+                </p>
+              </div>
+            </Reveal>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+              {[
+                {
+                  title: "Discover",
+                  rows: [
+                    { k: "Missions", v: "Map revenue path + constraints" },
+                    { k: "Inputs", v: "Traffic, offers, ops load" },
+                    { k: "Output", v: "Scope, stack, timeline" },
+                  ],
+                },
+                {
+                  title: "Build",
+                  rows: [
+                    { k: "Missions", v: "Ship production-grade systems" },
+                    { k: "Inputs", v: "Milestones + weekly reviews" },
+                    { k: "Output", v: "Live site, automations, docs" },
+                  ],
+                },
+                {
+                  title: "Operate",
+                  rows: [
+                    { k: "Missions", v: "Measure, harden, iterate" },
+                    { k: "Inputs", v: "Analytics + team feedback" },
+                    { k: "Output", v: "Cadence you can run" },
+                  ],
+                },
+              ].map((card) => (
+                <Reveal key={card.title} delay={0.06}>
+                  <div
+                    className="h-full bg-white border border-[#E5E2DC] rounded-2xl p-6 md:p-7 shadow-sm relative overflow-hidden"
+                    style={{
+                      clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%)",
+                    }}
+                  >
+                    <h3 className="text-lg font-black text-[#1A1A1A] tracking-tight mb-5 pr-2">{card.title}</h3>
+                    <div className="divide-y divide-[#E5E2DC]">
+                      {card.rows.map((row) => (
+                        <div key={row.k} className="grid grid-cols-[minmax(0,88px)_1fr] gap-x-3 py-3 first:pt-0">
+                          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#6B7280] leading-snug">
+                            {row.k}
+                          </span>
+                          <span className="text-sm font-semibold text-[#1A1A1A] leading-snug">{row.v}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+
+          <SubscriptionPlansSection />
+
+          <section className="max-w-5xl mx-auto mb-24">
+            <div className="text-center mb-14">
+              <h2 className="text-[clamp(30px,5vw,48px)] font-black text-[#1A1A1A] mb-4 tracking-tight">Service deep dive</h2>
+              <p className="text-[#6B7280] text-lg">Specific business problems we solve for clients.</p>
             </div>
 
             <AEOBlock
               question="What problem does Web Engineering solve?"
-              answer="It eliminates slow, fragile websites that lose customers and replaces them with high-performance engines built for conversion."
-              explanation="Modern users expect instant results. We engineer systems using Next.js and TypeScript that load in milliseconds and guide users directly to your offer."
-              example="A slow e-commerce site fixes its loading speed and navigation → bounce rate drops by 40% → sales increase."
-              ctaText="Optimize your web engineering"
+              answer="It replaces slow, fragile websites with fast conversion engines built for trust and action."
+              explanation="Modern buyers expect instant loading, clear offers, and simple paths to contact. We engineer sites that meet those expectations."
+              example="A service page becomes faster and clearer, form completions increase, and the sales team gets cleaner leads."
+              ctaText="Improve your website"
               ctaHref="/contact"
             />
 
             <AEOBlock
               question="What problem does AI & Automation solve?"
-              answer="It removes the bottleneck of manual, repetitive work that prevents your team from scaling."
-              explanation="We build custom AI agents and automated workflows that handle lead triage, scheduling, and data processing 24/7."
-              example="A service business automates lead follow-ups → response time drops from 4 hours to 4 seconds → conversion rate doubles."
+              answer="It removes repetitive manual work from lead handling, follow-ups, reporting, and customer communication."
+              explanation="We build workflows that respond quickly, route data accurately, and reduce the operational drag on your team."
+              example="A new inquiry triggers WhatsApp, CRM entry, email follow-up, and owner notification within seconds."
               ctaText="Start automating"
               ctaHref="/contact"
             />
 
             <AEOBlock
               question="What problem does Technical SEO solve?"
-              answer="It solves the 'hidden business' problem by ensuring AI engines and search platforms actively recommend you to high-intent buyers."
-              explanation="We optimize your site's schema, performance, and structure to meet the strict standards of SGE and ChatGPT-style search."
-              example="A B2B company optimizes for specific answer queries → Google AI features them in a summary → they get high-quality organic leads."
-              ctaText="Boost your visibility"
-              ctaHref="/contact"
-            />
-
-            <AEOBlock
-              question="What problem does Cloud Infrastructure solve?"
-              answer="It eliminates the risk of downtime and data loss that can destroy business continuity and reputation."
-              explanation="We deploy enterprise-grade cloud environments with automated scaling, daily backups, and 24/7 proactive monitoring."
-              example="A major marketing launch causes a 10x traffic spike → the infrastructure scales instantly → the site stays fast and online."
-              ctaText="Secure your hosting"
-              ctaHref="/contact"
-            />
-
-            <AEOBlock
-              question="What problem does Product Design solve?"
-              answer="It solves high drop-off rates by making complex digital actions feel simple and intuitive for the end-user."
-              explanation="We use psychological design principles to remove friction and guide the user's eye toward the most important actions."
-              example="A complex software tool simplifies its onboarding flow → user completion rate jumps from 30% to 85%."
-              ctaText="Redesign for conversion"
+              answer="It makes your business easier for search engines and AI answer engines to understand, rank, and recommend."
+              explanation="We improve metadata, schema, page structure, speed, internal linking, and content clarity around high-intent searches."
+              example="A local business shifts from generic pages to intent-mapped service pages that attract better qualified organic leads."
+              ctaText="Boost visibility"
               ctaHref="/contact"
             />
           </section>
 
-          {/* FAQ Section */}
-          <section className="mt-48 max-w-4xl mx-auto">
-            <div className="text-center mb-20">
-              <h2 className="text-[clamp(28px,4vw,36px)] font-bold text-white mb-6 tracking-tight">Service FAQ</h2>
-              <p className="text-[#A0A0A0] font-medium">Clear answers to help you understand our engineering process.</p>
+          <section className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-[clamp(28px,4vw,40px)] font-black text-[#1A1A1A] mb-4 tracking-tight">Service FAQ</h2>
+              <p className="text-[#6B7280]">Clear answers to help you understand the process.</p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               {faqData.map((faq, index) => (
-                <Reveal key={index} delay={index * 0.1}>
-                  <div className="p-8 md:p-10 rounded-3xl border border-white/5 bg-white/[0.02] shadow-xl hover:bg-white/[0.04] transition-all">
-                    <h4 className="text-white font-bold text-xl mb-4 tracking-tight flex items-center gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                <Reveal key={faq.question} delay={index * 0.06}>
+                  <div className="p-6 md:p-7 rounded-lg border border-[#E5E2DC] bg-white shadow-sm">
+                    <h4 className="text-[#1A1A1A] font-bold text-lg mb-3 flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-[#355CFF] shrink-0" aria-hidden="true" />
                       {faq.question}
                     </h4>
-                    <p className="text-[#A0A0A0] leading-relaxed pl-4 border-l border-white/10 font-medium">
+                    <p className="text-[#6B7280] leading-relaxed pl-8">
                       {faq.answer}
                     </p>
                   </div>
@@ -260,10 +323,22 @@ export default function ServicesPage() {
               ))}
             </div>
           </section>
+
+          <div className="mt-24 text-center rounded-lg bg-[#1A1A1A] p-8 md:p-12">
+            <h2 className="text-[clamp(28px,5vw,46px)] font-black text-white tracking-tight mb-4">
+              Need a complete digital system?
+            </h2>
+            <p className="text-white/70 max-w-2xl mx-auto mb-8">
+              Tell us what you sell, how leads currently arrive, and where your team loses time. We will map the system that fits.
+            </p>
+            <Link href="/contact">
+              <Button className="h-14 px-8 rounded-md font-semibold inline-flex items-center gap-2">
+                Start a project <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </>
   );
 }
-
-

@@ -7,6 +7,7 @@ import {
   Zap,
   Shield,
   Clock,
+  ArrowRight,
   LucideIcon
 } from "lucide-react";
 
@@ -31,15 +32,18 @@ export function ServiceCard({ title, description, iconName }: ServiceCardProps) 
   const Icon = ICON_MAP[iconName] || Settings;
 
   return (
-    <div className="group h-full transition-transform duration-300 hover:-translate-y-1">
-      <div className="h-full flex flex-col space-y-4 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-2xl p-6 transition-all duration-300 group-hover:border-[rgba(0,168,107,0.3)] group-hover:border-l-2 group-hover:border-l-[#00A86B]">
-        <div className="w-10 h-10 rounded-lg bg-[#00A86B]/10 flex items-center justify-center mb-1">
-          <Icon className="text-[#00A86B] w-8 h-8" aria-hidden="true" />
+    <div className="group h-full transition-all duration-300 hover:-translate-y-0.5">
+      <div className="h-full flex flex-col bg-white border border-[#E5E2DC] rounded-lg p-6 transition-all duration-300 shadow-sm group-hover:border-[#355CFF]/25 group-hover:shadow-md">
+        <div className="w-11 h-11 rounded-md bg-[#EDEAE4] flex items-center justify-center mb-5 group-hover:bg-[#355CFF]/10 transition-colors">
+          <Icon className="text-[#355CFF] w-[22px] h-[22px]" aria-hidden="true" />
         </div>
-        <h3 className="text-[20px] font-semibold text-white">{title}</h3>
-        <p className="text-[#A0A0A0] text-[15px] leading-[1.7]">
+        <h3 className="text-[17px] font-semibold text-[#1A1A1A] mb-2">{title}</h3>
+        <p className="text-[#6B7280] text-[14px] leading-[1.6] mb-5 flex-1">
           {description}
         </p>
+        <div className="flex items-center gap-1.5 text-[#355CFF] text-[14px] font-semibold group-hover:gap-2.5 transition-all">
+          Learn more <ArrowRight className="w-4 h-4" />
+        </div>
       </div>
     </div>
   );

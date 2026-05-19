@@ -4,6 +4,8 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  /** Hides the bottom-left Next.js dev “issues” badge in development (not your app UI). */
+  devIndicators: false,
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
@@ -16,7 +18,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // @ts-ignore
+  // @ts-expect-error NextConfig types omit legacy optimizeFonts; supported at runtime
   optimizeFonts: false,
   compress: true,
   async headers() {

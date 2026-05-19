@@ -9,7 +9,11 @@
   },
   "Nav": {
     "services": "Services",
+    "services_overview": "Overview",
+    "process": "Process",
     "portfolio": "Portfolio",
+    "products": "AIProducts",
+    "courses": "Courses",
     "pricing": "Pricing",
     "subscriptions": "Subscriptions",
     "about": "About",

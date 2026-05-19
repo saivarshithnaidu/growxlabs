@@ -9,63 +9,60 @@ import PricingTracker from "./PricingTracker";
 const VALUE_TRACKS = [
   {
     name: "Digital Presence",
-    description: "A professional website that works as your 24/7 sales machine by capturing leads, building trust, and converting visitors into customers automatically.",
+    description: "A professional website that captures trust, answers buyer questions, and converts visitors into leads.",
     outcomes: [
       "Customers find you on Google",
-      "Leads captured even at midnight",
-      "Professional first impression",
-      "Mobile first, fast loading",
-      "WhatsApp and enquiry integration"
+      "Leads captured after hours",
+      "Mobile-first performance",
+      "WhatsApp and enquiry integration",
+      "Clean handover documentation"
     ],
-    cta: "Discuss Your Website →",
-    popular: false,
-    color: "from-blue-600/20 to-blue-400/10"
+    cta: "Discuss Your Website",
+    popular: false
   },
   {
     name: "Growth Automation",
-    description: "n8n automation systems that eliminate manual work. follow ups, lead nurturing, invoice reminders, customer win back. all running without you lifting a finger.",
+    description: "Automation workflows for follow-ups, lead nurturing, reminders, customer win-back, and internal reporting.",
     outcomes: [
-      "Zero missed follow ups",
-      "Leads contacted within 60 seconds",
+      "Zero missed follow-ups",
+      "Leads contacted quickly",
       "Customers never go cold",
-      "Save 20 plus hours per week",
+      "Save 20+ hours per week",
       "Works while you sleep"
     ],
-    cta: "Discuss Automation →",
-    popular: true,
-    color: "from-primary/30 to-primary/10"
+    cta: "Discuss Automation",
+    popular: true
   },
   {
     name: "Complete Digital System",
-    description: "A complete digital infrastructure. website, automation, AI integration, and ongoing maintenance. built as one connected system for serious business growth.",
+    description: "A connected website, automation layer, AI features, CRM flow, analytics, and ongoing maintenance.",
     outcomes: [
       "Full website and automation stack",
-      "AI powered features",
+      "AI-powered features",
       "Custom admin dashboard",
       "Dedicated monthly support",
       "Scales as your business grows"
     ],
-    cta: "Get a Custom Scope →",
-    popular: false,
-    color: "from-purple-600/20 to-purple-400/10"
+    cta: "Get a Custom Scope",
+    popular: false
   }
 ];
 
 const PRICING_PROCESS = [
   {
     icon: Calendar,
-    title: "Book a Free Call",
-    text: "15 minutes. We understand your business and what you actually need."
+    title: "Book a free call",
+    text: "We understand the business, current bottlenecks, audience, and what the website or automation must accomplish."
   },
   {
     icon: FileText,
-    title: "We Send a Proposal",
-    text: "Custom scope and pricing based on your exact requirements. No generic packages."
+    title: "Receive a proposal",
+    text: "You get a custom scope, timeline, deliverables, and price based on what your project actually requires."
   },
   {
     icon: Rocket,
-    title: "We Start Building",
-    text: "50% to start. 50% on delivery. Simple, fair, no surprises."
+    title: "Start the build",
+    text: "We begin with a structured milestone plan, regular updates, and a practical production handover."
   }
 ];
 
@@ -84,70 +81,64 @@ export default function PricingPage() {
     <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
       <PricingTracker />
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-
-        {/* Header */}
-        <div className="text-center mb-24">
+        <div className="text-center mb-20">
           <Reveal>
-            <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#00A86B] mb-4 block">
-              HOW WE WORK
+            <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#355CFF] mb-4 block">
+              How we price
             </span>
           </Reveal>
           <Reveal delay={0.1}>
-            <h1 className="text-[clamp(40px,7vw,72px)] font-bold text-white mb-8 tracking-tight leading-[1.1]">
-              Systems Built for <br className="hidden md:block" /> Business Growth.
+            <h1 className="text-[clamp(40px,7vw,76px)] font-black text-[#1A1A1A] mb-7 tracking-tight leading-[1]">
+              Custom systems, scoped around real business value.
             </h1>
           </Reveal>
           <Reveal delay={0.2}>
-            <p className="text-lg md:text-xl text-[#A0A0A0] max-w-[720px] mx-auto font-medium leading-relaxed">
-              Every project starts with understanding your exact problem. We do not sell packages. We solve problems. Pricing depends on scope, timeline, and what you actually need.
+            <p className="text-lg md:text-xl text-[#6B7280] max-w-[760px] mx-auto leading-relaxed">
+              We do not force generic packages. Pricing depends on scope, timeline, integrations, content depth, automation complexity, and the level of ongoing support you need.
             </p>
           </Reveal>
         </div>
 
-        {/* Value Tracks Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 xl:gap-10 mb-40">
-          {VALUE_TRACKS.map((track, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 mb-28">
+          {VALUE_TRACKS.map((track, index) => (
             <Reveal
               key={track.name}
-              delay={i * 0.1}
+              delay={index * 0.1}
               className="h-full"
             >
               <Card className={cn(
-                "p-8 md:p-10 h-full flex flex-col relative overflow-hidden transition-all duration-500 hover:scale-[1.02] border border-white/5 shadow-2xl",
-                track.popular ? "bg-white/[0.04] border-[#00A86B]/30 shadow-[#00A86B]/5" : "bg-white/[0.02]"
+                "p-7 md:p-8 h-full flex flex-col relative overflow-hidden",
+                track.popular ? "border-[#355CFF]/35 shadow-md" : ""
               )}>
                 {track.popular && (
-                  <div className="absolute top-0 right-0 py-2 px-6 bg-[#00A86B] text-white font-bold uppercase text-[9px] tracking-[0.2em] rounded-bl-2xl shadow-xl">
-                    Most Popular
+                  <div className="absolute top-0 right-0 py-2 px-5 bg-[#355CFF] text-white font-bold uppercase text-[9px] tracking-[0.16em] rounded-bl-lg">
+                    Most requested
                   </div>
                 )}
-                <div className={cn("absolute -top-24 -right-24 w-64 h-64 rounded-full blur-[100px] -z-10 bg-gradient-to-br", track.color)} />
 
-                <div className="mb-10">
-                  <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-4">{track.name}</h3>
-                  <p className="text-base text-[#A0A0A0] font-medium leading-relaxed">{track.description}</p>
+                <div className="mb-8">
+                  <h3 className="text-2xl md:text-3xl font-black text-[#1A1A1A] tracking-tight mb-4">{track.name}</h3>
+                  <p className="text-base text-[#6B7280] leading-relaxed">{track.description}</p>
                 </div>
 
-                <ul className="space-y-4 mb-12 flex-grow">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/20 mb-6">Expected Outcomes</p>
-                  {track.outcomes.map((outcome, idx) => (
-                    <li key={idx} className="flex items-start gap-4 group">
-                      <div className="h-5 w-5 rounded-full bg-[#00A86B]/10 flex items-center justify-center shrink-0 mt-0.5 border border-[#00A86B]/20">
-                        <Check className="text-[#00A86B]" size={10} />
+                <ul className="space-y-4 mb-10 flex-grow">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6B7280] mb-5">Expected outcomes</p>
+                  {track.outcomes.map((outcome) => (
+                    <li key={outcome} className="flex items-start gap-3">
+                      <div className="h-5 w-5 rounded-md bg-[#355CFF]/10 flex items-center justify-center shrink-0 mt-0.5 border border-[#355CFF]/15">
+                        <Check className="text-[#355CFF]" size={12} aria-hidden="true" />
                       </div>
-                      <span className="text-base font-medium text-white/70 group-hover:text-white transition-colors">{outcome}</span>
+                      <span className="text-sm font-semibold text-[#1A1A1A]">{outcome}</span>
                     </li>
                   ))}
                 </ul>
 
                 <Link href="/contact" className="mt-auto">
                   <Button
-                    className={cn(
-                      "w-full h-14 rounded-2xl font-bold uppercase text-[11px] tracking-widest transition-all shadow-xl",
-                      track.popular ? "bg-[#00A86B] text-white hover:bg-[#00A86B]/90" : "bg-white text-black hover:bg-white/90"
-                    )}
+                    variant={track.popular ? "primary" : "outline"}
+                    className="w-full h-12 rounded-md font-semibold text-[14px]"
                     trackEvent="cta_clicked"
-                    trackProperties={{ location: 'pricing_table', track: track.name, cta: track.cta }}
+                    trackProperties={{ location: "pricing_table", track: track.name, cta: track.cta }}
                   >
                     {track.cta}
                   </Button>
@@ -157,74 +148,68 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* How Pricing Works Section */}
-        <div className="space-y-16 mb-40">
+        <div className="space-y-12 mb-28">
           <div className="text-center">
-            <h2 className="text-[clamp(28px,5vw,42px)] font-bold text-white tracking-tight">How Pricing Actually Works</h2>
-            <p className="text-[#A0A0A0] mt-4 max-w-xl mx-auto">A transparent, three-step process built for professional engineering delivery.</p>
+            <h2 className="text-[clamp(30px,5vw,48px)] font-black text-[#1A1A1A] tracking-tight">How pricing actually works</h2>
+            <p className="text-[#6B7280] mt-4 max-w-xl mx-auto">A transparent three-step process built for professional delivery.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {PRICING_PROCESS.map((point, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PRICING_PROCESS.map((point, index) => (
               <Reveal
-                key={i}
-                delay={i * 0.1}
+                key={point.title}
+                delay={index * 0.1}
                 scale={0.95}
-                className="bg-white/[0.02] border border-white/5 p-10 rounded-3xl space-y-6 hover:border-primary/20 transition-all duration-500 h-full"
+                className="bg-white border border-[#E5E2DC] p-7 rounded-lg space-y-5 shadow-sm h-full"
               >
-                <div className="p-4 bg-primary/10 rounded-2xl w-fit border border-primary/20">
-                  <point.icon className="text-primary" size={24} />
+                <div className="p-3 bg-[#EDEAE4] rounded-md w-fit">
+                  <point.icon className="text-[#355CFF]" size={24} aria-hidden="true" />
                 </div>
-                <h4 className="text-xl font-bold text-white tracking-tight">{point.title}</h4>
-                <p className="text-[#A0A0A0] text-sm font-medium leading-relaxed">{point.text}</p>
+                <h4 className="text-xl font-bold text-[#1A1A1A] tracking-tight">{point.title}</h4>
+                <p className="text-[#6B7280] text-sm leading-relaxed">{point.text}</p>
               </Reveal>
             ))}
           </div>
         </div>
 
-        {/* Final CTA Section */}
-        <Reveal y={40} className="relative group lg:pt-10">
-          <div className="absolute inset-0 bg-primary/20 blur-[120px] rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
-          <div className="relative bg-[#0A0A0A] border border-white/10 rounded-[40px] p-8 md:p-20 text-center space-y-12 overflow-hidden shadow-2xl">
-            <div className="absolute top-0 right-0 p-20 opacity-[0.03] -z-10">
-              <MessageSquare size={300} aria-hidden="true" />
+        <Reveal y={40}>
+          <div className="relative bg-[#1A1A1A] border border-[#1A1A1A] rounded-lg p-8 md:p-14 text-center space-y-9 overflow-hidden shadow-xl">
+            <div className="absolute top-0 right-0 p-14 opacity-[0.08]">
+              <MessageSquare size={220} aria-hidden="true" className="text-white" />
             </div>
 
-            <div className="space-y-6 relative z-10">
-              <span className="text-[11px] font-bold text-primary uppercase tracking-[0.4em]">Ready to scale?</span>
-              <h2 className="text-[clamp(32px,6vw,64px)] font-bold text-white tracking-tight leading-[1.1]">Not Sure Where <br /> to Start?</h2>
-              <p className="text-lg md:text-xl text-[#A0A0A0] max-w-2xl mx-auto font-medium">
-                Most businesses we work with start with one question: what is the fastest way to get more customers online? Let us answer that for free.
+            <div className="space-y-5 relative z-10">
+              <span className="text-[11px] font-bold text-white/50 uppercase tracking-[0.28em]">Ready to scale?</span>
+              <h2 className="text-[clamp(32px,6vw,64px)] font-black text-white tracking-tight leading-[1.05]">
+                Not sure where to start?
+              </h2>
+              <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
+                Most businesses start with one question: what is the fastest way to get more customers online? Let us answer that for free.
               </p>
             </div>
 
-            <div className="space-y-8 relative z-10">
+            <div className="space-y-7 relative z-10">
               <Link href="/contact" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto h-16 px-12 rounded-full bg-[#00A86B] text-white font-bold text-lg hover:bg-[#00A86B]/90 transition-all shadow-2xl group/btn border-none"
+                  className="w-full sm:w-auto h-14 px-9 rounded-md font-semibold text-base inline-flex items-center gap-2"
                   trackEvent="call_booked_intent"
-                  trackProperties={{ location: 'pricing_footer' }}
+                  trackProperties={{ location: "pricing_footer" }}
                 >
-                  Book Your Free 15 Minute Call
-                  <ArrowRight className="ml-3 group-hover/btn:translate-x-2 transition-transform" />
+                  Book your free 15 minute call
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </Link>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
-                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white/30">
-                  <Check className="text-primary" size={14} /> No Commitment
-                </div>
-                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white/30">
-                  <Check className="text-primary" size={14} /> No Sales Pressure
-                </div>
-                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white/30">
-                  <Check className="text-primary" size={14} /> Direct Clarity
-                </div>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-2">
+                {["No commitment", "No sales pressure", "Direct clarity"].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white/50">
+                    <Check className="text-[#355CFF]" size={14} aria-hidden="true" /> {item}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </Reveal>
-
       </div>
     </div>
   );

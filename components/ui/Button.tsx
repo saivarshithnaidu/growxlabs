@@ -17,10 +17,10 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, trackEvent, trackProperties, children, ...props }, ref) => {
     const variants = {
-      primary: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(0,168,107,0.3)]",
-      secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-      outline: "border border-border bg-transparent hover:bg-white/5",
-      ghost: "bg-transparent hover:bg-white/5 text-muted-foreground hover:text-white",
+      primary: "bg-[#355CFF] text-white hover:bg-[#2A4AD4] shadow-sm",
+      secondary: "bg-[#EDEAE4] text-[#1A1A1A] hover:bg-[#E5E2DC]",
+      outline: "border border-[#E5E2DC] bg-white text-[#1A1A1A] hover:border-[#355CFF]/35 hover:bg-[#F5F3EE]",
+      ghost: "bg-transparent text-[#6B7280] hover:bg-[#EDEAE4] hover:text-[#1A1A1A]",
     };
 
     const sizes = {

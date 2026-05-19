@@ -6,8 +6,7 @@ import { usePathname } from "@/navigation";
 /**
  * GlobalBackground Component
  * 
- * Style: Deep Mesh (CSS only)
- * Aesthetic: High-performance, near-zero JS background.
+ * Style: Warm Cream for marketing, Dark for admin/dashboard
  */
 export function GlobalBackground() {
   const pathname = usePathname();
@@ -15,22 +14,18 @@ export function GlobalBackground() {
   const isDashboard = pathname?.includes("/admin") || pathname?.includes("/client") || pathname?.includes("/demos");
 
   if (isDashboard) {
-    return <div className="fixed inset-0 -z-50 bg-black pointer-events-none" />;
+    return <div className="fixed inset-0 -z-50 bg-[#0B0F1A] pointer-events-none" />;
   }
 
   return (
-    <div className="fixed inset-0 -z-50 pointer-events-none bg-black overflow-hidden">
+    <div className="fixed inset-0 -z-50 pointer-events-none bg-[#F5F3EE] overflow-hidden">
       <div 
-        className="absolute inset-0 opacity-[0.15]" 
+        className="absolute inset-0 opacity-50" 
         style={{
           backgroundImage: `
-            radial-gradient(circle at 50% 50%, rgba(0, 168, 107, 0.1) 0%, transparent 50%),
-            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+            radial-gradient(ellipse 70% 42% at 50% -10%, rgba(53, 92, 255, 0.06) 0%, transparent 60%),
+            linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(245,243,238,0) 38%)
           `,
-          backgroundSize: '100% 100%, 40px 40px, 40px 40px',
-          maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)'
         }}
       />
     </div>
