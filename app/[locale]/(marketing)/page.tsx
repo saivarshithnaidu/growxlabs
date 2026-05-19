@@ -8,6 +8,7 @@ import { LeadEngineSection } from "@/components/marketing/LeadEngineSection";
 import { ValuePropositions } from "@/components/marketing/ValuePropositions";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
 import { AnimatedSection, AnimatedStagger, AnimatedItem } from "@/components/marketing/AnimatedSection";
+import { HotlineConsole } from "@/components/marketing/HotlineConsole";
 import { locales } from "@/navigation";
 import Script from "next/script";
 import Image from "next/image";
@@ -175,16 +176,7 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-          <div className="relative w-[220px] sm:w-[280px] mx-auto">
-            <Image
-              src="/images/cta-phone.png"
-              alt="GrowXLabsTech contact preview"
-              width={280}
-              height={320}
-              className="mx-auto object-contain"
-              priority={false}
-            />
-          </div>
+          <HotlineConsole />
         </AnimatedSection>
       </section>
 
