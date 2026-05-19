@@ -50,7 +50,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full flex justify-end mb-10 z-10 select-none"
+          className="w-full flex justify-end mb-24 z-10 select-none"
         >
           <div className="flex flex-row justify-between w-full max-w-4xl gap-8 font-mono text-[10px] md:text-[11px] tracking-[0.2em] text-[#6B7280] leading-[1.65] uppercase text-left pr-8">
             <div>
