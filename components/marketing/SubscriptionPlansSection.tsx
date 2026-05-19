@@ -170,31 +170,6 @@ export function SubscriptionPlansSection() {
           </Link>
         </div>
       </div>
-
-      <Reveal y={24} className="text-center mt-16 mb-12 flex flex-col items-center">
-        <h3 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] mb-3 tracking-tight">Not sure where to start?</h3>
-        <p className="text-[#6B7280] mb-8 max-w-md">We&apos;ll guide you based on your business stage.</p>
-        <Link href="/contact">
-          <Button className="rounded-xl h-12 px-8 font-semibold">Book free strategy call</Button>
-        </Link>
-      </Reveal>
-
-      <div className="max-w-[700px] mx-auto mt-8">
-        <div className="space-y-4">
-          {[
-            { q: "Can I cancel anytime?", a: "Yes. Cancel with 15 days notice. No lock-in." },
-            { q: "What if I need a website first?", a: "We build your website first (one-time), then you move to subscription." },
-            { q: "Do you serve outside India?", a: "Yes. USD pricing available." },
-          ].map((item) => (
-            <Reveal key={item.q}>
-              <div className="border border-[#E5E2DC] bg-[#FAF9F6] rounded-2xl p-6">
-                <h4 className="text-[#1A1A1A] font-bold mb-2">{item.q}</h4>
-                <p className="text-[#6B7280] text-[15px] leading-relaxed">{item.a}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
