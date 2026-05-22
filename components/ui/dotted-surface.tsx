@@ -8,6 +8,16 @@ type DottedSurfaceProps = Omit<React.ComponentProps<'div'>, 'ref'>;
 
 export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 	const { theme } = useTheme();
+	const [isMobile, setIsMobile] = React.useState(false);
+
+	useEffect(() => {
+		const checkMobile = () => {
+			setIsMobile(window.innerWidth <= 768);
+		};
+		checkMobile();
+		window.addEventListener('resize', checkMobile);
+		return () => window.removeEventListener('resize', checkMobile);
+	}, []);
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const sceneRef = useRef<{
@@ -20,6 +30,7 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 	} | null>(null);
 
 	useEffect(() => {
+		if (isMobile) return;
 		if (!containerRef.current) return;
 
 		const SEPARATION = 150;
@@ -175,7 +186,9 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 				}
 			}
 		};
-	}, [theme]);
+	}, [theme, isMobile]);
+
+	if (isMobile) return null;
 
 	return (
 		<div

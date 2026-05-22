@@ -31,7 +31,7 @@ const EditField = ({ isEditing, value, onChange, placeholder, className, type = 
   type?: string;
 }) => {
   if (!isEditing) {
-    return <span className={`${className} text-[#000] font-bold`}>{value || placeholder || "—"}</span>;
+    return <span className={`${className} text-neutral-900 font-semibold`}>{value || placeholder || "—"}</span>;
   }
   return (
     <input
@@ -39,8 +39,8 @@ const EditField = ({ isEditing, value, onChange, placeholder, className, type = 
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className={`${className} bg-[#e8f8f5] border-b-2 border-[#00b894] outline-none px-1 rounded text-[#000] font-bold`}
-      style={{ minWidth: type === "number" ? 60 : 80, color: "#000" }}
+      className={`${className} bg-neutral-50 border border-neutral-200 focus:border-[#355CFF] focus:ring-1 focus:ring-[#355CFF] outline-none px-2 py-0.5 rounded-lg text-neutral-900 font-semibold transition-all`}
+      style={{ minWidth: type === "number" ? 60 : 80, color: "#171717" }}
     />
   );
 };
@@ -90,27 +90,27 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
   const handlePrint = () => window.print();
 
   return (
-    <div className="min-h-screen bg-[#f4f4f4] py-12 px-4 print:bg-white print:py-0 print:px-0" style={{ fontFamily: '"Inter", "Segoe UI", Roboto, sans-serif' }}>
+    <div className="min-h-screen bg-neutral-50/50 py-12 px-4 print:bg-white print:py-0 print:px-0" style={{ fontFamily: '"Inter", "Segoe UI", Roboto, sans-serif' }}>
       {/* TOOLBAR */}
       <div className="max-w-[900px] mx-auto mb-8 flex justify-between items-center print:hidden">
-        <div className="flex items-center gap-2 text-[#666]">
-           <ShieldCheck className="text-[#00b894] h-5 w-5" />
-           <span className="text-[11px] font-bold uppercase tracking-widest leading-none">Invoice Management Console</span>
+        <div className="flex items-center gap-2.5 text-[#666]">
+           <ShieldCheck className="text-[#355CFF] h-5 w-5 animate-pulse" />
+           <span className="text-[10px] font-bold uppercase tracking-[0.2em] leading-none text-neutral-500">Invoice Management Console</span>
         </div>
         <div className="flex gap-3">
            <button
              onClick={() => setIsEditing(!isEditing)}
-             className={`flex items-center gap-2 px-6 py-3 rounded font-bold transition-all active:scale-95 text-xs ${
+             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all active:scale-95 text-xs ${
                isEditing
-                 ? 'bg-[#00b894] text-white'
-                 : 'bg-white border border-[#ccc] text-[#222] hover:bg-neutral-50'
+                 ? 'bg-[#355CFF] text-white shadow-lg shadow-blue-500/20 hover:bg-blue-600'
+                 : 'bg-white border border-neutral-200 text-[#222] hover:bg-neutral-50'
              }`}
            >
              {isEditing ? <><Eye size={14} /> Preview</> : <><Pencil size={14} /> Edit Invoice</>}
            </button>
            <button 
              onClick={handlePrint}
-             className="flex items-center gap-2 bg-[#222] text-white px-6 py-3 rounded font-bold transition-all active:scale-95 text-xs"
+             className="flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 rounded-xl font-bold transition-all active:scale-95 hover:bg-neutral-800 text-xs"
            >
              <Printer size={14} /> Export / Print
            </button>
@@ -118,40 +118,40 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
       </div>
 
       {/* DOCUMENT CONTAINER */}
-      <div className="max-w-[900px] mx-auto bg-white shadow-2xl print:shadow-none min-h-[1100px] flex flex-col border border-[#ddd] print:border-none p-10 md:p-20 text-[#000] text-[14px] leading-[1.7]">
+      <div className="max-w-[900px] mx-auto bg-white shadow-2xl print:shadow-none min-h-[1100px] flex flex-col border border-neutral-100 print:border-none p-10 md:p-16 rounded-3xl text-neutral-800 text-[13px] leading-[1.7]">
         
         {/* HEADER */}
-        <div className="flex justify-between items-start border-b-2 border-[#00b894] pb-8 mb-12">
+        <div className="flex justify-between items-start border-b border-neutral-100 pb-8 mb-12">
            <div className="text-left">
-              <h1 className="text-[36px] font-black text-[#00b894] tracking-tight m-0 leading-none">GrowXLabs<span className="text-[#222]">Tech</span></h1>
-              <p className="text-[12px] text-[#666] mt-2 m-0 font-medium tracking-wide uppercase">AI-Native Digital Systems Engineering</p>
+              <h1 className="text-[28px] font-black text-neutral-900 tracking-tight m-0 leading-none">GrowX<span className="text-[#355CFF]">Labs</span><span className="text-neutral-400 font-medium">Tech</span></h1>
+              <p className="text-[10px] text-neutral-400 mt-2.5 m-0 font-bold tracking-[0.15em] uppercase">AI-Native Digital Systems Engineering</p>
            </div>
-           <div className="text-right space-y-1">
-              <p className="text-[11px] font-bold text-[#222]">billing@growxlabs.tech</p>
-              <p className="text-[11px] font-medium text-[#666]">growxlabs.tech</p>
+           <div className="text-right space-y-1 text-xs">
+              <p className="text-[11px] font-bold text-neutral-800">billing@growxlabs.tech</p>
+              <p className="text-[11px] font-semibold text-neutral-400">growxlabs.tech</p>
            </div>
         </div>
 
         <div className="mb-12">
-           <div className="text-[22px] font-black text-[#000] mb-2 uppercase tracking-[2px]">TAX INVOICE</div>
-           <div className="text-[14px] text-[#555] font-bold uppercase tracking-widest">Reference # {metadata.invoiceNo}</div>
+           <div className="text-[20px] font-bold text-neutral-900 mb-1 uppercase tracking-[0.25em]">Tax Invoice</div>
+           <div className="text-[11px] text-neutral-500 font-semibold uppercase tracking-[0.1em]">Reference # {metadata.invoiceNo}</div>
         </div>
 
         {/* ADDRESS MATRIX */}
         <div className="grid grid-cols-2 gap-x-20 mb-12">
            <div className="space-y-4">
-              <h3 className="text-[16px] text-[#00b894] border-l-[6px] border-[#00b894] pl-[15px] uppercase font-black tracking-[1px] m-0">Billed From</h3>
-              <div className="space-y-1 text-[#000] font-bold">
-                 <p className="text-[15px]">GrowXLabsTech Engineering</p>
+              <h3 className="text-[11px] text-neutral-900 border-l-[3px] border-[#355CFF] pl-3 uppercase font-bold tracking-[0.2em] m-0">Billed From</h3>
+              <div className="space-y-1.5 text-neutral-800 font-semibold text-xs">
+                 <p className="text-[14px] text-neutral-900 font-bold">GrowXLabsTech Engineering</p>
                  <p>Guntur, Andhra Pradesh, India</p>
                  <p>Email: billing@growxlabs.tech</p>
-                 <p className="text-[11px] text-[#666] mt-2 font-normal uppercase tracking-widest">UDYAM: UDYAM-AP-22-0063260</p>
+                 <p className="text-[10px] text-neutral-400 mt-2 font-normal uppercase tracking-widest">UDYAM: UDYAM-AP-22-0063260</p>
               </div>
            </div>
            <div className="space-y-4">
-              <h3 className="text-[16px] text-[#00b894] border-l-[6px] border-[#00b894] pl-[15px] uppercase font-black tracking-[1px] m-0">Billed To</h3>
-              <div className="space-y-1 text-[#000] font-bold">
-                 <p className="text-[15px]">
+              <h3 className="text-[11px] text-neutral-900 border-l-[3px] border-[#355CFF] pl-3 uppercase font-bold tracking-[0.2em] m-0">Billed To</h3>
+              <div className="space-y-1.5 text-neutral-800 font-semibold text-xs">
+                 <p className="text-[14px] text-neutral-900 font-bold">
                     <EditField isEditing={isEditing} value={metadata.businessName} onChange={(v) => updateMeta('businessName', v)} placeholder="Business Name" />
                  </p>
                  <p>
@@ -160,7 +160,7 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
                  <p>
                     <EditField isEditing={isEditing} value={metadata.clientAddress} onChange={(v) => updateMeta('clientAddress', v)} placeholder="Address" />
                  </p>
-                 <p className="text-[#00b894]">
+                 <p className="text-[#355CFF]">
                     <EditField isEditing={isEditing} value={metadata.clientEmail} onChange={(v) => updateMeta('clientEmail', v)} placeholder="Email" />
                  </p>
               </div>
@@ -168,67 +168,67 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
         </div>
 
         {/* INVOICE DETAILS */}
-        <div className="grid grid-cols-2 gap-10 bg-[#f9f9f9] p-8 mb-12 border-2 border-[#eee] rounded-xl">
+        <div className="grid grid-cols-2 gap-10 bg-neutral-50/50 p-6 mb-12 border border-neutral-100 rounded-2xl">
            <div>
-              <p className="text-[12px] text-[#666] uppercase font-black m-0 tracking-widest">Invoice Date</p>
-              <p className="text-[15px] font-black text-[#000] m-0">{metadata.date}</p>
+              <p className="text-[10px] text-neutral-400 uppercase font-bold m-0 tracking-[0.15em]">Invoice Date</p>
+              <p className="text-[13px] font-bold text-neutral-900 m-0">{metadata.date}</p>
            </div>
            <div className="text-right">
-              <p className="text-[12px] text-red-500 uppercase font-black m-0 tracking-widest">Due Date</p>
-              <p className="text-[15px] font-black text-[#000] m-0">{metadata.dueDate}</p>
+              <p className="text-[10px] text-red-500/90 uppercase font-bold m-0 tracking-[0.15em]">Due Date</p>
+              <p className="text-[13px] font-bold text-neutral-900 m-0">{metadata.dueDate}</p>
            </div>
         </div>
 
         {/* LINE ITEMS */}
         <div className="mb-12">
-           <table className="w-full border-collapse border-2 border-[#eee] rounded-lg overflow-hidden">
+           <table className="w-full border-collapse border border-neutral-200/60 rounded-2xl overflow-hidden">
               <thead>
-                 <tr className="bg-[#00b894] text-white">
-                    <th className="p-4 text-left text-[13px] font-black border-r border-white/20 w-12 uppercase">No</th>
-                    <th className="p-4 text-left text-[13px] font-black border-r border-white/20 uppercase">Description</th>
-                    <th className="p-4 text-center text-[13px] font-black border-r border-white/20 w-24 uppercase">Qty</th>
-                    <th className="p-4 text-right text-[13px] font-black border-r border-white/20 w-36 uppercase">Rate (₹)</th>
-                    <th className="p-4 text-right text-[13px] font-black w-36 uppercase">Total (₹)</th>
+                 <tr className="bg-neutral-900 text-white">
+                    <th className="py-4 px-4 text-left text-[10px] font-bold border-r border-neutral-800 w-12 uppercase tracking-wider leading-normal">No</th>
+                    <th className="py-4 px-4 text-left text-[10px] font-bold border-r border-neutral-800 uppercase tracking-wider leading-normal">Description</th>
+                    <th className="py-4 px-4 text-center text-[10px] font-bold border-r border-neutral-800 w-20 uppercase tracking-wider leading-normal">Qty</th>
+                    <th className="py-4 px-4 text-right text-[10px] font-bold border-r border-neutral-800 w-32 uppercase tracking-wider leading-normal">Rate (₹)</th>
+                    <th className="py-4 px-4 text-right text-[10px] font-bold w-32 uppercase tracking-wider leading-normal">Total (₹)</th>
                  </tr>
               </thead>
-              <tbody className="text-[13px] text-[#000] font-bold">
+              <tbody className="text-xs text-neutral-800 font-semibold">
                  {items.map((item, i) => (
-                    <tr key={item.id} className={`${i % 2 === 0 ? 'bg-white' : 'bg-[#fcfcfc]'} border-b-2 border-[#eee]`}>
-                       <td className="p-4 border-r-2 border-[#eee] text-[#666]">0{i+1}</td>
-                       <td className="p-4 border-r-2 border-[#eee]">
+                    <tr key={item.id} className={`${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/30'} border-b border-neutral-100`}>
+                       <td className="p-4 border-r border-neutral-100 text-neutral-400 text-center leading-normal">0{i+1}</td>
+                       <td className="p-4 border-r border-neutral-100 leading-normal">
                           <input 
                             value={item.desc}
                             onChange={(e) => updateItem(item.id, 'desc', e.target.value)}
                             placeholder="Service description..."
-                            className={`bg-transparent w-full focus:outline-none font-bold text-[#000] ${isEditing ? 'bg-[#e8f8f5] rounded px-1' : ''}`}
+                            className={`bg-transparent w-full focus:outline-none font-semibold text-neutral-800 text-xs py-1 ${isEditing ? 'bg-neutral-50 border border-neutral-200 rounded-lg px-2 py-0.5' : ''}`}
                             readOnly={!isEditing}
                           />
                        </td>
-                       <td className="p-4 border-r-2 border-[#eee] text-center">
+                       <td className="p-4 border-r border-neutral-100 text-center leading-normal">
                           <input 
                             type="number"
                             value={item.qty}
                             onChange={(e) => updateItem(item.id, 'qty', e.target.value)}
-                            className={`bg-transparent w-full text-center focus:outline-none font-bold text-[#000] ${isEditing ? 'bg-[#e8f8f5] rounded' : ''}`}
+                            className={`bg-transparent w-full text-center focus:outline-none font-semibold text-neutral-800 text-xs py-1 ${isEditing ? 'bg-neutral-50 border border-neutral-200 rounded-lg py-0.5' : ''}`}
                             readOnly={!isEditing}
                           />
                        </td>
-                       <td className="p-4 border-r-2 border-[#eee] text-right">
+                       <td className="p-4 border-r border-neutral-100 text-right leading-normal">
                           <input 
                             type="number"
                             value={item.rate}
                             onChange={(e) => updateItem(item.id, 'rate', e.target.value)}
-                            className={`bg-transparent w-full text-right focus:outline-none font-bold text-[#000] ${isEditing ? 'bg-[#e8f8f5] rounded' : ''}`}
+                            className={`bg-transparent w-full text-right focus:outline-none font-semibold text-neutral-800 text-xs py-1 ${isEditing ? 'bg-neutral-50 border border-neutral-200 rounded-lg py-0.5' : ''}`}
                             readOnly={!isEditing}
                           />
                        </td>
-                       <td className="p-4 text-right font-black text-[14px]">{(item.qty * item.rate).toLocaleString()}</td>
+                       <td className="p-4 text-right font-bold text-neutral-900 text-xs leading-normal">{(item.qty * item.rate).toLocaleString()}</td>
                     </tr>
                  ))}
               </tbody>
            </table>
            {isEditing && (
-             <button onClick={addItem} className="mt-4 flex items-center gap-1 text-[#00b894] text-[12px] font-black uppercase tracking-widest print:hidden">
+             <button onClick={addItem} className="mt-4 flex items-center gap-1.5 text-[#355CFF] text-[10px] font-bold uppercase tracking-widest print:hidden hover:text-blue-700">
                <Plus size={14} /> Add Line Item
              </button>
            )}
@@ -236,58 +236,58 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
 
         {/* SUMMARY */}
         <div className="flex justify-end mb-12">
-           <div className="w-80 space-y-3 bg-[#f9f9f9] p-6 rounded-xl border-2 border-[#eee]">
-              <div className="flex justify-between text-[14px] text-[#000] font-bold">
+           <div className="w-80 space-y-3.5 bg-neutral-50/30 p-6 rounded-2xl border border-neutral-100">
+              <div className="flex justify-between text-xs text-neutral-500 font-semibold">
                  <span>Subtotal</span>
-                 <span>₹{subtotal.toLocaleString()}</span>
+                 <span className="text-neutral-900 font-bold">₹{subtotal.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-[14px] text-[#00b894] font-black">
+              <div className="flex justify-between text-xs text-neutral-400 font-semibold">
                  <span>Tax (0% GST)</span>
                  <span>+ ₹0.00</span>
               </div>
-              <div className="flex justify-between text-[14px] border-b-2 border-[#ddd] pb-3 text-[#000] font-bold">
+              <div className="flex justify-between text-xs border-b border-neutral-100 pb-3.5 text-neutral-500 font-semibold">
                  <span>Advance Paid</span>
-                 <span className="text-red-500">
+                 <span className="text-red-500/90 font-bold">
                     - ₹{isEditing ? (
                       <input
                         type="number"
                         value={metadata.advancePaid}
                         onChange={(e) => updateMeta('advancePaid', Number(e.target.value) || 0)}
-                        className="bg-[#e8f8f5] text-right w-24 outline-none rounded font-black"
+                        className="bg-neutral-50/80 border border-neutral-200 text-right w-24 outline-none rounded-lg font-semibold px-2 py-0.5"
                       />
                     ) : metadata.advancePaid.toLocaleString()}
                  </span>
               </div>
-              <div className="flex justify-between text-[22px] font-black pt-2 text-[#000]">
+              <div className="flex justify-between text-base font-bold pt-2.5 text-neutral-900 border-t border-neutral-100 mt-2">
                  <span>Balance Due</span>
-                 <span className="underline decoration-[#00b894] decoration-4 underline-offset-4">₹{balanceDue.toLocaleString()}</span>
+                 <span className="underline decoration-[#355CFF] decoration-2 underline-offset-4">₹{balanceDue.toLocaleString()}</span>
               </div>
            </div>
         </div>
 
         {/* NOTES & SIGNATURE */}
-        <div className="grid grid-cols-2 gap-20 mt-auto pt-10 border-t-2 border-[#eee]">
+        <div className="grid grid-cols-2 gap-20 mt-auto pt-10 border-t border-neutral-100">
            <div className="space-y-4">
-              <h5 className="text-[13px] font-black uppercase tracking-widest text-[#00b894] m-0">Payment Protocol</h5>
-              <div className="text-[12px] text-[#000] leading-relaxed font-bold italic space-y-1">
+              <h5 className="text-[10px] font-bold uppercase tracking-widest text-neutral-900 m-0">Payment Protocol</h5>
+              <div className="text-[11px] text-neutral-500 leading-relaxed font-semibold italic space-y-1 mt-2">
                  <p>Bank Transfer: HDFC Bank | growxlabs@hdfc</p>
                  <p>UPI: growxlabs@ybl</p>
                  <p>Note: Digital receipt is issued instantly upon confirmation.</p>
               </div>
            </div>
            <div className="text-right flex flex-col items-end">
-              <div className="w-56 border-b-4 border-[#333] mb-2 flex items-center justify-center">
+              <div className="w-56 border-b border-neutral-200 mb-2 flex items-center justify-center">
                  {/* Space for stamp/signature */}
                  <div className="h-16 flex items-center justify-center text-[10px] text-neutral-300 font-bold uppercase tracking-[4px]">Verified</div>
               </div>
-              <p className="text-[13px] font-black text-[#000] uppercase m-0">Authorized Signatory</p>
-              <p className="text-[11px] text-[#666] font-bold m-0 tracking-widest uppercase">GrowXLabsTech Engineering</p>
+              <p className="text-[10px] font-bold text-neutral-900 uppercase m-0 tracking-widest">Authorized Signatory</p>
+              <p className="text-[9px] text-neutral-400 font-bold m-0 tracking-widest uppercase mt-1">GrowXLabsTech Engineering</p>
            </div>
         </div>
 
         {/* FOOTER */}
-        <div className="mt-12 pt-6 border-t border-[#eee] text-center text-[12px] text-[#aaa] font-bold">
-           GrowXLabsTech | growxlabs.tech | hello@growxlabs.tech | © 2025 GrowXLabsTech. All rights reserved.
+        <div className="mt-12 pt-6 border-t border-neutral-100 text-center text-[9px] font-bold text-neutral-400 uppercase tracking-widest">
+           GrowX<span className="text-[#355CFF]">Labs</span>Tech | growxlabs.tech | hello@growxlabs.tech | © 2025 GrowXLabsTech. All rights reserved.
         </div>
 
       </div>
@@ -299,10 +299,10 @@ export default function InvoiceTemplate({ data = {} }: InvoiceProps) {
           @page { margin: 1cm; size: A4; }
           .shadow-2xl { box-shadow: none !important; }
           .min-h-screen { min-height: auto !important; padding: 0 !important; }
-          input, textarea { border: none !important; background: none !important; color: #000 !important; font-weight: bold !important; }
-          .bg-[#00b894] { background-color: #00b894 !important; }
-          .text-[#00b894] { color: #00b894 !important; }
-          .bg-[#e8f8f5] { background-color: #e8f8f5 !important; }
+          input, textarea { border: none !important; background: none !important; color: #111827 !important; font-weight: 600 !important; }
+          .bg-[#355CFF] { background-color: #355CFF !important; }
+          .text-[#355CFF] { color: #355CFF !important; }
+          .bg-neutral-50 { background-color: #f9fafb !important; }
         }
       ` }} />
     </div>

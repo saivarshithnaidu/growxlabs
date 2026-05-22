@@ -6,22 +6,22 @@ type ProjectCardProps = Pick<CaseStudy, "title" | "tag" | "description" | "tech"
 
 export function ProjectCard({ title, tag, description, tech, metric, link, status, image }: ProjectCardProps) {
   return (
-    <div className="group h-full transition-transform duration-300 hover:-translate-y-1">
-      <div className="h-full flex flex-col bg-white border border-[#E5E2DC] rounded-lg overflow-hidden transition-all duration-300 shadow-sm group-hover:border-[#355CFF]/25 group-hover:shadow-lg group-hover:shadow-[#355CFF]/[0.04]">
+    <div className="group h-full relative overflow-hidden transform-none">
+      <div className="h-full flex flex-col bg-white border border-[#E5E2DC] rounded-lg overflow-hidden transition-[opacity,background-color,border-color] duration-200 shadow-sm group-hover:border-[#355CFF]/25">
         {/* Image Section */}
         {image && (
-          <div className="relative h-48 w-full overflow-hidden">
+          <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
             <Image
               src={image}
               alt={title}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-40" />
             <div className="absolute top-4 left-4">
-              <span className="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-md text-[#355CFF] border border-[#E5E2DC]">
+              <span className="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-white text-[#355CFF] border border-[#E5E2DC]">
                 {tag}
               </span>
             </div>
