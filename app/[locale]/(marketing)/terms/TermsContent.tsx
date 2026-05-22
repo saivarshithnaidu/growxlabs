@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import React from "react";
 
 export function TermsContent() {
@@ -36,39 +35,35 @@ export function TermsContent() {
   ];
 
   return (
-    <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
+    <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full bg-[#F5F3EE]">
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-16 text-center lg:text-left"
-        >
-          <h1 className="text-[clamp(40px,7vw,72px)] font-black text-white tracking-tighter mb-8 leading-[1.1]">
-            Terms of <span className="text-gradient">Service.</span>
+        <div className="mb-16 text-center lg:text-left">
+          <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.2em] text-[#355CFF] mb-4 block">
+            Operating Standards
+          </span>
+          <h1 className="text-[clamp(40px,7vw,72px)] font-black text-[#1A1A1A] tracking-tighter mb-8 leading-[1.1] uppercase">
+            Terms of <span className="text-[#355CFF]">Service.</span>
           </h1>
-          <p className="text-xl text-white/40 font-light leading-relaxed max-w-2xl">
+          <p className="text-xl text-[#6B7280] font-medium leading-relaxed max-w-2xl">
             Legal framework governing the engineering and operational standards of GrowXLabsTech.
           </p>
-        </motion.div>
+        </div>
 
         <div className="space-y-10 max-w-4xl mx-auto lg:mx-0">
           {sections.map((section, index) => (
-            <motion.section
+            <section
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="glass p-8 md:p-12 rounded-[2rem] border-white/5 shadow-2xl backdrop-blur-sm transition-all hover:border-white/10"
+              className="bg-white border border-[#E5E2DC] p-8 md:p-12 rounded-[24px] shadow-sm transition-all hover:border-[#355CFF]/20 hover:shadow-md duration-300"
             >
-              <h2 className="text-3xl font-bold text-white mb-6 tracking-tight">{section.title}</h2>
-              <p className="text-white/50 leading-relaxed font-medium text-lg">
+              <h2 className="text-2xl md:text-3xl font-black text-[#1A1A1A] mb-6 tracking-tight uppercase">{section.title}</h2>
+              <p className="text-[#6B7280] leading-relaxed font-medium text-base md:text-lg">
                 {section.content}
               </p>
-            </motion.section>
+            </section>
           ))}
         </div>
 
-        <div className="mt-20 text-center lg:text-left text-white/20 text-[11px] font-black uppercase tracking-[0.4em]">
+        <div className="mt-20 text-center lg:text-left text-[#6B7280]/40 text-[11px] font-black uppercase tracking-[0.4em]">
           Last Updated: April 2026 • GrowXLabsTech
         </div>
       </div>

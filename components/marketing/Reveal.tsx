@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
 
-interface RevealProps extends HTMLMotionProps<"div"> {
+interface RevealProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   delay?: number;
   y?: number;
@@ -12,14 +11,9 @@ interface RevealProps extends HTMLMotionProps<"div"> {
 
 export function Reveal({ children, delay = 0, y = 20, scale = 1, ...props }: RevealProps) {
   return (
-    <motion.div
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      initial={{ opacity: 0, y, scale }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay, ease: "easeOut" }}
-      {...props}
-    >
+    <div {...props}>
       {children}
-    </motion.div>
+    </div>
   );
 }
+

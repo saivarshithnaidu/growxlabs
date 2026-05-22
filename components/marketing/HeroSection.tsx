@@ -9,6 +9,27 @@
 export function HeroSection() {
   const brandName = "GROW X LABS TECH";
   
+  // Custom neon flicker-in delays to mimic a high-fidelity retro studio load
+  const flickerDelays = [
+    1.02, // G
+    0.48, // R
+    1.38, // O
+    0.72, // W
+    1.15, // X
+    0.35, // L
+    0.95, // A
+    0.58, // B
+    1.25, // S
+    0.88, // T
+    1.52, // E
+    0.65, // C
+    1.10  // H
+  ];
+
+  // Stagger counters to assign unique flicker delays to actual letters (skipping spaces)
+  let letterIdxDesktop = 0;
+  let letterIdxMobile = 0;
+  
   return (
     <>
       {/* ═══ DESKTOP HERO (Hidden on mobile) ═══ */}
@@ -58,7 +79,27 @@ export function HeroSection() {
             id="hero-studio-heading-desktop"
             className="font-black select-none tracking-[-0.06em] text-[#1A1A1A] leading-[0.8] text-[9.2vw] uppercase whitespace-nowrap"
           >
-            {brandName}
+            {brandName.split("").map((char, idx) => {
+              if (char === " ") {
+                return (
+                  <span key={idx} className="inline-block w-[0.25em]" />
+                );
+              }
+              const currentDelay = flickerDelays[letterIdxDesktop % flickerDelays.length];
+              letterIdxDesktop++;
+              return (
+                <span
+                  key={idx}
+                  className="inline-block animate-flicker"
+                  style={{
+                    opacity: 0,
+                    animationDelay: `${currentDelay}s`,
+                  }}
+                >
+                  {char}
+                </span>
+              );
+            })}
           </h1>
         </div>
       </section>
@@ -116,7 +157,27 @@ export function HeroSection() {
                 fontSize: "clamp(1.8rem, 6.8vh, 3.4rem)",
               }}
             >
-              {brandName}
+              {brandName.split("").map((char, idx) => {
+                if (char === " ") {
+                  return (
+                    <span key={idx} className="inline-block w-[0.25em]" />
+                  );
+                }
+                const currentDelay = flickerDelays[letterIdxMobile % flickerDelays.length];
+                letterIdxMobile++;
+                return (
+                  <span
+                    key={idx}
+                    className="inline-block animate-flicker"
+                    style={{
+                      opacity: 0,
+                      animationDelay: `${currentDelay}s`,
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
             </h1>
           </div>
 

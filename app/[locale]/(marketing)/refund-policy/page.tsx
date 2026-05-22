@@ -1,51 +1,49 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { AlertCircle, CheckCircle, Clock } from "lucide-react";
 
 export default function RefundPage() {
   return (
-    <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full">
+    <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full bg-[#F5F3EE]">
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-16 text-center lg:text-left"
-        >
-          <h1 className="text-[clamp(40px,7vw,72px)] font-black text-white tracking-tighter mb-8 leading-[1.1] lowercase">
+        <div className="mb-16 text-center lg:text-left">
+          <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.2em] text-[#355CFF] mb-4 block">
+            Financial Protocols
+          </span>
+          <h1 className="text-[clamp(40px,7vw,72px)] font-black text-[#1A1A1A] tracking-tighter mb-8 leading-[1.1] uppercase">
             Refund <span className="text-gradient">Policy.</span>
           </h1>
-          <p className="text-xl text-white/40 font-light leading-relaxed max-w-2xl">
+          <p className="text-xl text-[#6B7280] font-medium leading-relaxed max-w-2xl">
             Transparent financial protocols for cancellations and project terminations.
           </p>
-        </motion.div>
+        </div>
 
         <div className="space-y-8 mb-20 max-w-4xl mx-auto lg:mx-0">
           <PolicyCard 
-            icon={<CheckCircle className="text-white" />} 
+            icon={<CheckCircle className="text-[#355CFF]" />} 
             title="Full Refund" 
             text="100% refund of initial deposit if requested before project assessment or engineering cycles begin." 
           />
           <PolicyCard 
-            icon={<AlertCircle className="text-white" />} 
+            icon={<AlertCircle className="text-[#355CFF]" />} 
             title="Non-Refundable" 
             text="Once technical engineering or strategic logic design has commenced, the initial 50% deposit is non-refundable." 
           />
           <PolicyCard 
-            icon={<Clock className="text-white" />} 
+            icon={<Clock className="text-[#355CFF]" />} 
             title="Failure to Deliver" 
             text="A full or partial refund will be provided if GrowXLabsTech fails to meet the agreed architectural deliverables within a reasonable grace period." 
           />
         </div>
 
-        <section className="glass p-12 rounded-[3rem] border-white/5 mb-20 max-w-4xl mx-auto lg:mx-0 shadow-2xl backdrop-blur-sm">
-          <h2 className="text-[clamp(28px,5vw,36px)] font-black text-white mb-8 tracking-tighter underline decoration-white/10 underline-offset-8">The Process</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-white/50 font-medium text-lg">
+        <section className="bg-white border border-[#E5E2DC] p-12 rounded-[24px] mb-20 max-w-4xl mx-auto lg:mx-0 shadow-sm">
+          <h2 className="text-[clamp(28px,5vw,36px)] font-black text-[#1A1A1A] mb-8 tracking-tighter uppercase underline decoration-[#E5E2DC] underline-offset-8">The Process</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-[#6B7280] font-medium text-lg">
             <p>
-              To initiate a refund, please email <span className="text-white font-bold">hello@growxlabs.tech</span> with your project ID and reason for cancellation.
+              To initiate a refund, please email <span className="text-[#1A1A1A] font-bold">hello@growxlabs.tech</span> with your project ID and reason for cancellation.
             </p>
             <p>
-              Processing typically takes <span className="text-white font-bold">7–10 business days</span> following formal approval of the refund request.
+              Processing typically takes <span className="text-[#1A1A1A] font-bold">7–10 business days</span> following formal approval of the refund request.
             </p>
           </div>
         </section>
@@ -56,18 +54,16 @@ export default function RefundPage() {
 
 function PolicyCard({ icon, title, text }: { icon: any, title: string, text: string }) {
   return (
-    <motion.div 
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="glass p-8 rounded-3xl border-white/5 flex gap-8 items-start"
+    <div 
+      className="bg-white border border-[#E5E2DC] p-8 rounded-[24px] flex gap-8 items-start shadow-sm hover:shadow-md transition-shadow duration-300"
     >
-      <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center flex-shrink-0">
+      <div className="h-12 w-12 rounded-2xl bg-[#355CFF]/5 flex items-center justify-center flex-shrink-0">
         {icon}
       </div>
       <div>
-        <h3 className="text-xl font-bold text-white mb-2 tracking-tight">{title}</h3>
-        <p className="text-white/40 font-light leading-relaxed">{text}</p>
+        <h3 className="text-xl font-black text-[#1A1A1A] mb-2 tracking-tight uppercase">{title}</h3>
+        <p className="text-[#6B7280] font-medium leading-relaxed text-sm md:text-base">{text}</p>
       </div>
-    </motion.div>
+    </div>
   );
 }
