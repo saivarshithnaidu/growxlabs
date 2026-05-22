@@ -159,7 +159,6 @@ function disposeThree(ctx: ThreeContext) {
 /* ----------------------------- TunnelBackground ----------------------------- */
 
 export function TunnelBackground() {
-  const isMobile = useIsMobile(768);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ctxRef = useRef<ThreeContext | null>(null);
   const lastTimeRef = useRef<number>(0);
@@ -182,7 +181,6 @@ export function TunnelBackground() {
   }, []);
 
   useEffect(() => {
-    if (isMobile) return;
     const canvas = canvasRef.current;
     if (!canvas || typeof window === "undefined") return;
 
@@ -207,9 +205,7 @@ export function TunnelBackground() {
       if (animRef.current) cancelAnimationFrame(animRef.current);
       if (ctxRef.current) disposeThree(ctxRef.current);
     };
-  }, [animate, isMobile]);
-
-  if (isMobile) return null;
+  }, [animate]);
 
   return (
     <canvas
