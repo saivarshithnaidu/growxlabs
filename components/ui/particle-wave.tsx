@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 
 interface ParticleWaveProps {
@@ -6,6 +6,17 @@ interface ParticleWaveProps {
 }
 
 const ParticleWave: React.FC<ParticleWaveProps> = ({ className = '' }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<{
     scene: THREE.Scene;
@@ -175,6 +186,7 @@ const ParticleWave: React.FC<ParticleWaveProps> = ({ className = '' }) => {
   };
 
   useEffect(() => {
+    if (isMobile) return;
     initScene();
     animate();
 
@@ -206,7 +218,9 @@ const ParticleWave: React.FC<ParticleWaveProps> = ({ className = '' }) => {
         renderer.dispose();
       }
     };
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) return null;
 
   return (
     <canvas
