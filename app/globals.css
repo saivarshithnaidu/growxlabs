@@ -354,5 +354,5 @@ img {
 }
 
 .animate-flicker {
-  animation: flicker-in 0.8s forwards !important;
+  animation: flicker-in 0.8s both !important;
 }

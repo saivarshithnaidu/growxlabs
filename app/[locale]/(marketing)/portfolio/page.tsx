@@ -100,7 +100,6 @@ export default function PortfolioPage() {
                   key={idx}
                   className="inline-block animate-flicker"
                   style={{
-                    opacity: 0,
                     animationDelay: `${currentDelay}s`,
                   }}
                 >
