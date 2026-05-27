@@ -49,6 +49,30 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   const regularPosts = [
     {
+      slug: "google-search-is-no-longer-just-search",
+      title: "Google Search Is No Longer Just Search: The Rise of the Execution Engine",
+      excerpt: "Explore the historic transition of Google Search from an index of web links to an AI-native execution workspace. Discover how Gemini's infrastructure layer changes search forever.",
+      category: "SEO / Search / AI",
+      date: "May 27, 2026",
+      readTime: "5 min read"
+    },
+    {
+      slug: "why-anthropic-is-becoming-a-serious-threat-to-openai",
+      title: "Why Anthropic Is Becoming a Serious Threat to OpenAI",
+      excerpt: "Analyze how Anthropic's Claude is quietly challenging OpenAI's dominance. Explore the developer migration, long-context mechanics, and smart enterprise positioning.",
+      category: "AI Industry / Anthropic / OpenAI",
+      date: "May 27, 2026",
+      readTime: "5 min read"
+    },
+    {
+      slug: "ai-coding-tools-are-reshaping-modern-software-engineering",
+      title: "AI Coding Tools Are Reshaping Modern Software Engineering",
+      excerpt: "Understand how AI coding systems are shifting software engineering from autocomplete syntax helpers to complex multi-agent workflow orchestration.",
+      category: "Engineering / Code / AI Tools",
+      date: "May 27, 2026",
+      readTime: "5 min read"
+    },
+    {
       slug: "n8n-automation-for-business",
       title: "n8n Automation for Business — Complete Global Guide 2026",
       excerpt: "Stop doing manual work. Learn how n8n can handle your leads, emails, and CRM data 24/7 so your team can focus on growing your business globally.",
