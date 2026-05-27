@@ -33,6 +33,7 @@ export function Navbar() {
     { name: t("portfolio"), href: "/portfolio" },
     { name: t("products"), href: "/products" },
     { name: t("courses"), href: "/courses" },
+    { name: t("blog"), href: "/blog" },
     { name: t("about"), href: "/about" },
     { name: t("contact"), href: "/contact" },
   ];
