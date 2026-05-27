@@ -12,6 +12,8 @@ import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { FlickerText } from "@/components/marketing/FlickerText";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
+import { InsightCallout, WhyThisMatters, EditorialDivider, RelatedArticlesGrid } from "@/components/marketing/BlogEditorial";
+import { InteractiveWorkflowEngine } from "@/components/marketing/InteractiveWorkflowEngine";
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / AEO Optimization)
@@ -148,19 +150,22 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
       title: "WhatsApp Automation for Lead Nurturing — The 2026 Strategy",
       href: "/blog/whatsapp-automation-for-lead-nurturing",
       date: "Mar 28, 2026",
-      readTime: "4 min read"
+      readTime: "4 min read",
+      category: "Marketing Automation"
     },
     {
       title: "Google Search Is No Longer Just Search: The Rise of the Execution Engine",
       href: "/blog/google-search-is-no-longer-just-search",
       date: "May 27, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "Search / SEO"
     },
     {
       title: "AI Coding Tools Are Reshaping Modern Software Engineering",
       href: "/blog/ai-coding-tools-are-reshaping-modern-software-engineering",
       date: "May 27, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "AI Industry"
     }
   ];
 
@@ -237,17 +242,10 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
             </div>
           </Reveal>
 
-          {/* Blueprint Banner */}
+          {/* Interactive Blueprint Banner */}
           <Reveal y={30} delay={0.2}>
-            <div className="mt-14 relative w-full aspect-[21/9] rounded-xl overflow-hidden border border-[#E5E2DC] shadow-sm bg-white">
-              <Image
-                src="/images/blog-n8n-automation.png"
-                alt="n8n business automation diagram"
-                fill
-                priority
-                className="object-cover transition-transform duration-700 hover:scale-[1.01]"
-                sizes="(max-w-1200px) 100vw, 1200px"
-              />
+            <div className="mt-14 w-full">
+              <InteractiveWorkflowEngine />
             </div>
           </Reveal>
         </div>
@@ -265,14 +263,14 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
           </aside>
 
           {/* Core Article Body (Strict 70ch) */}
-          <article className="col-span-12 lg:col-span-9 max-w-[70ch] mx-auto lg:mx-0">
+          <article className="col-span-12 lg:col-span-9 max-w-[720px] mx-auto lg:mx-0 blog-article">
             {/* Inline Table of Contents for Mobile */}
             <div className="lg:hidden mb-12 bg-white/60 border border-[#E5E2DC] rounded-xl p-6">
               <TableOfContents headings={headings} />
             </div>
 
             {/* Intro Content */}
-            <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-8 font-sans">
+            <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-8 font-sans blog-prose">
               <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
                 Every business wants to scale, but scaling usually means adding overhead.
               </p>
@@ -285,14 +283,14 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
             </div>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* Section 1 */}
             <section id="hiring-crisis" className="scroll-mt-32 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 The Shift from Manual Work to Digital Employees
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Most companies have talented teams that spend up to 30% of their day on low-leverage tasks: copying lead data, typing inputs manually, and logging details across disparate software systems.
                 </p>
@@ -310,7 +308,7 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Why n8n Is the Core of Business Orchestration
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   While tools like Zapier exist, they present major operational limitations:
                 </p>
@@ -322,12 +320,16 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
               </div>
             </section>
 
+            <InsightCallout variant="impact">
+              n8n's open-source model fundamentally changes the economics of automation infrastructure. Unlike SaaS platforms where recurring fees compound indefinitely, your n8n investment appreciates in value over time—every workflow you build, every custom node you create, and every integration you deploy becomes a permanent operational asset you fully own.
+            </InsightCallout>
+
             {/* Section 3 */}
             <section id="how-it-works" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Building Resilient Multi-System Pipelines
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   An automation is only as good as its error-handling and reliability parameters.
                 </p>
@@ -340,12 +342,16 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
               </div>
             </section>
 
+            <WhyThisMatters>
+              Self-hosted automation is rapidly becoming a structural competitive advantage. Companies that own their workflow infrastructure avoid vendor lock-in, reduce operational costs by 60–80% compared to per-task SaaS pricing, and maintain complete data sovereignty—a non-negotiable requirement as global privacy regulations tighten. The organizations building this capability now are creating moats that cloud-dependent competitors simply cannot replicate.
+            </WhyThisMatters>
+
             {/* Section 4 */}
             <section id="lead-engine" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Qualify and Route Leads in 60 Seconds
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Speed to lead is the most important conversion metric in digital sales.
                 </p>
@@ -360,7 +366,7 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Keeping CRM and Invoicing Synced 24/7
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Manual billing logging and CRM bookkeeping can take up hours of administrative time each week.
                 </p>
@@ -375,7 +381,7 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Scale Operations Globally Without the Headcount
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   The modern business goal is lean scalability: doing more work with a focused, elite group of specialists.
                 </p>
@@ -422,7 +428,7 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
             </section>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* ═══════════════════════════════════════════════════ */}
             {/* 3. FINAL CTA SECTION                               */}
@@ -463,29 +469,7 @@ export default async function N8nAutomationGuidePage({ params }: { params: Promi
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((article, index) => (
-                  <Link 
-                    key={index} 
-                    href={article.href}
-                    className="group flex flex-col justify-between p-6 bg-white border border-[#E5E2DC] rounded-xl hover:border-[#355CFF]/30 hover:shadow-sm transition-all duration-300 min-h-[160px]"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center font-mono text-[9px] tracking-wider text-[#6B7280] uppercase">
-                        <span>{article.date}</span>
-                        <span>{article.readTime}</span>
-                      </div>
-                      <h5 className="font-bold text-[#1A1A1A] text-[14px] leading-snug group-hover:text-[#355CFF] transition-colors line-clamp-3">
-                        {article.title}
-                      </h5>
-                    </div>
-                    <div className="pt-4 flex items-center gap-1.5 text-[11px] font-bold text-[#355CFF] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span>Read article</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </div>
-                  </Link>
-                ))}
-              </div>
+              <RelatedArticlesGrid articles={relatedArticles} />
             </section>
 
           </article>

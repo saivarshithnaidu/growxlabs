@@ -12,6 +12,9 @@ import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { FlickerText } from "@/components/marketing/FlickerText";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
+import { InsightCallout, WhyThisMatters, EditorialDivider, RelatedArticlesGrid } from "@/components/marketing/BlogEditorial";
+import { InteractiveWhatsappNurture } from "@/components/marketing/InteractiveWhatsappNurture";
+
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / AEO Optimization)
@@ -148,19 +151,22 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
       title: "n8n Automation for Business — Complete Global Guide 2026",
       href: "/blog/n8n-automation-for-business",
       date: "Apr 12, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "Automation"
     },
     {
       title: "Google Search Is No Longer Just Search: The Rise of the Execution Engine",
       href: "/blog/google-search-is-no-longer-just-search",
       date: "May 27, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "Search / SEO"
     },
     {
       title: "Why Anthropic Is Becoming a Serious Threat to OpenAI",
       href: "/blog/why-anthropic-is-becoming-a-serious-threat-to-openai",
       date: "May 27, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "AI Industry"
     }
   ];
 
@@ -239,15 +245,8 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
 
           {/* Blueprint Banner */}
           <Reveal y={30} delay={0.2}>
-            <div className="mt-14 relative w-full aspect-[21/9] rounded-xl overflow-hidden border border-[#E5E2DC] shadow-sm bg-white">
-              <Image
-                src="/images/blog-whatsapp-nurture.png"
-                alt="WhatsApp automation pipeline diagram"
-                fill
-                priority
-                className="object-cover transition-transform duration-700 hover:scale-[1.01]"
-                sizes="(max-w-1200px) 100vw, 1200px"
-              />
+            <div className="mt-14 w-full max-w-5xl mx-auto">
+              <InteractiveWhatsappNurture />
             </div>
           </Reveal>
         </div>
@@ -265,14 +264,14 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
           </aside>
 
           {/* Core Article Body (Strict 70ch) */}
-          <article className="col-span-12 lg:col-span-9 max-w-[70ch] mx-auto lg:mx-0">
+          <article className="col-span-12 lg:col-span-9 max-w-[720px] mx-auto lg:mx-0 blog-article">
             {/* Inline Table of Contents for Mobile */}
             <div className="lg:hidden mb-12 bg-white/60 border border-[#E5E2DC] rounded-xl p-6">
               <TableOfContents headings={headings} />
             </div>
 
             {/* Intro Content */}
-            <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-8 font-sans">
+            <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-8 font-sans blog-prose">
               <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
                 The traditional marketing funnel is fundamentally leaking.
               </p>
@@ -288,14 +287,14 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
             </div>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* Section 1 */}
             <section id="open-rate" className="scroll-mt-32 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 The 98% Open Rate Advantage
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   WhatsApp dominates modern digital attention with an average **98% open rate** and a **45% response/click-through rate**.
                 </p>
@@ -305,12 +304,16 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
               </div>
             </section>
 
+            <InsightCallout variant="trend">
+              Conversational commerce through WhatsApp is projected to handle over $35 billion in transactions globally by 2027. Businesses that build automated WhatsApp pipelines today are positioning themselves at the center of a channel that is rapidly becoming the primary commercial interface for over 2 billion users worldwide.
+            </InsightCallout>
+
             {/* Section 2 */}
             <section id="speed-to-lead" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Speed to Lead: Qualifying Under 60 Seconds
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   In high-performance digital sales, speed is the ultimate competitive advantage.
                 </p>
@@ -325,7 +328,7 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Building Automated Conversational Pipelines
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   A great conversational flow is structured, concise, and dynamic.
                 </p>
@@ -338,12 +341,16 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
               </div>
             </section>
 
+            <WhyThisMatters>
+              WhatsApp automation represents a fundamental channel shift in how businesses communicate with prospects. Companies that move their lead nurturing to 98% open-rate messaging channels will structurally outperform those still relying on 15% open-rate email sequences. This isn't an incremental optimization—it's a generational shift in distribution advantage, and the gap between early adopters and laggards will only widen as conversational commerce matures.
+            </WhyThisMatters>
+
             {/* Section 4 */}
             <section id="lead-engine" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Contextual AI Auto-Responders and Walkthroughs
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Instead of sending a text block, our pipelines dispatch rich media walkthroughs immediately.
                 </p>
@@ -358,7 +365,7 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Syncing Direct Chat Inquiries Natively
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   What happens in the chat must never stay siloed.
                 </p>
@@ -373,7 +380,7 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Scaling Personal Trust Without a Call Center
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Building trust at scale is traditionally an expensive, human-heavy operational challenge.
                 </p>
@@ -420,7 +427,7 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
             </section>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* ═══════════════════════════════════════════════════ */}
             {/* 3. FINAL CTA SECTION                               */}
@@ -461,29 +468,7 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((article, index) => (
-                  <Link 
-                    key={index} 
-                    href={article.href}
-                    className="group flex flex-col justify-between p-6 bg-white border border-[#E5E2DC] rounded-xl hover:border-[#355CFF]/30 hover:shadow-sm transition-all duration-300 min-h-[160px]"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center font-mono text-[9px] tracking-wider text-[#6B7280] uppercase">
-                        <span>{article.date}</span>
-                        <span>{article.readTime}</span>
-                      </div>
-                      <h5 className="font-bold text-[#1A1A1A] text-[14px] leading-snug group-hover:text-[#355CFF] transition-colors line-clamp-3">
-                        {article.title}
-                      </h5>
-                    </div>
-                    <div className="pt-4 flex items-center gap-1.5 text-[11px] font-bold text-[#355CFF] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span>Read article</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </div>
-                  </Link>
-                ))}
-              </div>
+              <RelatedArticlesGrid articles={relatedArticles} />
             </section>
 
           </article>

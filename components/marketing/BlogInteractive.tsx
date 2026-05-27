@@ -28,8 +28,11 @@ export function ReadingProgressBar() {
   return (
     <div className="fixed top-0 left-0 w-full h-[3px] bg-transparent z-[100] pointer-events-none">
       <div
-        className="h-full bg-[#355CFF] transition-all duration-75 ease-out"
-        style={{ width: `${progress}%` }}
+        className="h-full transition-all duration-100 ease-out"
+        style={{ 
+          width: `${progress}%`,
+          background: 'linear-gradient(90deg, #355CFF 0%, #5B7FFF 100%)'
+        }}
       />
     </div>
   );
@@ -96,12 +99,12 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   };
 
   return (
-    <nav className="space-y-6" aria-label="Table of contents">
-      <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-[#6B7280] uppercase pb-2 border-b border-[#E5E2DC]">
+    <nav className="space-y-5" aria-label="Table of contents">
+      <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-[#6B7280] uppercase pb-3 border-b border-[#E5E2DC]">
         <List className="w-3.5 h-3.5" />
         <span>In this article</span>
       </div>
-      <ul className="space-y-3.5">
+      <ul className="space-y-2.5">
         {headings.map((heading) => {
           const isActive = activeId === heading.id;
           return (
@@ -110,10 +113,10 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
                 href={`#${heading.id}`}
                 onClick={(e) => handleScrollTo(e, heading.id)}
                 className={cn(
-                  "block text-[13px] leading-relaxed transition-all duration-300 relative pl-4 border-l",
+                  "block text-[13px] leading-relaxed transition-all duration-200 relative pl-4 border-l-2 py-1 rounded-r-sm",
                   isActive
-                    ? "text-[#355CFF] font-semibold border-[#355CFF]"
-                    : "text-[#6B7280] hover:text-[#1A1A1A] border-transparent hover:border-[#E5E2DC]"
+                    ? "text-[#355CFF] font-semibold border-[#355CFF] bg-[#355CFF]/[0.04]"
+                    : "text-[#6B7280] hover:text-[#1A1A1A] border-transparent hover:border-[#D1D5DB]"
                 )}
               >
                 {heading.text}

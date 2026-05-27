@@ -344,4 +344,140 @@ img {
   }
 }
 
+/* ═══════════════════════════════════════════════════ */
+/* BLOG EDITORIAL TYPOGRAPHY SYSTEM                    */
+/* ═══════════════════════════════════════════════════ */
+
+/* Blog article sections need visible overflow for sticky TOC */
+.blog-article section {
+  overflow: visible !important;
+}
+
+.blog-article {
+  overflow: visible !important;
+}
+
+/* Premium reading prose container */
+.blog-prose {
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.blog-prose p {
+  font-size: 17px;
+  line-height: 1.9;
+  letter-spacing: -0.003em;
+  color: #374151;
+  margin-bottom: 1.5em;
+}
+
+.blog-prose h2 {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: #1A1A1A;
+  margin-top: 3.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.blog-prose h3 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: #1A1A1A;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.blog-prose ul,
+.blog-prose ol {
+  padding-left: 1.25em;
+  margin: 1.5em 0;
+}
+
+.blog-prose li {
+  font-size: 16px;
+  line-height: 1.85;
+  color: #374151;
+  padding-left: 0.5em;
+  margin-bottom: 0.6em;
+}
+
+.blog-prose li::marker {
+  color: #355CFF;
+}
+
+.blog-prose blockquote {
+  margin: 2.5rem 0;
+  padding-left: 1.5rem;
+  border-left: 3px solid #355CFF;
+  font-style: italic;
+  font-size: 20px;
+  color: #4B5563;
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.6;
+}
+
+.blog-prose strong {
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.blog-prose a {
+  color: #355CFF;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.blog-prose a:hover {
+  border-bottom-color: #355CFF;
+}
+
+/* Smooth scroll behavior for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ═══════════════════════════════════════════════════ */
+/* BLOG MOBILE REFINEMENTS (overrides generic resets)  */
+/* ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .blog-prose p {
+    font-size: 16px !important;
+    line-height: 1.85 !important;
+    margin-bottom: 1.25em !important;
+  }
+
+  .blog-prose h2 {
+    font-size: 24px !important;
+    margin-top: 2.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .blog-prose h3 {
+    font-size: 20px !important;
+    margin-top: 2rem !important;
+  }
+
+  .blog-prose li {
+    font-size: 15px !important;
+    padding-left: 0.25em !important;
+    line-height: 1.8 !important;
+  }
+
+  .blog-prose blockquote {
+    font-size: 18px !important;
+    margin: 1.5rem 0 !important;
+    padding-left: 1rem !important;
+  }
+
+  .blog-prose ul,
+  .blog-prose ol {
+    padding-left: 1em !important;
+    margin: 1.25em 0 !important;
+  }
+}
 

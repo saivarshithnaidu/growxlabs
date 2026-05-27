@@ -12,6 +12,9 @@ import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { FlickerText } from "@/components/marketing/FlickerText";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
+import { InsightCallout, WhyThisMatters, EditorialDivider, RelatedArticlesGrid } from "@/components/marketing/BlogEditorial";
+import { InteractiveRestaurantRetention } from "@/components/marketing/InteractiveRestaurantRetention";
+
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / AEO Optimization)
@@ -148,19 +151,22 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
       title: "Indian Restaurant Website USA — Stop Paying 30% Commission to Platforms",
       href: "/blog/indian-restaurant-website-usa",
       date: "Jan 15, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "Hospitality / Direct Sales"
     },
     {
       title: "WhatsApp Automation for Lead Nurturing — The 2026 Strategy",
       href: "/blog/whatsapp-automation-for-lead-nurturing",
       date: "Mar 28, 2026",
-      readTime: "4 min read"
+      readTime: "4 min read",
+      category: "Automation / CRM"
     },
     {
       title: "n8n Automation for Business — Complete Global Guide 2026",
       href: "/blog/n8n-automation-for-business",
       date: "Apr 12, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "Workflow Automation"
     }
   ];
 
@@ -239,15 +245,8 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
 
           {/* Blueprint Banner */}
           <Reveal y={30} delay={0.2}>
-            <div className="mt-14 relative w-full aspect-[21/9] rounded-xl overflow-hidden border border-[#E5E2DC] shadow-sm bg-white">
-              <Image
-                src="/images/blog-restaurant-retention.png"
-                alt="Restaurant customer retention loop diagram"
-                fill
-                priority
-                className="object-cover transition-transform duration-700 hover:scale-[1.01]"
-                sizes="(max-w-1200px) 100vw, 1200px"
-              />
+            <div className="mt-14 w-full max-w-5xl mx-auto">
+              <InteractiveRestaurantRetention />
             </div>
           </Reveal>
         </div>
@@ -265,14 +264,14 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
           </aside>
 
           {/* Core Article Body (Strict 70ch) */}
-          <article className="col-span-12 lg:col-span-9 max-w-[70ch] mx-auto lg:mx-0">
+          <article className="col-span-12 lg:col-span-9 max-w-[720px] mx-auto lg:mx-0 blog-article">
             {/* Inline Table of Contents for Mobile */}
             <div className="lg:hidden mb-12 bg-white/60 border border-[#E5E2DC] rounded-xl p-6">
               <TableOfContents headings={headings} />
             </div>
 
             {/* Intro Content */}
-            <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-8 font-sans">
+            <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-8 font-sans blog-prose">
               <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
                 In the global dining market, exceptional hospitality is no longer enough.
               </p>
@@ -285,14 +284,14 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
             </div>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* Section 1 */}
             <section id="retention-problem" className="scroll-mt-32 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Why Restaurants Lose 30% of Regulars
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Most hospitality owners focus completely on the in-house experience: food preparation, interior styling, and service staff.
                 </p>
@@ -305,12 +304,17 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
               </div>
             </section>
 
+            {/* Insight Callout */}
+            <InsightCallout variant="warning">
+              Restaurants that don't follow up with customers within 48 hours of their visit lose 40% of potential repeat business permanently. The window for re-engagement is razor-thin—and most operators miss it entirely because they lack automated touchpoints.
+            </InsightCallout>
+
             {/* Section 2 */}
             <section id="direct-relations" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Escaping the 30% Delivery Platform Trap
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Third-party ordering platforms (like DoorDash, UberEats, or Deliveroo) charge up to **30% commission** per transaction.
                 </p>
@@ -325,7 +329,7 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Building Automated Loyalty and Feedback Loops
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   A perfect guest retention loop operates automatically behind the scenes:
                 </p>
@@ -337,12 +341,17 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
               </div>
             </section>
 
+            {/* Why This Matters */}
+            <WhyThisMatters>
+              The restaurant industry loses billions annually to preventable churn—automated retention systems cost a fraction of acquiring new customers and deliver 5-7x higher ROI than traditional marketing. In an industry where a single loyal guest can generate $5,000+ in annual revenue, the math is unambiguous: retention automation isn't a nice-to-have, it's the highest-leverage investment a restaurant can make.
+            </WhyThisMatters>
+
             {/* Section 4 */}
             <section id="we-miss-you" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Retaining Guests with Intelligent Re-engagement
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   When a regular diner has not visited in 30 days, hope shouldn't be the recovery strategy.
                 </p>
@@ -357,7 +366,7 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Personalizing Experiences at Scale
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   A guest's birthday represents the highest-spending, most reliable booking opportunity of the year.
                 </p>
@@ -372,7 +381,7 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Scaling Operations and Brand Consistency
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Manually tracking guest loyalty across multiple locations is operational chaos.
                 </p>
@@ -419,7 +428,7 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
             </section>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* ═══════════════════════════════════════════════════ */}
             {/* 3. FINAL CTA SECTION                               */}
@@ -460,29 +469,7 @@ export default async function RestaurantCustomerRetentionPage({ params }: { para
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((article, index) => (
-                  <Link 
-                    key={index} 
-                    href={article.href}
-                    className="group flex flex-col justify-between p-6 bg-white border border-[#E5E2DC] rounded-xl hover:border-[#355CFF]/30 hover:shadow-sm transition-all duration-300 min-h-[160px]"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center font-mono text-[9px] tracking-wider text-[#6B7280] uppercase">
-                        <span>{article.date}</span>
-                        <span>{article.readTime}</span>
-                      </div>
-                      <h5 className="font-bold text-[#1A1A1A] text-[14px] leading-snug group-hover:text-[#355CFF] transition-colors line-clamp-3">
-                        {article.title}
-                      </h5>
-                    </div>
-                    <div className="pt-4 flex items-center gap-1.5 text-[11px] font-bold text-[#355CFF] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span>Read article</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </div>
-                  </Link>
-                ))}
-              </div>
+              <RelatedArticlesGrid articles={relatedArticles} />
             </section>
 
           </article>

@@ -12,6 +12,9 @@ import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { FlickerText } from "@/components/marketing/FlickerText";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
+import { InsightCallout, WhyThisMatters, EditorialDivider, RelatedArticlesGrid } from "@/components/marketing/BlogEditorial";
+import { InteractiveRestaurantWebsite } from "@/components/marketing/InteractiveRestaurantWebsite";
+
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / AEO Optimization)
@@ -148,19 +151,22 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
       title: "How Restaurants Worldwide Lose 30% of Regulars (And the Automation Fix)",
       href: "/blog/restaurant-customer-retention-automation",
       date: "Feb 18, 2026",
-      readTime: "6 min read"
+      readTime: "6 min read",
+      category: "Restaurant / Retention"
     },
     {
       title: "WhatsApp Automation for Lead Nurturing — The 2026 Strategy",
       href: "/blog/whatsapp-automation-for-lead-nurturing",
       date: "Mar 28, 2026",
-      readTime: "4 min read"
+      readTime: "4 min read",
+      category: "Automation / CRM"
     },
     {
       title: "n8n Automation for Business — Complete Global Guide 2026",
       href: "/blog/n8n-automation-for-business",
       date: "Apr 12, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "Workflow Automation"
     }
   ];
 
@@ -239,15 +245,8 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
 
           {/* Blueprint Banner */}
           <Reveal y={30} delay={0.2}>
-            <div className="mt-14 relative w-full aspect-[21/9] rounded-xl overflow-hidden border border-[#E5E2DC] shadow-sm bg-white">
-              <Image
-                src="/images/blog-restaurant-website.png"
-                alt="Direct web ordering platform diagram"
-                fill
-                priority
-                className="object-cover transition-transform duration-700 hover:scale-[1.01]"
-                sizes="(max-w-1200px) 100vw, 1200px"
-              />
+            <div className="mt-14 w-full max-w-5xl mx-auto">
+              <InteractiveRestaurantWebsite />
             </div>
           </Reveal>
         </div>
@@ -265,14 +264,14 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
           </aside>
 
           {/* Core Article Body (Strict 70ch) */}
-          <article className="col-span-12 lg:col-span-9 max-w-[70ch] mx-auto lg:mx-0">
+          <article className="col-span-12 lg:col-span-9 max-w-[720px] mx-auto lg:mx-0 blog-article">
             {/* Inline Table of Contents for Mobile */}
             <div className="lg:hidden mb-12 bg-white/60 border border-[#E5E2DC] rounded-xl p-6">
               <TableOfContents headings={headings} />
             </div>
 
             {/* Intro Content */}
-            <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-8 font-sans">
+            <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-8 font-sans blog-prose">
               <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
                 The restaurant margin squeeze in the United States is at an all-time high.
               </p>
@@ -288,14 +287,14 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
             </div>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* Section 1 */}
             <section id="commission-model" className="scroll-mt-32 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Escaping the Third-Party Platform Commission Trap
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Third-party food portals make big promises about audience reach, but they restrict direct customer contact completely.
                 </p>
@@ -310,7 +309,7 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 The Power of a Direct Online Ordering System
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   A dedicated online ordering system built natively into your restaurant's website bypasses aggregators entirely.
                 </p>
@@ -320,12 +319,17 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
               </div>
             </section>
 
+            {/* Insight Callout */}
+            <InsightCallout variant="impact">
+              A single restaurant switching from 100% platform-dependent orders to 50% direct orders can save $50,000–$80,000 annually in commission fees alone. That recovered margin funds better ingredients, higher staff wages, and marketing that actually builds your brand—not someone else's.
+            </InsightCallout>
+
             {/* Section 3 */}
             <section id="cultural-relevance" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Custom Technology Built for Indian Hospitality
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Indian dining represents a unique blend of heritage, group dining dynamics, complex spicing structures, and high delivery demand.
                 </p>
@@ -340,7 +344,7 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Qualitative Customer Data Capture and Marketing
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   When a customer orders via a portal app, they are the platform's user.
                 </p>
@@ -350,12 +354,17 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
               </div>
             </section>
 
+            {/* Why This Matters */}
+            <WhyThisMatters>
+              Every order placed through third-party platforms costs restaurants 25–30% in commissions while surrendering customer data—owning your digital infrastructure is no longer optional, it's survival. Restaurants that build direct ordering channels don't just save on fees; they accumulate a proprietary customer database that compounds in value with every transaction, creating a defensible moat that no aggregator can replicate.
+            </WhyThisMatters>
+
             {/* Section 5 */}
             <section id="database-sync" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Syncing Direct Ordering with Automated WhatsApp Alerts
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Automation ensures operational harmony.
                 </p>
@@ -370,7 +379,7 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Scale Your Restaurant Operations Efficiently
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   As you open multiple branches in different states, managing centralized operations becomes critical.
                 </p>
@@ -417,7 +426,7 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
             </section>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* ═══════════════════════════════════════════════════ */}
             {/* 3. FINAL CTA SECTION                               */}
@@ -458,29 +467,7 @@ export default async function IndianRestaurantUSAPage({ params }: { params: Prom
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((article, index) => (
-                  <Link 
-                    key={index} 
-                    href={article.href}
-                    className="group flex flex-col justify-between p-6 bg-white border border-[#E5E2DC] rounded-xl hover:border-[#355CFF]/30 hover:shadow-sm transition-all duration-300 min-h-[160px]"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center font-mono text-[9px] tracking-wider text-[#6B7280] uppercase">
-                        <span>{article.date}</span>
-                        <span>{article.readTime}</span>
-                      </div>
-                      <h5 className="font-bold text-[#1A1A1A] text-[14px] leading-snug group-hover:text-[#355CFF] transition-colors line-clamp-3">
-                        {article.title}
-                      </h5>
-                    </div>
-                    <div className="pt-4 flex items-center gap-1.5 text-[11px] font-bold text-[#355CFF] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span>Read article</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </div>
-                  </Link>
-                ))}
-              </div>
+              <RelatedArticlesGrid articles={relatedArticles} />
             </section>
 
           </article>

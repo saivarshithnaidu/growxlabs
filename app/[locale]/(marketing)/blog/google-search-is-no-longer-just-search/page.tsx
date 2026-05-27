@@ -12,6 +12,8 @@ import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { FlickerText } from "@/components/marketing/FlickerText";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
+import { InsightCallout, WhyThisMatters, EditorialDivider, RelatedArticlesGrid } from "@/components/marketing/BlogEditorial";
+import { InteractiveSearchEvolution } from "@/components/marketing/InteractiveSearchEvolution";
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / AEO Optimization)
@@ -47,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       authors: ["GrowXLabsTech"],
       images: [
         {
-          url: "https://growxlabs.tech/images/blog-google-io-2026.png",
+          url: "https://growxlabs.tech/images/hero-google-search.png",
           width: 1200,
           height: 630,
           alt: "Google Search — The Transition to an Execution Engine"
@@ -58,7 +60,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       card: "summary_large_image",
       title,
       description,
-      images: ["https://growxlabs.tech/images/blog-google-io-2026.png"]
+      images: ["https://growxlabs.tech/images/hero-google-search.png"]
     }
   };
 }
@@ -148,19 +150,22 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
       title: "Google I/O 2026: Gemini Spark, AI Agents & The Future of AI-Native Development",
       href: "/blog/google-io-2026",
       date: "May 27, 2026",
-      readTime: "6 min read"
+      readTime: "6 min read",
+      category: "AI Industry"
     },
     {
       title: "AI Coding Tools Are Reshaping Modern Software Engineering",
       href: "/blog/ai-coding-tools-are-reshaping-modern-software-engineering",
       date: "May 27, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "Developer Tools"
     },
     {
       title: "Why Anthropic Is Becoming a Serious Threat to OpenAI",
       href: "/blog/why-anthropic-is-becoming-a-serious-threat-to-openai",
       date: "May 27, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "AI Industry"
     }
   ];
 
@@ -236,6 +241,13 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
               </div>
             </div>
           </Reveal>
+
+          {/* Interactive Evolution Banner */}
+          <Reveal y={30} delay={0.2}>
+            <div className="mt-14 w-full">
+              <InteractiveSearchEvolution />
+            </div>
+          </Reveal>
         </div>
       </header>
 
@@ -251,14 +263,14 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
           </aside>
 
           {/* Core Article Body (Strict 70ch) */}
-          <article className="col-span-12 lg:col-span-9 max-w-[70ch] mx-auto lg:mx-0">
+          <article className="col-span-12 lg:col-span-9 max-w-[720px] mx-auto lg:mx-0 blog-article">
             {/* Inline Table of Contents for Mobile */}
             <div className="lg:hidden mb-12 bg-white/60 border border-[#E5E2DC] rounded-xl p-6">
               <TableOfContents headings={headings} />
             </div>
 
             {/* Intro Content */}
-            <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-8 font-sans">
+            <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-8 font-sans blog-prose">
               <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
                 For more than 20 years, Google Search worked in a simple, predictable way.
               </p>
@@ -274,14 +286,14 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
             </div>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* Section 1 */}
             <section id="shift-execution" className="scroll-mt-32 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 From Search Engine → Execution Engine
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Traditional search was built around <strong>information discovery</strong>. You had a question, and Google served as the index that pointed you toward potential answers written by third-party creators.
                 </p>
@@ -308,12 +320,16 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
               </div>
             </section>
 
+            <InsightCallout variant="trend">
+              Google's shift to AI-native search mirrors what happened with mobile-first indexing—companies that adapted early won dominant positions, and those that didn't became invisible overnight. The window for early-mover advantage in AEO is closing fast.
+            </InsightCallout>
+
             {/* Section 2 */}
             <section id="gemini-core" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Gemini Is Becoming the Core Layer
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Google is no longer treating Gemini as a standalone app or an experimental chatbot alternative.
                 </p>
@@ -331,7 +347,7 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 AI Search Changes SEO Forever
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   This evolution has massive, immediate implications for businesses, agencies, developers, and content creators.
                 </p>
@@ -347,12 +363,16 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
               </div>
             </section>
 
+            <WhyThisMatters>
+              Businesses that fail to adopt structured data and AEO strategies will lose visibility entirely as AI systems replace traditional search result pages. The shift isn't gradual—it's binary. Once AI-generated answers become the default interface, websites without semantic schema markup and authoritative structured content won't just rank lower; they'll disappear from the discovery layer altogether.
+            </WhyThisMatters>
+
             {/* Section 4 */}
             <section id="interactive-search" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Search Is Becoming Interactive
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   In its latest demos, Google showcased Search generating visual interfaces, interactive budget planners, dynamic schedules, and step-by-step programming workflows on the fly.
                 </p>
@@ -367,7 +387,7 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 The Rise of AI-Native Internet Experiences
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   The key takeaway is that the internet itself is undergoing an architectural rewrite.
                 </p>
@@ -382,7 +402,7 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Why Businesses Should Pay Attention
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Many businesses are still treating AI as a simple chatbot or a tool to write copy. That perspective is already years out of date.
                 </p>
@@ -432,7 +452,7 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
             </section>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* ═══════════════════════════════════════════════════ */}
             {/* 3. FINAL CTA SECTION                               */}
@@ -473,29 +493,7 @@ export default async function GoogleSearchEvolutionPage({ params }: { params: Pr
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((article, index) => (
-                  <Link 
-                    key={index} 
-                    href={article.href}
-                    className="group flex flex-col justify-between p-6 bg-white border border-[#E5E2DC] rounded-xl hover:border-[#355CFF]/30 hover:shadow-sm transition-all duration-300 min-h-[160px]"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center font-mono text-[9px] tracking-wider text-[#6B7280] uppercase">
-                        <span>{article.date}</span>
-                        <span>{article.readTime}</span>
-                      </div>
-                      <h5 className="font-bold text-[#1A1A1A] text-[14px] leading-snug group-hover:text-[#355CFF] transition-colors line-clamp-3">
-                        {article.title}
-                      </h5>
-                    </div>
-                    <div className="pt-4 flex items-center gap-1.5 text-[11px] font-bold text-[#355CFF] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span>Read article</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </div>
-                  </Link>
-                ))}
-              </div>
+              <RelatedArticlesGrid articles={relatedArticles} />
             </section>
 
           </article>

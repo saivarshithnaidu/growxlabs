@@ -146,7 +146,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
       <div className="max-w-5xl mx-auto px-6 md:px-10 xl:px-16 2xl:px-24">
         {/* Page Header */}
-        <header className="border-b border-[#E5E2DC] pb-12 mb-16 text-center">
+        <header className="border-b border-[#E5E2DC] pb-14 mb-16 text-center">
           {/* Massive Swiss Page Title with neon flickering */}
           <div className="w-full overflow-hidden flex justify-center items-end select-none pointer-events-none mb-10">
             <h1 className="font-black select-none tracking-[-0.06em] text-[#1A1A1A] leading-[0.8] text-[9.2vw] uppercase whitespace-nowrap">
@@ -155,13 +155,13 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
           </div>
 
           <Reveal y={20}>
-            <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#355CFF] mb-4 block">
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#355CFF] mb-5 block font-mono">
               Editorial Insights
             </span>
-            <h2 className="text-[clamp(32px,5vw,56px)] font-black text-[#1A1A1A] mb-6 tracking-tight leading-[1.1]">
-              Research, technical analyses, and high-performance guides.
+            <h2 className="text-[clamp(30px,4.5vw,52px)] font-black text-[#1A1A1A] mb-6 tracking-tight leading-[1.1]">
+              Research, technical analyses,<br className="hidden sm:block" /> and high-performance guides.
             </h2>
-            <p className="text-[17px] text-[#6B7280] leading-relaxed max-w-2xl mx-auto">
+            <p className="text-[16px] text-[#6B7280] leading-[1.8] max-w-xl mx-auto">
               Curated case studies, engineering papers, and deep-dives from the GrowXLabsTech studio.
             </p>
           </Reveal>
@@ -171,23 +171,23 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
         <section className="mb-20">
           <Reveal y={30}>
             <div className="flex flex-col gap-8 pb-16 border-b border-[#E5E2DC]">
-              <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden border border-[#E5E2DC] bg-white shadow-sm">
+              <div className="relative w-full max-w-[540px] mx-auto aspect-square rounded-xl overflow-hidden border border-[#E5E2DC] bg-white shadow-sm">
                 <Image
                   src={featuredPost.image}
                   alt={featuredPost.title}
                   fill
                   priority
-                  className="object-cover transition-transform duration-700 hover:scale-[1.01]"
+                  className="object-contain transition-transform duration-700 hover:scale-[1.01]"
                   sizes="(max-w-1200px) 100vw, 1200px"
                 />
               </div>
 
               <div className="space-y-4 max-w-4xl">
                 <div className="flex gap-3 items-center font-mono text-[10px] tracking-wider text-[#6B7280] uppercase">
-                  <span className="text-[#355CFF] font-bold">{featuredPost.category}</span>
-                  <span>•</span>
+                  <span className="text-[#355CFF] font-bold bg-[#355CFF]/5 px-2 py-0.5 rounded">{featuredPost.category}</span>
+                  <span className="text-[#D1D5DB]">·</span>
                   <span>{featuredPost.date}</span>
-                  <span>•</span>
+                  <span className="text-[#D1D5DB]">·</span>
                   <span>{featuredPost.readTime}</span>
                 </div>
 
@@ -223,16 +223,16 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
             </h3>
           </Reveal>
 
-          <div className="space-y-12">
+          <div className="space-y-0">
             {regularPosts.map((post, index) => (
               <Reveal key={index} y={20} delay={0.05 * index}>
-                <div className="group flex flex-col md:flex-row md:items-start justify-between gap-6 pb-12 border-b border-[#E5E2DC] last:border-0 last:pb-0">
+                <div className="group flex flex-col md:flex-row md:items-start justify-between gap-5 py-10 border-b border-[#E5E2DC] first:pt-0 last:border-0 last:pb-0">
                   <div className="space-y-3 max-w-3xl">
                     <div className="flex gap-3 items-center font-mono text-[10px] tracking-wider text-[#6B7280] uppercase">
-                      <span>{post.category}</span>
-                      <span>•</span>
+                      <span className="text-[#355CFF] font-bold bg-[#355CFF]/5 px-2 py-0.5 rounded">{post.category}</span>
+                      <span className="text-[#D1D5DB]">·</span>
                       <span>{post.date}</span>
-                      <span>•</span>
+                      <span className="text-[#D1D5DB]">·</span>
                       <span>{post.readTime}</span>
                     </div>
 
@@ -242,7 +242,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
                       </h4>
                     </Link>
 
-                    <p className="text-[#6B7280] text-[15px] leading-relaxed">
+                    <p className="text-[#6B7280] text-[15px] leading-[1.7] max-w-2xl">
                       {post.excerpt}
                     </p>
                   </div>
@@ -250,10 +250,10 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
                   <div className="shrink-0 pt-2 md:pt-6">
                     <Link 
                       href={`/blog/${post.slug}`}
-                      className="w-10 h-10 rounded-full border border-[#E5E2DC] flex items-center justify-center bg-white group-hover:bg-[#355CFF] group-hover:text-white group-hover:border-[#355CFF] transition-all duration-300 shadow-sm shrink-0"
+                      className="w-9 h-9 rounded-full border border-[#E5E2DC] flex items-center justify-center bg-white group-hover:bg-[#355CFF] group-hover:text-white group-hover:border-[#355CFF] transition-all duration-300 shrink-0"
                       aria-label={`Read ${post.title}`}
                     >
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>

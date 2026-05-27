@@ -12,6 +12,7 @@ import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { FlickerText } from "@/components/marketing/FlickerText";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
+import { InteractiveIOArchitecture } from "@/components/marketing/InteractiveIOArchitecture";
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / AEO Optimization)
@@ -269,17 +270,10 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
             </div>
           </Reveal>
 
-          {/* Large Hero Image */}
+          {/* Interactive Blueprint Architectures Diagram */}
           <Reveal y={30} delay={0.2}>
-            <div className="mt-14 relative w-full aspect-[21/9] rounded-xl overflow-hidden border border-[#E5E2DC] shadow-sm bg-white">
-              <Image
-                src="/images/blog-google-io-2026.png"
-                alt="Google I/O 2026 Editorial Banner"
-                fill
-                priority
-                className="object-cover transition-transform duration-700 hover:scale-[1.01]"
-                sizes="(max-w-1200px) 100vw, 1200px"
-              />
+            <div className="mt-14 w-full max-w-5xl mx-auto text-left">
+              <InteractiveIOArchitecture />
             </div>
           </Reveal>
         </div>

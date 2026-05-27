@@ -12,6 +12,9 @@ import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { FlickerText } from "@/components/marketing/FlickerText";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
+import { InsightCallout, WhyThisMatters, EditorialDivider, RelatedArticlesGrid } from "@/components/marketing/BlogEditorial";
+import { InteractiveModelComparison } from "@/components/marketing/InteractiveModelComparison";
+
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / AEO Optimization)
@@ -47,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       authors: ["GrowXLabsTech"],
       images: [
         {
-          url: "https://growxlabs.tech/images/blog-google-io-2026.png",
+          url: "https://growxlabs.tech/images/hero-anthropic-openai.png",
           width: 1200,
           height: 630,
           alt: "Anthropic Claude — The Ultimate Developer Tooling"
@@ -58,7 +61,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       card: "summary_large_image",
       title,
       description,
-      images: ["https://growxlabs.tech/images/blog-google-io-2026.png"]
+      images: ["https://growxlabs.tech/images/hero-anthropic-openai.png"]
     }
   };
 }
@@ -148,19 +151,22 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
       title: "AI Coding Tools Are Reshaping Modern Software Engineering",
       href: "/blog/ai-coding-tools-are-reshaping-modern-software-engineering",
       date: "May 27, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "Developer Tools"
     },
     {
       title: "Google Search Is No Longer Just Search: The Rise of the Execution Engine",
       href: "/blog/google-search-is-no-longer-just-search",
       date: "May 27, 2026",
-      readTime: "5 min read"
+      readTime: "5 min read",
+      category: "Search / SEO"
     },
     {
       title: "Google I/O 2026: Gemini Spark, AI Agents & The Future of AI-Native Development",
       href: "/blog/google-io-2026",
       date: "May 27, 2026",
-      readTime: "6 min read"
+      readTime: "6 min read",
+      category: "AI Industry"
     }
   ];
 
@@ -236,6 +242,13 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
               </div>
             </div>
           </Reveal>
+
+          {/* Editorial Hero Banner */}
+          <Reveal y={30} delay={0.2}>
+            <div className="mt-14 w-full max-w-5xl mx-auto">
+              <InteractiveModelComparison />
+            </div>
+          </Reveal>
         </div>
       </header>
 
@@ -251,14 +264,14 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
           </aside>
 
           {/* Core Article Body (Strict 70ch) */}
-          <article className="col-span-12 lg:col-span-9 max-w-[70ch] mx-auto lg:mx-0">
+          <article className="col-span-12 lg:col-span-9 max-w-[720px] mx-auto lg:mx-0 blog-article">
             {/* Inline Table of Contents for Mobile */}
             <div className="lg:hidden mb-12 bg-white/60 border border-[#E5E2DC] rounded-xl p-6">
               <TableOfContents headings={headings} />
             </div>
 
             {/* Intro Content */}
-            <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-8 font-sans">
+            <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-8 font-sans blog-prose">
               <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
                 For several years, OpenAI dominated the conversational AI narrative.
               </p>
@@ -271,14 +284,14 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
             </div>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* Section 1 */}
             <section id="developer-favorite" className="scroll-mt-32 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Claude Quietly Became a Developer Favorite
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Engineering teams are increasingly choosing Anthropic's Claude models for their primary technical tasks:
                 </p>
@@ -298,12 +311,16 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
               </div>
             </section>
 
+            <InsightCallout variant="impact">
+              Claude's developer adoption is following the same pattern as VS Code's rise—quiet, technically superior, then dominant. Just as VS Code overtook Sublime Text and Atom not through marketing but through relentless developer experience improvements, Claude is capturing engineering mindshare through workflow reliability rather than consumer hype.
+            </InsightCallout>
+
             {/* Section 2 */}
             <section id="context-advantage" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Long Context Changed Everything
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   One of the biggest practical hurdles in modern AI integration is maintaining consistency over large directories of data.
                 </p>
@@ -321,7 +338,7 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Enterprise AI Is Shifting
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Enterprise buyers are shifting from single-provider strategies to multi-provider pipelines.
                 </p>
@@ -331,12 +348,16 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
               </div>
             </section>
 
+            <WhyThisMatters>
+              The AI industry is shifting from a single-provider monopoly to a multi-model infrastructure reality, and businesses building on only one provider risk catastrophic lock-in. As Anthropic, Google, and open-source alternatives mature, the winning strategy is provider-agnostic architecture—companies that abstract their AI layer today will have the flexibility to switch models, optimize costs, and avoid single points of failure tomorrow.
+            </WhyThisMatters>
+
             {/* Section 4 */}
             <section id="coding-infrastructure" className="scroll-mt-32 mt-16 space-y-6">
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 AI Coding Is Becoming Infrastructure
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   In 2026, AI is no longer a separate, experimental chatbot window.
                 </p>
@@ -351,7 +372,7 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 Anthropic's Smart Positioning
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   Anthropic did not try to win the consumer social hype war.
                 </p>
@@ -366,7 +387,7 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
               <h2 className="text-3xl font-black tracking-tight text-[#1A1A1A] leading-tight">
                 The Bigger Industry Shift
               </h2>
-              <div className="text-[18px] leading-[1.85] text-[#374151] font-normal space-y-6 font-sans">
+              <div className="text-[17px] leading-[1.9] text-[#374151] font-normal space-y-6 font-sans blog-prose">
                 <p>
                   The AI landscape has evolved past the "cool demo" phase. The real competitive field is now <strong>infrastructure layer dominance</strong>.
                 </p>
@@ -413,7 +434,7 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
             </section>
 
             {/* Divider Line */}
-            <div className="w-full h-px bg-[#E5E2DC] my-14" />
+            <EditorialDivider />
 
             {/* ═══════════════════════════════════════════════════ */}
             {/* 3. FINAL CTA SECTION                               */}
@@ -454,29 +475,7 @@ export default async function AnthropicOpenAIPage({ params }: { params: Promise<
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((article, index) => (
-                  <Link 
-                    key={index} 
-                    href={article.href}
-                    className="group flex flex-col justify-between p-6 bg-white border border-[#E5E2DC] rounded-xl hover:border-[#355CFF]/30 hover:shadow-sm transition-all duration-300 min-h-[160px]"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center font-mono text-[9px] tracking-wider text-[#6B7280] uppercase">
-                        <span>{article.date}</span>
-                        <span>{article.readTime}</span>
-                      </div>
-                      <h5 className="font-bold text-[#1A1A1A] text-[14px] leading-snug group-hover:text-[#355CFF] transition-colors line-clamp-3">
-                        {article.title}
-                      </h5>
-                    </div>
-                    <div className="pt-4 flex items-center gap-1.5 text-[11px] font-bold text-[#355CFF] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span>Read article</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </div>
-                  </Link>
-                ))}
-              </div>
+              <RelatedArticlesGrid articles={relatedArticles} />
             </section>
 
           </article>
