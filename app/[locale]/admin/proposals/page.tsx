@@ -84,10 +84,22 @@ const COMPANY_DETAILS = {
   tagline: "Engineering Digital Growth. Globally.",
 };
 
-const PRODUCTS = [
-  { name: "ResumeForgeAI", description: "AI-Powered Career Intelligence" },
-  { name: "UniversalAI", description: "Multi-Model AI Aggregator" },
-  { name: "RecruitAI", description: "Autonomous Talent Sourcing" }
+const CAPABILITIES = [
+  { 
+    name: "Custom Web Architectures", 
+    description: "High-performance React/Next.js systems designed strictly for lead capturing and speed optimization.",
+    icon: "M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"
+  },
+  { 
+    name: "Intelligent Systems Automation", 
+    description: "Tailored server-side n8n processes, lead routing, autonomous webhook hooks, and custom CRM syncing.",
+    icon: "M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
+  },
+  { 
+    name: "Technical Infrastructure & SLAs", 
+    description: "Secure Cloudflare CDN staging, database encryption layers, SSL certifications, and post-deployment maintenance.",
+    icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.599-3.749A11.96 11.96 0 0112 2.714z"
+  }
 ];
 
 export default function ProposalsPage() {
@@ -356,12 +368,12 @@ export default function ProposalsPage() {
                {/* PAGE 1 - COVER */}
                <div className="proposal-page-wrapper space-y-3">
                   <div className="flex justify-between items-center px-4">
-                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 01 — COVER ARCHITECTURE</span>
+                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 01 — COVER PAGE</span>
                      <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                   </div>
                   <div className="proposal-page bg-[#FAF9F6] text-slate-900 p-20 flex flex-col justify-between shadow-2xl relative overflow-hidden aspect-[1/1.414]">
                      <div className="relative z-10 flex justify-between items-start">
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                            <div className="flex items-center gap-2">
                               <div className="w-5 h-5 bg-[#355CFF] rounded flex items-center justify-center text-white text-[10px] font-black italic">G</div>
                               <h2 className="text-sm font-bold tracking-tight uppercase">{COMPANY_DETAILS.name}</h2>
@@ -369,21 +381,21 @@ export default function ProposalsPage() {
                            <p className="text-[8px] font-mono font-bold uppercase tracking-[0.4em] text-zinc-400">{COMPANY_DETAILS.tagline}</p>
                         </div>
                         <div className="px-4 py-1.5 border border-[#355CFF]/20 bg-[#355CFF]/5 text-[#355CFF] rounded-full text-[8px] font-mono font-bold uppercase tracking-widest">
-                           OUTBOUND INITIATIVE
+                           PARTNERSHIP BRIEF
                         </div>
                      </div>
 
-                     <div className="relative z-10 my-auto space-y-8">
-                        <div className="space-y-3">
-                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.5em] text-[#355CFF]">DESIGNED EXCLUSIVELY FOR</span>
-                           <h1 className="text-5xl font-black tracking-tight leading-[1.05] text-zinc-900 break-words max-w-[90%]">
-                              {form.businessName || "DYNAMIC ENTERPRISE"}
+                     <div className="relative z-10 my-auto space-y-6">
+                        <div className="space-y-2">
+                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.45em] text-[#355CFF] block">SYSTEM ENGINEERING PROPOSAL</span>
+                           <h1 className="text-4xl font-extrabold tracking-tight leading-none text-zinc-900 break-words max-w-[90%]">
+                              {form.businessName || "Dynamic Enterprise"}
                            </h1>
                         </div>
                         <div className="flex items-center gap-4">
-                           <div className="h-[2px] w-12 bg-[#355CFF]" />
-                           <span className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500">
-                              {form.industry || "TARGET SECTOR"}
+                           <div className="h-[1.5px] w-12 bg-[#355CFF]" />
+                           <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-400">
+                              {form.industry || "Target Sector"}
                            </span>
                         </div>
                      </div>
@@ -391,69 +403,70 @@ export default function ProposalsPage() {
                      <div className="relative z-10 grid grid-cols-2 gap-8 border-t border-zinc-200/60 pt-8 mt-auto">
                         <div className="grid grid-cols-2 gap-4 text-[9px] font-mono">
                            <div className="space-y-1">
-                              <span className="text-zinc-400 uppercase tracking-wider block">PROJECT TARGET</span>
-                              <span className="font-bold text-zinc-800">Full-Stack Digital Infrastructure</span>
+                              <span className="text-zinc-400 uppercase tracking-wider block">PROJECT INITIATIVE</span>
+                              <span className="font-bold text-zinc-700">Digital Solutions Framework</span>
                            </div>
                            <div className="space-y-1">
-                              <span className="text-zinc-400 uppercase tracking-wider block">DISCOVERY</span>
-                              <span className="font-bold text-zinc-800">{form.callDate ? new Date(form.callDate).toLocaleDateString() : "TBD"}</span>
+                              <span className="text-zinc-400 uppercase tracking-wider block">DATE ISSUED</span>
+                              <span className="font-bold text-zinc-700">{new Date().toLocaleDateString()}</span>
                            </div>
                         </div>
                         <div className="text-right space-y-1">
-                           <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-wider block">PRIMARY ARCHITECT</span>
+                           <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-wider block">LEAD ENGINEERING ARCHITECT</span>
                            <span className="text-xs font-bold text-zinc-800 block">{COMPANY_DETAILS.founder}</span>
-                           <span className="text-[8px] font-mono font-bold text-[#355CFF] uppercase tracking-widest block">FOUNDING ENGINEER, GXL</span>
+                           <span className="text-[8px] font-mono font-bold text-[#355CFF] uppercase tracking-widest block">{COMPANY_DETAILS.email}</span>
                         </div>
                      </div>
                      
-                     <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -z-0 -mr-72 -mt-72" />
+                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-0 -mr-60 -mt-60" />
                   </div>
                </div>
 
                {/* PAGE 2 - CHALLENGE */}
                <div className="proposal-page-wrapper space-y-3">
                   <div className="flex justify-between items-center px-4">
-                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 02 — CHALLENGE ASSESSMENT</span>
+                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 02 — GAP ASSESSMENT</span>
                      <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                   </div>
                   <div className="proposal-page bg-[#FAF9F6] text-slate-900 p-20 flex flex-col justify-between shadow-2xl relative overflow-hidden aspect-[1/1.414]">
                      <div className="flex justify-between items-center border-b border-zinc-200/50 pb-3 text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400">
-                        <span>GROWXLABSTECH · ARCHITECTURAL PROPOSAL</span>
+                        <span>GROWXLABSTECH · SYSTEM BRIEFING</span>
                         <span>REF: GXL-{new Date().getFullYear()}-PRP</span>
                      </div>
 
-                     <div className="my-auto space-y-12">
-                        <div className="space-y-2">
-                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.4em] text-[#355CFF]">CHAPTER 01</span>
-                           <h3 className="text-3xl font-black tracking-tight text-zinc-900 leading-tight">The Digital Gap Assessment</h3>
+                     <div className="my-auto space-y-8">
+                        <div className="space-y-1.5">
+                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.35em] text-[#355CFF] block">01 / ANALYTICS DECK</span>
+                           <h3 className="text-2xl font-bold tracking-tight text-zinc-950 leading-tight">Operational Gap Assessment</h3>
                         </div>
 
-                        <div className="grid grid-cols-12 gap-8">
+                        <div className="grid grid-cols-12 gap-8 pt-4">
                            {/* Left Side: Client Pain Points */}
-                           <div className="col-span-7 space-y-6">
-                              <div className="space-y-3">
-                                 <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-400 block">OBSERVED SYSTEM BOTTLE-NECKS</span>
-                                 <div className="bg-zinc-100/50 border border-zinc-200/30 p-6 rounded-xl relative">
-                                    <p className="text-xs font-medium text-zinc-800 italic leading-relaxed">
-                                       "{form.problem || "Your current digital presence fails to match the scale of your ambition. You are losing high-intent leads due to technical friction and manual overhead."}"
-                                    </p>
-                                 </div>
+                           <div className="col-span-7 space-y-4">
+                              <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-400 block">OBSERVED OPERATIONAL CHALLENGES</span>
+                              <div className="bg-zinc-50 border border-zinc-200/30 p-5 rounded-xl">
+                                 <p className="text-xs leading-relaxed text-zinc-600 font-medium">
+                                    {form.problem ? `"${form.problem}"` : "Your current system parameters fall short of optimizing global operations, causing drop-offs in customer response speed and structural performance."}
+                                 </p>
+                              </div>
+                              <div className="text-[10px] text-zinc-400 leading-relaxed font-medium">
+                                 Analyzing the current framework reveals a core need for architectural restructuring to achieve fast loading speeds and reliable conversions.
                               </div>
                            </div>
 
                            {/* Right Side: Cost of Inaction */}
-                           <div className="col-span-5 flex flex-col justify-between border-l border-zinc-200 pl-8">
-                              <div className="space-y-3">
-                                 <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-[#355CFF] block">COST OF INACTION (MONTHLY)</span>
-                                 <p className="text-base font-extrabold text-zinc-900 leading-tight tracking-tight">
-                                    {form.impact || "Every 24 hours without a high-performance system is a day of uncaptured revenue and operational stagnation."}
+                           <div className="col-span-5 flex flex-col justify-between border-l border-zinc-200 pl-8 space-y-4">
+                              <div className="space-y-2">
+                                 <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-[#355CFF] block">OPERATIONAL IMPACT</span>
+                                 <p className="text-xs font-semibold text-zinc-700 leading-relaxed">
+                                    {form.impact || "Every day without dynamic optimizations directly reduces platform scalability and structural customer retention."}
                                  </p>
                               </div>
                               
-                              <div className="space-y-2 pt-6 border-t border-zinc-100">
+                              <div className="space-y-1.5 pt-4 border-t border-zinc-150">
                                  <span className="text-[8px] font-mono font-bold uppercase tracking-wider text-zinc-400 block">RESOLUTION DIRECTIVE</span>
-                                 <p className="text-[10px] text-zinc-500 font-medium leading-relaxed">
-                                    Deploying a dedicated, lightning-fast digital asset designed strictly for global lead conversion.
+                                 <p className="text-[9px] text-zinc-500 leading-relaxed">
+                                    Deploy a high-performance system structure engineered to minimize operational friction and maximize retention.
                                  </p>
                               </div>
                            </div>
@@ -461,7 +474,7 @@ export default function ProposalsPage() {
                      </div>
 
                      <div className="flex justify-between items-center border-t border-zinc-200/50 pt-3 text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400 mt-auto">
-                        <span>CONFIDENTIAL · CLIENT OUTBOUND BRIEFING</span>
+                        <span>CONFIDENTIAL · OPERATIONAL GAP DECK</span>
                         <span>PAGE 02 OF 05</span>
                      </div>
                      <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -z-0 -ml-32 -mb-32" />
@@ -471,23 +484,23 @@ export default function ProposalsPage() {
                {/* PAGE 3 - INVESTMENT */}
                <div className="proposal-page-wrapper space-y-3">
                   <div className="flex justify-between items-center px-4">
-                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 03 — INVESTMENT ARCHITECTURE</span>
+                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 03 — ARCHITECTURE & INVESTMENT</span>
                      <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                   </div>
                   <div className="proposal-page bg-[#FAF9F6] text-slate-900 p-20 flex flex-col justify-between shadow-2xl aspect-[1/1.414]">
                      <div className="flex justify-between items-center border-b border-zinc-200/50 pb-3 text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400">
-                        <span>GROWXLABSTECH · ARCHITECTURAL PROPOSAL</span>
+                        <span>GROWXLABSTECH · SYSTEM BRIEFING</span>
                         <span>REF: GXL-{new Date().getFullYear()}-PRP</span>
                      </div>
 
-                     <div className="my-auto space-y-10">
-                        <div className="text-center space-y-2">
-                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.4em] text-[#355CFF]">CHAPTER 02</span>
-                           <h3 className="text-3xl font-black tracking-tight text-zinc-900 leading-tight">Investment Architecture</h3>
-                           <p className="text-[10px] text-zinc-500 font-medium max-w-xl mx-auto">Scales for Global Infrastructure. Optimized for return on capital.</p>
+                     <div className="my-auto space-y-8">
+                        <div className="text-center space-y-1.5">
+                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.35em] text-[#355CFF]">02 / STRATEGY FRAMEWORK</span>
+                           <h3 className="text-2xl font-bold tracking-tight text-zinc-950 leading-tight">Investment Architecture</h3>
+                           <p className="text-[10px] text-zinc-400 max-w-xl mx-auto">Scalable system integrations structured for professional corporate returns.</p>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-5">
+                        <div className="grid grid-cols-3 gap-4">
                            {Object.keys(PACKAGES).map(pk => {
                               const p = PACKAGES[pk as keyof typeof PACKAGES];
                               const isSelected = form.selectedPackage === pk;
@@ -495,141 +508,127 @@ export default function ProposalsPage() {
                                  <div 
                                    key={pk} 
                                    className={cn(
-                                      "p-5 rounded-2xl border-2 flex flex-col justify-between h-[300px] relative transition-all duration-300",
+                                      "p-4 rounded-xl border flex flex-col justify-between h-[300px] relative transition-all duration-300",
                                       isSelected 
-                                        ? "border-[#355CFF] bg-[#355CFF]/[0.02] shadow-xl shadow-[#355CFF]/5" 
-                                        : "border-zinc-200/60 bg-white"
+                                        ? "border-[#355CFF] bg-[#355CFF]/[0.01] shadow-lg shadow-[#355CFF]/5" 
+                                        : "border-zinc-200 bg-white"
                                    )}
                                  >
                                     {isSelected && (
-                                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#355CFF] text-white px-3 py-1 rounded-full text-[7px] font-mono font-bold uppercase tracking-widest shadow-md">
-                                          RECOMMENDED
+                                       <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#355CFF] text-white px-2.5 py-0.5 rounded-full text-[6px] font-mono font-bold uppercase tracking-wider shadow-sm">
+                                          SELECTED ARCHITECTURE
                                        </div>
                                     )}
                                     
                                     <div>
-                                       <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-widest block">TIER</span>
-                                       <h4 className={cn("text-base font-black tracking-tight uppercase", isSelected ? "text-[#355CFF]" : "text-zinc-800")}>{p.name}</h4>
+                                       <span className="text-[8px] font-mono font-bold text-zinc-400 uppercase tracking-widest block">TIER LEVEL</span>
+                                       <h4 className={cn("text-xs font-black uppercase mt-0.5", isSelected ? "text-[#355CFF]" : "text-zinc-700")}>{p.name}</h4>
                                        
-                                       <div className="mt-4 space-y-1">
-                                          <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-wider block">FEE</span>
-                                          <p className="text-base font-extrabold text-zinc-900 tracking-tight leading-none">
+                                       <div className="mt-4 space-y-0.5">
+                                          <span className="text-[8px] font-mono font-bold text-zinc-400 uppercase tracking-wider block">FEES</span>
+                                          <p className="text-sm font-extrabold text-zinc-900 tracking-tight">
                                              {isSelected && form.customPrice ? form.customPrice : p.price[form.currency as 'INR']}
                                           </p>
                                        </div>
 
-                                       <div className="flex items-center gap-1.5 mt-3 text-[9px] text-zinc-400 font-bold uppercase">
-                                          <Clock size={12} className="text-zinc-400" />
+                                       <div className="flex items-center gap-1.5 mt-2.5 text-[8px] text-zinc-400 font-bold uppercase">
+                                          <Clock size={11} className="text-zinc-400 shrink-0" />
                                           <span>Engineering: {p.timeline}</span>
                                        </div>
                                     </div>
 
-                                    <ul className="space-y-2 mt-4 pt-4 border-t border-zinc-100 flex-1 overflow-hidden">
+                                    <ul className="space-y-1.5 mt-4 pt-3 border-t border-zinc-150 flex-1 overflow-hidden">
                                        {p.features.slice(0, 5).map((f, i) => (
-                                          <li key={i} className="flex items-start gap-2 text-[9px] font-medium text-zinc-500 leading-tight">
-                                             <CheckCircle2 size={11} className="text-[#355CFF] shrink-0 mt-0.5" />
+                                          <li key={i} className="flex items-start gap-1.5 text-[8px] font-medium text-zinc-500 leading-tight">
+                                             <CheckCircle2 size={10} className="text-[#355CFF] shrink-0 mt-0.5" />
                                              <span className="truncate">{f}</span>
                                           </li>
                                        ))}
                                     </ul>
 
                                     <div className={cn(
-                                       "w-full py-2.5 rounded-xl text-center text-[8px] font-mono font-bold uppercase tracking-widest transition-all mt-4",
-                                       isSelected ? "bg-zinc-900 text-white shadow-lg" : "bg-zinc-100 text-zinc-400"
+                                       "w-full py-2 rounded-lg text-center text-[7px] font-mono font-bold uppercase tracking-wider mt-3",
+                                       isSelected ? "bg-zinc-900 text-white font-extrabold" : "bg-zinc-100 text-zinc-400"
                                     )}>
-                                       {isSelected ? "CHOSEN VECTOR" : "AVAILABLE"}
+                                       {isSelected ? "CHOSEN DIRECTION" : "AVAILABLE"}
                                     </div>
                                  </div>
                               );
                            })}
                         </div>
 
-                        <p className="text-center text-[8px] text-zinc-400 font-mono max-w-lg mx-auto leading-relaxed border-t border-zinc-200/50 pt-4">
+                        <p className="text-center text-[7px] text-zinc-400 font-mono max-w-lg mx-auto leading-relaxed border-t border-zinc-200/50 pt-3">
                            *All architectural fees are inclusive of post-deployment support and core maintenance. Custom price overrides reflect specialized automation logic as defined in discovery.
                         </p>
                      </div>
 
                      <div className="flex justify-between items-center border-t border-zinc-200/50 pt-3 text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400 mt-auto">
-                        <span>CONFIDENTIAL · CLIENT OUTBOUND BRIEFING</span>
+                        <span>CONFIDENTIAL · INVESTMENT FRAMEWORK</span>
                         <span>PAGE 03 OF 05</span>
                      </div>
                   </div>
                </div>
 
-               {/* PAGE 4 - WHY US */}
+               {/* PAGE 4 - CAPABILITIES */}
                <div className="proposal-page-wrapper space-y-3">
                   <div className="flex justify-between items-center px-4">
-                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 04 — TRUST MATRIX</span>
+                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 04 — CORE CAPABILITIES</span>
                      <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                   </div>
                   <div className="proposal-page bg-[#FAF9F6] text-slate-900 p-20 flex flex-col justify-between shadow-2xl aspect-[1/1.414]">
                      <div className="flex justify-between items-center border-b border-zinc-200/50 pb-3 text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400">
-                        <span>GROWXLABSTECH · ARCHITECTURAL PROPOSAL</span>
+                        <span>GROWXLABSTECH · SYSTEM BRIEFING</span>
                         <span>REF: GXL-{new Date().getFullYear()}-PRP</span>
                      </div>
 
-                     <div className="my-auto space-y-10">
-                        <div className="text-center space-y-2">
-                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.4em] text-[#355CFF]">CHAPTER 03</span>
-                           <h3 className="text-3xl font-black tracking-tight text-zinc-900 leading-tight">The GrowXLabsTech Advantage</h3>
-                           <p className="text-[10px] text-zinc-500 font-medium max-w-xl mx-auto">We don't just build client assets. We build, launch, and operate global AI SaaS platforms.</p>
+                     <div className="my-auto space-y-8">
+                        <div className="text-center space-y-1.5">
+                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.35em] text-[#355CFF]">03 / ENGINEERING VALUE</span>
+                           <h3 className="text-2xl font-bold tracking-tight text-zinc-950 leading-tight">Core Capabilities & Scope</h3>
+                           <p className="text-[10px] text-zinc-400 max-w-xl mx-auto">Custom technology assets deployed to secure corporate performance and data scaling.</p>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">
-                           {PRODUCTS.map((prod, idx) => (
-                              <div key={idx} className="bg-zinc-50 border border-zinc-200/60 p-5 rounded-2xl flex flex-col justify-between h-[160px] group transition-all duration-300">
-                                 <div className="h-10 w-10 bg-white border border-zinc-200 rounded-xl flex items-center justify-center mb-6 shadow-sm">
-                                    <svg className="w-5 h-5 text-[#355CFF]" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                                       {idx === 0 ? (
-                                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                       ) : idx === 1 ? (
-                                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21l8.904-4.437M12.87 2.138a2.128 2.128 0 112.986 2.986L7.33 13.65c-.198.198-.456.326-.736.368l-3.32.502.503-3.32c.041-.28.17-.539.368-.737L12.87 2.138z" />
-                                       ) : (
-                                          <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.656-2.607 9.094 9.094 0 00-6.17 0 3 3 0 00-4.656 2.607 9.094 9.094 0 003.741.479m13.5-12.72c0-1.268-.63-2.39-1.593-3.068a3.745 3.745 0 00-5.314 0 3.745 3.745 0 000 5.314 3.745 3.745 0 005.314 0c.963-.678 1.593-1.8 1.593-3.068zm-18 0c0-1.268-.63-2.39-1.593-3.068a3.745 3.745 0 00-5.314 0 3.745 3.745 0 000 5.314 3.745 3.745 0 005.314 0c.963-.678 1.593-1.8 1.593-3.068z" />
-                                       )}
+                           {CAPABILITIES.map((cap, idx) => (
+                              <div key={idx} className="bg-zinc-50 border border-zinc-200/60 p-4 rounded-xl flex flex-col justify-between h-[160px]">
+                                 <div className="h-8 w-8 bg-white border border-zinc-200 rounded-lg flex items-center justify-center mb-4 shadow-sm shrink-0">
+                                    <svg className="w-4 h-4 text-[#355CFF]" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                       <path strokeLinecap="round" strokeLinejoin="round" d={cap.icon} />
                                     </svg>
                                  </div>
-                                 <div className="space-y-1">
-                                    <h4 className="text-xs font-black tracking-tight text-zinc-900">{prod.name}</h4>
-                                    <p className="text-[8px] font-mono font-bold uppercase tracking-wider text-zinc-400">{prod.description}</p>
+                                 <div className="space-y-1 flex-1 flex flex-col justify-end">
+                                    <h4 className="text-[11px] font-bold tracking-tight text-zinc-900 uppercase leading-snug">{cap.name}</h4>
+                                    <p className="text-[8px] font-medium leading-relaxed text-zinc-400 mt-1">{cap.description}</p>
                                  </div>
                               </div>
                            ))}
                         </div>
 
-                        <div className="grid grid-cols-3 gap-6 pt-6 border-t border-zinc-150">
+                        <div className="grid grid-cols-3 gap-6 pt-5 border-t border-zinc-200/60">
                            {[
                               {
-                                 title: "AI-Powered",
-                                 desc: "Engineering workflows built from the ground up to leverage LLM autonomy.",
-                                 icon: "M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
+                                 title: "AI-Accelerated",
+                                 desc: "Leveraging structured LLM check loops to deliver projects 3x faster than conventional methods."
                               },
                               {
-                                 title: "Fully Accountable",
-                                 desc: "Registered MSME entity in India (UDYAM), providing institutional transparency.",
-                                 icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.599-3.749A11.96 11.96 0 0112 2.714z"
+                                 title: "UDYAM Accountable",
+                                 desc: "Registered Indian micro-enterprise entity under Ministry of MSME, ensuring solid compliance."
                               },
                               {
-                                 title: "Global Standards",
-                                 desc: "World-class performance assets engineered in India, deployed to serve global audiences.",
-                                 icon: "M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253"
+                                 title: "Professional Standards",
+                                 desc: "Deploying enterprise-grade codebases, optimized database queries, and custom configurations."
                               }
                            ].map((t, idx) => (
-                              <div key={idx} className="space-y-2">
-                                 <div className="flex items-center gap-2">
-                                    <svg className="w-4 h-4 text-[#355CFF]" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                                       <path strokeLinecap="round" strokeLinejoin="round" d={t.icon} />
-                                    </svg>
-                                    <h5 className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-800">{t.title}</h5>
-                                 </div>
-                                 <p className="text-[9px] text-zinc-400 font-medium leading-relaxed">{t.desc}</p>
+                              <div key={idx} className="space-y-1.5">
+                                 <h5 className="text-[9px] font-mono font-bold uppercase tracking-wider text-zinc-700">{t.title}</h5>
+                                 <p className="text-[8px] text-zinc-400 font-medium leading-normal">{t.desc}</p>
                               </div>
                            ))}
                         </div>
                      </div>
 
                      <div className="flex justify-between items-center border-t border-zinc-200/50 pt-3 text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400 mt-auto">
-                        <span>CONFIDENTIAL · CLIENT OUTBOUND BRIEFING</span>
+                        <span>CONFIDENTIAL · SYSTEM ENGINEERING CAPABILITIES</span>
                         <span>PAGE 04 OF 05</span>
                      </div>
                   </div>
@@ -638,54 +637,54 @@ export default function ProposalsPage() {
                {/* PAGE 5 - NEXT STEPS */}
                <div className="proposal-page-wrapper space-y-3">
                   <div className="flex justify-between items-center px-4">
-                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 05 — EXECUTION PROTOCOL</span>
+                     <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">PAGE 05 — EXECUTION & SIGN-OFF</span>
                      <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                   </div>
                   <div className="proposal-page bg-[#FAF9F6] text-slate-900 p-20 flex flex-col justify-between shadow-2xl aspect-[1/1.414] relative overflow-hidden">
                      <div className="flex justify-between items-center border-b border-zinc-200/50 pb-3 text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400">
-                        <span>GROWXLABSTECH · ARCHITECTURAL PROPOSAL</span>
+                        <span>GROWXLABSTECH · SYSTEM BRIEFING</span>
                         <span>REF: GXL-{new Date().getFullYear()}-PRP</span>
                      </div>
 
                      <div className="my-auto space-y-8">
-                        <div className="text-center space-y-2">
-                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.4em] text-[#355CFF]">CHAPTER 04</span>
-                           <h3 className="text-3xl font-black tracking-tight text-zinc-900 leading-tight">Execution Protocol</h3>
-                           <p className="text-[10px] text-zinc-500 font-medium max-w-xl mx-auto">Structured project initialization milestones.</p>
+                        <div className="text-center space-y-1.5">
+                           <span className="text-[9px] font-mono font-bold uppercase tracking-[0.35em] text-[#355CFF]">04 / CONTRACT DECK</span>
+                           <h3 className="text-2xl font-bold tracking-tight text-zinc-950 leading-tight">Execution Protocol</h3>
+                           <p className="text-[10px] text-zinc-400 max-w-xl mx-auto">Structured pipeline coordinates to proceed with custom development.</p>
                         </div>
 
-                        <div className="grid gap-3 max-w-2xl mx-auto w-full">
+                        <div className="grid gap-2 max-w-2xl mx-auto w-full">
                            {[
-                              { step: "01", title: "Select Tier", desc: "Confirm your chosen solution tier via email or secure client vault." },
-                              { step: "02", title: "Agreement Dispatch", desc: "We prepare and execute the MSA and scope outlines within 4 hours." },
-                              { step: "03", title: "Milestone Advance", desc: "Process the 50% kick-off invoice to secure engineering resources." },
-                              { step: "04", title: "Sprint Phase", desc: "Production begins immediately. Client progress portal credentials dispatched." },
-                              { step: "05", title: "Launch & Support", desc: "Perform systems deployment, production checks, and handoff credentials." }
+                              { step: "01", title: "Select Solution Tier", desc: "Confirm the chosen architecture level via email or securely in our client workspace." },
+                              { step: "02", title: "Scope Execution", desc: "We prepare and execute the formal Agreement detailing deliverables within 4 hours." },
+                              { step: "03", title: "Kick-off Transfer", desc: "Process the 50% mobilization fee to secure system engineering capacity." },
+                              { step: "04", title: "Production Phase", desc: "Engineering sprints begin immediately. Live client progress dashboard access is issued." },
+                              { step: "05", title: "Launch Check", desc: "We complete database caching, perform speed audits, and deploy live to production." }
                            ].map((s, idx) => (
-                              <div key={idx} className="flex items-center gap-6 bg-zinc-50 border border-zinc-200/50 p-4 rounded-xl hover:border-zinc-300 transition-all w-full">
+                              <div key={idx} className="flex items-center gap-5 bg-zinc-50 border border-zinc-200/50 p-3.5 rounded-lg w-full">
                                  <span className="text-[9px] font-mono font-bold text-zinc-300 tracking-widest">{s.step}</span>
                                  <div className="space-y-0.5">
                                     <p className="text-xs font-bold text-zinc-800 leading-none">{s.title}</p>
-                                    <p className="text-[9px] text-zinc-400 font-medium tracking-wide uppercase leading-none">{s.desc}</p>
+                                    <p className="text-[8px] text-zinc-400 font-medium tracking-wide uppercase leading-none">{s.desc}</p>
                                  </div>
                               </div>
                            ))}
                         </div>
 
                         {/* Sign-off Blocks */}
-                        <div className="grid grid-cols-2 gap-12 pt-8 border-t border-zinc-200/50 max-w-xl mx-auto mt-6 w-full">
+                        <div className="grid grid-cols-2 gap-10 pt-6 border-t border-zinc-200/50 max-w-xl mx-auto mt-4 w-full">
                            <div className="space-y-4">
                               <span className="text-[8px] font-mono font-bold text-zinc-400 uppercase tracking-widest block">FOR GROWXLABSTECH</span>
-                              <div className="h-[1px] bg-zinc-300 w-full pt-10" />
-                              <div className="text-[9px] font-mono">
+                              <div className="h-[1px] bg-zinc-300 w-full pt-8" />
+                              <div className="text-[8px] font-mono">
                                  <span className="font-bold text-zinc-800 block">Varshith Pujala</span>
                                  <span className="text-zinc-400 block">Founding Engineer & Director</span>
                               </div>
                            </div>
                            <div className="space-y-4">
                               <span className="text-[8px] font-mono font-bold text-zinc-400 uppercase tracking-widest block">FOR {form.businessName ? form.businessName.toUpperCase() : "THE CLIENT"}</span>
-                              <div className="h-[1px] bg-zinc-300 w-full pt-10" />
-                              <div className="text-[9px] font-mono">
+                              <div className="h-[1px] bg-zinc-300 w-full pt-8" />
+                              <div className="text-[8px] font-mono">
                                  <span className="font-bold text-zinc-800 block">Authorized Representative</span>
                                  <span className="text-zinc-400 block">Title & Date</span>
                               </div>
@@ -693,12 +692,12 @@ export default function ProposalsPage() {
                         </div>
 
                         <div className="text-center text-[7px] font-mono text-zinc-400 tracking-wider">
-                           This brief is valid for 7 days from issue date. All operations governed by standard terms of service.
+                           This proposal remains valid for 7 business days. All operations governed by standard framework terms.
                         </div>
                      </div>
 
                      <div className="flex justify-between items-center border-t border-zinc-200/50 pt-3 text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400 mt-auto">
-                        <span>CONFIDENTIAL · CLIENT OUTBOUND BRIEFING</span>
+                        <span>CONFIDENTIAL · PARTNERSHIP SIGN-OFF</span>
                         <span>PAGE 05 OF 05</span>
                      </div>
                   </div>
