@@ -218,7 +218,7 @@ export default function ProposalsPage() {
              background: white !important;
              display: block !important;
              width: 210mm !important;
-             height: 297mm !important;
+             height: auto !important; /* Flow naturally to prevent browser page-split bugs */
           }
           
           /* Hide the interactive page indicators on printed sheets */
@@ -292,28 +292,29 @@ export default function ProposalsPage() {
             exit={{ opacity: 0, y: 15 }}
             className="grid lg:grid-cols-2 gap-10"
           >
-            {/* FORM SIDE (HIDDEN IN PRINT) */}
-            <Card className="p-8 border border-zinc-800 bg-[#0B0F19] rounded-2xl space-y-8 h-fit sticky top-10 max-h-[85vh] overflow-y-auto no-scrollbar shadow-3xl no-print">
+            {/* FORM SIDE (ELITE BUILDER CONTROL DECK) */}
+            <Card className="p-8 border border-zinc-800/80 bg-zinc-950 rounded-2xl space-y-8 h-fit sticky top-10 max-h-[85vh] overflow-y-auto no-scrollbar shadow-3xl no-print">
                <div className="space-y-6">
-                  <div>
-                     <h2 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-primary border-b border-zinc-800 pb-3 mb-6 italic">Lead Intelligence</h2>
+                  <div className="flex items-center gap-2 border-b border-zinc-800/80 pb-4 mb-6">
+                     <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                     <h2 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-primary">BUILDER CONTROL DECK</h2>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                      <div className="space-y-2">
                         <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Client Name</label>
-                        <input value={form.clientName} onChange={e => setForm({...form, clientName: e.target.value})} className="w-full bg-zinc-950/60 border border-zinc-800 rounded-xl h-11 px-4 text-sm font-medium text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-zinc-600" placeholder="Jane Doe" />
+                        <input value={form.clientName} onChange={e => setForm({...form, clientName: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 rounded-xl h-11 px-4 text-xs font-semibold text-white outline-none focus:border-primary/60 focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-zinc-650" placeholder="Jane Doe" />
                      </div>
                      <div className="space-y-2">
                         <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Business Name</label>
-                        <input value={form.businessName} onChange={e => setForm({...form, businessName: e.target.value})} className="w-full bg-zinc-950/60 border border-zinc-800 rounded-xl h-11 px-4 text-sm font-medium text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-zinc-600" placeholder="Acme Global" />
+                        <input value={form.businessName} onChange={e => setForm({...form, businessName: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 rounded-xl h-11 px-4 text-xs font-semibold text-white outline-none focus:border-primary/60 focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-zinc-655" placeholder="Acme Global" />
                      </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                      <div className="space-y-2">
                         <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Country</label>
-                        <select value={form.country} onChange={e => setForm({...form, country: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl h-11 px-4 text-sm font-medium text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all">
+                        <select value={form.country} onChange={e => setForm({...form, country: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl h-11 px-4 text-xs font-semibold text-white outline-none focus:border-primary/60 focus:ring-4 focus:ring-primary/10 transition-all cursor-pointer">
                            <option value="India" className="bg-zinc-950">India</option>
                            <option value="United States" className="bg-zinc-950">United States</option>
                            <option value="United Kingdom" className="bg-zinc-950">United Kingdom</option>
@@ -323,7 +324,7 @@ export default function ProposalsPage() {
                      </div>
                      <div className="space-y-2">
                         <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Currency</label>
-                        <select value={form.currency} onChange={e => setForm({...form, currency: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl h-11 px-4 text-sm font-medium text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all">
+                        <select value={form.currency} onChange={e => setForm({...form, currency: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl h-11 px-4 text-xs font-semibold text-white outline-none focus:border-primary/60 focus:ring-4 focus:ring-primary/10 transition-all cursor-pointer">
                            {CURRENCIES.map(c => <option key={c.value} value={c.value} className="bg-zinc-950">{c.label}</option>)}
                         </select>
                      </div>
@@ -331,22 +332,22 @@ export default function ProposalsPage() {
 
                   <div className="space-y-2">
                      <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Industry / Niche</label>
-                     <input value={form.industry} onChange={e => setForm({...form, industry: e.target.value})} className="w-full bg-zinc-950/60 border border-zinc-800 rounded-xl h-11 px-4 text-sm font-medium text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-zinc-600" placeholder="SaaS / Real Estate / Fintech" />
+                     <input value={form.industry} onChange={e => setForm({...form, industry: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 rounded-xl h-11 px-4 text-xs font-semibold text-white outline-none focus:border-primary/60 focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-zinc-650" placeholder="SaaS / Real Estate / Fintech" />
                   </div>
 
                   <div className="space-y-2">
                      <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Pain Point Description</label>
-                     <textarea value={form.problem} onChange={e => setForm({...form, problem: e.target.value})} className="w-full bg-zinc-950/60 border border-zinc-800 rounded-xl p-4 text-sm font-medium text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-zinc-600 min-h-[90px] no-scrollbar" placeholder="What specific problem are they facing?" />
+                     <textarea value={form.problem} onChange={e => setForm({...form, problem: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 rounded-xl p-4 text-xs font-semibold text-white outline-none focus:border-primary/60 focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-zinc-650 min-h-[90px] no-scrollbar" placeholder="What specific problem are they facing?" />
                   </div>
 
                   <div className="space-y-2">
                      <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Business Impact (The Cost)</label>
-                     <textarea value={form.impact} onChange={e => setForm({...form, impact: e.target.value})} className="w-full bg-zinc-950/60 border border-zinc-800 rounded-xl p-4 text-sm font-medium text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-zinc-600 min-h-[90px] no-scrollbar" placeholder="What is this costing their business monthly?" />
+                     <textarea value={form.impact} onChange={e => setForm({...form, impact: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 rounded-xl p-4 text-xs font-semibold text-white outline-none focus:border-primary/60 focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-zinc-650 min-h-[90px] no-scrollbar" placeholder="What is this costing their business monthly?" />
                   </div>
 
                   <div className="space-y-4 pt-6 border-t border-zinc-800/80">
                      <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Solution Architecture</label>
-                     <div className="grid grid-cols-3 gap-3 bg-zinc-950/40 p-1.5 border border-zinc-800 rounded-xl">
+                     <div className="grid grid-cols-3 gap-3 bg-zinc-900/30 p-1.5 border border-zinc-850 rounded-xl">
                         {Object.keys(PACKAGES).map(pk => {
                            const p = PACKAGES[pk as keyof typeof PACKAGES];
                            const isSelected = form.selectedPackage === pk;
@@ -359,7 +360,7 @@ export default function ProposalsPage() {
                                    "p-3 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer", 
                                    isSelected 
                                      ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
-                                     : "bg-transparent border-transparent text-zinc-400 hover:text-white"
+                                     : "bg-transparent border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/20"
                                 )}
                               >
                                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider">{p.name}</span>
@@ -371,11 +372,11 @@ export default function ProposalsPage() {
                      <div className="grid grid-cols-2 gap-4 pt-2">
                         <div className="space-y-2">
                            <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Price Override</label>
-                           <input value={form.customPrice} onChange={e => setForm({...form, customPrice: e.target.value})} className="w-full bg-zinc-950/60 border border-zinc-800 rounded-xl h-11 px-4 text-sm font-medium text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-zinc-600" placeholder="e.g. ₹28,000" />
+                           <input value={form.customPrice} onChange={e => setForm({...form, customPrice: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 rounded-xl h-11 px-4 text-xs font-semibold text-white outline-none focus:border-primary/60 focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-zinc-650" placeholder="e.g. ₹28,000" />
                         </div>
                         <div className="space-y-2">
                            <label className="text-[9px] font-mono font-bold uppercase tracking-widest text-zinc-500 ml-1">Discovery Call</label>
-                           <input type="datetime-local" value={form.callDate} onChange={e => setForm({...form, callDate: e.target.value})} className="w-full bg-zinc-950/60 border border-zinc-800 rounded-xl h-11 px-4 text-xs font-medium text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all" />
+                           <input type="datetime-local" value={form.callDate} onChange={e => setForm({...form, callDate: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 rounded-xl h-11 px-4 text-xs font-semibold text-white outline-none focus:border-primary/60 focus:ring-4 focus:ring-primary/10 transition-all" />
                         </div>
                      </div>
                   </div>
@@ -384,18 +385,18 @@ export default function ProposalsPage() {
                      <Button 
                         onClick={handleCreate} 
                         disabled={submitting} 
-                        className="h-14 bg-white hover:bg-zinc-200 text-black font-black uppercase text-[10px] tracking-[0.2em] rounded-xl shadow-2xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        className="h-12 bg-white hover:bg-zinc-200 text-black font-bold uppercase text-[9px] tracking-[0.2em] rounded-xl shadow-2xl transition-all flex items-center justify-center gap-2 cursor-pointer w-full"
                      >
                         {submitting ? <Loader2 className="animate-spin" size={14} /> : <CheckSquare size={14} />}
-                        Deploy Architecture
+                        DEPLOY SOLUTION
                      </Button>
                      <Button 
                         onClick={handlePrint} 
                         variant="outline" 
-                        className="h-14 border border-zinc-800 hover:border-zinc-700 bg-transparent text-white font-black uppercase text-[10px] tracking-[0.2em] rounded-xl hover:bg-white/5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        className="h-12 border border-zinc-800 hover:border-zinc-700 bg-transparent hover:bg-zinc-900/30 text-zinc-400 hover:text-white font-bold uppercase text-[9px] tracking-[0.2em] rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer w-full"
                      >
                         <Printer size={14} />
-                        System Print
+                        GENERATE PDF
                      </Button>
                   </div>
                </div>
@@ -476,7 +477,7 @@ export default function ProposalsPage() {
                      <div className="my-auto space-y-8">
                         <div className="space-y-1.5">
                            <span className="text-[9px] font-mono font-bold uppercase tracking-[0.35em] text-[#355CFF] block">01 / ANALYTICS DECK</span>
-                           <h3 className="text-2xl font-bold tracking-tight text-zinc-950 leading-tight">Operational Gap Assessment</h3>
+                           <h3 className="text-2xl font-bold tracking-tight text-zinc-955 leading-tight">Operational Gap Assessment</h3>
                         </div>
 
                         <div className="grid grid-cols-12 gap-8 pt-4">
