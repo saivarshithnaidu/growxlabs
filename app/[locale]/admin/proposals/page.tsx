@@ -528,7 +528,7 @@ export default function ProposalsPage() {
                                  <div 
                                    key={pk} 
                                    className={cn(
-                                      "p-4 rounded-xl border flex flex-col justify-between h-[300px] relative transition-all duration-300",
+                                      "p-4 rounded-xl border flex flex-col justify-between min-h-[300px] h-fit pb-4 relative transition-all duration-300",
                                       isSelected 
                                         ? "border-[#355CFF] bg-[#355CFF]/[0.01] shadow-lg shadow-[#355CFF]/5" 
                                         : "border-zinc-200 bg-white"
@@ -557,11 +557,11 @@ export default function ProposalsPage() {
                                        </div>
                                     </div>
 
-                                    <ul className="space-y-1.5 mt-4 pt-3 border-t border-zinc-150 flex-1 overflow-hidden">
-                                       {p.features.slice(0, 5).map((f, i) => (
+                                    <ul className="space-y-1.5 mt-4 pt-3 border-t border-zinc-150 flex-1">
+                                       {p.features.map((f, i) => (
                                           <li key={i} className="flex items-start gap-1.5 text-[8px] font-medium text-zinc-500 leading-tight">
                                              <CheckCircle2 size={10} className="text-[#355CFF] shrink-0 mt-0.5" />
-                                             <span className="truncate">{f}</span>
+                                             <span className="break-words">{f}</span>
                                           </li>
                                        ))}
                                     </ul>
