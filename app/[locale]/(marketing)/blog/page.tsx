@@ -187,13 +187,13 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
         <section className="mb-20">
           <Reveal y={30}>
             <div className="flex flex-col gap-8 pb-16 border-b border-[#E5E2DC]">
-              <div className="relative w-full max-w-[540px] mx-auto aspect-square rounded-xl overflow-hidden border border-[#E5E2DC] bg-white shadow-sm">
+              <div className="relative w-full aspect-[16/9] md:aspect-[21/9] rounded-2xl overflow-hidden border border-[#E5E2DC] bg-[#0F0F12] shadow-md">
                 <Image
                   src={featuredPost.image}
                   alt={featuredPost.title}
                   fill
                   priority
-                  className="object-contain transition-transform duration-700 hover:scale-[1.01]"
+                  className="object-cover transition-transform duration-700 hover:scale-[1.01]"
                   sizes="(max-w-1200px) 100vw, 1200px"
                 />
               </div>
