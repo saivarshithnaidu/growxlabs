@@ -537,7 +537,7 @@ function PlayCircleIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   3. EFFORT CONTROL DIAGRAM — Widescreen Calibration Panel (Zero Framer Motion)
+   3. EFFORT CONTROL DIAGRAM — Hybrid Browser-Adaptive Console Panel
    ═══════════════════════════════════════════════════════════════════════════ */
 
 interface EffortLevel {
@@ -634,8 +634,20 @@ const effortLevels: EffortLevel[] = [
 ];
 
 export function EffortControlDiagram() {
+  const [isChrome, setIsChrome] = useState(false);
   const [activeId, setActiveId] = useState<string>("high");
+  const [expandedId, setExpandedId] = useState<string | null>("high");
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    // Detect standard Google Chrome (distinguishing from Brave, Edge, Opera, Safari, Firefox, etc.)
+    const isGoogleChrome = 
+      /Chrome/.test(navigator.userAgent) && 
+      /Google Inc/.test(navigator.vendor) && 
+      !(navigator as any).brave;
+    
+    setIsChrome(isGoogleChrome);
+  }, []);
 
   const activeLevel = effortLevels.find((l) => l.id === activeId) || effortLevels[1];
   const ActiveIcon = activeLevel.icon;
@@ -646,6 +658,187 @@ export function EffortControlDiagram() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const toggleExpand = (id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // A. CHROME DETECTED: Show ultra-stable horizontal studio control dashboard
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (isChrome) {
+    return (
+      <div className="w-full bg-[#0F0F12] rounded-2xl border border-white/[0.06] p-6 md:p-8 shadow-2xl overflow-hidden select-none animate-fadeIn">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2.5 mb-2">
+            <div className="w-8 h-8 rounded-lg bg-[#355CFF]/10 flex items-center justify-center">
+              <Gauge className="w-4 h-4 text-[#355CFF]" />
+            </div>
+            <h3 className="text-white font-semibold text-[15px] tracking-tight">
+              Effort Control Dashboard
+            </h3>
+          </div>
+          <p className="text-[#6B7280] text-[12px] leading-relaxed ml-[42px]">
+            Click a selector node below to calibrate Claude's computational intensity
+          </p>
+        </div>
+
+        {/* 4-Segment Calibration Selector Deck */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          {effortLevels.map((level) => {
+            const isActive = activeId === level.id;
+            const IconComponent = level.icon;
+            return (
+              <button
+                key={level.id}
+                onClick={() => setActiveId(level.id)}
+                className={cn(
+                  "flex flex-col items-center justify-center p-3.5 rounded-xl border text-center transition-all duration-300 cursor-pointer relative overflow-hidden",
+                  isActive
+                    ? "border-[#355CFF]/40 bg-[#355CFF]/10"
+                    : "border-white/[0.04] bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/[0.08]"
+                )}
+              >
+                {/* Highlight bar at top of active button */}
+                {isActive && (
+                  <div
+                    className="absolute top-0 left-0 right-0 h-[2px] transition-all duration-300"
+                    style={{ backgroundColor: level.accentColor }}
+                  />
+                )}
+
+                <IconComponent
+                  className="w-5 h-5 mb-2 transition-transform duration-300"
+                  style={{ color: isActive ? level.accentColor : "#6B7280" }}
+                />
+                <span
+                  className="text-[12px] font-bold tracking-tight"
+                  style={{ color: isActive ? "#FFFFFF" : "#9CA3AF" }}
+                >
+                  {level.label}
+                </span>
+                <span className="text-[9px] font-mono text-[#6B7280] mt-0.5 uppercase">
+                  {level.claudeCodeId}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Calibration Detail Panel */}
+        <div className="relative rounded-xl border border-white/[0.06] bg-white/[0.01] p-5 md:p-6 overflow-hidden">
+          {/* Glow backdrop based on active level */}
+          <div
+            className="absolute -top-24 -left-24 w-48 h-48 rounded-full filter blur-[80px] opacity-[0.1] pointer-events-none transition-colors duration-500"
+            style={{ backgroundColor: activeLevel.accentColor }}
+          />
+
+          <div className="relative z-10">
+            {/* Header info */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.04] pb-4 mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/[0.03]">
+                  <ActiveIcon
+                    className="w-5 h-5"
+                    style={{ color: activeLevel.accentColor }}
+                  />
+                </div>
+                <div>
+                  <h4 className="text-white text-[14px] font-bold tracking-tight flex items-center gap-2">
+                    {activeLevel.label} Level
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.04] text-[#9CA3AF]">
+                      --effort={activeLevel.claudeCodeId}
+                    </span>
+                    {activeLevel.claudeCodeId === "high" && (
+                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#355CFF]/15 text-[#355CFF] uppercase tracking-wider">
+                        Default
+                      </span>
+                    )}
+                  </h4>
+                  <p className="text-[#6B7280] text-[11px] mt-0.5 font-mono">
+                    {activeLevel.subtitle}
+                  </p>
+                </div>
+              </div>
+
+              {/* Intensity visual display */}
+              <div className="flex items-center gap-1">
+                <span className="text-[9px] font-mono text-[#6B7280] uppercase tracking-wider mr-2">
+                  Compute Dial
+                </span>
+                {[1, 2, 3, 4].map((n) => (
+                  <div
+                    key={n}
+                    className="w-2 h-4 rounded-sm transition-all duration-300"
+                    style={{
+                      backgroundColor: n <= activeLevel.intensity ? activeLevel.accentColor : "rgba(255,255,255,0.02)",
+                      boxShadow: n <= activeLevel.intensity ? `0 0 10px ${activeLevel.accentColor}30` : "none"
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Description */}
+            <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-5">
+              {activeLevel.description}
+            </p>
+
+            {/* Use Cases */}
+            <div className="mb-5">
+              <h5 className="text-white text-[10px] font-mono uppercase tracking-widest text-[#6B7280] mb-3">
+                Primary Use Cases
+              </h5>
+              <div className="flex flex-wrap gap-2">
+                {activeLevel.useCases.map((useCase) => (
+                  <span
+                    key={useCase}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.04] text-[11px] text-[#9CA3AF] font-mono"
+                  >
+                    <Sparkles
+                      className="w-3 h-3 text-[#6B7280]"
+                      style={{ color: activeLevel.accentColor }}
+                    />
+                    {useCase}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Interactive copyable terminal command */}
+            <div className="flex items-center justify-between p-3 rounded-lg bg-[#070709] border border-white/[0.04] font-mono text-[11px]">
+              <div className="truncate text-left pr-4">
+                <span className="text-[#6B7280]">$ </span>
+                <span className="text-[#9CA3AF]">claude --effort </span>
+                <span className="font-bold" style={{ color: activeLevel.accentColor }}>
+                  {activeLevel.claudeCodeId}
+                </span>
+                <span className="text-[#6B7280]"> "execute refactor"</span>
+              </div>
+              <button
+                onClick={() => handleCopy(`claude --effort ${activeLevel.claudeCodeId} "execute refactor"`)}
+                className="shrink-0 text-[10px] font-bold font-mono px-2.5 py-1 rounded bg-white/[0.04] hover:bg-white/[0.08] text-white hover:text-white border border-white/[0.06] transition-all cursor-pointer"
+              >
+                {copied ? "Copied!" : "Copy CMD"}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-6 pt-5 border-t border-white/[0.06] flex items-center gap-2">
+          <Layers className="w-3.5 h-3.5 text-[#6B7280]" />
+          <span className="text-[10px] font-mono text-[#6B7280] uppercase tracking-wider">
+            System calibration successful — compute is dynamically allocated safely
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // B. OTHER BROWSERS (Brave, Firefox, Safari): Show premium expandable accordion list
+  // ═══════════════════════════════════════════════════════════════════════════
   return (
     <div className="w-full bg-[#0F0F12] rounded-2xl border border-white/[0.06] p-6 md:p-8 shadow-2xl overflow-hidden select-none">
       {/* Header */}
@@ -655,161 +848,147 @@ export function EffortControlDiagram() {
             <Gauge className="w-4 h-4 text-[#355CFF]" />
           </div>
           <h3 className="text-white font-semibold text-[15px] tracking-tight">
-            Effort Control Dashboard
+            Effort Control Levels
           </h3>
         </div>
         <p className="text-[#6B7280] text-[12px] leading-relaxed ml-[42px]">
-          Click a selector node below to calibrate Claude's computational intensity
+          Dial Claude&apos;s computational intensity to match your task complexity
         </p>
       </div>
 
-      {/* 4-Segment Calibration Selector Deck */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      {/* Effort Level Blocks */}
+      <div className="space-y-3">
         {effortLevels.map((level) => {
-          const isActive = activeId === level.id;
-          const IconComponent = level.icon;
+          const isExpanded = expandedId === level.id;
+          const LevelIcon = level.icon;
+
           return (
-            <button
+            <div
               key={level.id}
-              onClick={() => setActiveId(level.id)}
               className={cn(
-                "flex flex-col items-center justify-center p-3.5 rounded-xl border text-center transition-all duration-300 cursor-pointer relative overflow-hidden",
-                isActive
-                  ? "border-[#355CFF]/40 bg-[#355CFF]/10"
-                  : "border-white/[0.04] bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/[0.08]"
+                "relative rounded-xl border cursor-pointer transition-[border-color,background-color] duration-300 overflow-hidden",
+                isExpanded
+                  ? "border-white/[0.12] bg-white/[0.04]"
+                  : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.1]"
               )}
+              onClick={() => toggleExpand(level.id)}
             >
-              {/* Highlight bar at top of active button */}
-              {isActive && (
+              {/* Intensity Gradient Bar */}
+              <div className="absolute top-0 left-0 bottom-0 w-1 rounded-l-xl overflow-hidden bg-white/10">
                 <div
-                  className="absolute top-0 left-0 right-0 h-[2px] transition-all duration-300"
-                  style={{ backgroundColor: level.accentColor }}
-                />
-              )}
-
-              <IconComponent
-                className="w-5 h-5 mb-2 transition-transform duration-300"
-                style={{ color: isActive ? level.accentColor : "#6B7280" }}
-              />
-              <span
-                className="text-[12px] font-bold tracking-tight"
-                style={{ color: isActive ? "#FFFFFF" : "#9CA3AF" }}
-              >
-                {level.label}
-              </span>
-              <span className="text-[9px] font-mono text-[#6B7280] mt-0.5 uppercase">
-                {level.claudeCodeId}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Calibration Detail Panel */}
-      <div className="relative rounded-xl border border-white/[0.06] bg-white/[0.01] p-5 md:p-6 overflow-hidden">
-        {/* Glow backdrop based on active level */}
-        <div
-          className="absolute -top-24 -left-24 w-48 h-48 rounded-full filter blur-[80px] opacity-[0.1] pointer-events-none transition-colors duration-500"
-          style={{ backgroundColor: activeLevel.accentColor }}
-        />
-
-        <div className="relative z-10">
-          {/* Header info */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.04] pb-4 mb-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/[0.03]">
-                <ActiveIcon
-                  className="w-5 h-5"
-                  style={{ color: activeLevel.accentColor }}
-                />
-              </div>
-              <div>
-                <h4 className="text-white text-[14px] font-bold tracking-tight flex items-center gap-2">
-                  {activeLevel.label} Level
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.04] text-[#9CA3AF]">
-                    --effort={activeLevel.claudeCodeId}
-                  </span>
-                  {activeLevel.claudeCodeId === "high" && (
-                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#355CFF]/15 text-[#355CFF] uppercase tracking-wider">
-                      Default
-                    </span>
-                  )}
-                </h4>
-                <p className="text-[#6B7280] text-[11px] mt-0.5 font-mono">
-                  {activeLevel.subtitle}
-                </p>
-              </div>
-            </div>
-
-            {/* Intensity visual display */}
-            <div className="flex items-center gap-1">
-              <span className="text-[9px] font-mono text-[#6B7280] uppercase tracking-wider mr-2">
-                Compute Dial
-              </span>
-              {[1, 2, 3, 4].map((n) => (
-                <div
-                  key={n}
-                  className="w-2 h-4 rounded-sm transition-all duration-300"
+                  className="w-full h-full opacity-60"
                   style={{
-                    backgroundColor: n <= activeLevel.intensity ? activeLevel.accentColor : "rgba(255,255,255,0.02)",
-                    boxShadow: n <= activeLevel.intensity ? `0 0 10px ${activeLevel.accentColor}30` : "none"
+                    background: `linear-gradient(180deg, ${level.accentColor}, ${level.accentColor}40)`,
                   }}
                 />
-              ))}
-            </div>
-          </div>
+              </div>
 
-          {/* Description */}
-          <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-5">
-            {activeLevel.description}
-          </p>
-
-          {/* Use Cases */}
-          <div className="mb-5">
-            <h5 className="text-white text-[10px] font-mono uppercase tracking-widest text-[#6B7280] mb-3">
-              Primary Use Cases
-            </h5>
-            <div className="flex flex-wrap gap-2">
-              {activeLevel.useCases.map((useCase) => (
-                <span
-                  key={useCase}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.04] text-[11px] text-[#9CA3AF] font-mono"
+              {/* Main Row */}
+              <div className="flex items-center gap-4 p-4 pl-5">
+                {/* Icon */}
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors",
+                    isExpanded ? "bg-white/10" : "bg-white/[0.04]"
+                  )}
                 >
-                  <Sparkles
-                    className="w-3 h-3 text-[#6B7280]"
-                    style={{ color: activeLevel.accentColor }}
+                  <LevelIcon
+                    className="w-5 h-5"
+                    style={{ color: level.accentColor }}
                   />
-                  {useCase}
-                </span>
-              ))}
-            </div>
-          </div>
+                </div>
 
-          {/* Interactive copyable terminal command */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-[#070709] border border-white/[0.04] font-mono text-[11px]">
-            <div className="truncate text-left pr-4">
-              <span className="text-[#6B7280]">$ </span>
-              <span className="text-[#9CA3AF]">claude --effort </span>
-              <span className="font-bold" style={{ color: activeLevel.accentColor }}>
-                {activeLevel.claudeCodeId}
-              </span>
-              <span className="text-[#6B7280]"> "execute refactor"</span>
+                {/* Text */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="text-[14px] font-semibold tracking-tight"
+                      style={{
+                        color: isExpanded ? level.accentColor : "#E5E7EB",
+                      }}
+                    >
+                      {level.label}
+                    </span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-[#9CA3AF]">
+                      {level.claudeCodeId}
+                    </span>
+                    {level.claudeCodeId === "high" && (
+                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#355CFF]/10 text-[#355CFF] uppercase tracking-wider">
+                        Default
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[12px] text-[#6B7280] mt-0.5 truncate">
+                    {level.subtitle}
+                  </p>
+                </div>
+
+                {/* Intensity Meter */}
+                <div className="flex items-center gap-1 shrink-0">
+                  {[1, 2, 3, 4].map((n) => (
+                    <div
+                      key={n}
+                      className="w-2.5 h-5 rounded-sm transition-all duration-350"
+                      style={{
+                        backgroundColor: n <= level.intensity ? level.accentColor : "rgba(255,255,255,0.02)"
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Expanded Content (Stable pure-CSS transition) */}
+              <div className={cn(
+                "overflow-hidden transition-all duration-300 ease-in-out pl-[4.25rem] pr-5",
+                isExpanded ? "max-h-[350px] pb-5 opacity-100" : "max-h-0 opacity-0"
+              )}>
+                <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-4">
+                  {level.description}
+                </p>
+
+                {/* Use Cases */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {level.useCases.map((useCase) => (
+                    <span
+                      key={useCase}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.06] text-[11px] text-[#9CA3AF] font-mono"
+                    >
+                      <Sparkles
+                        className="w-3 h-3"
+                        style={{ color: level.accentColor }}
+                      />
+                      {useCase}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Copyable terminal command inside accordion */}
+                <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#070709] border border-white/[0.04] font-mono text-[10px]">
+                  <div className="truncate text-left pr-4">
+                    <span className="text-[#6B7280]">$ </span>
+                    <span className="text-[#9CA3AF]">claude --effort </span>
+                    <span className="font-bold" style={{ color: level.accentColor }}>
+                      {level.claudeCodeId}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleCopy(`claude --effort ${level.claudeCodeId}`)}
+                    className="shrink-0 font-bold px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] text-white hover:text-white border border-white/[0.06] transition-all cursor-pointer"
+                  >
+                    {copied && expandedId === level.id ? "Copied!" : "Copy"}
+                  </button>
+                </div>
+              </div>
             </div>
-            <button
-              onClick={() => handleCopy(`claude --effort ${activeLevel.claudeCodeId} "execute refactor"`)}
-              className="shrink-0 text-[10px] font-bold font-mono px-2.5 py-1 rounded bg-white/[0.04] hover:bg-white/[0.08] text-white hover:text-white border border-white/[0.06] transition-all cursor-pointer"
-            >
-              {copied ? "Copied!" : "Copy CMD"}
-            </button>
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* Footer */}
       <div className="mt-6 pt-5 border-t border-white/[0.06] flex items-center gap-2">
         <Layers className="w-3.5 h-3.5 text-[#6B7280]" />
         <span className="text-[10px] font-mono text-[#6B7280] uppercase tracking-wider">
-          System calibration successful — compute is dynamically allocated safely
+          Click any level to explore details — Higher effort = deeper reasoning
         </span>
       </div>
     </div>
