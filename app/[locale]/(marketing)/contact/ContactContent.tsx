@@ -68,7 +68,7 @@ export function ContactContent() {
 
   const contactItems = [
     { icon: Mail, label: "Email", value: "hello@growxlabs.tech", href: "mailto:hello@growxlabs.tech" },
-    { icon: Phone, label: "Phone", value: "+91 81859 58336", href: "tel:+918185958336" },
+    { icon: Phone, label: "Phone", value: "+91 87909 07144", href: "tel:+918790907144" },
     { icon: MapPin, label: "Location", value: "Guntur, Andhra Pradesh, India" },
   ];
 
@@ -106,7 +106,7 @@ export function ContactContent() {
 
         <div className="flex justify-center mb-14">
           <a
-            href="https://wa.me/918185958336"
+            href="https://wa.me/918790907144"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 px-6 py-4 bg-[#355CFF] text-white font-semibold rounded-md hover:bg-[#2A4AD4] transition-all shadow-sm"
