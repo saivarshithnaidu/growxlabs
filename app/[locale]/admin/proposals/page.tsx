@@ -630,38 +630,38 @@ export default function ProposalsPage() {
 
                         <div className="grid grid-cols-3 gap-4">
                            {CAPABILITIES.map((cap, idx) => (
-                              <div key={idx} className="bg-zinc-50 border border-zinc-200/60 p-4 rounded-xl flex flex-col justify-between h-[160px]">
-                                 <div className="h-8 w-8 bg-white border border-zinc-200 rounded-lg flex items-center justify-center mb-4 shadow-sm shrink-0">
-                                    <svg className="w-4 h-4 text-[#355CFF]" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                              <div key={idx} className="bg-zinc-50 border border-zinc-200/60 p-4 rounded-xl flex flex-col">
+                                 <div className="h-7 w-7 bg-white border border-zinc-200 rounded-lg flex items-center justify-center mb-3 shadow-sm shrink-0">
+                                    <svg className="w-3.5 h-3.5 text-[#355CFF]" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                                        <path strokeLinecap="round" strokeLinejoin="round" d={cap.icon} />
                                     </svg>
                                  </div>
-                                 <div className="space-y-1 flex-1 flex flex-col justify-end">
-                                    <h4 className="text-[11px] font-bold tracking-tight text-zinc-900 uppercase leading-snug">{cap.name}</h4>
-                                    <p className="text-[8px] font-medium leading-relaxed text-zinc-400 mt-1">{cap.description}</p>
+                                 <div className="space-y-1">
+                                    <h4 className="text-[10px] font-bold tracking-tight text-zinc-900 uppercase leading-snug">{cap.name}</h4>
+                                    <p className="text-[9px] font-medium leading-relaxed text-zinc-400">{cap.description}</p>
                                  </div>
                               </div>
                            ))}
                         </div>
 
-                        <div className="grid grid-cols-3 gap-6 pt-5 border-t border-zinc-200/60">
+                        <div className="grid grid-cols-3 gap-5 pt-5 border-t border-zinc-200/60">
                            {[
                               {
                                  title: "AI-Accelerated",
-                                 desc: "Leveraging structured LLM check loops to deliver projects 3x faster than conventional methods."
+                                 desc: "Structured workflows to deliver projects 3x faster than conventional methods."
                               },
                               {
-                                 title: "UDYAM Accountable",
-                                 desc: "Registered Indian micro-enterprise entity under Ministry of MSME, ensuring solid compliance."
+                                 title: "UDYAM Registered",
+                                 desc: "Certified micro-enterprise under Ministry of MSME, India."
                               },
                               {
                                  title: "Professional Standards",
-                                 desc: "Deploying enterprise-grade codebases, optimized database queries, and custom configurations."
+                                 desc: "Enterprise-grade code, optimized queries, and custom configurations."
                               }
                            ].map((t, idx) => (
-                              <div key={idx} className="space-y-1.5">
+                              <div key={idx} className="space-y-1">
                                  <h5 className="text-[9px] font-mono font-bold uppercase tracking-wider text-zinc-700">{t.title}</h5>
-                                 <p className="text-[8px] text-zinc-400 font-medium leading-normal">{t.desc}</p>
+                                 <p className="text-[9px] text-zinc-400 font-medium leading-relaxed">{t.desc}</p>
                               </div>
                            ))}
                         </div>
