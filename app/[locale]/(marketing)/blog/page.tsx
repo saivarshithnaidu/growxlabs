@@ -38,16 +38,24 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   // Blog posts database
   const featuredPost = {
-    slug: "google-io-2026",
-    title: "Google I/O 2026: The Beginning of the AI-Native Internet",
-    excerpt: "Explore the shift from reactive AI chatbots to proactive, 24/7 background AI infrastructure. Discover how Gemini 3.5 Flash, Gemini Spark, and Antigravity are redefining the modern internet and developer workflows.",
-    category: "AI / Google / Technology",
-    date: "May 27, 2026",
-    readTime: "6 min read",
-    image: "/images/blog-google-io-2026.png"
+    slug: "claude-opus-4-8-anthropic-ai-model",
+    title: "Claude Opus 4.8: Anthropic's Most Advanced AI Model — Benchmarks, Features & Full Review",
+    excerpt: "Complete analysis of Claude Opus 4.8 released May 28, 2026. Explore benchmark results (SWE-Bench 69.2%, Terminal-Bench 74.2%), Dynamic Workflows, Effort Control, pricing, API access, and what's next with Claude Mythos.",
+    category: "AI / Anthropic / Engineering",
+    date: "May 29, 2026",
+    readTime: "12 min read",
+    image: "/images/blog-claude-opus-4-8.png"
   };
 
   const regularPosts = [
+    {
+      slug: "google-io-2026",
+      title: "Google I/O 2026: The Beginning of the AI-Native Internet",
+      excerpt: "Explore the shift from reactive AI chatbots to proactive, 24/7 background AI infrastructure. Discover how Gemini 3.5 Flash, Gemini Spark, and Antigravity are redefining the modern internet.",
+      category: "AI / Google / Technology",
+      date: "May 27, 2026",
+      readTime: "6 min read"
+    },
     {
       slug: "ferraris-electric-future-why-the-luce-marks-a-historic-turning-point",
       title: "Ferrari’s Electric Future: Why The Luce Marks A Historic Turning Point",
