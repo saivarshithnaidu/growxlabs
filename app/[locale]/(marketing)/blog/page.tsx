@@ -49,6 +49,14 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   const regularPosts = [
     {
+      slug: "ferraris-electric-future-why-the-luce-marks-a-historic-turning-point",
+      title: "Ferrari’s Electric Future: Why The Luce Marks A Historic Turning Point",
+      excerpt: "Analyze how Ferrari is navigating its transition to electrification. Discover how solid-state engineering, axial flux motors, and predictive software dynamics bridge heritage and innovation.",
+      category: "Case Study / Automotive / Future",
+      date: "May 29, 2026",
+      readTime: "7 min read"
+    },
+    {
       slug: "google-search-is-no-longer-just-search",
       title: "Google Search Is No Longer Just Search: The Rise of the Execution Engine",
       excerpt: "Explore the historic transition of Google Search from an index of web links to an AI-native execution workspace. Discover how Gemini's infrastructure layer changes search forever.",
