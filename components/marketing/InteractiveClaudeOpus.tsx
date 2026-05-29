@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   BarChart3,
   TrendingUp,
@@ -15,9 +14,6 @@ import {
   Rocket,
   Sparkles,
   Activity,
-  ChevronRight,
-  ArrowDown,
-  PlayCircle,
   Clock,
   Shield,
   Target,
@@ -27,7 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   1. CLAUDE OPUS BENCHMARKS — Animated bar chart comparison
+   1. CLAUDE OPUS BENCHMARKS — Premium Animated Bar Chart (Zero Framer Motion)
    ═══════════════════════════════════════════════════════════════════════════ */
 
 interface BenchmarkItem {
@@ -83,30 +79,18 @@ const benchmarks: BenchmarkItem[] = [
 ];
 
 export function ClaudeOpusBenchmarks() {
-  const [hasAnimated, setHasAnimated] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          setHasAnimated(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-    if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [hasAnimated]);
+    const timer = setTimeout(() => setMounted(true), 200);
+    return () => clearTimeout(timer);
+  }, []);
 
   const maxValue = 100;
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full bg-[#0F0F12] rounded-2xl border border-white/[0.06] p-6 md:p-8 shadow-2xl overflow-hidden select-none"
-    >
+    <div className="w-full bg-[#0F0F12] rounded-2xl border border-white/[0.06] p-6 md:p-8 shadow-2xl overflow-hidden select-none">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
@@ -125,15 +109,11 @@ export function ClaudeOpusBenchmarks() {
         <div className="flex items-center gap-4 ml-[42px] sm:ml-0">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-sm bg-[#D97706]" />
-            <span className="text-[11px] text-[#9CA3AF] font-mono">
-              Opus 4.7
-            </span>
+            <span className="text-[11px] text-[#9CA3AF] font-mono">Opus 4.7</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-sm bg-[#355CFF]" />
-            <span className="text-[11px] text-[#9CA3AF] font-mono">
-              Opus 4.8
-            </span>
+            <span className="text-[11px] text-[#9CA3AF] font-mono">Opus 4.8</span>
           </div>
         </div>
       </div>
@@ -143,23 +123,14 @@ export function ClaudeOpusBenchmarks() {
         {benchmarks.map((bench, i) => {
           const isLegal = bench.name === "Legal Agent Benchmark";
           return (
-            <motion.div
+            <div
               key={bench.name}
               className={cn(
-                "group relative rounded-xl p-4 transition-colors duration-200",
-                hoveredIndex === i
-                  ? "bg-white/[0.04]"
-                  : "bg-transparent"
+                "group relative rounded-xl p-4 transition-colors duration-300",
+                hoveredIndex === i ? "bg-white/[0.04]" : "bg-transparent"
               )}
               onMouseEnter={() => setHoveredIndex(i)}
               onMouseLeave={() => setHoveredIndex(null)}
-              initial={{ opacity: 0, x: -20 }}
-              animate={
-                hasAnimated
-                  ? { opacity: 1, x: 0 }
-                  : { opacity: 0, x: -20 }
-              }
-              transition={{ delay: i * 0.1, duration: 0.5, ease: "easeOut" }}
             >
               {/* Label Row */}
               <div className="flex items-center justify-between mb-3">
@@ -168,35 +139,17 @@ export function ClaudeOpusBenchmarks() {
                     {bench.name}
                   </span>
                   {bench.isBestInClass && (
-                    <motion.span
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20"
-                      initial={{ scale: 0 }}
-                      animate={hasAnimated ? { scale: 1 } : { scale: 0 }}
-                      transition={{ delay: i * 0.1 + 0.4, type: "spring" }}
-                    >
-                      <Sparkles className="w-3 h-3 text-emerald-400" />
-                      <span className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
-                        {bench.highlight}
-                      </span>
-                    </motion.span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                      <Sparkles className="w-3 h-3" />
+                      {bench.highlight}
+                    </span>
                   )}
                 </div>
                 {bench.delta && (
-                  <motion.div
-                    className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={
-                      hasAnimated
-                        ? { opacity: 1, scale: 1 }
-                        : { opacity: 0, scale: 0.8 }
-                    }
-                    transition={{ delay: i * 0.1 + 0.6, duration: 0.3 }}
-                  >
-                    <TrendingUp className="w-3 h-3 text-emerald-400" />
-                    <span className="text-emerald-400 text-[12px] font-bold font-mono">
-                      {bench.delta}
-                    </span>
-                  </motion.div>
+                  <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 text-[12px] font-bold font-mono">
+                    <TrendingUp className="w-3 h-3" />
+                    {bench.delta}
+                  </div>
                 )}
               </div>
 
@@ -207,24 +160,14 @@ export function ClaudeOpusBenchmarks() {
                     4.7
                   </span>
                   <div className="flex-1 h-6 bg-white/[0.04] rounded-md overflow-hidden relative">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-[#D97706] to-[#F59E0B] rounded-md relative"
-                      initial={{ width: 0 }}
-                      animate={
-                        hasAnimated
-                          ? { width: `${(bench.opus47 / maxValue) * 100}%` }
-                          : { width: 0 }
-                      }
-                      transition={{
-                        delay: i * 0.1 + 0.2,
-                        duration: 0.8,
-                        ease: "easeOut",
-                      }}
+                    <div
+                      className="h-full bg-gradient-to-r from-[#D97706] to-[#F59E0B] rounded-md relative transition-[width] duration-1000 ease-out"
+                      style={{ width: mounted ? `${(bench.opus47 / maxValue) * 100}%` : "0%" }}
                     >
                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] font-bold font-mono text-white drop-shadow-sm">
                         {bench.opus47}%
                       </span>
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -235,27 +178,19 @@ export function ClaudeOpusBenchmarks() {
                   4.8
                 </span>
                 <div className="flex-1 h-6 bg-white/[0.04] rounded-md overflow-hidden relative">
-                  <motion.div
+                  <div
                     className={cn(
-                      "h-full rounded-md relative",
+                      "h-full rounded-md relative transition-[width] duration-1000 ease-out",
                       isLegal
                         ? "bg-gradient-to-r from-[#355CFF] via-[#6366F1] to-emerald-500"
                         : "bg-gradient-to-r from-[#355CFF] to-[#6366F1]"
                     )}
-                    initial={{ width: 0 }}
-                    animate={
-                      hasAnimated
-                        ? {
-                            width: isLegal
-                              ? "100%"
-                              : `${(bench.opus48 / maxValue) * 100}%`,
-                          }
-                        : { width: 0 }
-                    }
-                    transition={{
-                      delay: i * 0.1 + 0.35,
-                      duration: 0.9,
-                      ease: "easeOut",
+                    style={{
+                      width: mounted
+                        ? isLegal
+                          ? "100%"
+                          : `${(bench.opus48 / maxValue) * 100}%`
+                        : "0%",
                     }}
                   >
                     {isLegal ? (
@@ -268,21 +203,16 @@ export function ClaudeOpusBenchmarks() {
                         {bench.opus48}%
                       </span>
                     )}
-                  </motion.div>
+                  </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>
 
       {/* Footer */}
-      <motion.div
-        className="mt-8 pt-5 border-t border-white/[0.06] flex items-center justify-between"
-        initial={{ opacity: 0 }}
-        animate={hasAnimated ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ delay: 0.8 }}
-      >
+      <div className="mt-8 pt-5 border-t border-white/[0.06] flex items-center justify-between">
         <div className="flex items-center gap-2 text-[#6B7280]">
           <Activity className="w-3.5 h-3.5" />
           <span className="text-[10px] font-mono uppercase tracking-wider">
@@ -295,13 +225,13 @@ export function ClaudeOpusBenchmarks() {
             All improvements verified
           </span>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   2. DYNAMIC WORKFLOW VIZ — Cinematic animated workflow
+   2. DYNAMIC WORKFLOW VIZ — Cinematic Workflow (Zero Framer Motion)
    ═══════════════════════════════════════════════════════════════════════════ */
 
 interface WorkflowStep {
@@ -323,7 +253,7 @@ const workflowSteps: WorkflowStep[] = [
       "Claude plans the full scope of work upfront — analyzing the codebase, decomposing the task, and mapping dependencies before a single line is touched.",
     icon: Brain,
     color: "#8B5CF6",
-    glow: "shadow-[0_0_30px_rgba(139,92,246,0.3)]",
+    glow: "shadow-[0_0_20px_rgba(139,92,246,0.15)]",
   },
   {
     id: "spawn",
@@ -333,7 +263,7 @@ const workflowSteps: WorkflowStep[] = [
       "Hundreds of parallel subagents are spawned simultaneously, each assigned a discrete chunk of the work graph. This is massively concurrent execution.",
     icon: Network,
     color: "#355CFF",
-    glow: "shadow-[0_0_30px_rgba(53,92,255,0.3)]",
+    glow: "shadow-[0_0_20px_rgba(53,92,255,0.15)]",
   },
   {
     id: "execute",
@@ -343,7 +273,7 @@ const workflowSteps: WorkflowStep[] = [
       "Each subagent independently handles its piece — editing files, running tests, validating outputs. No bottleneck. No sequential wait.",
     icon: Zap,
     color: "#F59E0B",
-    glow: "shadow-[0_0_30px_rgba(245,158,11,0.3)]",
+    glow: "shadow-[0_0_20px_rgba(245,158,11,0.15)]",
   },
   {
     id: "verify",
@@ -353,7 +283,7 @@ const workflowSteps: WorkflowStep[] = [
       "All outputs are verified against acceptance criteria. Tests pass, lint passes, type-checks pass. Nothing ships without proof.",
     icon: Shield,
     color: "#10B981",
-    glow: "shadow-[0_0_30px_rgba(16,185,129,0.3)]",
+    glow: "shadow-[0_0_20px_rgba(16,185,129,0.15)]",
   },
   {
     id: "deliver",
@@ -363,7 +293,7 @@ const workflowSteps: WorkflowStep[] = [
       "Final merged output delivered as a cohesive, clean result. Thousands of changes, one unified delivery. Production-ready.",
     icon: Package,
     color: "#EC4899",
-    glow: "shadow-[0_0_30px_rgba(236,72,153,0.3)]",
+    glow: "shadow-[0_0_20px_rgba(236,72,153,0.15)]",
   },
 ];
 
@@ -376,7 +306,7 @@ export function DynamicWorkflowViz() {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
       setActiveStep((prev) => (prev + 1) % workflowSteps.length);
-    }, 2000);
+    }, 2500);
   }, []);
 
   useEffect(() => {
@@ -425,7 +355,7 @@ export function DynamicWorkflowViz() {
               : "bg-white/[0.04] text-[#9CA3AF] border border-white/[0.08]"
           )}
         >
-          <PlayCircle className="w-3.5 h-3.5" />
+          <PlayCircleIcon className="w-3.5 h-3.5" />
           {isAutoCycling ? "Auto-Playing" : "Paused"}
         </button>
       </div>
@@ -442,51 +372,19 @@ export function DynamicWorkflowViz() {
               {/* Connection Line */}
               {i > 0 && (
                 <div className="relative flex justify-center h-8 md:h-10">
-                  <motion.div
-                    className="w-[2px] h-full origin-top"
+                  <div
+                    className="w-[2px] h-full transition-all duration-500"
                     style={{
                       background: isPast || isActive
                         ? `linear-gradient(180deg, ${workflowSteps[i - 1].color}, ${step.color})`
                         : "rgba(255,255,255,0.06)",
                     }}
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: 1 }}
-                    transition={{ delay: i * 0.15, duration: 0.4 }}
                   />
-                  {/* Animated dash overlay */}
-                  {(isPast || isActive) && (
-                    <motion.div
-                      className="absolute w-[2px] h-full"
-                      style={{
-                        backgroundImage: `repeating-linear-gradient(180deg, transparent, transparent 4px, ${step.color} 4px, ${step.color} 8px)`,
-                        backgroundSize: "2px 12px",
-                      }}
-                      animate={{ backgroundPositionY: ["0px", "24px"] }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 0.8,
-                        ease: "linear",
-                      }}
-                    />
-                  )}
-                  {/* Flow particles */}
-                  {isActive && (
-                    <motion.div
-                      className="absolute w-2 h-2 rounded-full"
-                      style={{ backgroundColor: step.color }}
-                      animate={{ top: ["0%", "100%"], opacity: [1, 0] }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 0.6,
-                        ease: "easeIn",
-                      }}
-                    />
-                  )}
                 </div>
               )}
 
               {/* Step Node */}
-              <motion.div
+              <div
                 onClick={() => handleStepClick(i)}
                 className={cn(
                   "relative flex items-start gap-4 md:gap-5 p-4 md:p-5 rounded-xl cursor-pointer transition-all duration-300 border",
@@ -496,37 +394,17 @@ export function DynamicWorkflowViz() {
                     ? "bg-white/[0.02] border-white/[0.04]"
                     : "bg-transparent border-transparent hover:bg-white/[0.02]"
                 )}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
               >
                 {/* Step Icon */}
                 <div className="relative shrink-0">
-                  <motion.div
+                  <div
                     className={cn(
-                      "w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center relative",
-                      isActive
-                        ? "bg-white/10"
-                        : isPast
-                        ? "bg-white/[0.06]"
-                        : "bg-white/[0.03]"
+                      "w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center relative transition-all duration-500",
+                      isActive ? "bg-white/10" : isPast ? "bg-white/[0.06]" : "bg-white/[0.03]"
                     )}
-                    animate={
-                      isActive
-                        ? {
-                            boxShadow: [
-                              `0 0 0px ${step.color}00`,
-                              `0 0 20px ${step.color}40`,
-                              `0 0 0px ${step.color}00`,
-                            ],
-                          }
-                        : {}
-                    }
-                    transition={
-                      isActive
-                        ? { repeat: Infinity, duration: 2, ease: "easeInOut" }
-                        : {}
-                    }
+                    style={{
+                      boxShadow: isActive ? `0 0 15px ${step.color}25` : "none"
+                    }}
                   >
                     <StepIcon
                       className="w-5 h-5 md:w-6 md:h-6"
@@ -534,11 +412,11 @@ export function DynamicWorkflowViz() {
                         color: isActive || isPast ? step.color : "#6B7280",
                       }}
                     />
-                  </motion.div>
+                  </div>
                   {/* Step number badge */}
                   <div
                     className={cn(
-                      "absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold font-mono",
+                      "absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold font-mono transition-all duration-300",
                       isActive || isPast
                         ? "text-white"
                         : "bg-white/[0.06] text-[#6B7280]"
@@ -557,7 +435,7 @@ export function DynamicWorkflowViz() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span
-                      className="text-[10px] font-mono font-bold uppercase tracking-[0.2em]"
+                      className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] transition-all duration-300"
                       style={{
                         color: isActive || isPast ? step.color : "#6B7280",
                       }}
@@ -565,14 +443,9 @@ export function DynamicWorkflowViz() {
                       {step.label}
                     </span>
                     {isActive && (
-                      <motion.span
-                        className="w-1.5 h-1.5 rounded-full"
+                      <span
+                        className="w-1.5 h-1.5 rounded-full animate-pulse"
                         style={{ backgroundColor: step.color }}
-                        animate={{ opacity: [1, 0.3, 1] }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 1.2,
-                        }}
                       />
                     )}
                     {isPast && (
@@ -584,42 +457,24 @@ export function DynamicWorkflowViz() {
                   </div>
                   <h4
                     className={cn(
-                      "text-[14px] font-semibold tracking-tight mb-1",
+                      "text-[14px] font-semibold tracking-tight mb-1 transition-colors duration-300",
                       isActive ? "text-white" : "text-[#9CA3AF]"
                     )}
                   >
                     {step.title}
                   </h4>
-                  <AnimatePresence mode="wait">
-                    {isActive && (
-                      <motion.p
-                        className="text-[12px] text-[#9CA3AF] leading-relaxed"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {step.description}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
+                  
+                  {/* Static height info container (zero layout shift) */}
+                  <div className={cn(
+                    "overflow-hidden transition-all duration-300",
+                    isActive ? "max-h-[100px] opacity-100 mt-1" : "max-h-0 opacity-0"
+                  )}>
+                    <p className="text-[12px] text-[#9CA3AF] leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-
-                {/* Active indicator arrow */}
-                {isActive && (
-                  <motion.div
-                    className="shrink-0 self-center"
-                    initial={{ opacity: 0, x: -5 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <ChevronRight
-                      className="w-5 h-5"
-                      style={{ color: step.color }}
-                    />
-                  </motion.div>
-                )}
-              </motion.div>
+              </div>
             </React.Fragment>
           );
         })}
@@ -629,26 +484,19 @@ export function DynamicWorkflowViz() {
       <div className="mt-8 pt-5 border-t border-white/[0.06]">
         <div className="flex items-center gap-2">
           {workflowSteps.map((step, i) => (
-            <motion.div
+            <div
               key={step.id}
               className="flex-1 h-1.5 rounded-full overflow-hidden bg-white/[0.04] cursor-pointer"
               onClick={() => handleStepClick(i)}
             >
-              <motion.div
-                className="h-full rounded-full"
-                style={{ backgroundColor: step.color }}
-                initial={{ width: 0 }}
-                animate={{
-                  width:
-                    i < activeStep
-                      ? "100%"
-                      : i === activeStep
-                      ? "100%"
-                      : "0%",
+              <div
+                className="h-full rounded-full transition-all duration-500 ease-out"
+                style={{
+                  backgroundColor: step.color,
+                  width: i <= activeStep ? "100%" : "0%"
                 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
               />
-            </motion.div>
+            </div>
           ))}
         </div>
         <div className="flex items-center justify-between mt-3">
@@ -656,7 +504,7 @@ export function DynamicWorkflowViz() {
             Stage {activeStep + 1} of {workflowSteps.length}
           </span>
           <span
-            className="text-[10px] font-mono font-bold uppercase tracking-wider"
+            className="text-[10px] font-mono font-bold uppercase tracking-wider transition-colors duration-300"
             style={{ color: workflowSteps[activeStep].color }}
           >
             {workflowSteps[activeStep].label}
@@ -667,8 +515,29 @@ export function DynamicWorkflowViz() {
   );
 }
 
+// Simple internal icon helper for zero dependencies
+function PlayCircleIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polygon points="10 8 16 12 10 16 10 8" />
+    </svg>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
-   3. EFFORT CONTROL DIAGRAM — Expandable effort level blocks
+   3. EFFORT CONTROL DIAGRAM — Widescreen Calibration Panel (Zero Framer Motion)
    ═══════════════════════════════════════════════════════════════════════════ */
 
 interface EffortLevel {
@@ -806,22 +675,20 @@ export function EffortControlDiagram() {
               className={cn(
                 "flex flex-col items-center justify-center p-3.5 rounded-xl border text-center transition-all duration-300 cursor-pointer relative overflow-hidden",
                 isActive
-                  ? "border-white/[0.12] bg-white/[0.04]"
+                  ? "border-[#355CFF]/40 bg-[#355CFF]/10"
                   : "border-white/[0.04] bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/[0.08]"
               )}
             >
               {/* Highlight bar at top of active button */}
               {isActive && (
-                <motion.div
-                  className="absolute top-0 left-0 right-0 h-[2px]"
+                <div
+                  className="absolute top-0 left-0 right-0 h-[2px] transition-all duration-300"
                   style={{ backgroundColor: level.accentColor }}
-                  layoutId="activeIndicator"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
 
               <IconComponent
-                className="w-5 h-5 mb-2 transition-transform duration-300 group-hover:scale-110"
+                className="w-5 h-5 mb-2 transition-transform duration-300"
                 style={{ color: isActive ? level.accentColor : "#6B7280" }}
               />
               <span
@@ -842,111 +709,100 @@ export function EffortControlDiagram() {
       <div className="relative rounded-xl border border-white/[0.06] bg-white/[0.01] p-5 md:p-6 overflow-hidden">
         {/* Glow backdrop based on active level */}
         <div
-          className="absolute -top-24 -left-24 w-48 h-48 rounded-full filter blur-[80px] opacity-[0.15] pointer-events-none transition-colors duration-500"
+          className="absolute -top-24 -left-24 w-48 h-48 rounded-full filter blur-[80px] opacity-[0.1] pointer-events-none transition-colors duration-500"
           style={{ backgroundColor: activeLevel.accentColor }}
         />
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeLevel.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25 }}
-            className="relative z-10"
-          >
-            {/* Header info */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.04] pb-4 mb-5">
-              <div className="flex items-center gap-3">
+        <div className="relative z-10">
+          {/* Header info */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.04] pb-4 mb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/[0.03]">
+                <ActiveIcon
+                  className="w-5 h-5"
+                  style={{ color: activeLevel.accentColor }}
+                />
+              </div>
+              <div>
+                <h4 className="text-white text-[14px] font-bold tracking-tight flex items-center gap-2">
+                  {activeLevel.label} Level
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.04] text-[#9CA3AF]">
+                    --effort={activeLevel.claudeCodeId}
+                  </span>
+                  {activeLevel.claudeCodeId === "high" && (
+                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#355CFF]/15 text-[#355CFF] uppercase tracking-wider">
+                      Default
+                    </span>
+                  )}
+                </h4>
+                <p className="text-[#6B7280] text-[11px] mt-0.5 font-mono">
+                  {activeLevel.subtitle}
+                </p>
+              </div>
+            </div>
+
+            {/* Intensity visual display */}
+            <div className="flex items-center gap-1">
+              <span className="text-[9px] font-mono text-[#6B7280] uppercase tracking-wider mr-2">
+                Compute Dial
+              </span>
+              {[1, 2, 3, 4].map((n) => (
                 <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/[0.03]"
+                  key={n}
+                  className="w-2 h-4 rounded-sm transition-all duration-300"
+                  style={{
+                    backgroundColor: n <= activeLevel.intensity ? activeLevel.accentColor : "rgba(255,255,255,0.02)",
+                    boxShadow: n <= activeLevel.intensity ? `0 0 10px ${activeLevel.accentColor}30` : "none"
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Description */}
+          <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-5">
+            {activeLevel.description}
+          </p>
+
+          {/* Use Cases */}
+          <div className="mb-5">
+            <h5 className="text-white text-[10px] font-mono uppercase tracking-widest text-[#6B7280] mb-3">
+              Primary Use Cases
+            </h5>
+            <div className="flex flex-wrap gap-2">
+              {activeLevel.useCases.map((useCase) => (
+                <span
+                  key={useCase}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.04] text-[11px] text-[#9CA3AF] font-mono"
                 >
-                  <ActiveIcon
-                    className="w-5 h-5"
+                  <Sparkles
+                    className="w-3 h-3 text-[#6B7280]"
                     style={{ color: activeLevel.accentColor }}
                   />
-                </div>
-                <div>
-                  <h4 className="text-white text-[14px] font-bold tracking-tight flex items-center gap-2">
-                    {activeLevel.label} Level
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.04] text-[#9CA3AF]">
-                      --effort={activeLevel.claudeCodeId}
-                    </span>
-                    {activeLevel.claudeCodeId === "high" && (
-                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#355CFF]/15 text-[#355CFF] uppercase tracking-wider">
-                        Default
-                      </span>
-                    )}
-                  </h4>
-                  <p className="text-[#6B7280] text-[11px] mt-0.5 font-mono">
-                    {activeLevel.subtitle}
-                  </p>
-                </div>
-              </div>
-
-              {/* Intensity visual display */}
-              <div className="flex items-center gap-1">
-                <span className="text-[9px] font-mono text-[#6B7280] uppercase tracking-wider mr-2">
-                  Compute Dial
+                  {useCase}
                 </span>
-                {[1, 2, 3, 4].map((n) => (
-                  <div
-                    key={n}
-                    className="w-2 h-4 rounded-sm transition-all duration-300"
-                    style={{
-                      backgroundColor: n <= activeLevel.intensity ? activeLevel.accentColor : "rgba(255,255,255,0.02)",
-                      boxShadow: n <= activeLevel.intensity ? `0 0 10px ${activeLevel.accentColor}30` : "none"
-                    }}
-                  />
-                ))}
-              </div>
+              ))}
             </div>
+          </div>
 
-            {/* Description */}
-            <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-5">
-              {activeLevel.description}
-            </p>
-
-            {/* Use Cases */}
-            <div className="mb-5">
-              <h5 className="text-white text-[10px] font-mono uppercase tracking-widest text-[#6B7280] mb-3">
-                Primary Use Cases
-              </h5>
-              <div className="flex flex-wrap gap-2">
-                {activeLevel.useCases.map((useCase) => (
-                  <span
-                    key={useCase}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.04] text-[11px] text-[#9CA3AF] font-mono"
-                  >
-                    <Sparkles
-                      className="w-3 h-3 text-[#6B7280]"
-                      style={{ color: activeLevel.accentColor }}
-                    />
-                    {useCase}
-                  </span>
-                ))}
-              </div>
+          {/* Interactive copyable terminal command */}
+          <div className="flex items-center justify-between p-3 rounded-lg bg-[#070709] border border-white/[0.04] font-mono text-[11px]">
+            <div className="truncate text-left pr-4">
+              <span className="text-[#6B7280]">$ </span>
+              <span className="text-[#9CA3AF]">claude --effort </span>
+              <span className="font-bold" style={{ color: activeLevel.accentColor }}>
+                {activeLevel.claudeCodeId}
+              </span>
+              <span className="text-[#6B7280]"> "execute refactor"</span>
             </div>
-
-            {/* Interactive copyable terminal command */}
-            <div className="flex items-center justify-between p-3 rounded-lg bg-[#070709] border border-white/[0.04] font-mono text-[11px]">
-              <div className="truncate text-left pr-4">
-                <span className="text-[#6B7280]">$ </span>
-                <span className="text-[#9CA3AF]">claude --effort </span>
-                <span className="font-bold" style={{ color: activeLevel.accentColor }}>
-                  {activeLevel.claudeCodeId}
-                </span>
-                <span className="text-[#6B7280]"> "execute refactor"</span>
-              </div>
-              <button
-                onClick={() => handleCopy(`claude --effort ${activeLevel.claudeCodeId} "execute refactor"`)}
-                className="shrink-0 text-[10px] font-bold font-mono px-2.5 py-1 rounded bg-white/[0.04] hover:bg-white/[0.08] text-white hover:text-white border border-white/[0.06] transition-all cursor-pointer"
-              >
-                {copied ? "Copied!" : "Copy CMD"}
-              </button>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+            <button
+              onClick={() => handleCopy(`claude --effort ${activeLevel.claudeCodeId} "execute refactor"`)}
+              className="shrink-0 text-[10px] font-bold font-mono px-2.5 py-1 rounded bg-white/[0.04] hover:bg-white/[0.08] text-white hover:text-white border border-white/[0.06] transition-all cursor-pointer"
+            >
+              {copied ? "Copied!" : "Copy CMD"}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Footer */}
