@@ -38,16 +38,24 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   // Blog posts database
   const featuredPost = {
-    slug: "claude-opus-4-8-anthropic-ai-model",
-    title: "Claude Opus 4.8: Anthropic's Most Advanced AI Model — Benchmarks, Features & Full Review",
-    excerpt: "Complete analysis of Claude Opus 4.8 released May 28, 2026. Explore benchmark results (SWE-Bench 69.2%, Terminal-Bench 74.2%), Dynamic Workflows, Effort Control, pricing, API access, and what's next with Claude Mythos.",
-    category: "AI / Anthropic / Engineering",
-    date: "May 29, 2026",
-    readTime: "12 min read",
-    image: "/images/blog-claude-opus-4-8.png"
+    slug: "blue-origin-new-glenn-rocket-explosion",
+    title: "Blue Origin’s New Glenn Rocket Explodes During Test: What Happened?",
+    excerpt: "Blue Origin's New Glenn rocket exploded during a hot-fire test in Florida. Here's what happened, why it matters, and what it means for the future of space technology.",
+    category: "Space / Technology / Innovation",
+    date: "May 30, 2026",
+    readTime: "5 min read",
+    image: "/images/blue-origin-new-glenn-rocket-explosion.png"
   };
 
   const regularPosts = [
+    {
+      slug: "claude-opus-4-8-anthropic-ai-model",
+      title: "Claude Opus 4.8: Anthropic's Most Advanced AI Model — Benchmarks, Features & Full Review",
+      excerpt: "Complete analysis of Claude Opus 4.8 released May 28, 2026. Explore benchmark results (SWE-Bench 69.2%, Terminal-Bench 74.2%), Dynamic Workflows, Effort Control, pricing, API access, and what's next with Claude Mythos.",
+      category: "AI / Anthropic / Engineering",
+      date: "May 29, 2026",
+      readTime: "12 min read"
+    },
     {
       slug: "google-io-2026",
       title: "Google I/O 2026: The Beginning of the AI-Native Internet",
