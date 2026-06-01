@@ -4,7 +4,7 @@ import { Link, usePathname } from "@/navigation";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
 import {
-  BarChart3, Users, Target, Inbox,
+  BarChart3, Users, Target, Inbox, Terminal,
   FileText, Zap, ShieldCheck, Rocket, FileCheck, LogOut, PanelLeftClose, PanelLeft,
   GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
   TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X
@@ -12,6 +12,7 @@ import {
 
 const navItems = [
   { name: "Overview", href: "/admin", icon: BarChart3 },
+  { name: "Command Center", href: "/admin/command-center", icon: Terminal },
   { name: "CRM", href: "/admin/crm", icon: Database },
   { name: "Team", href: "/admin/team", icon: UserCog },
   { name: "Leads", href: "/admin/leads", icon: Target },
