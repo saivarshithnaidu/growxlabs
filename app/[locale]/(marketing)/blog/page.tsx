@@ -38,16 +38,24 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   // Blog posts database
   const featuredPost = {
-    slug: "blue-origin-new-glenn-rocket-explosion",
-    title: "Blue Origin’s New Glenn Rocket Explodes During Test: What Happened?",
-    excerpt: "Blue Origin's New Glenn rocket exploded during a hot-fire test in Florida. Here's what happened, why it matters, and what it means for the future of space technology.",
-    category: "Space / Technology / Innovation",
-    date: "May 30, 2026",
-    readTime: "5 min read",
-    image: "/images/blue-origin-new-glenn-rocket-explosion.png"
+    slug: "chatbots-are-dying-agents-are-taking-over",
+    title: "Chatbots Are Dying. Agents Are Taking Over.",
+    excerpt: "AI is evolving from chatbots to autonomous agents. Discover why AI agents will transform business operations, automation, sales, marketing, and execution.",
+    category: "AI / Automation / Scale",
+    date: "June 1, 2026",
+    readTime: "6 min read",
+    image: "/images/chatbots-are-dying-agents-are-taking-over.png"
   };
 
   const regularPosts = [
+    {
+      slug: "blue-origin-new-glenn-rocket-explosion",
+      title: "Blue Origin’s New Glenn Rocket Explodes During Test: What Happened?",
+      excerpt: "Blue Origin's New Glenn rocket exploded during a hot-fire test in Florida. Here's what happened, why it matters, and what it means for the future of space technology.",
+      category: "Space / Technology / Innovation",
+      date: "May 30, 2026",
+      readTime: "5 min read"
+    },
     {
       slug: "claude-opus-4-8-anthropic-ai-model",
       title: "Claude Opus 4.8: Anthropic's Most Advanced AI Model — Benchmarks, Features & Full Review",
