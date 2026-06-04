@@ -10,6 +10,7 @@ import { Reveal } from "@/components/marketing/Reveal";
 import { Calendar, Clock, User, Cpu, Sparkles, Compass, ShieldAlert, ArrowRight } from "lucide-react";
 import { FlickerText } from "@/components/marketing/FlickerText";
 import { BlogShare, NewsletterCTA, AgentCTA } from "./InteractiveComponents";
+import { AIFactoryVisualizerClient, AIPipelineEvolution, CudaXSkillsExplorer } from "./InteractiveNvidia";
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (SEO & Directory Optimization)
@@ -324,6 +325,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
                 <p>
                   The transition from chatbots to agentic architectures represents the leap from passive systems to active virtual workers. Rather than offering answers, they deliver finished work. In NVIDIA&apos;s lexicon, when agentic AI is deployed to consistently produce valuable business outcomes at scale, it becomes <strong>Useful AI</strong>.
                 </p>
+                <AIPipelineEvolution />
               </div>
             </section>
 
@@ -384,6 +386,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
                 <p>
                   This bridge shifts AI from general-purpose writing tools to highly specialized calculators. By equipping agents with CUDA-X, NVIDIA gives them the capability to solve real science, engineering, and data problems at accelerated speeds.
                 </p>
+                <CudaXSkillsExplorer />
               </div>
             </section>
 
@@ -413,6 +416,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
                 <p>
                   AI Factories are the industrial engine designed to sustain this new world of continuous execution.
                 </p>
+                <AIFactoryVisualizerClient />
               </div>
             </section>
 

@@ -365,7 +365,7 @@ export function DynamicWorkflowViz() {
         {workflowSteps.map((step, i) => {
           const isActive = activeStep === i;
           const isPast = i < activeStep;
-          const StepIcon = step.icon;
+          const StepIcon = step.icon as any;
 
           return (
             <React.Fragment key={step.id}>
@@ -650,7 +650,7 @@ export function EffortControlDiagram() {
   }, []);
 
   const activeLevel = effortLevels.find((l) => l.id === activeId) || effortLevels[1];
-  const ActiveIcon = activeLevel.icon;
+  const ActiveIcon = activeLevel.icon as any;
 
   const handleCopy = (cmd: string) => {
     navigator.clipboard.writeText(cmd);
@@ -687,7 +687,7 @@ export function EffortControlDiagram() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {effortLevels.map((level) => {
             const isActive = activeId === level.id;
-            const IconComponent = level.icon;
+            const IconComponent = level.icon as any;
             return (
               <button
                 key={level.id}
@@ -860,7 +860,7 @@ export function EffortControlDiagram() {
       <div className="space-y-3">
         {effortLevels.map((level) => {
           const isExpanded = expandedId === level.id;
-          const LevelIcon = level.icon;
+          const LevelIcon = level.icon as any;
 
           return (
             <div
