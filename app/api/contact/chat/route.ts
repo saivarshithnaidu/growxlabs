@@ -150,33 +150,48 @@ export async function POST(req: Request) {
 ${historyText}`;
 
     let jsonText = "";
+    let selectedModel = "";
 
-    // 1. Try OpenRouter (Gemma 4 Free)
+    // List of reliable free models on OpenRouter to try in order
+    const FREE_MODELS = [
+      "meta-llama/llama-3.3-70b-instruct:free",
+      "qwen/qwen3-coder:free",
+      "google/gemma-4-31b-it:free",
+      "openrouter/free"
+    ];
+
     if (process.env.OPENROUTER_API_KEY) {
-      try {
-        console.log("Attempting OpenRouter free model (google/gemma-4-31b-it:free)...");
-        const completion = await openai.chat.completions.create({
-          model: "google/gemma-4-31b-it:free",
-          messages: [
-            { role: "system", content: SYSTEM_INSTRUCTION },
-            { role: "user", content: prompt }
-          ],
-          max_tokens: 1000,
-          response_format: { type: "json_object" }
-        });
-        jsonText = completion.choices?.[0]?.message?.content || "";
-        console.log("OpenRouter primary model responded successfully.");
-      } catch (openRouterErr: any) {
-        console.warn("OpenRouter primary model failed. Error:", openRouterErr.message || openRouterErr);
+      for (const model of FREE_MODELS) {
+        try {
+          console.log(`Attempting OpenRouter free model: ${model}...`);
+          const completion = await openai.chat.completions.create({
+            model: model,
+            messages: [
+              { role: "system", content: SYSTEM_INSTRUCTION },
+              { role: "user", content: prompt }
+            ],
+            max_tokens: 1000,
+            response_format: { type: "json_object" }
+          });
+          
+          jsonText = completion.choices?.[0]?.message?.content || "";
+          if (jsonText && jsonText.trim()) {
+            selectedModel = model;
+            console.log(`OpenRouter model ${model} responded successfully.`);
+            break;
+          }
+        } catch (openRouterErr: any) {
+          console.warn(`OpenRouter model ${model} failed. Error:`, openRouterErr.message || openRouterErr);
+        }
       }
     }
 
-    // 2. Try Direct Google Gemini SDK Fallback (Completely free, fast, high RPM)
+    // Try Direct Google Gemini SDK Fallback (as backup if OpenRouter key is missing or entirely down)
     if (!jsonText && process.env.GEMINI_API_KEY) {
       try {
         console.log("Attempting direct Google Gemini API fallback...");
         const model = genAI.getGenerativeModel({
-          model: "gemini-1.5-flash-latest",
+          model: "gemini-1.5-flash",
           generationConfig: {
             responseMimeType: "application/json",
           }
@@ -192,28 +207,15 @@ ${historyText}`;
       }
     }
 
-    // 3. Last Resort Fallback (OpenRouter Generic Free Router)
-    if (!jsonText && process.env.OPENROUTER_API_KEY) {
-      try {
-        console.log("Attempting OpenRouter generic free router fallback...");
-        const completion = await openai.chat.completions.create({
-          model: "openrouter/free",
-          messages: [
-            { role: "system", content: SYSTEM_INSTRUCTION },
-            { role: "user", content: prompt }
-          ],
-          max_tokens: 1000,
-          response_format: { type: "json_object" }
-        });
-        jsonText = completion.choices?.[0]?.message?.content || "";
-        console.log("OpenRouter generic free router fallback responded successfully.");
-      } catch (lastErr: any) {
-        console.error("OpenRouter generic free router fallback failed. Error:", lastErr.message || lastErr);
-      }
-    }
-
     if (!jsonText) {
-      throw new Error("All AI inference providers failed to return a response.");
+      console.warn("All AI inference providers failed. Returning friendly client-side fallback response.");
+      return NextResponse.json({
+        response: "I'm having a brief connection issue due to high traffic, but I've saved your details. Could you tell me a bit more about your project goals or switch to the traditional form to submit directly?",
+        service: "",
+        budget: "",
+        tasks: [],
+        isReady: false
+      });
     }
 
     console.log("DEBUG Cleaned AI Output:", jsonText);
