@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
@@ -10,8 +10,14 @@ import React from "react";
 import { usePostHog } from "posthog-js/react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { FlickerText } from "@/components/marketing/FlickerText";
+import Plan, { Task } from "@/components/ui/agent-plan";
+import { cn } from "@/lib/utils";
 
 export function ContactContent() {
+  // Mode selection state
+  const [isAIMode, setIsAIMode] = useState(false);
+
+  // Traditional form state
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,6 +26,21 @@ export function ContactContent() {
     budget: "",
     message: "",
   });
+
+  // AI strategy builder state
+  const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "model"; content: string }>>([
+    {
+      role: "model",
+      content: "Hi! I'm your GrowXLabs AI Architect. Tell me a bit about what you want to build or automate, and I will live-design your system blueprint, tech stack, and execution roadmap right here!"
+    }
+  ]);
+  const [currentChatInput, setCurrentChatInput] = useState("");
+  const [aiService, setAiService] = useState("");
+  const [aiBudget, setAiBudget] = useState("");
+  const [aiTasks, setAiTasks] = useState<Task[]>([]);
+  const [isAIChatLoading, setIsAIChatLoading] = useState(false);
+  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
+
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -27,6 +48,7 @@ export function ContactContent() {
 
   const titleName = "CONTACT";
 
+  // Handle traditional submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
@@ -55,6 +77,7 @@ export function ContactContent() {
         posthog.capture("lead_submitted", {
           service: formData.service,
           budget: formData.budget,
+          mode: "traditional"
         });
       }
 
@@ -63,6 +86,108 @@ export function ContactContent() {
     } catch (err: unknown) {
       setStatus("error");
       setErrorMessage(err instanceof Error ? err.message : "An unexpected error occurred. Please try again.");
+    }
+  };
+
+  // Handle chat submission (conversational steps)
+  const handleSendChatMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentChatInput.trim() || isAIChatLoading) return;
+
+    const userMsg = currentChatInput.trim();
+    setCurrentChatInput("");
+    setIsAIChatLoading(true);
+
+    const updatedMessages = [...chatMessages, { role: "user" as const, content: userMsg }];
+    setChatMessages(updatedMessages);
+
+    try {
+      const response = await fetch("/api/contact/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: updatedMessages }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Strategy server is currently busy. Please try writing again.");
+      }
+
+      const data = await response.json();
+      
+      setChatMessages(prev => [...prev, { role: "model" as const, content: data.response }]);
+      if (data.service) setAiService(data.service);
+      if (data.budget) setAiBudget(data.budget);
+      if (data.tasks && data.tasks.length > 0) setAiTasks(data.tasks);
+      if (data.isReady) setIsReadyToSubmit(true);
+
+    } catch (err: any) {
+      setChatMessages(prev => [...prev, { 
+        role: "model" as const, 
+        content: "Sorry, I had a brief connection interruption. Could you describe your requirement again?" 
+      }]);
+    } finally {
+      setIsAIChatLoading(false);
+    }
+  };
+
+  // Submit lead from AI strategy mode
+  const handleAISubmit = async () => {
+    setStatus("loading");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          service: aiService,
+          budget: aiBudget,
+          message: `AI generated strategy roadmap for ${formData.name}`,
+          tasks: aiTasks,
+          chatHistory: chatMessages,
+          turnstileToken
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Lead submission failed. Please try again.");
+      }
+
+      if (posthog) {
+        posthog.identify(formData.email, {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          service: aiService,
+          budget: aiBudget,
+        });
+
+        posthog.capture("lead_submitted", {
+          service: aiService,
+          budget: aiBudget,
+          mode: "ai_strategy"
+        });
+      }
+
+      setStatus("success");
+      // Reset form
+      setFormData({ name: "", email: "", phone: "", service: "", budget: "", message: "" });
+      setChatMessages([
+        {
+          role: "model",
+          content: "Hi! I'm your GrowXLabs AI Architect. Tell me a bit about what you want to build or automate, and I will live-design your system blueprint, tech stack, and execution roadmap right here!"
+        }
+      ]);
+      setAiTasks([]);
+      setAiService("");
+      setAiBudget("");
+      setIsReadyToSubmit(false);
+    } catch (err: any) {
+      setStatus("error");
+      setErrorMessage(err.message || "Something went wrong. Please check your network and submit again.");
     }
   };
 
@@ -116,7 +241,7 @@ export function ContactContent() {
           </a>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-14">
+        <div className="grid grid-cols-1 lg:grid-cols-[0.75fr_1.25fr] gap-10 lg:gap-14">
           <div className="space-y-8">
             <div className="rounded-lg border border-[#E5E2DC] bg-white p-8 shadow-sm">
               <h2 className="text-2xl font-black text-[#1A1A1A] mb-4">Direct contact</h2>
@@ -156,8 +281,41 @@ export function ContactContent() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            className="w-full"
           >
-            <div className="p-6 md:p-8 rounded-lg border border-[#E5E2DC] bg-white shadow-sm">
+            <div className="p-6 md:p-8 rounded-lg border border-[#E5E2DC] bg-white shadow-sm w-full">
+              
+              {/* Premium Mode Switch Tabs */}
+              <div className="flex p-1 bg-[#EDEAE4] rounded-lg border border-[#E5E2DC] mb-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAIMode(false);
+                    setStatus("idle");
+                  }}
+                  className={cn(
+                    "flex-1 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-md transition-all cursor-pointer",
+                    !isAIMode ? "bg-white text-[#1A1A1A] shadow-sm" : "text-[#6B7280] hover:text-[#1A1A1A]"
+                  )}
+                >
+                  Traditional Form
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAIMode(true);
+                    setStatus("idle");
+                  }}
+                  className={cn(
+                    "flex-1 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-md transition-all flex items-center justify-center gap-2 cursor-pointer",
+                    isAIMode ? "bg-[#355CFF] text-white shadow-sm" : "text-[#6B7280] hover:text-[#1A1A1A]"
+                  )}
+                >
+                  <Sparkles size={13} className={cn(isAIMode ? "text-white" : "text-[#355CFF]")} />
+                  AI Strategy Builder
+                </button>
+              </div>
+
               {status === "success" ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -178,111 +336,302 @@ export function ContactContent() {
                   </Button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Full name</label>
-                    <Input
-                      required
-                      placeholder="Your name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="h-12 rounded-md"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Email address</label>
-                      <Input
-                        required
-                        type="email"
-                        placeholder="you@company.com"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="h-12 rounded-md"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Phone number</label>
-                      <Input
-                        type="tel"
-                        placeholder="+91 98765 43210"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="h-12 rounded-md"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Service needed</label>
-                      <select
-                        required
-                        value={formData.service}
-                        onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                        className="w-full h-12 rounded-md bg-white border border-[#E5E2DC] px-4 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#355CFF] transition-all"
-                      >
-                        <option value="">Select a service</option>
-                        <option value="website">Website Development</option>
-                        <option value="automation">n8n Automation</option>
-                        <option value="hosting">Hosting and Maintenance</option>
-                        <option value="ai">AI Integration</option>
-                        <option value="bundle">Full Bundle</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Estimated budget</label>
-                      <select
-                        value={formData.budget}
-                        onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                        className="w-full h-12 rounded-md bg-white border border-[#E5E2DC] px-4 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#355CFF] transition-all"
-                      >
-                        <option value="">Select budget range</option>
-                        <option value="under-15k">Under INR 15,000</option>
-                        <option value="15k-35k">INR 15,000 - INR 35,000</option>
-                        <option value="35k-70k">INR 35,000 - INR 70,000</option>
-                        <option value="above-70k">Above INR 70,000</option>
-                        <option value="overseas">Overseas (USD)</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Project brief</label>
-                    <Textarea
-                      required
-                      placeholder="Tell us about your project goals, timeline, and requirements..."
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="min-h-[150px] rounded-md leading-relaxed"
-                    />
-                  </div>
-
-                  {status === "error" && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      className="flex items-center gap-3 text-red-600 text-sm bg-red-50 p-4 rounded-md border border-red-100"
+                <AnimatePresence mode="wait">
+                  {!isAIMode ? (
+                    /* TRADITIONAL STATIC FORM VIEW */
+                    <motion.form 
+                      key="traditional-form"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      onSubmit={handleSubmit} 
+                      className="space-y-5"
                     >
-                      <AlertCircle size={18} className="shrink-0" aria-hidden="true" />
-                      <span className="font-semibold">{errorMessage}</span>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Full name</label>
+                        <Input
+                          required
+                          placeholder="Your name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="h-12 rounded-md bg-white border border-[#E5E2DC] px-4"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                          <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Email address</label>
+                          <Input
+                            required
+                            type="email"
+                            placeholder="you@company.com"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            className="h-12 rounded-md bg-white border border-[#E5E2DC] px-4"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Phone number</label>
+                          <Input
+                            type="tel"
+                            placeholder="+91 98765 43210"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            className="h-12 rounded-md bg-white border border-[#E5E2DC] px-4"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                          <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Service needed</label>
+                          <select
+                            required
+                            value={formData.service}
+                            onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                            className="w-full h-12 rounded-md bg-white border border-[#E5E2DC] px-4 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#355CFF] transition-all"
+                          >
+                            <option value="">Select a service</option>
+                            <option value="website">Website Development</option>
+                            <option value="automation">n8n Automation</option>
+                            <option value="hosting">Hosting and Maintenance</option>
+                            <option value="ai">AI Integration</option>
+                            <option value="bundle">Full Bundle</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Estimated budget</label>
+                          <select
+                            value={formData.budget}
+                            onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                            className="w-full h-12 rounded-md bg-white border border-[#E5E2DC] px-4 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#355CFF] transition-all"
+                          >
+                            <option value="">Select budget range</option>
+                            <option value="under-15k">Under INR 15,000</option>
+                            <option value="15k-35k">INR 15,000 - INR 35,000</option>
+                            <option value="35k-70k">INR 35,000 - INR 70,000</option>
+                            <option value="above-70k">Above INR 70,000</option>
+                            <option value="overseas">Overseas (USD)</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#6B7280] ml-1">Project brief</label>
+                        <Textarea
+                          required
+                          placeholder="Tell us about your project goals, timeline, and requirements..."
+                          value={formData.message}
+                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                          className="min-h-[150px] rounded-md leading-relaxed border border-[#E5E2DC] p-4"
+                        />
+                      </div>
+
+                      {status === "error" && (
+                        <div className="flex items-center gap-3 text-red-600 text-sm bg-red-50 p-4 rounded-md border border-red-100">
+                          <AlertCircle size={18} className="shrink-0" aria-hidden="true" />
+                          <span className="font-semibold">{errorMessage}</span>
+                        </div>
+                      )}
+
+                      <div className="flex justify-center py-2">
+                        <Turnstile
+                          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+                          onSuccess={(token) => setTurnstileToken(token)}
+                        />
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className="w-full h-14 text-base font-semibold rounded-md inline-flex items-center gap-2 bg-[#355CFF] hover:bg-[#2A4AD4] text-white transition-all cursor-pointer"
+                        disabled={status === "loading"}
+                      >
+                        {status === "loading" ? "Processing..." : "Send project brief"}
+                        {status !== "loading" && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
+                      </Button>
+                    </motion.form>
+                  ) : (
+                    /* DYNAMIC AGENTIC AI MODE VIEW */
+                    <motion.div
+                      key="ai-mode"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-8"
+                    >
+                      {/* Left: Chat Window */}
+                      <div className="flex flex-col h-[580px] bg-white border border-[#E5E2DC] rounded-lg p-5">
+                        
+                        {/* Conversation stream */}
+                        <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2 scrollbar-thin">
+                          {chatMessages.map((msg, idx) => (
+                            <div key={idx} className={cn("flex", msg.role === "user" ? "justify-end" : "justify-start")}>
+                              <div className={cn(
+                                "max-w-[85%] rounded-lg p-3 text-sm leading-relaxed",
+                                msg.role === "user" 
+                                  ? "bg-[#355CFF] text-white rounded-br-none" 
+                                  : "bg-[#F5F3EE] text-[#1A1A1A] rounded-bl-none border border-[#E5E2DC]"
+                              )}>
+                                {msg.content}
+                              </div>
+                            </div>
+                          ))}
+                          
+                          {isAIChatLoading && (
+                            <div className="flex justify-start">
+                              <div className="bg-[#F5F3EE] border border-[#E5E2DC] rounded-lg rounded-bl-none p-3 max-w-[85%] flex items-center gap-2">
+                                <span className="text-xs text-[#6B7280]">AI Architect is drafting</span>
+                                <div className="flex gap-1">
+                                  <span className="w-1.5 h-1.5 bg-[#6B7280] rounded-full animate-bounce delay-100" />
+                                  <span className="w-1.5 h-1.5 bg-[#6B7280] rounded-full animate-bounce delay-200" />
+                                  <span className="w-1.5 h-1.5 bg-[#6B7280] rounded-full animate-bounce delay-300" />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Input console */}
+                        {!isReadyToSubmit ? (
+                          <form onSubmit={handleSendChatMessage} className="flex gap-2 items-end shrink-0">
+                            <Input
+                              value={currentChatInput}
+                              onChange={(e) => setCurrentChatInput(e.target.value)}
+                              placeholder="Describe your project requirements here..."
+                              className="flex-1 h-12 bg-white border border-[#E5E2DC] px-4"
+                              disabled={isAIChatLoading}
+                            />
+                            <Button 
+                              type="submit" 
+                              disabled={isAIChatLoading || !currentChatInput.trim()}
+                              className="h-12 w-12 rounded-md p-0 flex items-center justify-center bg-[#355CFF] text-white cursor-pointer hover:bg-[#2A4AD4]"
+                            >
+                              <ArrowRight className="h-5 w-5" />
+                            </Button>
+                          </form>
+                        ) : (
+                          <div className="border-t border-[#E5E2DC] pt-4 space-y-4 shrink-0">
+                            <p className="text-xs font-bold text-green-600 bg-green-50 p-2.5 rounded-md border border-green-100 flex items-center gap-2">
+                              <CheckCircle2 size={14} /> Roadmap draft completed! Enter details below to submit.
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                              <Input 
+                                required 
+                                placeholder="Your Name" 
+                                value={formData.name} 
+                                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                className="h-11 bg-white border border-[#E5E2DC] px-4"
+                              />
+                              <Input 
+                                required 
+                                type="email"
+                                placeholder="Your Email" 
+                                value={formData.email} 
+                                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                className="h-11 bg-white border border-[#E5E2DC] px-4"
+                              />
+                            </div>
+                            <div className="flex gap-2">
+                              <Input 
+                                placeholder="Phone Number (Optional)" 
+                                value={formData.phone} 
+                                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                className="h-11 flex-1 bg-white border border-[#E5E2DC] px-4"
+                              />
+                              <Button 
+                                onClick={handleAISubmit} 
+                                disabled={status === "loading" || !formData.name || !formData.email}
+                                className="h-11 px-6 bg-[#355CFF] text-white hover:bg-[#2A4AD4] cursor-pointer"
+                              >
+                                {status === "loading" ? "Submitting..." : "Submit AI Brief"}
+                              </Button>
+                            </div>
+                            {status === "error" && (
+                              <div className="text-xs text-red-600 font-semibold bg-red-50 p-2 rounded-md border border-red-100">
+                                {errorMessage}
+                              </div>
+                            )}
+                            <div className="flex justify-center py-1">
+                              <Turnstile
+                                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+                                onSuccess={(token) => setTurnstileToken(token)}
+                              />
+                            </div>
+                            <button 
+                              type="button" 
+                              onClick={() => setIsReadyToSubmit(false)} 
+                              className="text-xs text-[#6B7280] hover:text-[#355CFF] block mx-auto underline font-medium cursor-pointer"
+                            >
+                              Keep chatting to customize roadmap
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right: Live Blueprint Cards */}
+                      <div className="bg-[#F9F8F6] border border-[#E5E2DC] rounded-lg p-5 flex flex-col h-[580px] overflow-hidden">
+                        <h3 className="text-sm font-black text-[#1A1A1A] uppercase tracking-wider mb-4 pb-2 border-b border-[#E5E2DC] flex items-center gap-2">
+                          <Sparkles size={15} className="text-[#355CFF]" /> Live Strategy Blueprint
+                        </h3>
+                        
+                        {/* Service / Budget auto-indicators */}
+                        <div className="grid grid-cols-2 gap-3 mb-4 shrink-0">
+                          <div className="bg-white border border-[#E5E2DC] rounded-md p-3">
+                            <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Service Class</p>
+                            <p className="text-xs font-bold text-[#1A1A1A]">
+                              {aiService ? (
+                                aiService === "website" ? "Website Development" :
+                                aiService === "automation" ? "Workflow Automation" :
+                                aiService === "hosting" ? "Hosting & Maintenance" :
+                                aiService === "ai" ? "AI Integrations" : "Full Bundle"
+                              ) : (
+                                <span className="text-[#6B7280] font-normal italic">Analyzing...</span>
+                              )}
+                            </p>
+                          </div>
+                          
+                          <div className="bg-white border border-[#E5E2DC] rounded-md p-3">
+                            <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Estimated Budget</p>
+                            <p className="text-xs font-bold text-[#1A1A1A]">
+                              {aiBudget ? (
+                                aiBudget === "under-15k" ? "Under INR 15,000" :
+                                aiBudget === "15k-35k" ? "INR 15,000 - 35,000" :
+                                aiBudget === "35k-70k" ? "INR 35,000 - 70,000" :
+                                aiBudget === "above-70k" ? "Above INR 70,000" : "Overseas (USD)"
+                              ) : (
+                                <span className="text-[#6B7280] font-normal italic">Analyzing...</span>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Interactive Plan Roadmap */}
+                        <div className="flex-1 overflow-y-auto pr-1">
+                          {aiTasks.length > 0 ? (
+                            <Plan tasks={aiTasks} />
+                          ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-center p-6 border border-dashed border-[#E5E2DC] rounded-md">
+                              <Sparkles size={32} className="text-[#6B7280] opacity-30 mb-3 animate-pulse" />
+                              <h4 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wider">Roadmap Ingesting</h4>
+                              <p className="text-xs text-[#6B7280] max-w-[220px] mt-1.5 leading-relaxed">
+                                Chat with the AI Strategy Architect on the left to instantly map out your task breakdown, tools, and execution phases.
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Finish trigger */}
+                        {aiTasks.length > 0 && !isReadyToSubmit && (
+                          <Button 
+                            onClick={() => setIsReadyToSubmit(true)}
+                            className="mt-4 w-full h-11 bg-white hover:bg-neutral-50 text-[#355CFF] border border-[#355CFF]/20 text-xs font-bold uppercase tracking-wider shrink-0 cursor-pointer"
+                          >
+                            Finish & Lock in Strategy
+                          </Button>
+                        )}
+                      </div>
                     </motion.div>
                   )}
-
-                  <div className="flex justify-center py-2">
-                    <Turnstile
-                      siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
-                      onSuccess={(token) => setTurnstileToken(token)}
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full h-14 text-base font-semibold rounded-md inline-flex items-center gap-2"
-                    disabled={status === "loading"}
-                  >
-                    {status === "loading" ? "Processing..." : "Send project brief"}
-                    {status !== "loading" && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
-                  </Button>
-                </form>
+                </AnimatePresence>
               )}
             </div>
           </motion.div>
