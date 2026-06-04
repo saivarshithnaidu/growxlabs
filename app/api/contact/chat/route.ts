@@ -1,7 +1,10 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import { NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const openai = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY || "",
+});
 
 const SYSTEM_INSTRUCTION = `You are the GrowX Labs Project Architect AI. Your job is to consult with prospective clients, refine their ideas, classify their project, and live-generate a development roadmap.
 
@@ -59,38 +62,38 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid messages history" }, { status: 400 });
     }
 
-    if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({ error: "API Key not configured" }, { status: 500 });
+    if (!process.env.OPENROUTER_API_KEY) {
+      return NextResponse.json({ error: "OpenRouter API Key not configured" }, { status: 500 });
     }
-
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest",
-      generationConfig: {
-        responseMimeType: "application/json",
-      }
-    });
 
     // Format prompt from history
     const historyText = messages
       .map((m: any) => `${m.role === "user" ? "Client" : "Architect"}: ${m.content}`)
       .join("\n");
 
-    const prompt = `${SYSTEM_INSTRUCTION}
+    const prompt = `Analyze the user's latest inputs and respond with the updated JSON.
     
 === CONVERSATION HISTORY ===
-${historyText}
+${historyText}`;
 
-Analyze the user's latest inputs and respond with the updated JSON.`;
+    // Call OpenRouter
+    const completion = await openai.chat.completions.create({
+      model: "google/gemini-2.0-flash-lite-preview-02-05:free",
+      messages: [
+        { role: "system", content: SYSTEM_INSTRUCTION },
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" }
+    });
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const jsonText = response.text();
+    const jsonText = completion.choices[0].message.content;
+    if (!jsonText) throw new Error("AI failed to generate response content");
 
     try {
       const parsed = JSON.parse(jsonText);
       return NextResponse.json(parsed);
     } catch (parseErr) {
-      console.error("Gemini JSON parse failure:", jsonText, parseErr);
+      console.error("OpenRouter JSON parse failure:", jsonText, parseErr);
       return NextResponse.json({
         response: "I've processed your idea. Could you tell me more about your requirements or what budget range you're targetting?",
         service: "",
@@ -101,7 +104,7 @@ Analyze the user's latest inputs and respond with the updated JSON.`;
     }
 
   } catch (error: any) {
-    console.error("Contact Conversational API Error:", error);
+    console.error("Contact Conversational OpenRouter API Error:", error);
     return NextResponse.json({ error: "Architect agent is temporarily offline. Please try the traditional form." }, { status: 500 });
   }
 }
