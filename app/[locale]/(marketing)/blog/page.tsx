@@ -49,6 +49,14 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   const regularPosts = [
     {
+      slug: "nvidia-vision-agentic-to-useful-ai",
+      title: "NVIDIA's Vision for the Future of AI: From Agentic AI to Useful AI",
+      excerpt: "Analyze Jensen Huang's GTC vision: CUDA-X, AI Factories, Physical AI, and the historic shift from reactive chatbots to proactive execution systems.",
+      category: "AI Industry / Infrastructure / Analysis",
+      date: "June 4, 2026",
+      readTime: "14 min read"
+    },
+    {
       slug: "blue-origin-new-glenn-rocket-explosion",
       title: "Blue Origin’s New Glenn Rocket Explodes During Test: What Happened?",
       excerpt: "Blue Origin's New Glenn rocket exploded during a hot-fire test in Florida. Here's what happened, why it matters, and what it means for the future of space technology.",
