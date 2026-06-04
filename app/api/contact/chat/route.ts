@@ -1,10 +1,13 @@
 import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY || "",
 });
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 const SYSTEM_INSTRUCTION = `You are the GrowX Labs Project Architect AI. Your job is to consult with prospective clients, refine their ideas, classify their project, and live-generate a development roadmap.
 
@@ -23,7 +26,7 @@ Based on the client's raw inputs, you must:
    - "35k-70k" (custom web apps, complex CRM integrations, portals, 35,000 - 70,000 INR)
    - "above-70k" (large enterprise web portals, advanced full-stack SaaS, >70,000 INR)
    - "overseas" (international clients outside India desiring USD billing)
-3. Live-generate a checklist of 3-4 custom milestones (Tasks) with specific Subtasks tailored to their exact project brief. Make these milestones realistic for what they explained.
+3. Live-generate a roadmap: Generate exactly 2 high-level milestones (Tasks) with exactly 2 subtasks each, tailored to the project. Keep titles and descriptions extremely brief (max 5 words) to avoid JSON truncation.
 
 Return ONLY a JSON response conforming strictly to the following TypeScript interface structure. Do not wrap it in markdown block tags, return plain raw JSON:
 
@@ -55,15 +58,85 @@ interface AIResponse {
   isReady: boolean; // Set to true if you have a clear picture of their scope, service, and budget, and they are ready to finalize.
 }`;
 
+// Robust parser to clean LLM JSON response and extract fields via regex if parsing fails
+function cleanAndParseJSON(text: string) {
+  let cleaned = text.trim();
+  
+  // Strip Markdown JSON codeblocks
+  if (cleaned.startsWith("```")) {
+    cleaned = cleaned.replace(/^```(?:json)?\n/, "").replace(/\n```$/, "").trim();
+  }
+
+  // Remove trailing commas in objects and arrays
+  cleaned = cleaned.replace(/,\s*([\]}])/g, "$1");
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    console.warn("JSON.parse failed, running regex fallback extraction. Raw text:", text, e);
+    
+    // Extract "response" field
+    const responseMatch = cleaned.match(/"response"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+    const responseVal = responseMatch 
+      ? responseMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n')
+      : "I've processed your idea. Could you tell me more about your requirements or budget?";
+
+    // Extract "service" field
+    const serviceMatch = cleaned.match(/"service"\s*:\s*"([^"]*)"/);
+    const serviceVal = serviceMatch ? serviceMatch[1] : "";
+
+    // Extract "budget" field
+    const budgetMatch = cleaned.match(/"budget"\s*:\s*"([^"]*)"/);
+    const budgetVal = budgetMatch ? budgetMatch[1] : "";
+
+    // Extract "isReady" field
+    const isReadyMatch = cleaned.match(/"isReady"\s*:\s*(true|false)/i);
+    const isReadyVal = isReadyMatch ? isReadyMatch[1].toLowerCase() === "true" : false;
+
+    // Extract tasks array
+    let tasksVal: any[] = [];
+    try {
+      const tasksStartIdx = cleaned.indexOf('"tasks"');
+      if (tasksStartIdx !== -1) {
+        const tasksSubStr = cleaned.substring(tasksStartIdx);
+        const arrayStart = tasksSubStr.indexOf('[');
+        if (arrayStart !== -1) {
+          let bracketCount = 1;
+          let arrayEnd = -1;
+          for (let i = arrayStart + 1; i < tasksSubStr.length; i++) {
+            if (tasksSubStr[i] === '[') bracketCount++;
+            else if (tasksSubStr[i] === ']') bracketCount--;
+            if (bracketCount === 0) {
+              arrayEnd = i;
+              break;
+            }
+          }
+          if (arrayEnd !== -1) {
+            const tasksJsonStr = tasksSubStr.substring(arrayStart, arrayEnd + 1);
+            const cleanedTasks = tasksJsonStr.replace(/,\s*([\]}])/g, "$1");
+            tasksVal = JSON.parse(cleanedTasks);
+          }
+        }
+      }
+    } catch (tasksErr) {
+      console.warn("Failed to extract tasks array via regex", tasksErr);
+    }
+
+    return {
+      response: responseVal,
+      service: serviceVal,
+      budget: budgetVal,
+      tasks: tasksVal,
+      isReady: isReadyVal
+    };
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: "Invalid messages history" }, { status: 400 });
-    }
-
-    if (!process.env.OPENROUTER_API_KEY) {
-      return NextResponse.json({ error: "OpenRouter API Key not configured" }, { status: 500 });
     }
 
     // Format prompt from history
@@ -76,32 +149,76 @@ export async function POST(req: Request) {
 === CONVERSATION HISTORY ===
 ${historyText}`;
 
-    // Call OpenRouter
-    const completion = await openai.chat.completions.create({
-      model: "google/gemini-2.0-flash-lite-preview-02-05:free",
-      messages: [
-        { role: "system", content: SYSTEM_INSTRUCTION },
-        { role: "user", content: prompt }
-      ],
-      response_format: { type: "json_object" }
-    });
+    let jsonText = "";
 
-    const jsonText = completion.choices[0].message.content;
-    if (!jsonText) throw new Error("AI failed to generate response content");
-
-    try {
-      const parsed = JSON.parse(jsonText);
-      return NextResponse.json(parsed);
-    } catch (parseErr) {
-      console.error("OpenRouter JSON parse failure:", jsonText, parseErr);
-      return NextResponse.json({
-        response: "I've processed your idea. Could you tell me more about your requirements or what budget range you're targetting?",
-        service: "",
-        budget: "",
-        tasks: [],
-        isReady: false
-      });
+    // 1. Try OpenRouter (Gemma 4 Free)
+    if (process.env.OPENROUTER_API_KEY) {
+      try {
+        console.log("Attempting OpenRouter free model (google/gemma-4-31b-it:free)...");
+        const completion = await openai.chat.completions.create({
+          model: "google/gemma-4-31b-it:free",
+          messages: [
+            { role: "system", content: SYSTEM_INSTRUCTION },
+            { role: "user", content: prompt }
+          ],
+          max_tokens: 1000,
+          response_format: { type: "json_object" }
+        });
+        jsonText = completion.choices?.[0]?.message?.content || "";
+        console.log("OpenRouter primary model responded successfully.");
+      } catch (openRouterErr: any) {
+        console.warn("OpenRouter primary model failed. Error:", openRouterErr.message || openRouterErr);
+      }
     }
+
+    // 2. Try Direct Google Gemini SDK Fallback (Completely free, fast, high RPM)
+    if (!jsonText && process.env.GEMINI_API_KEY) {
+      try {
+        console.log("Attempting direct Google Gemini API fallback...");
+        const model = genAI.getGenerativeModel({
+          model: "gemini-1.5-flash-latest",
+          generationConfig: {
+            responseMimeType: "application/json",
+          }
+        });
+        
+        const fullPrompt = `${SYSTEM_INSTRUCTION}\n\n${prompt}`;
+        const result = await model.generateContent(fullPrompt);
+        const response = await result.response;
+        jsonText = response.text() || "";
+        console.log("Direct Google Gemini API fallback responded successfully.");
+      } catch (geminiErr: any) {
+        console.error("Direct Google Gemini API fallback failed. Error:", geminiErr.message || geminiErr);
+      }
+    }
+
+    // 3. Last Resort Fallback (OpenRouter Generic Free Router)
+    if (!jsonText && process.env.OPENROUTER_API_KEY) {
+      try {
+        console.log("Attempting OpenRouter generic free router fallback...");
+        const completion = await openai.chat.completions.create({
+          model: "openrouter/free",
+          messages: [
+            { role: "system", content: SYSTEM_INSTRUCTION },
+            { role: "user", content: prompt }
+          ],
+          max_tokens: 1000,
+          response_format: { type: "json_object" }
+        });
+        jsonText = completion.choices?.[0]?.message?.content || "";
+        console.log("OpenRouter generic free router fallback responded successfully.");
+      } catch (lastErr: any) {
+        console.error("OpenRouter generic free router fallback failed. Error:", lastErr.message || lastErr);
+      }
+    }
+
+    if (!jsonText) {
+      throw new Error("All AI inference providers failed to return a response.");
+    }
+
+    console.log("DEBUG Cleaned AI Output:", jsonText);
+    const parsed = cleanAndParseJSON(jsonText);
+    return NextResponse.json(parsed);
 
   } catch (error: any) {
     console.error("Contact Conversational OpenRouter API Error:", error);

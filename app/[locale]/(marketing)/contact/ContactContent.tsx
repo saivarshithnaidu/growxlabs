@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { Mail, Phone, MapPin, CheckCircle2, AlertCircle, MessageCircle, ShieldCheck, Clock, Sparkles, ArrowRight } from "lucide-react";
+import { Mail, Phone, MapPin, CheckCircle2, AlertCircle, MessageCircle, ShieldCheck, Clock, Bot, Compass, Cpu, Zap, ArrowRight } from "lucide-react";
 import React from "react";
 import { usePostHog } from "posthog-js/react";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -200,7 +200,7 @@ export function ContactContent() {
   const trustSignals = [
     { icon: ShieldCheck, text: "Registered Business: UDYAM-AP-22-0063260" },
     { icon: Clock, text: "Response within 4 business hours" },
-    { icon: Sparkles, text: "Free 15-minute discovery call" },
+    { icon: Zap, text: "Free 15-minute discovery call" },
   ];
 
   return (
@@ -311,7 +311,7 @@ export function ContactContent() {
                     isAIMode ? "bg-[#355CFF] text-white shadow-sm" : "text-[#6B7280] hover:text-[#1A1A1A]"
                   )}
                 >
-                  <Sparkles size={13} className={cn(isAIMode ? "text-white" : "text-[#355CFF]")} />
+                  <Bot size={13} className={cn(isAIMode ? "text-white" : "text-[#355CFF]")} />
                   AI Strategy Builder
                 </button>
               </div>
@@ -570,7 +570,7 @@ export function ContactContent() {
                       {/* Right: Live Blueprint Cards */}
                       <div className="bg-[#F9F8F6] border border-[#E5E2DC] rounded-lg p-5 flex flex-col h-[580px] overflow-hidden">
                         <h3 className="text-sm font-black text-[#1A1A1A] uppercase tracking-wider mb-4 pb-2 border-b border-[#E5E2DC] flex items-center gap-2">
-                          <Sparkles size={15} className="text-[#355CFF]" /> Live Strategy Blueprint
+                          <Compass size={15} className="text-[#355CFF]" /> Live Strategy Blueprint
                         </h3>
                         
                         {/* Service / Budget auto-indicators */}
@@ -610,7 +610,7 @@ export function ContactContent() {
                             <Plan tasks={aiTasks} />
                           ) : (
                             <div className="h-full flex flex-col items-center justify-center text-center p-6 border border-dashed border-[#E5E2DC] rounded-md">
-                              <Sparkles size={32} className="text-[#6B7280] opacity-30 mb-3 animate-pulse" />
+                              <Compass size={32} className="text-[#6B7280] opacity-30 mb-3 animate-pulse" />
                               <h4 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wider">Roadmap Ingesting</h4>
                               <p className="text-xs text-[#6B7280] max-w-[220px] mt-1.5 leading-relaxed">
                                 Chat with the AI Strategy Architect on the left to instantly map out your task breakdown, tools, and execution phases.
