@@ -1,14 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MessageSquare, Calendar, ShieldCheck, ArrowUpRight, Terminal, Code, Cpu } from "lucide-react";
 import { Link } from "@/navigation";
+
+const neofetchArt = `  ______ ______   ______ _   _
+ / _____|_____ \\\\ / _____| \\\\_/ |
+| /  ___ _____) | /  ___ \\\\   / 
+| | | _ |  ____/| | | _ | ) (  
+| \\\\____/| |     | \\\\____/|/ _ \\\\ 
+ \\\\_____/|_|      \\\\_____/_/   \\\\_|
+
+OS: GrowX-OS v2.0
+Host: growxlabs-core-node-1
+Uptime: 247d 8h 12m
+Shell: growxsh v3.5-secure
+AI Core: Claude 3.5 Sonnet / GPT-4o
+Workflows: n8n / Node.js / TypeScript
+Availability: OPEN TO PROJECTS (Type 'whatsapp' or 'schedule')`;
 
 export function HotlineConsole() {
   const [showCalendly, setShowCalendly] = useState(false);
   const [activeTab, setActiveTab] = useState<"logs" | "payload" | "metrics">("logs");
   const [logs, setLogs] = useState<string[]>([]);
+  const [currentInput, setCurrentInput] = useState("");
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const logsEndRef = useRef<HTMLDivElement>(null);
 
   // Initialize terminal logs on mount
   useEffect(() => {
@@ -39,27 +58,127 @@ export function HotlineConsole() {
     return () => clearInterval(timer);
   }, []);
 
-  // Append a line when button is hovered
+  // Auto scroll to bottom
+  useEffect(() => {
+    if (logsEndRef.current) {
+      logsEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [logs]);
+
+  // Focus terminal input
+  const focusTerminal = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  // Handle CLI command submission
+  const handleCommand = (cmd: string) => {
+    const trimmed = cmd.trim();
+    if (!trimmed) return;
+    
+    // Add command to log
+    setLogs(prev => [...prev, `guest@growxlabs:~$ ${trimmed}`]);
+    setCurrentInput("");
+
+    const cmdLower = trimmed.toLowerCase();
+    setTimeout(() => {
+      switch (cmdLower) {
+        case "help":
+        case "?":
+          setLogs(prev => [
+            ...prev,
+            "Available commands:",
+            "  whatsapp   - Open secure WhatsApp line to developer",
+            "  schedule   - Load inline Calendly strategy calendar",
+            "  neofetch   - Display system neofetch ASCII details",
+            "  specs      - Open system hardware/AI tab",
+            "  payload    - Show JSON API payload response",
+            "  about      - Studio info and services overview",
+            "  clear      - Clear terminal logs history"
+          ]);
+          break;
+        case "clear":
+          setLogs([]);
+          break;
+        case "about":
+          setLogs(prev => [
+            ...prev,
+            "GrowXLabs.tech is an AI-native product studio building secure automated digital platforms.",
+            "We engineer custom Next.js web applications, n8n automations, and CRM integrations."
+          ]);
+          break;
+        case "specs":
+          setActiveTab("metrics");
+          setLogs(prev => [
+            ...prev,
+            "▸ Switching display view to system.specs...",
+            "✔ Metrics loaded successfully."
+          ]);
+          break;
+        case "payload":
+          setActiveTab("payload");
+          setLogs(prev => [
+            ...prev,
+            "▸ Switching display view to payload.json...",
+            "✔ Schema loaded successfully."
+          ]);
+          break;
+        case "neofetch":
+          setLogs(prev => [...prev, neofetchArt]);
+          break;
+        case "whatsapp":
+        case "connect":
+          setLogs(prev => [
+            ...prev,
+            "▸ Building WhatsApp handshake routing payload...",
+            "▸ Redirecting to Lead Engineer line...",
+          ]);
+          setTimeout(() => {
+            window.open("/contact", "_blank");
+          }, 800);
+          break;
+        case "schedule":
+        case "book":
+          setLogs(prev => [
+            ...prev,
+            "▸ Mounting inline scheduler script...",
+            "▸ Spawning secure booking window..."
+          ]);
+          setTimeout(() => {
+            setShowCalendly(true);
+          }, 800);
+          break;
+        default:
+          setLogs(prev => [
+            ...prev,
+            `bash: command not found: ${trimmed}. Type 'help' for options.`
+          ]);
+      }
+    }, 100);
+  };
+
+  // Append lines on button hovers
   const handleButtonHover = (buttonName: string) => {
     setHoveredButton(buttonName);
     if (buttonName === "whatsapp") {
       setLogs(prev => [
-        ...prev.slice(-10),
-        "guest@growxlabs:~$ exec launch_whatsapp --target=engineer",
-        "▸ Status: Preparing redirection payload..."
+        ...prev.slice(-12),
+        "guest@growxlabs:~$ exec launch_whatsapp --target=lead_engineer",
+        "▸ Status: Redirection route ready."
       ]);
     } else if (buttonName === "calendly") {
       setLogs(prev => [
-        ...prev.slice(-10),
-        "guest@growxlabs:~$ exec initialize_calendly --embed",
-        "▸ Status: Awaiting calendar selection..."
+        ...prev.slice(-12),
+        "guest@growxlabs:~$ exec initialize_calendly --inline",
+        "▸ Status: Interactive calendar mount ready."
       ]);
     }
   };
 
   return (
     <div className="w-full max-w-3xl mx-auto mt-4 px-4 text-left">
-      {/* Top Header (directly on section background) */}
+      {/* Top Header */}
       <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 text-left animate-fade-in">
         <div className="flex items-center gap-3">
           <span className="relative flex h-3 w-3">
@@ -101,7 +220,10 @@ export function HotlineConsole() {
       ) : (
         /* Central Interactive Terminal Window */
         <div className="space-y-6">
-          <div className="w-full rounded-xl border border-border bg-[#05060A] overflow-hidden flex flex-col font-mono text-[13px] text-white/95 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+          <div 
+            onClick={focusTerminal}
+            className="w-full rounded-xl border border-border bg-[#05060A] overflow-hidden flex flex-col font-mono text-[13px] text-white/95 shadow-[0_20px_50px_rgba(0,0,0,0.3)] cursor-text"
+          >
             {/* Terminal Title Bar */}
             <div className="flex items-center justify-between px-4 py-3 bg-[#0B0D15] border-b border-border/70">
               <div className="flex gap-2">
@@ -151,7 +273,7 @@ export function HotlineConsole() {
             </div>
 
             {/* Terminal Screen Body */}
-            <div className="p-4 sm:p-6 h-[240px] overflow-y-auto text-left leading-relaxed">
+            <div className="p-4 sm:p-6 h-[250px] overflow-y-auto text-left leading-relaxed">
               {activeTab === "logs" && (
                 <div className="space-y-1">
                   {logs.map((log, index) => {
@@ -172,9 +294,34 @@ export function HotlineConsole() {
                     if (log.startsWith("●")) {
                       return <p key={index} className="text-[#10B981] font-bold">{log}</p>;
                     }
-                    return <p key={index} className="text-white/70">{log}</p>;
+                    return <pre key={index} className="text-white/70 whitespace-pre-wrap font-mono m-0">{log}</pre>;
                   })}
-                  <div className="w-2 h-4 bg-white/70 inline-block animate-pulse ml-0.5 align-middle" />
+                  
+                  {/* Real Interactive CLI input */}
+                  <form 
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleCommand(currentInput);
+                    }}
+                    className="flex items-center text-white/95 mt-1"
+                  >
+                    <span className="text-[#355CFF]">guest@growxlabs</span>
+                    <span className="text-white/60">:</span>
+                    <span className="text-[#10B981]">~$</span>{" "}
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={currentInput}
+                      onChange={(e) => setCurrentInput(e.target.value)}
+                      className="flex-1 bg-transparent border-none outline-none font-mono text-[13px] text-white p-0 ml-2 focus:ring-0 focus:outline-none border-0 shadow-none"
+                      placeholder="Type 'help'..."
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck="false"
+                    />
+                  </form>
+                  <div ref={logsEndRef} />
                 </div>
               )}
 
@@ -211,6 +358,21 @@ export function HotlineConsole() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Quick Command Suggestion Pills */}
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground font-mono">
+            <span>Suggestions:</span>
+            {["help", "neofetch", "whatsapp", "schedule", "clear"].map((cmd) => (
+              <button
+                key={cmd}
+                type="button"
+                onClick={() => handleCommand(cmd)}
+                className="px-2 py-0.5 rounded border border-border bg-background hover:bg-card text-muted-foreground hover:text-white transition-colors cursor-pointer active:scale-95"
+              >
+                {cmd}
+              </button>
+            ))}
           </div>
 
           {/* Bottom Actions Panel */}
