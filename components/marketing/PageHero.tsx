@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { FlickerText } from "@/components/marketing/FlickerText";
 
 interface PageHeroProps {
   title: string;          // e.g. "Services", "Portfolio", "Products", "Courses", "Blog", "About", "Contact"
@@ -22,7 +23,7 @@ export function PageHero({
     <div className={cn("w-full bg-background relative overflow-hidden select-none", className)}>
       {/* ═══ DESKTOP HERO (Hidden on mobile) ═══ */}
       <section
-        className="hidden sm:flex sm:flex-col w-full relative overflow-hidden z-20 px-6 md:px-10 xl:px-16 2xl:px-24 pt-28 pb-0 min-h-[70vh] justify-between select-none"
+        className="hidden sm:flex sm:flex-col w-full relative overflow-hidden z-20 px-6 md:px-10 xl:px-16 2xl:px-24 pt-28 pb-0 min-h-dvh justify-between select-none"
       >
         {/* Decorative Grid Mesh Background */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
@@ -34,7 +35,7 @@ export function PageHero({
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full flex flex-col items-end mb-16 md:mb-20 z-10 select-none"
+          className="w-full flex flex-col items-end mb-36 z-10 select-none"
         >
           {/* Subtle horizontal grid line for Swiss architectural framing */}
           <div className="w-full max-w-4xl pr-8 mb-6">
@@ -64,24 +65,23 @@ export function PageHero({
           </div>
         </motion.div>
 
-        {/* Bottom part: Massive Brand Title touching the bottom */}
         <motion.div 
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-          className="w-full flex justify-center items-end select-none pointer-events-none z-0 translate-y-[3%] overflow-visible"
+          className="w-full flex justify-start items-end select-none pointer-events-none z-0 translate-y-[3%] overflow-visible -ml-3 md:-ml-5 xl:-ml-8 2xl:-ml-12"
         >
           <h1
-            className="font-sans font-black select-none tracking-[-0.06em] text-foreground leading-[0.8] text-[10.2vw] uppercase whitespace-nowrap inline-block origin-bottom scale-y-[1.35]"
+            className="font-sans font-black select-none tracking-[0.08em] text-foreground leading-[0.8] text-[10.2vw] whitespace-nowrap inline-block origin-bottom scale-x-[1.08] scale-y-[1.35]"
           >
-            {title}
+            <FlickerText text={title} />
           </h1>
         </motion.div>
       </section>
 
       {/* ═══ SWISS-EDITORIAL MOBILE HERO (Visible only on mobile) ═══ */}
       <section
-        className="flex sm:hidden w-full relative overflow-hidden px-6 pt-28 pb-10 min-h-[65vh] items-center"
+        className="flex sm:hidden w-full relative overflow-hidden px-6 pt-28 pb-10 min-h-dvh items-center"
       >
         {/* Decorative Grid Mesh Background */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
@@ -93,7 +93,7 @@ export function PageHero({
             initial={{ opacity: 0, x: -15 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col justify-between h-[45vh] text-left pr-4 select-none z-10"
+            className="flex flex-col justify-between h-[62dvh] text-left pr-4 select-none z-10"
           >
             {/* Top Indicator */}
             <div className="font-mono text-[10px] tracking-[0.22em] font-extrabold text-foreground uppercase">
@@ -132,15 +132,15 @@ export function PageHero({
             initial={{ opacity: 0, x: 25 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-[90px] h-[55vh] flex items-center justify-center pointer-events-none z-0 overflow-hidden"
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-[90px] h-[75dvh] flex items-center justify-center pointer-events-none z-0 overflow-hidden"
           >
             <h1
-              className="font-sans rotate-[-90deg] whitespace-nowrap text-foreground font-black select-none tracking-[-0.04em] leading-none uppercase"
+              className="font-sans rotate-[-90deg] whitespace-nowrap text-foreground font-black select-none tracking-[0.06em] leading-none scale-x-[1.08]"
               style={{
-                fontSize: "clamp(1.8rem, 6.2vh, 3.2rem)",
+                fontSize: "clamp(1.8rem, 6.8vh, 3.4rem)",
               }}
             >
-              {title}
+              <FlickerText text={title} />
             </h1>
           </motion.div>
 

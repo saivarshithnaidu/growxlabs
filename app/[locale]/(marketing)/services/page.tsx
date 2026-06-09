@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+
 import { Reveal } from "@/components/marketing/Reveal";
 import { locales, Link } from "@/navigation";
 import { DynamicSchema } from "@/components/marketing/DynamicSchema";
@@ -260,20 +260,6 @@ export default function ServicesPage() {
               ))}
             </div>
           </Reveal>
-
-          <div className="mt-24 text-center rounded-lg bg-[#1A1A1A] p-8 md:p-12">
-            <h2 className="text-[clamp(28px,5vw,46px)] font-black text-white tracking-tight mb-4">
-              Need a complete digital system?
-            </h2>
-            <p className="text-white/70 max-w-2xl mx-auto mb-8">
-              Tell us what you sell, how leads currently arrive, and where your team loses time. We will map the system that fits.
-            </p>
-            <Link href="/contact">
-              <Button className="h-14 px-8 rounded-md font-semibold inline-flex items-center gap-2">
-                Start a project <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
         </div>
       </div>
     </>
