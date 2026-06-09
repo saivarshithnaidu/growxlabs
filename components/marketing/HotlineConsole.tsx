@@ -26,7 +26,10 @@ export function HotlineConsole() {
     let i = 0;
     const timer = setInterval(() => {
       if (i < initialLogs.length) {
-        setLogs(prev => [...prev, initialLogs[i]]);
+        const nextLine = initialLogs[i];
+        if (nextLine) {
+          setLogs(prev => [...prev, nextLine]);
+        }
         i++;
       } else {
         clearInterval(timer);
@@ -156,6 +159,7 @@ export function HotlineConsole() {
                 {activeTab === "logs" && (
                   <div className="space-y-1">
                     {logs.map((log, index) => {
+                      if (!log || typeof log !== "string") return null;
                       if (log.startsWith("guest@growxlabs")) {
                         return (
                           <p key={index} className="text-white/40">
