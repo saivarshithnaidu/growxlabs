@@ -251,6 +251,16 @@ export default function Home() {
           <AnimatedSection delay={0.15}>
             <AccordionFAQ items={faqData} />
           </AnimatedSection>
+
+          <AnimatedSection delay={0.2} className="text-center mt-12">
+            <Link 
+              href="/faq" 
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-md border border-border bg-background hover:bg-card text-foreground text-[12px] font-bold tracking-[0.15em] uppercase transition-all shadow-sm active:scale-95 group font-mono"
+            >
+              <span>View All FAQs</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+            </Link>
+          </AnimatedSection>
         </div>
       </section>
 

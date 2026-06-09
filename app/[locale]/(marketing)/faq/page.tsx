@@ -7,6 +7,30 @@ import Script from "next/script";
 
 const faqData = [
   {
+    question: "What is GrowXLabs.tech?",
+    answer: "GrowXLabs.tech is a global AI-native product studio that builds high-performance websites, automation systems, and growth systems for ambitious businesses worldwide. We specialize in helping restaurants, real estate agencies, and scaling brands stop losing customers through automated follow-ups and custom workflows."
+  },
+  {
+    question: "Where is GrowXLabs.tech based?",
+    answer: "GrowXLabs.tech is headquartered in India and operates globally. We serve clients across the USA, UK, Europe, Australia, UAE, Canada, Singapore, and worldwide. All client work is done remotely with full transparency and regular async updates."
+  },
+  {
+    question: "What industries does GrowXLabs.tech serve?",
+    answer: "GrowXLabs.tech serves restaurants, real estate agencies, hotels, clinics, e-commerce brands, SaaS platforms, B2B service firms, and any growing business that wants to automate customer acquisition."
+  },
+  {
+    question: "How does GrowXLabs.tech work with international clients?",
+    answer: "GrowXLabs.tech works fully remotely with clients worldwide. Discovery and alignment calls are scheduled on Google Meet or Zoom. We support secure international bank transfers, Stripe, and PayPal, and send updates via WhatsApp, Slack, or email."
+  },
+  {
+    question: "What makes GrowXLabs.tech different from other agencies?",
+    answer: "We combine AI-powered development tools with deep software engineering expertise to build systems faster and with higher fidelity than traditional agencies. Every platform we build is optimized for measurable conversion and speed."
+  },
+  {
+    question: "What tech stack and frameworks do you use to build projects?",
+    answer: "We build with a high-performance, future-proof stack: Next.js (React) as our primary framework, TypeScript for type safety, Tailwind CSS for clean responsive layouts, and Framer Motion for premium micro-animations. For backend automations, we leverage n8n, node.js, and cloud integrations. Everything is hosted on secure cloud infrastructure like AWS, Vercel, or highly optimized VPS setups."
+  },
+  {
     question: "How do your digital systems improve revenue?",
     answer: "Our systems capture high-intent traffic, qualify leads quickly, and automate the conversion path so fewer opportunities are lost."
   },
