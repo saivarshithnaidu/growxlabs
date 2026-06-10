@@ -5,6 +5,7 @@ import { Link, locales } from "@/navigation";
 import { Reveal } from "@/components/marketing/Reveal";
 import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { BlogInteractiveList } from "@/components/marketing/BlogInteractiveList";
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / Directory SEO)
@@ -182,7 +183,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
   };
 
   return (
-    <div className="w-full bg-background min-h-screen text-foreground selection:bg-primary/10 selection:text-primary pt-32 pb-24">
+    <div className="w-full bg-background min-h-screen text-foreground selection:bg-primary/10 selection:text-primary pt-32 pb-24 animate-fade-in">
       {/* Schema injection */}
       <Script
         id="blog-index-schema"
@@ -190,125 +191,33 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="max-w-5xl mx-auto px-6 md:px-10 xl:px-16 2xl:px-24">
+      <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-6 md:px-10 xl:px-16 2xl:px-24">
         {/* Page Header */}
-        <header className="border-b border-border pb-14 mb-16 text-center">
+        <header className="pb-10 mb-10 text-center">
           <Reveal y={20}>
-            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary mb-5 block font-mono">
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary mb-4 block font-mono">
               Editorial Insights
             </span>
-            <h1 className="font-serif font-black text-5xl md:text-6xl lg:text-7xl text-foreground tracking-tight leading-tight mb-6">
+            <h1 className="font-serif font-black text-4xl md:text-5xl lg:text-6xl text-foreground tracking-tight leading-tight mb-4 uppercase">
               Insights
             </h1>
-            <p className="text-[16px] text-muted-foreground leading-[1.8] max-w-xl mx-auto">
+            <p className="text-[14px] text-muted-foreground leading-relaxed max-w-xl mx-auto">
               Curated case studies, engineering papers, and deep-dives from the GrowXLabsTech studio.
             </p>
           </Reveal>
         </header>
 
-        {/* Featured Post (NVIDIA Vision) */}
-        <section className="mb-20">
-          <Reveal y={30}>
-            <div className="flex flex-col gap-8 pb-16 border-b border-border">
-              <div className="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-black">
-                <Image
-                  src={featuredPost.image}
-                  alt={featuredPost.title}
-                  fill
-                  priority
-                  className="object-cover scale-[1.10] transition-transform duration-700 hover:scale-[1.12]"
-                  sizes="(max-w-1200px) 100vw, 1200px"
-                />
-              </div>
-
-              <div className="space-y-4 max-w-4xl">
-                <div className="flex gap-3 items-center font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
-                  <span className="text-primary font-bold bg-primary/5 px-2 py-0.5 rounded">{featuredPost.category}</span>
-                  <span className="text-[#babcbe]">·</span>
-                  <span>{featuredPost.date}</span>
-                  <span className="text-[#babcbe]">·</span>
-                  <span>{featuredPost.readTime}</span>
-                </div>
-
-                <Link href={`/blog/${featuredPost.slug}`} className="group inline-block">
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-foreground group-hover:text-primary transition-colors">
-                    {featuredPost.title}
-                  </h2>
-                </Link>
-
-                <p className="text-muted-foreground text-[17px] leading-relaxed font-normal">
-                  {featuredPost.excerpt}
-                </p>
-
-                <div className="pt-2">
-                  <Link 
-                    href={`/blog/${featuredPost.slug}`} 
-                    className="inline-flex items-center gap-1.5 text-[13px] font-bold text-primary hover:underline"
-                  >
-                    <span>Read featured article</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </section>
-
-        {/* Regular Posts Grid List */}
-        <section className="space-y-16">
-          <Reveal y={20} delay={0.15}>
-            <h3 className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase font-bold pb-4 border-b border-border mb-10">
-              More Insights & Case Studies
-            </h3>
-          </Reveal>
-
-          <div className="space-y-0">
-            {regularPosts.map((post, index) => (
-              <Reveal key={index} y={20} delay={0.05 * index}>
-                <div className="group flex flex-col md:flex-row md:items-start justify-between gap-5 py-10 border-b border-border first:pt-0 last:border-0 last:pb-0">
-                  <div className="space-y-3 max-w-3xl">
-                    <div className="flex gap-3 items-center font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
-                      <span className="text-primary font-bold bg-primary/5 px-2 py-0.5 rounded">{post.category}</span>
-                      <span className="text-[#babcbe]">·</span>
-                      <span>{post.date}</span>
-                      <span className="text-[#babcbe]">·</span>
-                      <span>{post.readTime}</span>
-                    </div>
-
-                    <Link href={`/blog/${post.slug}`} className="block">
-                      <h4 className="text-xl md:text-2xl font-black leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors">
-                        {post.title}
-                      </h4>
-                    </Link>
-
-                    <p className="text-muted-foreground text-[15px] leading-[1.7] max-w-2xl">
-                      {post.excerpt}
-                    </p>
-                  </div>
-
-                  <div className="shrink-0 pt-2 md:pt-6">
-                    <Link 
-                      href={`/blog/${post.slug}`}
-                      className="w-9 h-9 rounded-full border border-border flex items-center justify-center bg-card group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300 shrink-0"
-                      aria-label={`Read ${post.title}`}
-                    >
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </section>
+        {/* Interactive Filterable Blog Index Split Layout */}
+        <BlogInteractiveList posts={regularPosts} featuredPost={featuredPost} />
 
         {/* Bottom CTA Block */}
-        <section className="mt-24 border-t border-border pt-16">
+        <section className="mt-32 border-t border-border/20 pt-16">
           <Reveal y={20}>
-            <div className="bg-card rounded-2xl p-8 md:p-12 border border-border text-center space-y-6">
+            <div className="bg-[#111111]/20 rounded-3xl p-8 md:p-16 border border-border/10 text-center space-y-6 max-w-5xl mx-auto backdrop-blur-sm">
               <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold">
                 Let's construct your system
               </span>
-              <h3 className="text-[28px] md:text-[36px] font-black tracking-tight leading-tight text-foreground">
+              <h3 className="font-outfit font-black text-3xl md:text-4xl lg:text-5xl tracking-tight leading-tight text-foreground uppercase">
                 Building AI-native products
                 <br />
                 and modern digital systems.
@@ -318,7 +227,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
               </p>
               <div className="pt-4">
                 <Link href="/contact">
-                  <Button className="bg-primary text-primary-foreground hover:opacity-90 rounded-md px-8 h-12 text-[15px] font-semibold transition-all inline-flex items-center gap-2 hover:gap-3">
+                  <Button className="bg-primary text-primary-foreground hover:opacity-90 rounded-md px-8 h-12 text-[15px] font-semibold transition-all inline-flex items-center gap-2 hover:gap-3 cursor-pointer">
                     Work With GrowXLabsTech <ArrowRight className="w-4.5 h-4.5" />
                   </Button>
                 </Link>

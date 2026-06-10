@@ -1,7 +1,7 @@
 import React from "react";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { Plus_Jakarta_Sans, Playfair_Display, Lora } from "next/font/google";
+import { Plus_Jakarta_Sans, Playfair_Display, Lora, Outfit } from "next/font/google";
 import { GlobalBackground } from "@/components/layout/GlobalBackground";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
@@ -28,6 +28,13 @@ const serif = Playfair_Display({
 const lora = Lora({
   subsets: ["latin"],
   variable: "--font-lora",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-outfit",
   display: "swap",
 });
 
@@ -81,7 +88,7 @@ export default async function LocaleLayout({
   const direction = locale.startsWith('ar') ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={direction} className={`${sans.variable} ${serif.variable} ${lora.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={locale} dir={direction} className={`${sans.variable} ${serif.variable} ${lora.variable} ${outfit.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         {/* 🧠 MASTER AEO KNOWLEDGE GRAPH (Verified Architecture) */}
         <script

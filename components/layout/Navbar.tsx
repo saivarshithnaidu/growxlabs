@@ -25,7 +25,7 @@ export function Navbar() {
   const isDemoRoute = Boolean(pathname?.includes("/demos"));
   const isBlog = Boolean(pathname?.includes("/blog"));
   const isContact = Boolean(pathname?.includes("/contact"));
-  const isLightThemePage = isBlog;
+  const isLightThemePage = false; // Redesigned blog uses dark mode layout
   const isLandingPage = pathname === "/";
 
 

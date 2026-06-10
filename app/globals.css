@@ -5,6 +5,7 @@
   --font-sans: var(--font-sans), sans-serif;
   --font-serif: var(--font-serif), serif;
   --font-lora: var(--font-lora), serif;
+  --font-outfit: var(--font-outfit), sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   --color-background: var(--background);
@@ -62,24 +63,24 @@
 /* LIGHT THEME — Blog / Reading / Essay pages          */
 /* ═══════════════════════════════════════════════════ */
 .posts-page {
-  --background: #FDFAF7;
-  --foreground: #111111;
-  --card: #FFFFFF;
-  --card-foreground: #111111;
-  --popover: #FFFFFF;
-  --popover-foreground: #111111;
+  --background: #020202;
+  --foreground: #FFFFFF;
+  --card: #0C0C0C;
+  --card-foreground: #FFFFFF;
+  --popover: #0C0C0C;
+  --popover-foreground: #FFFFFF;
   --primary: #355CFF;
   --primary-foreground: #FFFFFF;
-  --secondary: #EDEAE4;
-  --secondary-foreground: #111111;
-  --muted: #EDEAE4;
-  --muted-foreground: #6B7280;
+  --secondary: #161616;
+  --secondary-foreground: #FFFFFF;
+  --muted: #161616;
+  --muted-foreground: #8E8E93;
   --accent: #355CFF;
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --border: #E5E2DC;
-  --input: #FFFFFF;
+  --border: #161616;
+  --input: #0C0C0C;
   --ring: #355CFF;
 }
 
@@ -346,8 +347,7 @@ section:not(:first-of-type) {
 
 .image-wrapper img, 
 [class*="image-wrapper"] img, 
-[class*="img-container"] img, 
-img {
+[class*="img-container"] img {
   object-fit: cover !important;
 }
 
@@ -445,11 +445,26 @@ img {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Premium Blog Typography Overrides */
+.posts-page main h1,
+.posts-page main h2,
+.posts-page main h3,
+.posts-page main h4,
+.posts-page main h5,
+.posts-page main h6,
+.posts-page main .font-serif {
+  font-family: var(--font-serif), Georgia, serif !important;
+}
+
+.posts-page main .font-lora {
+  font-family: var(--font-lora), Georgia, serif !important;
+}
+
 .blog-prose p {
   font-size: 17px;
   line-height: 1.9;
   letter-spacing: -0.003em;
-  color: #374151;
+  color: #D1D5DB;
   margin-bottom: 1.5em;
 }
 
@@ -458,7 +473,7 @@ img {
   font-weight: 900;
   letter-spacing: -0.025em;
   line-height: 1.2;
-  color: #1A1A1A;
+  color: #FFFFFF;
   margin-top: 3.5rem;
   margin-bottom: 1.25rem;
 }
@@ -468,7 +483,7 @@ img {
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.3;
-  color: #1A1A1A;
+  color: #FFFFFF;
   margin-top: 2.5rem;
   margin-bottom: 1rem;
 }
@@ -482,7 +497,7 @@ img {
 .blog-prose li {
   font-size: 16px;
   line-height: 1.85;
-  color: #374151;
+  color: #D1D5DB;
   padding-left: 0.5em;
   margin-bottom: 0.6em;
 }
@@ -497,14 +512,14 @@ img {
   border-left: 3px solid #355CFF;
   font-style: italic;
   font-size: 20px;
-  color: #4B5563;
+  color: #9CA3AF;
   font-family: Georgia, "Times New Roman", serif;
   line-height: 1.6;
 }
 
 .blog-prose strong {
   font-weight: 700;
-  color: #1A1A1A;
+  color: #FFFFFF;
 }
 
 .blog-prose a {
@@ -516,6 +531,32 @@ img {
 
 .blog-prose a:hover {
   border-bottom-color: #355CFF;
+}
+
+/* Smart layout overrides to bridge hardcoded class tags in old static markup */
+.posts-page footer,
+.posts-page [class*="bg-[#FDFAF7]"],
+.posts-page footer[class*="bg-[#FDFAF7]"] {
+  background-color: transparent !important;
+}
+
+.posts-page [class*="bg-[#EDEAE4]"] {
+  background-color: var(--secondary) !important;
+}
+
+.posts-page [class*="border-[#E5E2DC]"],
+.posts-page [class*="border-[#D1D5DB]"] {
+  border-color: var(--border) !important;
+}
+
+/* Force all header title text and subtitles to match the main white text color */
+.posts-page header h1 span.text-\[\#355CFF\],
+.posts-page header h1 span[class*="text-"],
+.posts-page header h2 span.text-\[\#355CFF\],
+.posts-page header h2 span[class*="text-"],
+.posts-page header h3 span.text-\[\#355CFF\],
+.posts-page header h3 span[class*="text-"] {
+  color: var(--foreground) !important;
 }
 
 /* Smooth scroll behavior for anchor links */
