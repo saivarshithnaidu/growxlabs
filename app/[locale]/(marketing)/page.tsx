@@ -237,7 +237,7 @@ export default function Home() {
 
       <PipelineSection />
 
-      <section className="w-full py-20 px-6 md:px-10 xl:px-16 2xl:px-24 bg-card border-y border-border overflow-hidden">
+      <section className="w-full py-20 px-6 md:px-10 xl:px-16 2xl:px-24 bg-background overflow-hidden">
         <AnimatedSection className="max-w-7xl mx-auto text-center">
           <HotlineConsole />
         </AnimatedSection>
