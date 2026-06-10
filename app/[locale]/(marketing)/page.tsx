@@ -137,7 +137,7 @@ export default function Home() {
 
 
       {/* ═══ EXPLORE NAVIGATIONS ═══ */}
-      <section className="w-full py-24 px-6 md:px-10 xl:px-16 2xl:px-24 bg-card/60 border-y border-border">
+      <section className="w-full py-24 px-6 md:px-10 xl:px-16 2xl:px-24 bg-background">
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
           <AnimatedSection className="text-center mb-16">
             <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-primary mb-3 block">OUR WORK</span>
