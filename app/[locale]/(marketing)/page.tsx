@@ -13,7 +13,7 @@ import { LeadEngineSection } from "@/components/marketing/LeadEngineSection";
 import { ValuePropositions } from "@/components/marketing/ValuePropositions";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
 import { AnimatedSection, AnimatedStagger, AnimatedItem } from "@/components/marketing/AnimatedSection";
-import { HotlineConsole } from "@/components/marketing/HotlineConsole";
+import { Feature1 } from "@/components/ui/feature-1";
 import { PipelineSection } from "@/components/marketing/PipelineSection";
 import { locales } from "@/navigation";
 import Script from "next/script";
@@ -141,7 +141,7 @@ export default function Home() {
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
           <AnimatedSection className="text-center mb-16">
             <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-primary mb-3 block">OUR WORK</span>
-            <h2 className="text-[clamp(28px,4vw,42px)] font-sans font-black text-foreground tracking-tight">Explore Our Systems</h2>
+            <h2 className="text-[clamp(28px,4vw,42px)] font-sans font-black text-foreground tracking-tight">Explore Our Projects</h2>
           </AnimatedSection>
           
           <AnimatedStagger className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
@@ -237,11 +237,9 @@ export default function Home() {
 
       <PipelineSection />
 
-      <section className="w-full py-20 px-6 md:px-10 xl:px-16 2xl:px-24 bg-background overflow-hidden">
-        <AnimatedSection className="max-w-7xl mx-auto text-center">
-          <HotlineConsole />
-        </AnimatedSection>
-      </section>
+      <AnimatedSection>
+        <Feature1 />
+      </AnimatedSection>
 
       {/* ═══ FAQ — Accordion ═══ */}
       <section className="w-full py-24 px-6 md:px-10 xl:px-16 2xl:px-24">

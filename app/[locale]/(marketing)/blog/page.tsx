@@ -6,6 +6,7 @@ import { Reveal } from "@/components/marketing/Reveal";
 import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { BlogInteractiveList } from "@/components/marketing/BlogInteractiveList";
+import { AstroChatCTA } from "@/components/marketing/AstroChatCTA";
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / Directory SEO)
@@ -209,33 +210,14 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
         {/* Interactive Filterable Blog Index Split Layout */}
         <BlogInteractiveList posts={regularPosts} featuredPost={featuredPost} />
-
-        {/* Bottom CTA Block */}
-        <section className="mt-32 border-t border-border/20 pt-16">
-          <Reveal y={20}>
-            <div className="bg-[#111111]/20 rounded-3xl p-8 md:p-16 border border-border/10 text-center space-y-6 max-w-5xl mx-auto backdrop-blur-sm">
-              <span className="text-[11px] font-mono tracking-[0.2em] text-neutral-400 uppercase font-bold">
-                Let's construct your system
-              </span>
-              <h3 className="font-outfit font-black text-3xl md:text-4xl lg:text-5xl tracking-tight leading-tight text-foreground uppercase">
-                Building AI-native products
-                <br />
-                and modern digital systems.
-              </h3>
-              <p className="text-muted-foreground text-[15px] max-w-md mx-auto leading-relaxed">
-                Work directly with the GrowXLabsTech studio to engineer bespoke background automation pipelines, custom Web systems, and high-performance growth stacks.
-              </p>
-              <div className="pt-4">
-                <Link href="/contact">
-                  <Button className="bg-white text-black hover:bg-neutral-200 rounded-md px-8 h-12 text-[15px] font-semibold transition-all inline-flex items-center gap-2 hover:gap-3 cursor-pointer">
-                    Work With GrowXLabsTech <ArrowRight className="w-4.5 h-4.5" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </Reveal>
-        </section>
       </div>
+
+      {/* Bottom CTA Block */}
+      <section className="my-36 w-full flex justify-center">
+        <Reveal y={20} className="w-full flex justify-center">
+          <AstroChatCTA />
+        </Reveal>
+      </section>
     </div>
   );
 }

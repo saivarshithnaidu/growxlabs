@@ -1,0 +1,144 @@
+"use client";
+
+import { useState } from "react";
+import { Link } from "@/navigation";
+import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
+
+interface Feature1Props {
+  title?: string;
+  description?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  buttonPrimary?: {
+    label: string;
+    href: string;
+  };
+  buttonSecondary?: {
+    label: string;
+    href: string;
+  };
+}
+
+export const Feature1 = ({
+  title = "Ready to build your next AI-powered product?",
+  description = "Let's make it happen.",
+  imageSrc = "/images/landscape.jpg",
+  imageAlt = "GrowXLabs Landscape Illustration",
+  buttonPrimary = {
+    label: "Book a Strategy Call",
+    href: "/contact",
+  },
+  buttonSecondary = {
+    label: "Explore Our Work",
+    href: "/portfolio",
+  },
+}: Feature1Props) => {
+  const [showCalendly, setShowCalendly] = useState(false);
+
+  const renderButton = (
+    button: { label: string; href: string },
+    variant: "default" | "outline"
+  ) => {
+    const isExternal =
+      button.href.startsWith("http://") || button.href.startsWith("https://");
+
+    // Intercept Strategy Call buttons to show inline Calendly
+    const isBookCall =
+      button.label.toLowerCase().includes("strategy") ||
+      button.label.toLowerCase().includes("call") ||
+      button.label.toLowerCase().includes("book");
+
+    if (isBookCall) {
+      return (
+        <Button
+          variant={variant}
+          onClick={(e) => {
+            e.preventDefault();
+            setShowCalendly(true);
+          }}
+        >
+          {button.label}
+        </Button>
+      );
+    }
+
+    if (isExternal) {
+      return (
+        <Button variant={variant} asChild>
+          <a href={button.href} target="_blank" rel="noopener noreferrer">
+            {button.label}
+          </a>
+        </Button>
+      );
+    }
+
+    return (
+      <Button variant={variant} asChild>
+        <Link href={button.href as any}>
+          {button.label}
+        </Link>
+      </Button>
+    );
+  };
+
+  return (
+    <section className="py-24 border-t border-b border-white/5 bg-[#111111] overflow-hidden">
+      <div className="container mx-auto px-6 md:px-12">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left z-10">
+            <h2 className="my-6 mt-0 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl leading-tight">
+              {title}
+            </h2>
+            <p className="mb-8 max-w-xl text-zinc-400 text-base md:text-lg leading-relaxed">
+              {description}
+            </p>
+            <div className="flex w-full flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+              {buttonPrimary && renderButton(buttonPrimary, "default")}
+              {buttonSecondary && renderButton(buttonSecondary, "outline")}
+            </div>
+          </div>
+          <div
+            className={cn(
+              "relative group w-full border border-white/5 bg-[#000000] rounded-2xl flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500 hover:border-[#C0F0FB]/35",
+              showCalendly ? "h-[650px] w-full" : "aspect-square md:aspect-[4/3] max-h-96"
+            )}
+          >
+            {/* Subtle premium accent glows in background */}
+            {!showCalendly && (
+              <>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-[#C0F0FB]/5 blur-[70px] pointer-events-none" />
+                <div className="absolute top-1/2 left-[70%] -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-[#355CFF]/5 blur-[50px] pointer-events-none" />
+              </>
+            )}
+
+            {showCalendly ? (
+              <div className="w-full h-full relative flex flex-col">
+                {/* Close/Back button */}
+                <button
+                  onClick={() => setShowCalendly(false)}
+                  className="absolute top-4 right-4 z-20 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-full w-8 h-8 flex items-center justify-center text-white cursor-pointer transition-all shadow-lg hover:scale-105"
+                  title="Close Calendar"
+                >
+                  ✕
+                </button>
+                {/* Calendly iframe embed */}
+                <iframe
+                  src="https://calendly.com/saivarshith8284?background_color=111111&text_color=ffffff&primary_color=355cff"
+                  className="w-full h-full min-h-[580px] border-none"
+                  title="Schedule a meeting with GrowXLabs"
+                />
+              </div>
+            ) : (
+              <img
+                src={imageSrc}
+                alt={imageAlt}
+                className="w-full h-full object-cover transition-transform duration-750 group-hover:scale-105 select-none"
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
