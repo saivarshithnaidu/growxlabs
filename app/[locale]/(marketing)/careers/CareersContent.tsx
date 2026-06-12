@@ -338,10 +338,13 @@ export function CareersContent() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="fixed inset-0 w-full h-full bg-white text-black font-sans z-50 flex flex-col justify-between p-8 md:p-16 select-none overflow-hidden"
+          className="fixed inset-0 w-full h-full bg-black text-white font-sans z-50 flex flex-col justify-between p-8 md:p-16 select-none overflow-hidden"
         >
+          {/* Decorative Grid Mesh Background matching main site */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none -z-10" />
+
           {/* Top Row */}
-          <div className="flex justify-between items-center text-[10px] font-mono font-bold tracking-widest text-neutral-400">
+          <div className="flex justify-between items-center text-[10px] font-mono font-bold tracking-widest text-zinc-500">
             <div>[GrowXLabs]</div>
             <div>// INTRO</div>
             <div>START</div>
@@ -349,29 +352,29 @@ export function CareersContent() {
 
           {/* Middle Row with columns */}
           <div className="flex justify-end w-full mb-12">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 text-[9px] font-mono tracking-widest uppercase text-neutral-400 max-w-4xl w-full">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 text-[9px] font-mono tracking-widest uppercase text-zinc-500 max-w-4xl w-full">
               <div>
-                <p className="text-neutral-400 mb-1">We hire for</p>
-                <p className="text-black font-bold">Curiosity, grit,<br />honesty</p>
+                <p className="text-zinc-500 mb-1">We hire for</p>
+                <p className="text-white font-bold">Curiosity, grit,<br />honesty</p>
               </div>
               <div>
-                <p className="text-neutral-400 mb-1">{ROLES.length} roles</p>
-                <p className="text-black font-bold">open across<br />the company</p>
+                <p className="text-zinc-500 mb-1">{ROLES.length} roles</p>
+                <p className="text-white font-bold">open across<br />the company</p>
               </div>
               <div>
-                <p className="text-neutral-400 mb-1">Reply within</p>
-                <p className="text-black font-bold">7 days,<br />always a human</p>
+                <p className="text-zinc-500 mb-1">Reply within</p>
+                <p className="text-white font-bold">7 days,<br />always a human</p>
               </div>
               <div>
-                <p className="text-neutral-400 mb-1">© 2026</p>
-                <p className="text-black font-bold">GrowX Labs<br />Pvt Ltd</p>
+                <p className="text-zinc-500 mb-1">© 2026</p>
+                <p className="text-white font-bold">GrowX Labs<br />Pvt Ltd</p>
               </div>
             </div>
           </div>
 
           {/* Bottom Row */}
           <div className="w-full flex flex-col items-start">
-            <h1 className="text-[12vw] font-bold tracking-tighter leading-none select-none text-black">
+            <h1 className="text-[12vw] font-bold tracking-tighter leading-none select-none text-white">
               Careers
             </h1>
           </div>
