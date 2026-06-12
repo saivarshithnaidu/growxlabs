@@ -255,7 +255,7 @@ export default function Home() {
 
       {/* ═══ FAQ — Accordion ═══ */}
       <section className="w-full py-24 px-6 md:px-10 xl:px-16 2xl:px-24">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-[1400px] mx-auto">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-[clamp(28px,4vw,36px)] font-bold text-foreground mb-4 tracking-tight">Common Questions</h2>
             <p className="text-muted-foreground text-[16px]">Everything you need to know about working with us.</p>
