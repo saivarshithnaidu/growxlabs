@@ -3,70 +3,112 @@
 import React from "react";
 
 export function TermsContent() {
+  const promises = [
+    { title: "2 revision rounds", desc: "Each project phase includes two complimentary rounds of feedback." },
+    { title: "Full IP Transfer", desc: "Ownership of codebase and design assets transfers to you upon final payment." },
+    { title: "Zero Lock-In", desc: "Cancel monthly retainers or support services with a 15-day notice." }
+  ];
+
   const sections = [
     {
       title: "1. Introduction & Acceptance",
-      content: "By accessing and using the services of GrowXLabsTech, you agree to be bound by these Terms and Conditions. Our services are designed for businesses seeking high-performance digital engineering and automation solutions."
+      content: "By accessing and utilizing the services of GrowX Labs Tech, you agree to be bound by these operational Terms and Conditions. Our development environment is tailored exclusively for companies seeking high-performance software engineering, API orchestrations, and conversion-focused systems."
     },
     {
-      title: "2. Services Offered",
-      content: "GrowXLabsTech provides specialized expertise in: Web Development (Next.js/React), Automation Systems (n8n/Custom Logic), Premium Hosting, AI Strategy & Integration, and Technical SEO."
+      title: "2. Scope of Services",
+      content: "GrowX Labs Tech delivers specialized engineering capabilities including: Next.js and React web architectures, custom backend automation runtimes (n8n, Node.js), cloud node configurations (AWS, Vercel), strategic AI agent modeling, and Technical SEO search integration."
     },
     {
-      title: "3. Project Commencement",
-      content: "A 50% advance payment is required to initiate any project cycle. Work will commence only after the successful receipt of the initial deposit and all necessary project requirements."
+      title: "3. Project Kickoff & Payments",
+      content: "A 50% advance deposit is required to initiate any fixed-scope project cycle. Engineering tasks and timeline commitments commence immediately upon the successful capture of the initial deposit and receipt of all technical credentials or scope specifications."
     },
     {
-      title: "4. Revision Policy",
-      content: "Each project includes 2 complimentary rounds of revisions. Any subsequent changes or modifications requested after these rounds will be billed at our standard hourly rate."
+      title: "4. Feedback & Revision cycles",
+      content: "Every build phase includes 2 formal rounds of edits based on client review. Any revisions, scope modifications, or structural changes requested beyond these rounds will be billed at our standard developer hourly rates."
     },
     {
-      title: "5. Intellectual Property",
-      content: "Full ownership and intellectual property rights of the final deliverables are transferred to the client upon receipt of the final payment. GrowXLabsTech retains the right to showcase the project in our portfolio unless otherwise agreed in writing."
+      title: "5. Intellectual Property Transfer",
+      content: "Complete legal ownership, licensing rights, and codebase repositories are fully transferred to the client upon receipt of the final project balance. GrowX Labs Tech retains the right to display design wireframes and platform achievements in public case studies unless restricted by a prior NDA."
     },
     {
-      title: "6. Prohibited Uses",
-      content: "We strictly prohibit the use of our services for illegal activities, scams, adult content, hacking, or phishing. Discovery of such use will result in immediate termination of the project without refund."
+      title: "6. Prohibited Operational Uses",
+      content: "We strictly prohibit the hosting, development, or deployment of our custom systems for scams, phishing, automated spamming, adult content, or malicious code distribution. Violation of this clause will lead to immediate service suspension without refund."
     },
     {
-      title: "7. Governing Law",
-      content: "Any disputes arising from these terms will be governed by the laws of India, under the jurisdiction of Guntur courts."
+      title: "7. Jurisdiction & Dispute Resolution",
+      content: "These operational terms are governed by and construed in accordance with the laws of India. Any disputes arising from these covenants will be handled exclusively under the jurisdiction of the courts of Guntur, Andhra Pradesh, India."
     }
   ];
 
   return (
-    <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full bg-muted">
+    <div className="pt-32 pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full bg-[#0d0d0e]">
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-        <div className="mb-16 text-center lg:text-left">
-          <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.2em] text-[#355CFF] mb-4 block">
-            Operating Standards
-          </span>
-          <h1 className="text-[clamp(40px,7vw,72px)] font-black text-foreground tracking-tighter mb-8 leading-[1.1] uppercase">
-            Terms of <span className="text-[#355CFF]">Service.</span>
-          </h1>
-          <p className="text-xl text-muted-foreground font-medium leading-relaxed max-w-2xl">
-            Legal framework governing the engineering and operational standards of GrowXLabsTech.
-          </p>
-        </div>
-
-        <div className="space-y-10 max-w-4xl mx-auto lg:mx-0">
-          {sections.map((section, index) => (
-            <section
-              key={index}
-              className="bg-card border border-border p-8 md:p-12 rounded-[24px] shadow-sm transition-all hover:border-[#355CFF]/20 hover:shadow-md duration-300"
-            >
-              <h2 className="text-2xl md:text-3xl font-black text-foreground mb-6 tracking-tight uppercase">{section.title}</h2>
-              <p className="text-muted-foreground leading-relaxed font-medium text-base md:text-lg">
-                {section.content}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          
+          {/* Left Column: Sticky Brand Panel (on Desktop) */}
+          <div className="lg:col-span-5 flex flex-col justify-between lg:sticky lg:top-32 lg:h-[calc(100vh-200px)]">
+            <div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-[#C0F0FB] mb-4 block">
+                // OPERATING STANDARDS
+              </span>
+              <h1 className="text-[clamp(36px,5vw,64px)] font-sans font-black text-white tracking-tighter mb-6 uppercase leading-none">
+                Terms of Service
+              </h1>
+              <p className="text-base sm:text-lg text-zinc-400 font-sans leading-relaxed mb-12 max-w-md">
+                Legal framework and structural guidelines governing the engineering, delivery, and support standards of GrowX Labs Tech.
               </p>
-            </section>
-          ))}
-        </div>
 
-        <div className="mt-20 text-center lg:text-left text-muted-foreground/40 text-[11px] font-black uppercase tracking-[0.4em]">
-          Last Updated: April 2026 • GrowXLabsTech
+              {/* Core Promises List */}
+              <div className="border-t border-white/10 pt-8 mt-8 space-y-6">
+                <h3 className="font-mono text-xs text-white/40 uppercase tracking-wider">Our Operating Guidelines</h3>
+                {promises.map((p, i) => (
+                  <div key={i} className="flex flex-col gap-1.5">
+                    <h4 className="font-sans font-extrabold text-sm text-white">{p.title}</h4>
+                    <p className="text-xs text-zinc-400 leading-relaxed max-w-sm">{p.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Sticky Panel Footer */}
+            <div className="mt-12 lg:mt-0 font-mono text-[10px] text-zinc-600 uppercase tracking-widest">
+              Last Updated: April 2026 • GL-X
+            </div>
+          </div>
+
+          {/* Right Column: Detailed Sections */}
+          <div className="lg:col-span-7 space-y-12">
+            
+            {/* Sections Loop */}
+            <div className="space-y-0">
+              {sections.map((section, index) => (
+                <div
+                  key={index}
+                  className="border-t border-white/10 last:border-b border-white/10 py-10 transition-all duration-300"
+                >
+                  <h2 className="text-lg sm:text-xl font-sans font-bold text-white tracking-tight mb-4">
+                    {section.title}
+                  </h2>
+                  <p className="text-zinc-400 font-sans text-sm sm:text-base leading-relaxed">
+                    {section.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Contact CTA */}
+            <div className="border-t border-white/10 pt-12 mt-16 text-left">
+              <p className="text-mono text-xs text-white/40 uppercase tracking-widest mb-3">Have a legal inquiry?</p>
+              <a href="mailto:hello@growxlabs.tech" className="text-2xl font-sans font-black text-[#C0F0FB] hover:text-white transition-colors duration-300">
+                hello@growxlabs.tech
+              </a>
+            </div>
+
+          </div>
+
         </div>
       </div>
     </div>
   );
 }
+
