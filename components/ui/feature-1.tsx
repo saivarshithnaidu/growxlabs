@@ -106,7 +106,7 @@ export const Feature1 = ({
             </div>
           </div>
           <div
-            className="relative group w-full h-[450px] sm:h-[500px] md:h-[550px] lg:h-[600px] border border-white/[0.08] bg-[#0c0c0e]/80 backdrop-blur-xl rounded-[24px] flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-700 hover:border-[#C0F0FB]/35"
+            className="relative group w-full aspect-[4/3] sm:aspect-video lg:aspect-auto lg:h-[420px] border border-white/[0.08] bg-[#0c0c0e]/80 backdrop-blur-xl rounded-[24px] flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-700 hover:border-[#C0F0FB]/35"
           >
             {/* Subtle premium accent glows in background */}
             <div
