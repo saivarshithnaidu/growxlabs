@@ -77,13 +77,13 @@ export function AboutContent() {
             </h2>
             <div className="space-y-5 text-[17px] text-muted-foreground leading-[1.75]">
               <p>
-                GrowXLabsTech is an AI-native systems engineering agency headquartered in Guntur, Andhra Pradesh, India. We build websites, automations, and digital growth systems for businesses that need practical technology, not decorative complexity.
+                GrowXLabsTech is an AI-native systems engineering agency building websites, automations, and digital growth systems for businesses that need practical technology, not decorative complexity.
               </p>
               <p>
                 Our work sits at the intersection of product engineering, lead generation, technical SEO, and business automation. That means every project is designed to look credible, load fast, capture demand, and reduce manual work.
               </p>
               <p>
-                We serve clients remotely across India, the USA, UK, Australia, UAE, Canada, Singapore, and other global markets with transparent delivery and clear communication.
+                We serve clients remotely across global markets with transparent delivery and clear communication.
               </p>
             </div>
           </motion.div>
@@ -153,7 +153,7 @@ export function AboutContent() {
           </div>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <p className="text-foreground font-bold text-lg">Serving India, USA, UK, Australia, UAE, Canada, and Singapore</p>
+              <p className="text-foreground font-bold text-lg">Serving Clients Worldwide</p>
               <p className="text-muted-foreground mt-2">Available across time zones with remote-first project delivery.</p>
             </div>
             <Link href="/contact">

@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     title: "GrowXLabsTech — AI Native Product Studio | Websites & Automation for Businesses Worldwide",
-    description: "GrowXLabsTech is a global AI native product studio building AI powered websites, automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide generate leads and scale with intelligent digital systems. Serving India, USA, UK, Australia, UAE, and Canada.",
+    description: "GrowXLabsTech is a global AI native product studio building AI powered websites, automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide generate leads and scale with intelligent digital systems. Serving clients worldwide.",
     keywords: "AI agency, AI native digital agency, web agency, n8n automation agency, restaurant automation, real estate CRM, WhatsApp automation business, business automation agency, AI web agency, lead capture automation, automated follow up system, GrowXLabsTech",
     alternates: {
       canonical: "https://growxlabs.tech/en-IN",
@@ -48,7 +48,7 @@ export default function Home() {
     },
     {
       question: "Where is GrowXLabs.tech based?",
-      answer: "GrowXLabs.tech is headquartered in India and operates globally. We serve clients across the USA, UK, Europe, Australia, UAE, Canada, Singapore, and worldwide. All client work is done remotely with full transparency and regular async updates."
+      answer: "GrowXLabs.tech is a global studio. We serve clients worldwide. All client work is done remotely with full transparency and regular async updates."
     },
     {
       question: "What industries does GrowXLabs.tech serve?",
@@ -75,8 +75,8 @@ export default function Home() {
       answer: "We build your website first (one-time), then you move to subscription."
     },
     {
-      question: "Do you serve outside India?",
-      answer: "Yes. USD pricing available."
+      question: "What currencies and pricing options do you support?",
+      answer: "We support USD and major global currencies. Pricing options are transparent and tailored to your system requirements."
     }
   ];
 

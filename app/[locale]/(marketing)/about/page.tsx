@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     title: "About GrowXLabsTech | Global AI Native Digital Agency",
-    description: "GrowXLabsTech is a global AI native digital agency. We build websites, automation systems, and AI products for businesses in India, USA, UK, Australia, UAE, and Canada. MSME registered. Founded 2026.",
+    description: "GrowXLabsTech is a global AI native digital agency. We build websites, automation systems, and AI products for businesses worldwide. MSME registered. Founded 2026.",
     alternates: {
       canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages

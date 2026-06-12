@@ -121,7 +121,7 @@ export function Footer() {
             Copyright 2026 GrowXLabsTech. All rights reserved.
           </p>
           <p className={`text-[13px] ${textColor}`}>
-            India, USA, UK, Australia, UAE, Canada, Singapore
+            Serving Clients Worldwide
           </p>
         </div>
       </div>

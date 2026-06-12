@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Link } from "@/navigation";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
 
 interface Feature1Props {
   title?: string;
@@ -35,6 +36,12 @@ export const Feature1 = ({
   },
 }: Feature1Props) => {
   const [showCalendly, setShowCalendly] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+
+  const handleClose = () => {
+    setShowCalendly(false);
+    setIframeLoaded(false);
+  };
 
   const renderButton = (
     button: { label: string; href: string },
@@ -99,43 +106,72 @@ export const Feature1 = ({
             </div>
           </div>
           <div
-            className={cn(
-              "relative group w-full border border-white/5 bg-[#000000] rounded-2xl flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500 hover:border-[#C0F0FB]/35",
-              showCalendly ? "h-[650px] w-full" : "aspect-square md:aspect-[4/3] max-h-96"
-            )}
+            className="relative group w-full h-[450px] sm:h-[500px] md:h-[550px] lg:h-[600px] border border-white/[0.08] bg-[#0c0c0e]/80 backdrop-blur-xl rounded-[24px] flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-700 hover:border-[#C0F0FB]/35"
           >
             {/* Subtle premium accent glows in background */}
-            {!showCalendly && (
-              <>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-[#C0F0FB]/5 blur-[70px] pointer-events-none" />
-                <div className="absolute top-1/2 left-[70%] -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-[#355CFF]/5 blur-[50px] pointer-events-none" />
-              </>
-            )}
+            <div
+              className={cn(
+                "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-[#C0F0FB]/5 blur-[70px] pointer-events-none transition-all duration-1000 ease-in-out",
+                showCalendly ? "opacity-100 scale-150 bg-[#C0F0FB]/10" : "opacity-75 scale-100"
+              )}
+            />
+            <div
+              className={cn(
+                "absolute top-1/2 left-[70%] -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-[#355CFF]/5 blur-[50px] pointer-events-none transition-all duration-1000 ease-in-out",
+                showCalendly ? "opacity-100 scale-150 bg-[#355CFF]/10" : "opacity-75 scale-100"
+              )}
+            />
 
-            {showCalendly ? (
-              <div className="w-full h-full relative flex flex-col">
-                {/* Close/Back button */}
-                <button
-                  onClick={() => setShowCalendly(false)}
-                  className="absolute top-4 right-4 z-20 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-full w-8 h-8 flex items-center justify-center text-white cursor-pointer transition-all shadow-lg hover:scale-105"
-                  title="Close Calendar"
-                >
-                  ✕
-                </button>
-                {/* Calendly iframe embed */}
-                <iframe
-                  src="https://calendly.com/saivarshith8284?background_color=111111&text_color=ffffff&primary_color=355cff"
-                  className="w-full h-full min-h-[580px] border-none"
-                  title="Schedule a meeting with GrowXLabs"
-                />
-              </div>
-            ) : (
+            {/* Original Artwork Image Wrapper */}
+            <div
+              className={cn(
+                "absolute inset-0 w-full h-full transition-all duration-700 ease-in-out z-10",
+                showCalendly ? "opacity-0 scale-95 pointer-events-none" : "opacity-100 scale-100"
+              )}
+            >
               <img
                 src={imageSrc}
                 alt={imageAlt}
                 className="w-full h-full object-cover transition-transform duration-750 group-hover:scale-105 select-none"
               />
-            )}
+            </div>
+
+            {/* Calendly Scheduler Widget Wrapper */}
+            <div
+              className={cn(
+                "absolute inset-0 w-full h-full flex flex-col transition-all duration-700 ease-in-out bg-[#0c0c0e]/95 backdrop-blur-xl",
+                showCalendly ? "opacity-100 scale-100 z-20" : "opacity-0 scale-95 pointer-events-none z-0"
+              )}
+            >
+              {/* Close/Back button */}
+              <button
+                onClick={handleClose}
+                className="absolute top-4 right-4 z-30 bg-white/5 hover:bg-white/10 active:scale-95 backdrop-blur-md border border-white/[0.08] hover:border-white/20 rounded-full p-2 flex items-center justify-center text-white/70 hover:text-white cursor-pointer transition-all duration-300 shadow-lg"
+                title="Return to Artwork"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              {/* Loading Spinner */}
+              {showCalendly && !iframeLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                  <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-white/80 animate-spin" />
+                </div>
+              )}
+
+              {/* Calendly iframe embed */}
+              {showCalendly && (
+                <iframe
+                  src="https://calendly.com/saivarshith8284?background_color=0c0c0e&text_color=ffffff&primary_color=c0f0fb&hide_landing_page_details=1&hide_gdpr_banner=1"
+                  className={cn(
+                    "w-full h-full border-none relative z-20 transition-opacity duration-700 ease-in-out",
+                    iframeLoaded ? "opacity-100" : "opacity-0"
+                  )}
+                  onLoad={() => setIframeLoaded(true)}
+                  title="Schedule a meeting with GrowXLabs"
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

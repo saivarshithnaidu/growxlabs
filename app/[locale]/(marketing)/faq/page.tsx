@@ -12,7 +12,7 @@ const faqData = [
   },
   {
     question: "Where is GrowXLabs.tech based?",
-    answer: "GrowXLabs.tech is headquartered in India and operates globally. We serve clients across the USA, UK, Europe, Australia, UAE, Canada, Singapore, and worldwide. All client work is done remotely with full transparency and regular async updates."
+    answer: "GrowXLabs.tech is a global studio. We serve clients worldwide remotely with full transparency and regular async updates."
   },
   {
     question: "What industries does GrowXLabs.tech serve?",
@@ -59,8 +59,8 @@ const faqData = [
     answer: "We build your website first (one-time), then you move to subscription."
   },
   {
-    question: "Do you serve outside India?",
-    answer: "Yes. USD pricing available."
+    question: "What currencies and pricing options do you support?",
+    answer: "We support USD and major global currencies. Pricing options are transparent and tailored to your system requirements."
   }
 ];
 

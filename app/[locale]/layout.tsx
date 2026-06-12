@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       default: "GrowXLabsTech — AI Native Digital Agency",
       template: "%s | GrowXLabsTech"
     },
-    description: "GrowXLabsTech is a global AI native digital agency building AI powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow ups and intelligent lead capture. 7 day delivery. Serving India, USA, UK, Australia, UAE, and Canada.",
+    description: "GrowXLabsTech is a global AI native digital agency building AI powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow ups and intelligent lead capture. 7 day delivery. Serving clients worldwide.",
     alternates: {
       canonical: `https://growxlabs.tech/${locale}`,
       languages
@@ -123,7 +123,7 @@ export default async function LocaleLayout({
                   "areaServed": "Worldwide",
                   "serviceArea": {
                     "@type": "GeoShape",
-                    "description": "Worldwide — India, USA, UK, Australia, UAE, Canada, Singapore and all countries"
+                    "description": "Worldwide — serving clients across all countries"
                   },
                   "knowsAbout": [
                     "Web Development",
