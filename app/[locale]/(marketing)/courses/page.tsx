@@ -26,41 +26,7 @@ import { CertificatePreview } from "@/components/marketing/CertificatePreview";
 import Script from "next/script";
 import { PageHero } from "@/components/marketing/PageHero";
 
-const faqData = [
-  {
-    question: "Are these courses suitable for beginners?",
-    answer: "We have specific 'Beginner' tracks for Java and Python. The AI Engineering track is best suited for those with basic programming knowledge."
-  },
-  {
-    question: "Do I get a certificate after completion?",
-    answer: "Yes. Every course includes a GrowX Labs certification that is cryptographically signed and globally verifiable."
-  },
-  {
-    question: "Is there any support if I get stuck?",
-    answer: "Yes. Our premium tracks include access to our private community where engineers provide direct feedback."
-  },
-  {
-    question: "How long do I have access to the materials?",
-    answer: "Once you enroll, you have lifetime access to the course materials and all future updates."
-  },
-  {
-    question: "Can I get a refund if I'm not satisfied?",
-    answer: "We offer a 7-day no-questions-asked refund policy if you haven't completed more than 20% of the course."
-  }
-];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": faqData.map(faq => ({
-    "@type": "Question",
-    "name": faq.question,
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": faq.answer
-    }
-  }))
-};
 
 const COURSE_PRICES: Record<string, { inr: number; id: string }> = {
   "ai-engineering": { inr: 1999, id: "ai-engineering" },
@@ -149,11 +115,7 @@ export default function CoursesPage() {
 
   return (
     <>
-      <Script
-        id="faq-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       
       <PageHero
@@ -510,27 +472,7 @@ export default function CoursesPage() {
           </div>
         </section>
 
-        {/* FAQ Section */}
-        <section className="mt-32 max-w-4xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">Academy FAQ</h2>
-            <p className="text-white/60 text-lg">Direct answers to common enrollment questions.</p>
-          </div>
 
-          <div className="space-y-4">
-            {faqData.map((faq, index) => (
-              <div key={index} className="p-6 rounded-2xl border border-zinc-800 bg-zinc-950">
-                <h4 className="text-white font-semibold text-lg mb-2 flex items-center gap-3">
-                  <HelpCircle size={18} className="text-white/40" />
-                  {faq.question}
-                </h4>
-                <p className="text-[#A0A0A0] leading-relaxed pl-7 border-l border-zinc-800">
-                  {faq.answer}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* Expansion Roadmap Section */}
         <section className="pb-20 mt-32">

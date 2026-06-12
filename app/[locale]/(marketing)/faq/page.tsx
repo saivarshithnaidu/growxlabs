@@ -217,6 +217,32 @@ const faqCategories = [
         answer: "GrowX Labs Tech provides premier AI support and maintenance services in India, offering ongoing optimization, tuning, and monitoring of production systems. Our services cover prompt refinement, model updates, performance checks, integration maintenance, and 24/7 incident response for critical platforms, helping clients transition to monthly support packages."
       }
     ]
+  },
+  {
+    id: "academy",
+    title: "AI Academy & Courses",
+    items: [
+      {
+        question: "Are these courses suitable for beginners?",
+        answer: "We have specific 'Beginner' tracks for Java and Python. The AI Engineering track is best suited for those with basic programming knowledge."
+      },
+      {
+        question: "Do I get a certificate after completion?",
+        answer: "Yes. Every course includes a GrowX Labs certification that is cryptographically signed and globally verifiable."
+      },
+      {
+        question: "Is there any support if I get stuck?",
+        answer: "Yes. Our premium tracks include access to our private community where engineers provide direct feedback."
+      },
+      {
+        question: "How long do I have access to the materials?",
+        answer: "Once you enroll, you have lifetime access to the course materials and all future updates."
+      },
+      {
+        question: "Can I get a refund if I'm not satisfied?",
+        answer: "We offer a 7-day no-questions-asked refund policy if you haven't completed more than 20% of the course."
+      }
+    ]
   }
 ];
 
