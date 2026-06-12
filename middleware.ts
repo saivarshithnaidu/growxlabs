@@ -88,55 +88,56 @@ export default async function middleware(req: NextRequest) {
 
     if ((hasCourses && !isCoursesSub) || (hasCareers && !isCareersSub)) {
       const targetSub = hasCourses ? 'courses' : 'careers';
-      const isLocal = hostname.includes('localhost');
       
       let cleanPath = pathname;
-      locales.forEach(l => {
-        if (cleanPath.startsWith(`/${l}`)) {
-          cleanPath = cleanPath.substring(l.length + 1);
+      const sortedLocales = [...locales].sort((a, b) => b.length - a.length);
+      for (const l of sortedLocales) {
+        if (cleanPath.startsWith(`/${l}/`)) {
+          cleanPath = '/' + cleanPath.substring(l.length + 2);
+          break;
+        } else if (cleanPath === `/${l}`) {
+          cleanPath = '/';
+          break;
         }
-      });
+      }
+
       if (cleanPath === `/courses` || cleanPath === `/careers`) {
         cleanPath = '/';
       } else {
         cleanPath = cleanPath.replace(/^\/(courses|careers)/, '');
       }
 
-      if (isLocal) {
-        const port = hostname.split(':')[1];
-        const redirectUrl = `http://${targetSub}.localhost${port ? `:${port}` : ''}${cleanPath === '' ? '/' : cleanPath}`;
-        return NextResponse.redirect(new URL(redirectUrl, req.url));
-      } else {
-        const baseHost = hostname.replace(/^(admin\.|client\.|restaurant\.|hotel\.|realestate\.|courses\.|careers\.)/, '');
-        const redirectUrl = `https://${targetSub}.${baseHost}${cleanPath === '' ? '/' : cleanPath}`;
-        return NextResponse.redirect(new URL(redirectUrl, req.url));
-      }
+      const url = req.nextUrl.clone();
+      url.pathname = cleanPath === '' ? '/' : cleanPath;
+      const baseHost = req.nextUrl.hostname.replace(/^(admin\.|client\.|restaurant\.|hotel\.|realestate\.|courses\.|careers\.)/, '');
+      url.hostname = `${targetSub}.${baseHost}`;
+      return NextResponse.redirect(url);
     }
   }
 
   // 2.8. Redirect subdomain requests for main site paths back to main domain
   if (subdomain === 'courses' || subdomain === 'careers') {
     let cleanPath = pathname;
-    locales.forEach(l => {
-      if (cleanPath.startsWith(`/${l}`)) {
-        cleanPath = cleanPath.substring(l.length + 1);
+    const sortedLocales = [...locales].sort((a, b) => b.length - a.length);
+    for (const l of sortedLocales) {
+      if (cleanPath.startsWith(`/${l}/`)) {
+        cleanPath = '/' + cleanPath.substring(l.length + 2);
+        break;
+      } else if (cleanPath === `/${l}`) {
+        cleanPath = '/';
+        break;
       }
-    });
+    }
     
     // Redirect if they repeat the subdomain path in URL
     const targetSubRoute = `/${subdomain}`;
     if (cleanPath.startsWith(targetSubRoute)) {
       const remainingPath = cleanPath.substring(targetSubRoute.length);
-      const isLocal = hostname.includes('localhost');
-      if (isLocal) {
-        const port = hostname.split(':')[1];
-        const redirectUrl = `http://${subdomain}.localhost${port ? `:${port}` : ''}${remainingPath === '' ? '/' : remainingPath}`;
-        return NextResponse.redirect(new URL(redirectUrl, req.url));
-      } else {
-        const baseHost = hostname.replace(/^(admin\.|client\.|restaurant\.|hotel\.|realestate\.|courses\.|careers\.)/, '');
-        const redirectUrl = `https://${subdomain}.${baseHost}${remainingPath === '' ? '/' : remainingPath}`;
-        return NextResponse.redirect(new URL(redirectUrl, req.url));
-      }
+      const url = req.nextUrl.clone();
+      url.pathname = remainingPath === '' ? '/' : remainingPath;
+      const baseHost = req.nextUrl.hostname.replace(/^(admin\.|client\.|restaurant\.|hotel\.|realestate\.|courses\.|careers\.)/, '');
+      url.hostname = `${subdomain}.${baseHost}`;
+      return NextResponse.redirect(url);
     }
 
     const mainSitePaths = [
@@ -146,16 +147,10 @@ export default async function middleware(req: NextRequest) {
     ];
 
     if (mainSitePaths.some(path => cleanPath.startsWith(path))) {
-      const isLocal = hostname.includes('localhost');
-      if (isLocal) {
-        const port = hostname.split(':')[1];
-        const redirectUrl = `http://localhost${port ? `:${port}` : ''}${pathname}`;
-        return NextResponse.redirect(new URL(redirectUrl, req.url));
-      } else {
-        const baseHost = hostname.replace(/^(admin\.|client\.|restaurant\.|hotel\.|realestate\.|courses\.|careers\.)/, '');
-        const redirectUrl = `https://${baseHost}${pathname}`;
-        return NextResponse.redirect(new URL(redirectUrl, req.url));
-      }
+      const url = req.nextUrl.clone();
+      const baseHost = req.nextUrl.hostname.replace(/^(admin\.|client\.|restaurant\.|hotel\.|realestate\.|courses\.|careers\.)/, '');
+      url.hostname = baseHost;
+      return NextResponse.redirect(url);
     }
   }
 
