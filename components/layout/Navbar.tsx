@@ -8,10 +8,12 @@ import { usePathname } from "@/navigation";
 import { Link } from "@/navigation";
 import { useTranslations } from "next-intl";
 import { useSession, signOut } from "next-auth/react";
+import { getAbsoluteUrl } from "@/lib/subdomains";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const { data: session, status } = useSession();
   const isLoggedIn = status === "authenticated";
@@ -54,6 +56,10 @@ export function Navbar() {
     { name: t("faq"), href: "/faq" },
     { name: t("contact"), href: "/contact" },
   ];
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -113,21 +119,52 @@ export function Navbar() {
 
             {/* Desktop Center: Centered Serif Logo */}
             <div className="absolute left-1/2 -translate-x-1/2">
-              <Link href="/" className="flex items-center group notranslate" translate="no" aria-label="GrowXLabsTech home">
-                <div className="flex items-center text-xl md:text-2xl font-serif font-bold tracking-tight transition-transform group-hover:scale-[1.02] duration-300">
-                  <span className={logoColor1}>GrowXLabs</span>
-                  <span className={logoColor2}>.tech</span>
-                </div>
-              </Link>
+              {(() => {
+                const resolvedHref = getAbsoluteUrl("/");
+                const isExternal = resolvedHref.startsWith("http") && isMounted;
+                if (isExternal) {
+                  return (
+                    <a href={resolvedHref} className="flex items-center group notranslate" translate="no" aria-label="GrowXLabsTech home">
+                      <div className="flex items-center text-xl md:text-2xl font-serif font-bold tracking-tight transition-transform group-hover:scale-[1.02] duration-300">
+                        <span className={logoColor1}>GrowXLabs</span>
+                        <span className={logoColor2}>.tech</span>
+                      </div>
+                    </a>
+                  );
+                }
+                return (
+                  <Link href="/" className="flex items-center group notranslate" translate="no" aria-label="GrowXLabsTech home">
+                    <div className="flex items-center text-xl md:text-2xl font-serif font-bold tracking-tight transition-transform group-hover:scale-[1.02] duration-300">
+                      <span className={logoColor1}>GrowXLabs</span>
+                      <span className={logoColor2}>.tech</span>
+                    </div>
+                  </Link>
+                );
+              })()}
             </div>
 
             {/* Right: Bordered Contact Button */}
             <div className="flex items-center justify-end lg:w-1/4">
-              <Link href="/contact">
-                <Button size="sm" variant="outline" className={cn("font-semibold px-5 rounded-md border", buttonOverrideClass)}>
-                  {t("contact")}
-                </Button>
-              </Link>
+              {(() => {
+                const resolvedHref = getAbsoluteUrl("/contact");
+                const isExternal = resolvedHref.startsWith("http") && isMounted;
+                if (isExternal) {
+                  return (
+                    <a href={resolvedHref}>
+                      <Button size="sm" variant="outline" className={cn("font-semibold px-5 rounded-md border", buttonOverrideClass)}>
+                        {t("contact")}
+                      </Button>
+                    </a>
+                  );
+                }
+                return (
+                  <Link href="/contact">
+                    <Button size="sm" variant="outline" className={cn("font-semibold px-5 rounded-md border", buttonOverrideClass)}>
+                      {t("contact")}
+                    </Button>
+                  </Link>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -169,25 +206,58 @@ export function Navbar() {
 
             {/* Navigation Links */}
             <div className="flex flex-col">
-              {topLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm font-semibold text-neutral-300 hover:text-white transition-colors text-left block w-full px-6 py-3.5 border-b border-neutral-800 hover:bg-white/[0.02]"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              {isLoggedIn && (
-                <>
+              {topLinks.map((link) => {
+                const resolvedHref = getAbsoluteUrl(link.href);
+                const isExternal = resolvedHref.startsWith("http") && isMounted;
+                if (isExternal) {
+                  return (
+                    <a
+                      key={link.href}
+                      href={resolvedHref}
+                      className="text-sm font-semibold text-neutral-300 hover:text-white transition-colors text-left block w-full px-6 py-3.5 border-b border-neutral-800 hover:bg-white/[0.02]"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {link.name}
+                    </a>
+                  );
+                }
+                return (
                   <Link
-                    href={dashboardPath}
+                    key={link.href}
+                    href={link.href}
                     className="text-sm font-semibold text-neutral-300 hover:text-white transition-colors text-left block w-full px-6 py-3.5 border-b border-neutral-800 hover:bg-white/[0.02]"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {t("dashboard")}
+                    {link.name}
                   </Link>
+                );
+              })}
+              {isLoggedIn && (
+                <>
+                  {(() => {
+                    const resolvedHref = getAbsoluteUrl(dashboardPath);
+                    const isExternal = resolvedHref.startsWith("http") && isMounted;
+                    if (isExternal) {
+                      return (
+                        <a
+                          href={resolvedHref}
+                          className="text-sm font-semibold text-neutral-300 hover:text-white transition-colors text-left block w-full px-6 py-3.5 border-b border-neutral-800 hover:bg-white/[0.02]"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {t("dashboard")}
+                        </a>
+                      );
+                    }
+                    return (
+                      <Link
+                        href={dashboardPath}
+                        className="text-sm font-semibold text-neutral-300 hover:text-white transition-colors text-left block w-full px-6 py-3.5 border-b border-neutral-800 hover:bg-white/[0.02]"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {t("dashboard")}
+                      </Link>
+                    );
+                  })()}
                   <button
                     type="button"
                     onClick={() => {
@@ -205,13 +275,30 @@ export function Navbar() {
 
           {/* Bottom Section */}
           <div className="border-t border-neutral-900 flex flex-col mt-auto pt-4">
-            <Link
-              href="/careers"
-              className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors text-left block w-full px-6 py-2.5 border-b border-neutral-800 hover:bg-white/[0.02]"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Careers
-            </Link>
+            {(() => {
+              const resolvedHref = getAbsoluteUrl("/careers");
+              const isExternal = resolvedHref.startsWith("http") && isMounted;
+              if (isExternal) {
+                return (
+                  <a
+                    href={resolvedHref}
+                    className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors text-left block w-full px-6 py-2.5 border-b border-neutral-800 hover:bg-white/[0.02]"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Careers
+                  </a>
+                );
+              }
+              return (
+                <Link
+                  href="/careers"
+                  className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors text-left block w-full px-6 py-2.5 border-b border-neutral-800 hover:bg-white/[0.02]"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Careers
+                </Link>
+              );
+            })()}
             <Link
               href="/contact"
               className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors text-left block w-full px-6 py-2.5 border-b border-neutral-800 hover:bg-white/[0.02]"

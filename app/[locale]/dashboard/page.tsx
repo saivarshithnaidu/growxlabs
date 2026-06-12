@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
+import { getAbsoluteUrl } from "@/lib/subdomains";
 import { 
   BookOpen, 
   PlayCircle, 
@@ -17,6 +19,8 @@ import { redirect } from "next/navigation";
 export default async function UserDashboard() {
   const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
+  const hostHeader = (await headers()).get("host") || "";
+  const coursesUrl = getAbsoluteUrl("/courses", hostHeader);
 
   if (!session) {
     redirect("/login");
@@ -81,7 +85,7 @@ export default async function UserDashboard() {
         <div className="lg:col-span-2 space-y-8">
            <div className="flex items-center justify-between">
               <h2 className="text-2xl font-black text-white tracking-tight italic">My Learning Tracks.</h2>
-              <Link href="/courses" className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline">Browse All</Link>
+              <a href={coursesUrl} className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline">Browse All</a>
            </div>
 
            <div className="grid grid-cols-1 gap-6">
@@ -136,9 +140,9 @@ export default async function UserDashboard() {
                     </div>
                     <h3 className="text-xl font-bold text-white">No active enrollments found.</h3>
                     <p className="text-white/20 text-sm max-w-sm mx-auto">Start your engineering journey by enrolling in our expert-led courses.</p>
-                    <Link href="/courses">
+                    <a href={coursesUrl}>
                        <Button className="bg-[#00A86B] text-white font-bold px-10 h-14 rounded-2xl shadow-none">DISCOVER COURSES</Button>
-                    </Link>
+                    </a>
                  </div>
               )}
            </div>

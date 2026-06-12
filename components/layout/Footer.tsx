@@ -2,9 +2,16 @@
 
 import { Mail } from "lucide-react";
 import { Link, usePathname } from "@/navigation";
+import { useState, useEffect } from "react";
+import { getAbsoluteUrl } from "@/lib/subdomains";
 
 export function Footer() {
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const isBlog = pathname?.includes("/blog");
 
   const links = {
@@ -110,12 +117,34 @@ export function Footer() {
 
           {/* Right side: Legal links horizontal */}
           <div className="flex items-center gap-6">
-            {links.legal.map((link) => (
-              <Link key={link.name} href={link.href} className={`text-[13px] transition-colors ${textColor} ${linkHoverColor}`}>
-                {link.name}
-              </Link>
-            ))}
+            {links.legal.map((link) => {
+              const resolvedHref = getAbsoluteUrl(link.href);
+              const isExternal = resolvedHref.startsWith("http");
+
+              if (isExternal) {
+                return (
+                  <a
+                    key={link.name}
+                    href={resolvedHref}
+                    className={`text-[13px] transition-colors ${textColor} ${linkHoverColor}`}
+                  >
+                    {link.name}
+                  </a>
+                );
+              }
+
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`text-[13px] transition-colors ${textColor} ${linkHoverColor}`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </div>
+
         </div>
 
         <div className={`border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 ${isBlog ? "border-neutral-900" : "border-[#2B2D31]"}`}>
