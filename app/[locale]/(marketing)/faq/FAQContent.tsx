@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Link } from "@/navigation";
 import { PageHero } from "@/components/marketing/PageHero";
-import { Button } from "@/components/ui/Button";
-import { ArrowRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface FAQItem {
   question: string;
@@ -93,21 +91,6 @@ export function FAQContent({ categories }: FAQContentProps) {
               </div>
             </section>
           ))}
-
-          {/* CTA Box */}
-          <div className="text-center rounded-lg bg-[#1A1A1A] p-8 md:p-12 mt-16">
-            <h2 className="text-[clamp(28px,5vw,46px)] font-black text-white tracking-tight mb-4">
-              Need a complete digital system?
-            </h2>
-            <p className="text-white/70 max-w-2xl mx-auto mb-8">
-              Tell us what you sell, how leads currently arrive, and where your team loses time. We will map the system that fits.
-            </p>
-            <Link href="/contact">
-              <Button className="h-14 px-8 rounded-md font-semibold inline-flex items-center gap-2">
-                Start a project <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
         </div>
       </div>
     </>
