@@ -5,7 +5,7 @@ import {
   Send, Paperclip, Terminal, Cpu, User, Briefcase, FileText,
   BarChart3, PenTool, Download, Command, X,
   PanelLeftClose, PanelLeft, Plus, MessageSquare, Loader2,
-  ArrowUp, ChevronDown,
+  ArrowUp, ChevronDown, Check, AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,6 +45,15 @@ function getGreeting(): string {
 /* ─────────────────────────────────────────────────────────
    Types
    ───────────────────────────────────────────────────────── */
+interface ToolCall {
+  id: string;
+  name: string;
+  args: Record<string, any>;
+  status: "calling" | "complete" | "error";
+  result?: any;
+  duration?: number;
+}
+
 interface Message {
   id: string;
   sender: "user" | "gxl";
@@ -54,6 +63,7 @@ interface Message {
   activityLogs?: string[];
   proposal?: { clientName: string; budget: string; timeline: string; deliverables: string[]; status: string };
   chart?: { month: string; revenue: number }[];
+  toolCalls?: ToolCall[];
 }
 
 interface Conversation {
@@ -61,6 +71,119 @@ interface Conversation {
   title: string;
   messages: Message[];
   createdAt: Date;
+}
+
+function mapToolToAgent(toolName: string): string {
+  switch (toolName) {
+    case "search_web":
+      return "Research Agent";
+    case "query_leads":
+    case "create_lead":
+      return "Sales Agent";
+    case "get_company_stats":
+      return "CFO Agent";
+    case "generate_proposal":
+      return "Proposal Agent";
+    default:
+      return "Research Agent";
+  }
+}
+
+function ToolCallActivityWidget({ toolCalls }: { toolCalls?: ToolCall[] }) {
+  const [isOpen, setIsOpen] = useState(true);
+
+  if (!toolCalls || toolCalls.length === 0) return null;
+
+  return (
+    <div className="my-4 rounded-lg border border-[#e6e6e6] bg-[#f6f5f4]/50 overflow-hidden text-[13px] shadow-sm">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between px-4 py-3 bg-[#f6f5f4] hover:bg-neutral-100 transition-colors font-semibold text-neutral-700"
+      >
+        <div className="flex items-center gap-2">
+          <Cpu className="w-4 h-4 text-[#0075de] animate-pulse" />
+          <span>Real Agent Activity ({toolCalls.length})</span>
+        </div>
+        <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isOpen && "rotate-180")} />
+      </button>
+
+      {isOpen && (
+        <div className="divide-y divide-[#e6e6e6] bg-white">
+          {toolCalls.map((tc) => {
+            const formatArgs = () => {
+              if (!tc.args || Object.keys(tc.args).length === 0) return null;
+              return (
+                <pre className="mt-1 text-[10px] font-mono text-neutral-500 bg-neutral-50 p-2 rounded overflow-x-auto">
+                  {JSON.stringify(tc.args, null, 2)}
+                </pre>
+              );
+            };
+
+            const formatResult = () => {
+              if (!tc.result) return null;
+              if (tc.name === "get_company_stats") {
+                return (
+                  <div className="mt-1.5 text-xs text-neutral-600 space-y-0.5 font-mono">
+                    <p>Total Leads: {tc.result.totalLeads}</p>
+                    <p>Average Score: {tc.result.averageLeadScore}</p>
+                  </div>
+                );
+              }
+              if (tc.name === "query_leads") {
+                const count = Array.isArray(tc.result) ? tc.result.length : 0;
+                return (
+                  <p className="mt-1.5 text-xs text-neutral-600 font-mono">
+                    → Found {count} lead(s) matching query
+                  </p>
+                );
+              }
+              if (tc.name === "create_lead") {
+                return (
+                  <p className="mt-1.5 text-xs text-emerald-600 font-mono">
+                    → Created lead: {tc.result.business_name} ({tc.result.city})
+                  </p>
+                );
+              }
+              if (tc.name === "generate_proposal") {
+                return (
+                  <p className="mt-1.5 text-xs text-emerald-600 font-mono">
+                    → Generated proposal ID: {tc.result.proposalId}
+                  </p>
+                );
+              }
+              return (
+                <pre className="mt-1.5 text-[10px] font-mono text-neutral-500 bg-neutral-50 p-2 rounded overflow-x-auto max-h-24">
+                  {typeof tc.result === "string" ? tc.result : JSON.stringify(tc.result, null, 2)}
+                </pre>
+              );
+            };
+
+            return (
+              <div key={tc.id} className="p-4 flex flex-col gap-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {tc.status === "calling" ? (
+                      <Loader2 className="w-4 h-4 text-[#0075de] animate-spin" />
+                    ) : tc.status === "complete" ? (
+                      <Check className="w-4 h-4 text-emerald-600 font-bold" />
+                    ) : (
+                      <AlertTriangle className="w-4 h-4 text-amber-500" />
+                    )}
+                    <span className="font-mono font-bold text-neutral-800">{tc.name}</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-neutral-400">
+                    {tc.status === "calling" ? "Running..." : "Finished"}
+                  </span>
+                </div>
+                {formatArgs()}
+                {formatResult()}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
 interface CommandSuggestion {
@@ -381,48 +504,33 @@ export default function InteractiveWorkspace() {
     setCurrentActiveAgents([]);
 
     const targetConvoId = activeConvoId;
+    const gxlMsgId = `gxl-${Date.now()}`;
+
+    const history = activeConvo.messages.map(m => ({
+      sender: m.sender,
+      text: m.text
+    }));
 
     try {
       const response = await fetch("/api/admin/command-center", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, files: attachedFiles }),
+        body: JSON.stringify({ message: text, history }),
       });
 
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
+      if (!response.ok) throw new Error("Sync failed");
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No reader");
 
-      // Activate agents
-      setAgentSuite(prev => prev.map(a =>
-        data.activeAgents?.includes(a.name) ? { ...a, status: "Thinking..." } : a,
-      ));
-      setCurrentActiveAgents(data.activeAgents || []);
-
-      // Step through activity logs
-      for (let i = 0; i < data.activity.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 900));
-
-        const activeName = data.activity[i].split(":")[0];
-        setAgentSuite(prev => prev.map(a => a.name === activeName ? { ...a, status: "Active" } : a));
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 600));
-
-      // Turn off loading spinner before streaming starts
       setIsLoading(false);
       setIsStreaming(true);
 
-      // Create a unique ID for the streaming message
-      const gxlMsgId = `gxl-${Date.now()}`;
-      
-      // Push the initial empty message
       const initialGxlMsg: Message = {
         id: gxlMsgId,
         sender: "gxl",
         text: "",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        activeAgents: data.activeAgents,
-        activityLogs: data.activity,
+        toolCalls: [],
       };
 
       setConversations(prev => prev.map(c => {
@@ -433,46 +541,111 @@ export default function InteractiveWorkspace() {
         };
       }));
 
-      // Stream the text output cleanly word-by-word
-      const fullText = data.output;
-      let currentText = "";
-      const words = fullText.split(" ");
-      let wordIndex = 0;
+      const decoder = new TextDecoder();
+      let buffer = "";
 
-      await new Promise<void>((resolve) => {
-        const interval = setInterval(() => {
-          if (wordIndex < words.length) {
-            currentText += (wordIndex === 0 ? "" : " ") + words[wordIndex];
-            wordIndex++;
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
 
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() || "";
+
+        for (const part of parts) {
+          if (!part.trim()) continue;
+
+          const lines = part.split("\n");
+          let eventName = "";
+          let dataStr = "";
+
+          for (const line of lines) {
+            if (line.startsWith("event: ")) {
+              eventName = line.substring(7).trim();
+            } else if (line.startsWith("data: ")) {
+              dataStr = line.substring(6).trim();
+            }
+          }
+
+          if (!eventName) continue;
+          let data: any = {};
+          try {
+            data = JSON.parse(dataStr);
+          } catch (e) {
+            console.error("Parse error", dataStr, e);
+            continue;
+          }
+
+          if (eventName === "text_delta") {
             setConversations(prev => prev.map(c => {
               if (c.id !== targetConvoId) return c;
               return {
                 ...c,
-                messages: c.messages.map(m => m.id === gxlMsgId ? { ...m, text: currentText } : m)
+                messages: c.messages.map(m => m.id === gxlMsgId ? { ...m, text: m.text + data.text } : m)
               };
             }));
-          } else {
-            clearInterval(interval);
-            resolve();
+          } else if (eventName === "tool_call") {
+            setConversations(prev => prev.map(c => {
+              if (c.id !== targetConvoId) return c;
+              return {
+                ...c,
+                messages: c.messages.map(m => m.id === gxlMsgId ? {
+                  ...m,
+                  toolCalls: [...(m.toolCalls || []), {
+                    id: data.name + "-" + Date.now(),
+                    name: data.name,
+                    args: data.args,
+                    status: "calling"
+                  }]
+                } : m)
+              };
+            }));
+
+            const agentName = mapToolToAgent(data.name);
+            setAgentSuite(prev => prev.map(a => a.name === agentName ? { ...a, status: "Thinking..." } : a));
+            setCurrentActiveAgents(prev => prev.includes(agentName) ? prev : [...prev, agentName]);
+          } else if (eventName === "tool_result") {
+            setConversations(prev => prev.map(c => {
+              if (c.id !== targetConvoId) return c;
+              return {
+                ...c,
+                messages: c.messages.map(m => m.id === gxlMsgId ? {
+                  ...m,
+                  toolCalls: (m.toolCalls || []).map(tc =>
+                    tc.name === data.name && tc.status === "calling" ? {
+                      ...tc,
+                      status: "complete",
+                      result: data.result
+                    } : tc
+                  )
+                } : m)
+              };
+            }));
+
+            const agentName = mapToolToAgent(data.name);
+            setAgentSuite(prev => prev.map(a => a.name === agentName ? { ...a, status: "Active" } : a));
+          } else if (eventName === "proposal") {
+            setConversations(prev => prev.map(c => {
+              if (c.id !== targetConvoId) return c;
+              return {
+                ...c,
+                messages: c.messages.map(m => m.id === gxlMsgId ? { ...m, proposal: data } : m)
+              };
+            }));
+          } else if (eventName === "chart") {
+            setConversations(prev => prev.map(c => {
+              if (c.id !== targetConvoId) return c;
+              return {
+                ...c,
+                messages: c.messages.map(m => m.id === gxlMsgId ? { ...m, chart: data } : m)
+              };
+            }));
           }
-        }, 15);
-      });
+        }
+      }
 
-      // Add attachments at the end of streaming
-      setConversations(prev => prev.map(c => {
-        if (c.id !== targetConvoId) return c;
-        return {
-          ...c,
-          messages: c.messages.map(m => m.id === gxlMsgId ? {
-            ...m,
-            proposal: data.proposal,
-            chart: data.chart,
-          } : m)
-        };
-      }));
-
-    } catch {
+    } catch (err) {
+      console.error("Fetch/Stream failed", err);
       pushMessage({
         id: `err-${Date.now()}`,
         sender: "gxl",
@@ -484,6 +657,7 @@ export default function InteractiveWorkspace() {
       setIsStreaming(false);
       setAttachedFiles([]);
       setAgentSuite(prev => prev.map(a => ({ ...a, status: "Idle" })));
+      setCurrentActiveAgents([]);
     }
   };
 
@@ -720,6 +894,7 @@ ${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
                       </div>
 
                       <div className="pl-10">
+                        <ToolCallActivityWidget toolCalls={msg.toolCalls} />
                         <MarkdownBlock text={msg.text} />
 
                         {/* Chart attachment */}
