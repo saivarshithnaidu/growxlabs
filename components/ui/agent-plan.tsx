@@ -438,9 +438,9 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
   };
 
   return (
-    <div className="bg-background text-foreground h-full overflow-auto p-2">
+    <div className="bg-transparent text-neutral-800 h-full overflow-auto p-1">
       <motion.div 
-        className="bg-[#121216] border-white/5 rounded-lg border shadow-2xl overflow-hidden"
+        className="bg-white border-[#e6e6e6] rounded-md border shadow-sm overflow-hidden"
         initial={{ opacity: 0, y: 10 }}
         animate={{ 
           opacity: 1, 
@@ -462,16 +462,16 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                 return (
                   <motion.li
                     key={task.id}
-                    className={` ${index !== 0 ? "mt-1 pt-2 border-t border-white/5" : ""} `}
+                    className={` ${index !== 0 ? "mt-1 pt-2 border-t border-[#e6e6e6]" : ""} `}
                     initial="hidden"
                     animate="visible"
                     variants={taskVariants}
                   >
                     {/* Task row */}
                     <motion.div 
-                      className="group flex items-center px-3 py-1.5 rounded-md"
-                      whileHover={{ 
-                        backgroundColor: "rgba(255,255,255,0.02)",
+                       className="group flex items-center px-3 py-1.5 rounded-md"
+                       whileHover={{ 
+                        backgroundColor: "rgba(0,0,0,0.015)",
                         transition: { duration: 0.2 }
                       }}
                     >
@@ -498,13 +498,13 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                             {task.status === "completed" ? (
                               <CheckCircle2 className="h-4.5 w-4.5 text-green-500" />
                             ) : task.status === "in-progress" ? (
-                              <CircleDotDashed className="h-4.5 w-4.5 text-blue-500 animate-spin" />
+                              <CircleDotDashed className="h-4.5 w-4.5 text-[#0075de] animate-spin" />
                             ) : task.status === "need-help" ? (
-                              <CircleAlert className="h-4.5 w-4.5 text-yellow-500" />
+                              <CircleAlert className="h-4.5 w-4.5 text-amber-600" />
                             ) : task.status === "failed" ? (
-                              <CircleX className="h-4.5 w-4.5 text-red-500" />
+                              <CircleX className="h-4.5 w-4.5 text-red-600" />
                             ) : (
-                              <Circle className="text-muted-foreground h-4.5 w-4.5" />
+                              <Circle className="text-neutral-400 h-4.5 w-4.5" />
                             )}
                           </motion.div>
                         </AnimatePresence>
@@ -516,7 +516,7 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                       >
                         <div className="mr-2 flex-1 truncate">
                           <span
-                            className={`${isCompleted ? "text-muted-foreground line-through" : ""}`}
+                            className={`${isCompleted ? "text-neutral-400 line-through font-medium" : "text-neutral-900 font-bold"} text-sm tracking-tight`}
                           >
                             {task.title}
                           </span>
@@ -529,7 +529,7 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                                 {task.dependencies.map((dep, idx) => (
                                   <motion.span
                                     key={idx}
-                                    className="bg-card/5 text-white/70 border border-white/5 rounded px-1.5 py-0.5 text-[10px] font-medium shadow-sm"
+                                    className="bg-neutral-100 text-neutral-600 border border-[#e6e6e6] rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm"
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{
@@ -538,7 +538,7 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                                     }}
                                     whileHover={{ 
                                       y: -1, 
-                                      backgroundColor: "rgba(255,255,255,0.05)",
+                                      backgroundColor: "rgba(0,0,0,0.03)",
                                       transition: { duration: 0.2 } 
                                     }}
                                   >
@@ -550,16 +550,16 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                           )}
 
                           <motion.span
-                            className={`rounded px-1.5 py-0.5 font-semibold text-[10px] tracking-wide uppercase ${
+                            className={`rounded px-1.5 py-0.5 font-bold text-[9px] tracking-wider uppercase ${
                               task.status === "completed"
-                                ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                ? "bg-green-50 text-green-700 border border-green-200"
                                 : task.status === "in-progress"
-                                  ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                  ? "bg-blue-50 text-[#0075de] border border-blue-200"
                                   : task.status === "need-help"
-                                    ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                                    ? "bg-amber-50 text-amber-700 border border-amber-200"
                                     : task.status === "failed"
-                                      ? "bg-red-500/10 text-red-400 border border-red-500/20"
-                                      : "bg-white/5 text-white/50 border border-white/5"
+                                      ? "bg-red-50 text-red-700 border border-red-200"
+                                      : "bg-neutral-50 text-neutral-500 border border-[#e6e6e6]"
                             }`}
                             variants={statusBadgeVariants}
                             initial="initial"
@@ -584,7 +584,7 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                           layout
                         >
                           {/* Vertical connecting line aligned with task icon */}
-                          <div className="absolute top-0 bottom-0 left-[20px] border-l border-dashed border-white/10" />
+                          <div className="absolute top-0 bottom-0 left-[20px] border-l border-dashed border-[#e6e6e6]" />
                           <ul className="mt-1 mr-2 mb-1.5 ml-3 space-y-0.5">
                             {task.subtasks.map((subtask) => {
                               const subtaskKey = `${task.id}-${subtask.id}`;
@@ -606,7 +606,7 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                                   <motion.div 
                                     className="flex flex-1 items-center rounded-md p-1"
                                     whileHover={{ 
-                                      backgroundColor: "rgba(255,255,255,0.02)",
+                                      backgroundColor: "rgba(0,0,0,0.015)",
                                       transition: { duration: 0.2 }
                                     }}
                                     layout
@@ -635,20 +635,20 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                                           {subtask.status === "completed" ? (
                                             <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
                                           ) : subtask.status === "in-progress" ? (
-                                            <CircleDotDashed className="h-3.5 w-3.5 text-blue-500 animate-spin" />
+                                            <CircleDotDashed className="h-3.5 w-3.5 text-[#0075de] animate-spin" />
                                           ) : subtask.status === "need-help" ? (
-                                            <CircleAlert className="h-3.5 w-3.5 text-yellow-500" />
+                                            <CircleAlert className="h-3.5 w-3.5 text-amber-600" />
                                           ) : subtask.status === "failed" ? (
-                                            <CircleX className="h-3.5 w-3.5 text-red-500" />
+                                            <CircleX className="h-3.5 w-3.5 text-red-600" />
                                           ) : (
-                                            <Circle className="text-muted-foreground h-3.5 w-3.5" />
+                                            <Circle className="text-neutral-400 h-3.5 w-3.5" />
                                           )}
                                         </motion.div>
                                       </AnimatePresence>
                                     </motion.div>
 
                                     <span
-                                      className={`cursor-pointer text-sm ${subtask.status === "completed" ? "text-white/40 line-through" : "text-white/80"}`}
+                                      className={`cursor-pointer text-sm ${subtask.status === "completed" ? "text-neutral-400 line-through" : "text-neutral-700"}`}
                                     >
                                       {subtask.title}
                                     </span>
@@ -657,7 +657,7 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                                   <AnimatePresence mode="wait">
                                     {isSubtaskExpanded && (
                                       <motion.div 
-                                        className="text-white/50 border-white/10 mt-1 ml-1.5 border-l border-dashed pl-5 text-xs overflow-hidden"
+                                        className="text-neutral-500 border-[#e6e6e6] mt-1 ml-1.5 border-l border-dashed pl-5 text-xs overflow-hidden"
                                         variants={subtaskDetailsVariants}
                                         initial="hidden"
                                         animate="visible"
@@ -667,14 +667,14 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                                         <p className="py-1">{subtask.description}</p>
                                         {subtask.tools && subtask.tools.length > 0 && (
                                           <div className="mt-0.5 mb-1 flex flex-wrap items-center gap-1.5">
-                                            <span className="text-white/40 font-medium">
+                                            <span className="text-neutral-400 font-bold uppercase tracking-wider text-[9px]">
                                               MCP Servers:
                                             </span>
                                             <div className="flex flex-wrap gap-1">
                                               {subtask.tools.map((tool, idx) => (
                                                 <motion.span
                                                   key={idx}
-                                                  className="bg-card/5 text-white/70 border border-white/5 rounded px-1.5 py-0.5 text-[10px] font-medium shadow-sm"
+                                                  className="bg-neutral-100 text-neutral-600 border border-[#e6e6e6] rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm"
                                                   initial={{ opacity: 0, y: -5 }}
                                                   animate={{ 
                                                     opacity: 1, 
@@ -686,7 +686,7 @@ export default function Plan({ tasks: externalTasks, onTaskStatusChange, onSubta
                                                   }}
                                                   whileHover={{ 
                                                     y: -1, 
-                                                    backgroundColor: "rgba(255,255,255,0.08)",
+                                                    backgroundColor: "rgba(0,0,0,0.03)",
                                                     transition: { duration: 0.2 } 
                                                   }}
                                                 >

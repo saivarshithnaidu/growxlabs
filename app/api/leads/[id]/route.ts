@@ -95,3 +95,42 @@ export async function PATCH(
     return NextResponse.json({ error: `Server Error: ${message}` }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { role } = session.user as any;
+    if (role !== "ADMIN" && role !== "CO_ADMIN") {
+      return NextResponse.json({ error: "Forbidden: Admins only" }, { status: 403 });
+    }
+
+    const { id } = await params;
+    if (!id) {
+      return NextResponse.json({ error: "Lead ID is required" }, { status: 400 });
+    }
+
+    console.log(`[API] Deleting Lead ${id}`);
+    const { error } = await supabaseAdmin
+      .from("leads")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("[DATABASE DELETE ERROR]:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error("[API DELETE ERROR]:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+

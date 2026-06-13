@@ -3,13 +3,12 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Send, Paperclip, Terminal, Cpu, User, Briefcase, FileText,
-  BarChart3, PenTool, Sparkles, Download, Command, X,
+  BarChart3, PenTool, Download, Command, X,
   PanelLeftClose, PanelLeft, Plus, MessageSquare, Loader2,
   ArrowUp, ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import Plan, { Task, Subtask } from "@/components/ui/agent-plan";
 
 /* ─────────────────────────────────────────────────────────
    Auto-resize textarea hook
@@ -41,73 +40,7 @@ function getGreeting(): string {
   return "Good evening";
 }
 
-/* ─────────────────────────────────────────────────────────
-   Agent plan initializers (per intent)
-   ───────────────────────────────────────────────────────── */
-const getInitialPlanForIntent = (intent: string): Task[] => {
-  switch (intent) {
-    case "PROPOSAL":
-      return [
-        { id: "1", title: "Market & Workflows Diagnostics", description: "Analyze target industry requirements and regional intake lags", status: "pending", priority: "high", level: 0, dependencies: [],
-          subtasks: [
-            { id: "1.1", title: "Review regional healthcare latency", description: "Audit current patient scheduling lag factors", status: "pending", priority: "medium", tools: ["file-system", "browser"] },
-            { id: "1.2", title: "Research HIPAA compliance schemas", description: "Establish compliance constraints for custom database fields", status: "pending", priority: "high", tools: ["browser", "security-compliance-scanner"] },
-          ],
-        },
-        { id: "2", title: "Sales Pipeline & Pain Qualification", description: "Map prospect conversions to operational CRM suites", status: "pending", priority: "high", level: 0, dependencies: ["1"],
-          subtasks: [{ id: "2.1", title: "Evaluate prospect intake latency metrics", description: "Audit sales pipeline drop-offs and patient onboarding schemas", status: "pending", priority: "medium", tools: ["crm-intelligence", "lead-scoring-engine"] }],
-        },
-        { id: "3", title: "Financial Margin & Pricing Projections", description: "Develop automated cost models and standard/custom margins", status: "pending", priority: "medium", level: 1, dependencies: ["2"],
-          subtasks: [{ id: "3.1", title: "Generate standard vs custom SaaS pricing models", description: "Forecast software delivery expenses and lifetime value", status: "pending", priority: "high", tools: ["financial-forecaster", "pricing-tier-builder"] }],
-        },
-        { id: "4", title: "Proposal (SOW) Blueprint Design", description: "Establish delivery milestones, specifications, and PDF blueprints", status: "pending", priority: "high", level: 1, dependencies: ["3"],
-          subtasks: [{ id: "4.1", title: "Generate custom milestones scope", description: "Compile final proposal deliverables package and draft SOW.spec", status: "pending", priority: "high", tools: ["project-manager", "markdown-compiler"] }],
-        },
-      ];
-    case "CONTENT":
-      return [
-        { id: "1", title: "Trend Scan & Competitor Intelligence", description: "Scan high-volume developer trends across social channels", status: "pending", priority: "high", level: 0, dependencies: [],
-          subtasks: [{ id: "1.1", title: "LinkedIn & X developer hubs scrape", description: "Find top engineering and automation trends", status: "pending", priority: "medium", tools: ["linkedin-scraper", "x-trend-tracker"] }],
-        },
-        { id: "2", title: "SEO Keyword & Ranking Analysis", description: "Establish ranking parameters and keyword competition analysis", status: "pending", priority: "high", level: 0, dependencies: ["1"],
-          subtasks: [{ id: "2.1", title: "Scrape SEO competition indices", description: "Run primary focus keyword metrics for AI vs Chatbots", status: "pending", priority: "high", tools: ["semrush-connector", "google-analytics"] }],
-        },
-        { id: "3", title: "Copywriting Hook & Body Drafting", description: "Craft high-converting social hooks, body copy, and metadata hashtags", status: "pending", priority: "high", level: 1, dependencies: ["2"],
-          subtasks: [{ id: "3.1", title: "Draft target CTA & body framework", description: "Generate premium outreach copy", status: "pending", priority: "medium", tools: ["copywriting-assistant", "linguistic-processor"] }],
-        },
-      ];
-    case "GROWTH":
-      return [
-        { id: "1", title: "Transactional Student Analytics", description: "Pull lifetime enrollments, curriculum records, and exam scores", status: "pending", priority: "high", level: 0, dependencies: [],
-          subtasks: [{ id: "1.1", title: "Scan database analytics models", description: "Examine MoM expansion velocity stats", status: "pending", priority: "high", tools: ["postgres-connector", "upstash-redis"] }],
-        },
-        { id: "2", title: "SaaS Subscription Revenue Modeling", description: "Process financial trajectories and forecast revenue streams", status: "pending", priority: "high", level: 0, dependencies: ["1"],
-          subtasks: [{ id: "2.1", title: "Run cost margins spreadsheets", description: "Simulate LTV and predictable MRR subscription lifecycles", status: "pending", priority: "high", tools: ["financial-forecaster", "pricing-tier-builder"] }],
-        },
-        { id: "3", title: "Strategic Risk & Expansion Roadmap", description: "Formulate strategic recommendations and manual-to-automated latency maps", status: "pending", priority: "medium", level: 1, dependencies: ["2"],
-          subtasks: [{ id: "3.1", title: "Compile CEO strategic briefing", description: "Outline integration targets for administrative systems", status: "pending", priority: "medium", tools: ["strategy-analyzer", "executive-planner"] }],
-        },
-      ];
-    case "CTO":
-      return [
-        { id: "1", title: "Repository Layout & Code Audit", description: "Examine client/server framework boundaries and dependencies", status: "pending", priority: "high", level: 0, dependencies: [],
-          subtasks: [{ id: "1.1", title: "Check ESLint & Next.js compilation specs", description: "Confirm standard code quality rules", status: "pending", priority: "high", tools: ["file-system", "eslint-checker"] }],
-        },
-        { id: "2", title: "Security Logging & GPU Auditing", description: "Verify hardware acceleration settings and sentry error logging limits", status: "pending", priority: "medium", level: 0, dependencies: ["1"],
-          subtasks: [{ id: "2.1", title: "Trace composition performance benchmarks", description: "Verify VRAM safety limits and clean compile margins", status: "pending", priority: "medium", tools: ["shell", "sentry-connector"] }],
-        },
-      ];
-    default:
-      return [
-        { id: "1", title: "Context Mapping & Query Investigation", description: "Scan administrative and automation files for target query details", status: "pending", priority: "high", level: 0, dependencies: [],
-          subtasks: [{ id: "1.1", title: "Query search indices", description: "Extract reference context details", status: "pending", priority: "medium", tools: ["browser", "search-engine"] }],
-        },
-        { id: "2", title: "Actionable Operational Advice Formulation", description: "Unify background findings into executive strategic suggestions", status: "pending", priority: "high", level: 1, dependencies: ["1"],
-          subtasks: [{ id: "2.1", title: "Draft operational checklist recommendation", description: "Structure diagnostic markdown outputs", status: "pending", priority: "high", tools: ["strategy-analyzer", "markdown-processor"] }],
-        },
-      ];
-  }
-};
+
 
 /* ─────────────────────────────────────────────────────────
    Types
@@ -141,100 +74,171 @@ interface CommandSuggestion {
    Markdown renderer — clean prose blocks
    ───────────────────────────────────────────────────────── */
 function MarkdownBlock({ text }: { text: string }) {
-  return (
-    <div className="space-y-4">
-      {text.split("\n\n").map((block, i) => {
-        const t = block.trim();
-        if (!t) return null;
+  const lines = text.split("\n");
+  const elements: React.ReactNode[] = [];
+  
+  let currentList: { type: "bullet" | "number"; items: string[] } | null = null;
+  let currentBlockquote: string[] | null = null;
+  let currentTable: string[] | null = null;
+  let currentParagraph: string[] | null = null;
+  
+  const renderFormattedText = (str: string) => {
+    return str
+      .replace(/\*\*(.*?)\*\*/g, "<strong class='text-neutral-950'>$1</strong>")
+      .replace(/`(.*?)`/g, "<code class='bg-[#f6f5f4] border border-[#e6e6e6] px-1.5 py-0.5 rounded text-[13px] font-mono text-purple-600'>$1</code>");
+  };
 
-        // Headings
-        if (t.startsWith("# ")) return <h2 key={i} className="text-xl font-semibold text-white tracking-tight pt-2">{t.slice(2)}</h2>;
-        if (t.startsWith("## ")) return <h3 key={i} className="text-lg font-semibold text-white/95 tracking-tight pt-1">{t.slice(3)}</h3>;
-        if (t.startsWith("### ")) return <h4 key={i} className="text-base font-medium text-white/90 pt-1">{t.slice(4)}</h4>;
-
-        // Horizontal rule
-        if (t === "---") return <hr key={i} className="border-white/[0.06] my-2" />;
-
-        // Bullet lists
-        if (t.startsWith("* ") || t.startsWith("- ")) {
-          return (
-            <ul key={i} className="space-y-1.5 pl-1">
-              {t.split("\n").map((li, j) => {
-                const content = li.replace(/^[\*\-]\s*/, "").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-                return (
-                  <li key={j} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-white/80">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF] mt-2 shrink-0" />
-                    <span dangerouslySetInnerHTML={{ __html: content }} />
-                  </li>
-                );
-              })}
-            </ul>
-          );
-        }
-
-        // Numbered lists
-        if (/^\d+\.\s/.test(t)) {
-          return (
-            <ol key={i} className="space-y-1.5 pl-1">
-              {t.split("\n").map((li, j) => {
-                const content = li.replace(/^\d+\.\s*/, "").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-                return (
-                  <li key={j} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-white/80">
-                    <span className="text-[#355CFF] font-mono text-xs font-bold mt-0.5 shrink-0 w-5">{j + 1}.</span>
-                    <span dangerouslySetInnerHTML={{ __html: content }} />
-                  </li>
-                );
-              })}
-            </ol>
-          );
-        }
-
-        // Blockquotes
-        if (t.startsWith("> ")) {
-          const inner = t.split("\n").map(l => l.replace(/^>\s?/, "")).join("\n");
-          return (
-            <blockquote key={i} className="border-l-2 border-[#355CFF]/50 pl-4 py-2 text-[14px] text-white/70 leading-relaxed italic">
-              <span dangerouslySetInnerHTML={{ __html: inner.replace(/\*\*(.*?)\*\*/g, "<strong class='text-white/90 not-italic'>$1</strong>") }} />
-            </blockquote>
-          );
-        }
-
-        // Tables
-        if (t.startsWith("| ")) {
-          const rows = t.split("\n").filter(r => r.trim() && !r.includes("---"));
-          const headers = rows[0].split("|").map(h => h.trim()).filter(Boolean);
-          const body = rows.slice(1).map(r => r.split("|").map(c => c.trim()).filter(Boolean));
-          return (
-            <div key={i} className="overflow-x-auto my-4 rounded-xl border border-white/[0.06]">
-              <table className="w-full text-left text-[13px]">
-                <thead>
-                  <tr className="bg-white/[0.03] text-white/60 text-[11px] font-mono uppercase tracking-wider">
-                    {headers.map((h, k) => <th key={k} className="px-4 py-3 font-medium">{h}</th>)}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/[0.04]">
-                  {body.map((r, k) => (
-                    <tr key={k} className="hover:bg-white/[0.02] transition-colors">
-                      {r.map((c, m) => (
-                        <td key={m} className={cn("px-4 py-3 text-white/80", m === r.length - 1 && "font-mono font-semibold text-white")}>
-                          {c.replace(/\*\*/g, "")}
+  const flush = (key: string | number) => {
+    if (currentList) {
+      if (currentList.type === "bullet") {
+        elements.push(
+          <ul key={`ul-${key}`} className="space-y-1.5 pl-1 my-2">
+            {currentList.items.map((item, idx) => {
+              const html = renderFormattedText(item);
+              return (
+                <li key={idx} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-neutral-700">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0075de] mt-2 shrink-0" />
+                  <span dangerouslySetInnerHTML={{ __html: html }} />
+                </li>
+              );
+            })}
+          </ul>
+        );
+      } else {
+        elements.push(
+          <ol key={`ol-${key}`} className="space-y-1.5 pl-1 my-2">
+            {currentList.items.map((item, idx) => {
+              const html = renderFormattedText(item);
+              return (
+                <li key={idx} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-neutral-700">
+                  <span className="text-[#0075de] font-mono text-xs font-bold mt-0.5 shrink-0 w-5">{idx + 1}.</span>
+                  <span dangerouslySetInnerHTML={{ __html: html }} />
+                </li>
+              );
+            })}
+          </ol>
+        );
+      }
+      currentList = null;
+    }
+    
+    if (currentBlockquote) {
+      const inner = currentBlockquote.join("\n");
+      const html = renderFormattedText(inner);
+      elements.push(
+        <blockquote key={`bq-${key}`} className="border-l-2 border-[#0075de]/50 pl-4 py-2 text-[14px] text-neutral-600 leading-relaxed italic my-2">
+          <span dangerouslySetInnerHTML={{ __html: html }} />
+        </blockquote>
+      );
+      currentBlockquote = null;
+    }
+    
+    if (currentTable) {
+      const rows = currentTable.filter(r => r.trim() && !r.includes("---"));
+      if (rows.length > 0) {
+        const headers = rows[0].split("|").map(h => h.trim()).filter(Boolean);
+        const body = rows.slice(1).map(r => r.split("|").map(c => c.trim()).filter(Boolean));
+        elements.push(
+          <div key={`tab-${key}`} className="overflow-x-auto my-4 rounded-lg border border-[#e6e6e6]">
+            <table className="w-full text-left text-[13px]">
+              <thead>
+                <tr className="bg-[#f6f5f4] text-neutral-500 text-[11px] font-mono uppercase tracking-wider">
+                  {headers.map((h, k) => <th key={k} className="px-4 py-3 font-medium">{h}</th>)}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#e6e6e6]">
+                {body.map((r, k) => (
+                  <tr key={k} className="hover:bg-neutral-50 transition-colors">
+                    {r.map((c, m) => {
+                      const html = renderFormattedText(c);
+                      return (
+                        <td key={m} className={cn("px-4 py-3 text-neutral-700", m === r.length - 1 && "font-mono font-semibold text-neutral-950")}>
+                          <span dangerouslySetInnerHTML={{ __html: html }} />
                         </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          );
-        }
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+      currentTable = null;
+    }
+    
+    if (currentParagraph) {
+      const content = currentParagraph.join(" ");
+      if (content.trim()) {
+        const html = renderFormattedText(content);
+        elements.push(
+          <p key={`p-${key}`} className="text-[14px] leading-[1.75] text-neutral-700 my-2" dangerouslySetInnerHTML={{ __html: html }} />
+        );
+      }
+      currentParagraph = null;
+    }
+  };
 
-        // Paragraphs
-        const html = t.replace(/\*\*(.*?)\*\*/g, "<strong class='text-white'>$1</strong>")
-                       .replace(/`(.*?)`/g, "<code class='bg-white/[0.06] px-1.5 py-0.5 rounded text-[13px] font-mono text-[#c4b5fd]'>$1</code>");
-        return <p key={i} className="text-[14px] leading-[1.75] text-white/75" dangerouslySetInnerHTML={{ __html: html }} />;
-      })}
-    </div>
-  );
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      flush(i);
+      continue;
+    }
+
+    // Headings
+    if (trimmed.startsWith("# ")) {
+      flush(i);
+      elements.push(<h2 key={`h2-${i}`} className="text-xl font-bold text-neutral-900 tracking-tight pt-2 my-2">{trimmed.slice(2)}</h2>);
+    } else if (trimmed.startsWith("## ")) {
+      flush(i);
+      elements.push(<h3 key={`h3-${i}`} className="text-lg font-bold text-neutral-800 tracking-tight pt-1 my-2">{trimmed.slice(3)}</h3>);
+    } else if (trimmed.startsWith("### ")) {
+      flush(i);
+      elements.push(<h4 key={`h4-${i}`} className="text-base font-semibold text-neutral-700 pt-1 my-2">{trimmed.slice(4)}</h4>);
+    } 
+    // Horizontal rule
+    else if (trimmed === "---") {
+      flush(i);
+      elements.push(<hr key={`hr-${i}`} className="border-[#e6e6e6] my-4" />);
+    }
+    // Blockquotes
+    else if (trimmed.startsWith("> ")) {
+      if (currentList || currentTable || currentParagraph) flush(i);
+      if (!currentBlockquote) currentBlockquote = [];
+      currentBlockquote.push(trimmed.slice(2));
+    }
+    // Tables
+    else if (trimmed.startsWith("| ")) {
+      if (currentList || currentBlockquote || currentParagraph) flush(i);
+      if (!currentTable) currentTable = [];
+      currentTable.push(trimmed);
+    }
+    // Bullet lists
+    else if (trimmed.startsWith("* ") || trimmed.startsWith("- ")) {
+      if (currentBlockquote || currentTable || currentParagraph || (currentList && currentList.type !== "bullet")) flush(i);
+      if (!currentList) currentList = { type: "bullet", items: [] };
+      currentList.items.push(trimmed.slice(2));
+    }
+    // Numbered lists
+    else if (/^\d+\.\s/.test(trimmed)) {
+      if (currentBlockquote || currentTable || currentParagraph || (currentList && currentList.type !== "number")) flush(i);
+      if (!currentList) currentList = { type: "number", items: [] };
+      currentList.items.push(trimmed.replace(/^\d+\.\s*/, ""));
+    }
+    // Normal paragraphs
+    else {
+      if (currentList || currentBlockquote || currentTable) flush(i);
+      if (!currentParagraph) currentParagraph = [];
+      currentParagraph.push(trimmed);
+    }
+  }
+
+  flush("final");
+
+  return <div className="space-y-3">{elements}</div>;
 }
 
 /* ═════════════════════════════════════════════════════════
@@ -252,13 +256,13 @@ export default function InteractiveWorkspace() {
 
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [currentActiveAgents, setCurrentActiveAgents] = useState<string[]>([]);
   const [attachedFiles, setAttachedFiles] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [livePlan, setLivePlan] = useState<Task[]>([]);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -354,7 +358,6 @@ export default function InteractiveWorkspace() {
     const id = `convo-${Date.now()}`;
     setConversations(prev => [{ id, title: "New conversation", messages: [], createdAt: new Date() }, ...prev]);
     setActiveConvoId(id);
-    setLivePlan([]);
     setCurrentActiveAgents([]);
   };
 
@@ -376,7 +379,8 @@ export default function InteractiveWorkspace() {
     adjustHeight(true);
     setIsLoading(true);
     setCurrentActiveAgents([]);
-    setLivePlan([]);
+
+    const targetConvoId = activeConvoId;
 
     try {
       const response = await fetch("/api/admin/command-center", {
@@ -387,10 +391,6 @@ export default function InteractiveWorkspace() {
 
       const data = await response.json();
       if (data.error) throw new Error(data.error);
-
-      // Initialize plan
-      const initialPlan = getInitialPlanForIntent(data.intent || "GENERAL");
-      setLivePlan(initialPlan);
 
       // Activate agents
       setAgentSuite(prev => prev.map(a =>
@@ -404,36 +404,74 @@ export default function InteractiveWorkspace() {
 
         const activeName = data.activity[i].split(":")[0];
         setAgentSuite(prev => prev.map(a => a.name === activeName ? { ...a, status: "Active" } : a));
-
-        setLivePlan(prevPlan =>
-          prevPlan.map((task, idx) => {
-            if (idx === i) return { ...task, status: "in-progress", subtasks: task.subtasks.map(sub => ({ ...sub, status: "in-progress" })) };
-            if (idx < i) return { ...task, status: "completed", subtasks: task.subtasks.map(sub => ({ ...sub, status: "completed" })) };
-            return task;
-          }),
-        );
       }
 
       await new Promise(resolve => setTimeout(resolve, 600));
 
-      // Finalize plan
-      setLivePlan(prevPlan => prevPlan.map(task => ({
-        ...task, status: "completed",
-        subtasks: task.subtasks.map(sub => ({ ...sub, status: "completed" })),
-      })));
+      // Turn off loading spinner before streaming starts
+      setIsLoading(false);
+      setIsStreaming(true);
 
-      const gxlMsg: Message = {
-        id: `gxl-${Date.now()}`,
+      // Create a unique ID for the streaming message
+      const gxlMsgId = `gxl-${Date.now()}`;
+      
+      // Push the initial empty message
+      const initialGxlMsg: Message = {
+        id: gxlMsgId,
         sender: "gxl",
-        text: data.output,
+        text: "",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         activeAgents: data.activeAgents,
         activityLogs: data.activity,
-        proposal: data.proposal,
-        chart: data.chart,
       };
 
-      pushMessage(gxlMsg);
+      setConversations(prev => prev.map(c => {
+        if (c.id !== targetConvoId) return c;
+        return {
+          ...c,
+          messages: [...c.messages, initialGxlMsg]
+        };
+      }));
+
+      // Stream the text output cleanly word-by-word
+      const fullText = data.output;
+      let currentText = "";
+      const words = fullText.split(" ");
+      let wordIndex = 0;
+
+      await new Promise<void>((resolve) => {
+        const interval = setInterval(() => {
+          if (wordIndex < words.length) {
+            currentText += (wordIndex === 0 ? "" : " ") + words[wordIndex];
+            wordIndex++;
+
+            setConversations(prev => prev.map(c => {
+              if (c.id !== targetConvoId) return c;
+              return {
+                ...c,
+                messages: c.messages.map(m => m.id === gxlMsgId ? { ...m, text: currentText } : m)
+              };
+            }));
+          } else {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 15);
+      });
+
+      // Add attachments at the end of streaming
+      setConversations(prev => prev.map(c => {
+        if (c.id !== targetConvoId) return c;
+        return {
+          ...c,
+          messages: c.messages.map(m => m.id === gxlMsgId ? {
+            ...m,
+            proposal: data.proposal,
+            chart: data.chart,
+          } : m)
+        };
+      }));
+
     } catch {
       pushMessage({
         id: `err-${Date.now()}`,
@@ -443,9 +481,39 @@ export default function InteractiveWorkspace() {
       });
     } finally {
       setIsLoading(false);
+      setIsStreaming(false);
       setAttachedFiles([]);
       setAgentSuite(prev => prev.map(a => ({ ...a, status: "Idle" })));
     }
+  };
+
+  const handleDownloadSOW = (msg: Message) => {
+    if (!msg.proposal) return;
+    const clientNameClean = msg.proposal.clientName.replace(/[^a-zA-Z0-9]/g, "_");
+    const fileName = `SOW_${clientNameClean}.md`;
+    
+    const fileContent = `${msg.text}
+
+---
+
+### Proposal Metadata
+- **Client:** ${msg.proposal.clientName}
+- **Budget:** ${msg.proposal.budget}
+- **Timeline:** ${msg.proposal.timeline}
+- **Deliverables:**
+${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
+- **Status:** ${msg.proposal.status}
+`;
+
+    const blob = new Blob([fileContent], { type: "text/markdown;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // ── Keyboard ──
@@ -476,7 +544,7 @@ export default function InteractiveWorkspace() {
   //  RENDER
   // ═══════════════════════════════════════════════════════
   return (
-    <div className="flex h-full bg-[#0a0a0b] text-white overflow-hidden">
+    <div className="flex h-full bg-white text-neutral-900 overflow-hidden">
 
       {/* ─── LEFT SIDEBAR ─── */}
       <AnimatePresence mode="wait">
@@ -486,13 +554,14 @@ export default function InteractiveWorkspace() {
             animate={{ width: 260, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="h-full border-r border-white/[0.06] bg-[#0f0f11] flex flex-col overflow-hidden shrink-0"
+            className="h-full border-r border-[#e6e6e6] bg-[#f6f5f4] flex flex-col overflow-hidden shrink-0"
           >
             {/* New chat button */}
             <div className="p-3">
               <button
                 onClick={startNewConversation}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-white/80 hover:text-white hover:bg-white/[0.05] border border-white/[0.06] hover:border-white/[0.1] transition-all active:scale-[0.98]"
+                disabled={isLoading || isStreaming}
+                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-md text-[13px] font-bold uppercase tracking-wider text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-50 border border-[#e6e6e6] shadow-sm transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Plus className="w-4 h-4" />
                 New chat
@@ -501,16 +570,17 @@ export default function InteractiveWorkspace() {
 
             {/* Conversation list */}
             <div className="flex-1 overflow-y-auto px-2 pb-4 space-y-0.5 custom-scrollbar">
-              <p className="px-3 pt-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-white/30">Recent</p>
+              <p className="px-3 pt-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-neutral-400">Recent</p>
               {conversations.map(c => (
                 <button
                   key={c.id}
-                  onClick={() => { setActiveConvoId(c.id); setLivePlan([]); setCurrentActiveAgents([]); }}
+                  onClick={() => { setActiveConvoId(c.id); setCurrentActiveAgents([]); }}
+                  disabled={isLoading || isStreaming}
                   className={cn(
-                    "w-full text-left px-3 py-2.5 rounded-lg text-[13px] truncate transition-all",
+                    "w-full text-left px-3 py-2.5 rounded-md text-[13px] truncate transition-all disabled:opacity-80 disabled:cursor-not-allowed",
                     c.id === activeConvoId
-                      ? "bg-white/[0.07] text-white font-medium"
-                      : "text-white/50 hover:text-white/80 hover:bg-white/[0.03]",
+                      ? "bg-white shadow-sm border border-[#e6e6e6] text-neutral-900 font-semibold"
+                      : "text-neutral-500 hover:text-neutral-800 hover:bg-neutral-200/40",
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -522,14 +592,14 @@ export default function InteractiveWorkspace() {
             </div>
 
             {/* Bottom brand */}
-            <div className="p-4 border-t border-white/[0.04]">
+            <div className="p-4 border-t border-[#e6e6e6]">
               <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#355CFF] to-[#1E3BB3] flex items-center justify-center">
-                  <Sparkles className="w-3.5 h-3.5 text-white" />
+                <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[#0075de] to-[#005bab] flex items-center justify-center">
+                  <Command className="w-3.5 h-3.5 text-white" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-semibold text-white/80">GXL Command Center</p>
-                  <p className="text-[9px] text-white/30 font-mono">v2.0 · Internal</p>
+                  <p className="text-[11px] font-bold text-neutral-800">GXL Command Center</p>
+                  <p className="text-[9px] text-neutral-400 font-mono">v2.0 · Internal</p>
                 </div>
               </div>
             </div>
@@ -541,24 +611,24 @@ export default function InteractiveWorkspace() {
       <div className="flex-1 flex flex-col min-w-0 relative">
 
         {/* Top bar */}
-        <div className="h-12 shrink-0 flex items-center justify-between px-4 border-b border-white/[0.04] bg-[#0a0a0b]/80 backdrop-blur-sm z-20">
+        <div className="h-12 shrink-0 flex items-center justify-between px-4 border-b border-[#e6e6e6] bg-white/80 backdrop-blur-sm z-20">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(p => !p)}
-              className="p-1.5 rounded-lg text-white/40 hover:text-white/80 hover:bg-white/[0.05] transition-colors"
+              className="p-1.5 rounded-md text-neutral-400 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
             >
               {sidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
             </button>
-            <span className="text-[13px] font-medium text-white/60 hidden sm:inline">
+            <span className="text-[13px] font-bold text-neutral-600 hidden sm:inline">
               {activeConvo.title === "New conversation" ? "GXL Command Center" : activeConvo.title}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
             {currentActiveAgents.length > 0 && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#355CFF]/10 border border-[#355CFF]/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF] animate-pulse" />
-                <span className="text-[10px] font-mono text-[#355CFF] font-medium">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0075de]/10 border border-[#0075de]/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0075de] animate-pulse" />
+                <span className="text-[10px] font-mono text-[#0075de] font-bold uppercase tracking-wide">
                   {currentActiveAgents.length} agent{currentActiveAgents.length > 1 ? "s" : ""} active
                 </span>
               </div>
@@ -579,14 +649,14 @@ export default function InteractiveWorkspace() {
                 className="text-center max-w-2xl mx-auto"
               >
                 {/* Logo */}
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#355CFF] to-[#6B7BFF] flex items-center justify-center mx-auto mb-8 shadow-lg shadow-[#355CFF]/20">
-                  <Sparkles className="w-7 h-7 text-white" />
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0075de] to-[#62aef0] flex items-center justify-center mx-auto mb-8 shadow-md shadow-[#0075de]/10">
+                  <Command className="w-7 h-7 text-white" />
                 </div>
 
-                <h1 className="text-3xl sm:text-4xl font-semibold text-white tracking-tight mb-2">
+                <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-tight mb-2">
                   {getGreeting()}.
                 </h1>
-                <p className="text-[15px] text-white/40 mb-10">
+                <p className="text-[15px] text-neutral-500 mb-10">
                   How can I help you today?
                 </p>
 
@@ -599,14 +669,14 @@ export default function InteractiveWorkspace() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 + i * 0.08, duration: 0.3 }}
                       onClick={() => { if (!isLoading) handleSendMessage(item.description); }}
-                      className="group flex items-start gap-3 p-4 rounded-xl border border-white/[0.06] hover:border-white/[0.12] bg-white/[0.02] hover:bg-white/[0.04] text-left transition-all active:scale-[0.98]"
+                      className="group flex items-start gap-3 p-4 rounded-md border border-[#e6e6e6] hover:border-[#a39e98] bg-white hover:bg-[#f6f5f4] text-left shadow-sm transition-all active:scale-[0.98]"
                     >
-                      <div className="p-2 rounded-lg bg-white/[0.04] group-hover:bg-white/[0.08] text-white/50 group-hover:text-white/80 transition-colors shrink-0">
+                      <div className="p-2 rounded-md bg-neutral-100 group-hover:bg-neutral-200 text-neutral-500 group-hover:text-neutral-900 transition-colors shrink-0">
                         {item.icon}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[13px] font-medium text-white/80 group-hover:text-white mb-0.5 transition-colors">{item.label}</p>
-                        <p className="text-[12px] text-white/35 group-hover:text-white/50 leading-snug transition-colors">{item.description}</p>
+                        <p className="text-[13px] font-bold text-neutral-800 group-hover:text-neutral-950 mb-0.5 transition-colors">{item.label}</p>
+                        <p className="text-[12px] text-neutral-500 group-hover:text-neutral-600 leading-snug transition-colors">{item.description}</p>
                       </div>
                     </motion.button>
                   ))}
@@ -629,10 +699,10 @@ export default function InteractiveWorkspace() {
                   {msg.sender === "user" ? (
                     /* ── User message ── */
                     <div className="max-w-[85%] sm:max-w-[70%]">
-                      <div className="bg-white/[0.06] rounded-2xl rounded-br-md px-5 py-3.5">
-                        <p className="text-[14px] leading-relaxed text-white/90">{msg.text}</p>
+                      <div className="bg-[#f6f5f4] border border-[#e6e6e6] rounded-2xl rounded-br-md px-5 py-3.5">
+                        <p className="text-[14px] leading-relaxed text-neutral-800">{msg.text}</p>
                       </div>
-                      <p className="text-[10px] text-white/20 mt-1.5 text-right font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+                      <p className="text-[10px] text-neutral-400 mt-1.5 text-right font-mono opacity-0 group-hover:opacity-100 transition-opacity">
                         {msg.timestamp}
                       </p>
                     </div>
@@ -640,12 +710,12 @@ export default function InteractiveWorkspace() {
                     /* ── GXL message ── */
                     <div className="w-full">
                       <div className="flex items-start gap-3 mb-3">
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#355CFF] to-[#1E3BB3] flex items-center justify-center shrink-0 shadow-md shadow-[#355CFF]/10">
-                          <Sparkles className="w-3.5 h-3.5 text-white" />
+                        <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[#0075de] to-[#005bab] flex items-center justify-center shrink-0 shadow-md shadow-[#0075de]/10">
+                          <Command className="w-3.5 h-3.5 text-white" />
                         </div>
                         <div className="flex items-center gap-2 pt-1">
-                          <span className="text-[12px] font-semibold text-white/60">GXL Command Center</span>
-                          <span className="text-[10px] text-white/20 font-mono opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
+                          <span className="text-[12px] font-bold text-neutral-700">GXL Command Center</span>
+                          <span className="text-[10px] text-neutral-400 font-mono opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
                         </div>
                       </div>
 
@@ -654,23 +724,23 @@ export default function InteractiveWorkspace() {
 
                         {/* Chart attachment */}
                         {msg.chart && (
-                          <div className="mt-6 p-5 rounded-xl border border-white/[0.06] bg-white/[0.02]">
+                          <div className="mt-6 p-5 rounded-md border border-[#e6e6e6] bg-[#f6f5f4]/50 shadow-sm">
                             <div className="flex items-center gap-2.5 mb-5">
-                              <Cpu className="w-4 h-4 text-[#355CFF]" />
-                              <h4 className="text-[13px] font-semibold text-white/80">Revenue Forecast</h4>
+                              <Cpu className="w-4 h-4 text-[#0075de]" />
+                              <h4 className="text-[13px] font-bold text-neutral-800">Revenue Forecast</h4>
                             </div>
-                            <div className="h-36 flex items-end gap-3 pb-2 border-b border-white/[0.04]">
+                            <div className="h-36 flex items-end gap-3 pb-2 border-b border-[#e6e6e6]">
                               {msg.chart.map((point, k) => {
                                 const pct = (point.revenue / 120000) * 100;
                                 return (
                                   <div key={k} className="flex-1 flex flex-col items-center gap-2 group/bar cursor-pointer">
                                     <div className="w-full relative flex items-end justify-center h-24">
-                                      <div className="absolute -top-6 opacity-0 group-hover/bar:opacity-100 transition-opacity bg-white text-black font-mono text-[9px] font-bold px-2 py-0.5 rounded shadow-lg">
+                                      <div className="absolute -top-6 opacity-0 group-hover/bar:opacity-100 transition-opacity bg-neutral-900 text-white font-mono text-[9px] font-bold px-2 py-0.5 rounded shadow-md z-10">
                                         ₹{point.revenue.toLocaleString()}
                                       </div>
-                                      <div style={{ height: `${pct}%` }} className="w-full bg-[#355CFF]/15 group-hover/bar:bg-[#355CFF]/30 rounded-t-md transition-all border border-[#355CFF]/20" />
+                                      <div style={{ height: `${pct}%` }} className="w-full bg-[#0075de]/20 group-hover/bar:bg-[#0075de]/40 rounded-t-sm transition-all border border-[#0075de]/30" />
                                     </div>
-                                    <span className="text-[10px] font-mono text-white/30">{point.month}</span>
+                                    <span className="text-[10px] font-mono text-neutral-500">{point.month}</span>
                                   </div>
                                 );
                               })}
@@ -680,31 +750,31 @@ export default function InteractiveWorkspace() {
 
                         {/* Proposal attachment */}
                         {msg.proposal && (
-                          <div className="mt-6 p-5 rounded-xl border border-[#355CFF]/20 bg-[#355CFF]/[0.03] relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#355CFF]/5 rounded-full blur-3xl" />
+                          <div className="mt-6 p-5 rounded-md border border-[#0075de]/20 bg-[#0075de]/[0.03] relative overflow-hidden shadow-sm">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#0075de]/5 rounded-full blur-3xl" />
                             <div className="relative space-y-4">
                               <div className="flex items-center justify-between flex-wrap gap-2">
                                 <div>
-                                  <p className="text-[10px] font-mono text-[#355CFF] uppercase tracking-widest font-bold mb-1">Proposal Generated</p>
-                                  <h4 className="text-base font-semibold text-white">{msg.proposal.clientName} Scope Blueprint</h4>
+                                  <p className="text-[10px] font-mono text-[#0075de] uppercase tracking-widest font-bold mb-1">Proposal Generated</p>
+                                  <h4 className="text-base font-bold text-neutral-900">{msg.proposal.clientName} Scope Blueprint</h4>
                                 </div>
-                                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2.5 py-1 rounded-full font-semibold">
+                                <span className="text-[10px] font-mono text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full font-bold">
                                   ✓ Ready for review
                                 </span>
                               </div>
 
-                              <div className="grid grid-cols-3 gap-3 border-y border-white/[0.06] py-3 text-[11px] font-mono">
-                                <div><p className="text-white/30 uppercase mb-1">Budget</p><p className="text-white font-semibold">{msg.proposal.budget}</p></div>
-                                <div><p className="text-white/30 uppercase mb-1">Delivery</p><p className="text-white font-semibold">{msg.proposal.timeline}</p></div>
-                                <div><p className="text-white/30 uppercase mb-1">Format</p><p className="text-white font-semibold">SOW-PDF.spec</p></div>
+                              <div className="grid grid-cols-3 gap-3 border-y border-[#e6e6e6] py-3 text-[11px] font-mono">
+                                <div><p className="text-neutral-400 uppercase mb-1">Budget</p><p className="text-neutral-900 font-bold">{msg.proposal.budget}</p></div>
+                                <div><p className="text-neutral-400 uppercase mb-1">Delivery</p><p className="text-neutral-900 font-bold">{msg.proposal.timeline}</p></div>
+                                <div><p className="text-neutral-400 uppercase mb-1">Format</p><p className="text-neutral-900 font-bold">SOW-PDF.spec</p></div>
                               </div>
 
                               <div>
-                                <p className="text-[10px] font-mono text-white/30 uppercase mb-2">Key Deliverables</p>
+                                <p className="text-[10px] font-mono text-neutral-400 uppercase mb-2">Key Deliverables</p>
                                 <ul className="space-y-1.5">
                                   {msg.proposal.deliverables.map((del, k) => (
-                                    <li key={k} className="flex items-center gap-2 text-[12px] text-white/70">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                                    <li key={k} className="flex items-center gap-2 text-[12px] text-neutral-700">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-[#0075de]" />
                                       {del}
                                     </li>
                                   ))}
@@ -712,8 +782,8 @@ export default function InteractiveWorkspace() {
                               </div>
 
                               <button
-                                onClick={() => alert(`Simulating download for ${msg.proposal?.clientName}.`)}
-                                className="inline-flex items-center gap-2 bg-[#355CFF] hover:bg-[#355CFF]/90 text-white font-medium text-[12px] px-4 py-2.5 rounded-lg transition-all active:scale-[0.97]"
+                                onClick={() => handleDownloadSOW(msg)}
+                                className="inline-flex items-center gap-2 bg-[#0075de] hover:bg-[#005bab] text-white font-bold text-[10px] uppercase tracking-wider px-4 py-2.5 rounded-md shadow-sm transition-all active:scale-[0.97]"
                               >
                                 <Download className="w-3.5 h-3.5" />
                                 Download Full SOW Package
@@ -735,12 +805,12 @@ export default function InteractiveWorkspace() {
                   className="w-full"
                 >
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#355CFF] to-[#1E3BB3] flex items-center justify-center shrink-0 shadow-md shadow-[#355CFF]/10">
-                      <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
+                    <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[#0075de] to-[#005bab] flex items-center justify-center shrink-0 shadow-md shadow-[#0075de]/10">
+                      <Command className="w-3.5 h-3.5 text-white animate-pulse" />
                     </div>
                     <div className="flex items-center gap-2 pt-1">
-                      <span className="text-[12px] font-semibold text-white/60">GXL Command Center</span>
-                      <span className="text-[10px] text-[#355CFF] font-mono animate-pulse">thinking…</span>
+                      <span className="text-[12px] font-bold text-neutral-700">GXL Command Center</span>
+                      <span className="text-[10px] text-[#0075de] font-mono animate-pulse uppercase tracking-wide">thinking…</span>
                     </div>
                   </div>
 
@@ -751,28 +821,23 @@ export default function InteractiveWorkspace() {
                         {currentActiveAgents.map((agent, i) => (
                           <span
                             key={i}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-[11px] font-medium text-white/60"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f6f5f4] border border-[#e6e6e6] text-[11px] font-bold uppercase tracking-wider text-neutral-600"
                           >
-                            <span className="w-1 h-1 rounded-full bg-[#355CFF] animate-pulse" />
+                            <span className="w-1 h-1 rounded-full bg-[#0075de] animate-pulse" />
                             {agent}
                           </span>
                         ))}
                       </div>
                     )}
 
-                    {/* Live plan */}
-                    {livePlan.length > 0 && (
-                      <div className="rounded-xl border border-white/[0.06] bg-white/[0.01] overflow-hidden">
-                        <Plan tasks={livePlan} />
-                      </div>
-                    )}
+
 
                     {/* Shimmer loading indicator */}
-                    <div className="flex items-center gap-2 text-white/30 text-[12px] font-mono">
+                    <div className="flex items-center gap-2 text-neutral-400 text-[11px] font-mono uppercase tracking-wider">
                       <div className="flex gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF] animate-bounce" style={{ animationDelay: "0ms" }} />
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF] animate-bounce" style={{ animationDelay: "150ms" }} />
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF] animate-bounce" style={{ animationDelay: "300ms" }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#0075de] animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#0075de] animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#0075de] animate-bounce" style={{ animationDelay: "300ms" }} />
                       </div>
                       <span>Processing multi-agent pipeline…</span>
                     </div>
@@ -792,16 +857,16 @@ export default function InteractiveWorkspace() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 8 }}
                 onClick={scrollToBottom}
-                className="fixed bottom-32 left-1/2 -translate-x-1/2 z-30 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center backdrop-blur-md transition-colors"
+                className="fixed bottom-32 left-1/2 -translate-x-1/2 z-30 w-8 h-8 rounded-full bg-white hover:bg-neutral-100 border border-[#e6e6e6] flex items-center justify-center shadow-md transition-colors"
               >
-                <ChevronDown className="w-4 h-4 text-white/70" />
+                <ChevronDown className="w-4 h-4 text-neutral-600" />
               </motion.button>
             )}
           </AnimatePresence>
         </div>
 
         {/* ─── BOTTOM INPUT CONSOLE ─── */}
-        <div className="shrink-0 border-t border-white/[0.04] bg-[#0a0a0b] relative z-20">
+        <div className="shrink-0 border-t border-[#e6e6e6] bg-white relative z-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 space-y-2">
 
             {/* Command palette overlay */}
@@ -813,7 +878,7 @@ export default function InteractiveWorkspace() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 6 }}
                   transition={{ duration: 0.12 }}
-                  className="absolute left-4 right-4 sm:left-6 sm:right-6 bottom-full mb-2 bg-[#141416] rounded-xl border border-white/[0.08] shadow-2xl overflow-hidden max-w-3xl mx-auto z-50"
+                  className="absolute left-4 right-4 sm:left-6 sm:right-6 bottom-full mb-2 bg-white rounded-md border border-[#e6e6e6] shadow-xl overflow-hidden max-w-3xl mx-auto z-50"
                 >
                   <div className="py-1">
                     {commandSuggestions
@@ -824,13 +889,13 @@ export default function InteractiveWorkspace() {
                           onClick={() => { setInputValue(sug.description); setShowCommandPalette(false); textareaRef.current?.focus(); }}
                           className={cn(
                             "w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors",
-                            activeSuggestion === index ? "bg-white/[0.06] text-white" : "text-white/60 hover:bg-white/[0.03]",
+                            activeSuggestion === index ? "bg-neutral-100 text-neutral-900" : "text-neutral-600 hover:bg-neutral-50",
                           )}
                         >
-                          <div className="w-5 h-5 flex items-center justify-center text-white/40">{sug.icon}</div>
+                          <div className="w-5 h-5 flex items-center justify-center text-neutral-400">{sug.icon}</div>
                           <span className="text-[13px] font-medium">{sug.label}</span>
-                          <span className="text-[11px] text-white/25 font-mono ml-1">{sug.prefix}</span>
-                          <span className="text-[11px] text-white/30 ml-auto">{sug.description}</span>
+                          <span className="text-[11px] text-neutral-400 font-mono ml-1">{sug.prefix}</span>
+                          <span className="text-[11px] text-neutral-400 ml-auto">{sug.description}</span>
                         </button>
                       ))}
                   </div>
@@ -842,10 +907,10 @@ export default function InteractiveWorkspace() {
             {attachedFiles.length > 0 && (
               <div className="flex flex-wrap gap-2 pb-1">
                 {attachedFiles.map((file, i) => (
-                  <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] text-[11px] font-mono">
-                    <FileText className="w-3 h-3 text-[#355CFF]" />
-                    <span className="text-white/60 max-w-[120px] truncate">{file}</span>
-                    <button onClick={() => setAttachedFiles(prev => prev.filter((_, j) => j !== i))} className="text-white/30 hover:text-red-400 transition-colors">
+                  <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#f6f5f4] border border-[#e6e6e6] text-[11px] font-mono text-neutral-700">
+                    <FileText className="w-3 h-3 text-[#0075de]" />
+                    <span className="text-neutral-700 max-w-[120px] truncate">{file}</span>
+                    <button onClick={() => setAttachedFiles(prev => prev.filter((_, j) => j !== i))} className="text-neutral-400 hover:text-red-600 transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
@@ -854,16 +919,16 @@ export default function InteractiveWorkspace() {
             )}
 
             {/* Input bar */}
-            <div className="relative flex flex-col bg-[#141416] border border-white/[0.08] focus-within:border-white/[0.15] rounded-2xl transition-all duration-200 shadow-lg shadow-black/20">
+            <div className="relative flex flex-col bg-white border border-[#e6e6e6] focus-within:border-[#0075de] focus-within:ring-1 focus-within:ring-[#0075de] rounded-md transition-all duration-200 shadow-sm">
               <textarea
                 ref={textareaRef}
                 value={inputValue}
                 onChange={(e) => { setInputValue(e.target.value); adjustHeight(); }}
                 onKeyDown={handleKeyDown}
-                placeholder={isLoading ? "Agents are working…" : "Message GXL Command Center…"}
-                disabled={isLoading}
+                placeholder={isLoading || isStreaming ? "Agents are working…" : "Message GXL Command Center…"}
+                disabled={isLoading || isStreaming}
                 rows={1}
-                className="w-full bg-transparent px-4 pt-3.5 pb-2 text-[14px] text-white placeholder-white/25 focus:outline-none resize-none min-h-[48px] max-h-[200px] leading-relaxed custom-scrollbar"
+                className="w-full bg-transparent px-4 pt-3.5 pb-2 text-[14px] text-neutral-800 placeholder-neutral-400 focus:outline-none resize-none min-h-[48px] max-h-[200px] leading-relaxed custom-scrollbar"
               />
 
               <div className="px-3 pb-2.5 flex items-center justify-between">
@@ -871,19 +936,20 @@ export default function InteractiveWorkspace() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    disabled={isLoading || isUploading}
-                    className="p-2 rounded-lg text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-colors disabled:opacity-30"
+                    disabled={isLoading || isUploading || isStreaming}
+                    className="p-2 rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors disabled:opacity-30"
                     title="Attach file"
                   >
-                    <Paperclip className={cn("w-4 h-4", isUploading && "animate-spin text-[#355CFF]")} />
+                    <Paperclip className={cn("w-4 h-4", isUploading && "animate-spin text-[#0075de]")} />
                   </button>
                   <button
                     type="button"
                     data-command-button
                     onClick={(e) => { e.stopPropagation(); setShowCommandPalette(p => !p); }}
+                    disabled={isLoading || isStreaming}
                     className={cn(
-                      "p-2 rounded-lg text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-colors",
-                      showCommandPalette && "bg-white/[0.06] text-white/60",
+                      "p-2 rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors",
+                      showCommandPalette && "bg-neutral-100 text-neutral-700",
                     )}
                     title="Commands"
                   >
@@ -903,12 +969,12 @@ export default function InteractiveWorkspace() {
                 <button
                   type="button"
                   onClick={() => handleSendMessage(inputValue)}
-                  disabled={isLoading || !inputValue.trim()}
+                  disabled={isLoading || isStreaming || !inputValue.trim()}
                   className={cn(
                     "w-8 h-8 rounded-lg flex items-center justify-center transition-all",
                     inputValue.trim()
-                      ? "bg-white text-black hover:bg-neutral-200 shadow-md active:scale-95"
-                      : "bg-white/[0.06] text-white/20 cursor-not-allowed",
+                      ? "bg-[#0075de] hover:bg-[#005bab] text-white shadow-sm active:scale-95"
+                      : "bg-neutral-100 text-neutral-300 cursor-not-allowed border border-[#e6e6e6]",
                   )}
                 >
                   {isLoading ? (
@@ -920,7 +986,7 @@ export default function InteractiveWorkspace() {
               </div>
             </div>
 
-            <p className="text-[10px] text-white/15 text-center font-mono">
+            <p className="text-[10px] text-neutral-400 text-center font-mono uppercase tracking-wider">
               GXL Command Center can make mistakes. Verify important outputs.
             </p>
           </div>

@@ -67,17 +67,17 @@ export default async function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       {/* Header */}
       <Reveal y={-20}>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-1">
-            <h1 className="text-3xl font-bold text-white tracking-tight">Intelligence Overview</h1>
-            <p className="text-[var(--text-secondary)] text-sm">Real-time performance metrics for GrowX Labs Academy.</p>
+            <h1 className="text-2xl font-bold text-neutral-900 -tracking-[0.025em]">Intelligence Overview</h1>
+            <p className="text-[#615d59] text-sm">Real-time performance metrics for GrowX Labs Academy.</p>
           </div>
-          <div className="flex items-center gap-3 bg-primary/5 border border-primary/10 rounded-xl px-5 py-2.5">
-            <div className="w-2 h-2 rounded-full bg-primary" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-primary">System Monitoring Live</span>
+          <div className="flex items-center gap-2 bg-[#0075de]/5 border border-[#0075de]/10 rounded-md px-3 py-1.5 shadow-sm">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#0075de] animate-pulse" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-[#0075de]">System Monitoring Live</span>
           </div>
         </div>
       </Reveal>
@@ -86,32 +86,32 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map((stat, i) => {
           const accColor = {
-            blue: "text-blue-400 bg-blue-400/10 border-blue-400/20",
-            green: "text-primary bg-primary/10 border-primary/20",
-            amber: "text-amber-400 bg-amber-400/10 border-amber-400/20",
-            purple: "text-purple-400 bg-purple-400/10 border-purple-400/20"
+            blue: "text-[#0075de] bg-[#0075de]/5 border-[#0075de]/10",
+            green: "text-[#1aae39] bg-[#1aae39]/5 border-[#1aae39]/10",
+            amber: "text-[#dd5b00] bg-[#dd5b00]/5 border-[#dd5b00]/10",
+            purple: "text-[#8a3ffc] bg-[#8a3ffc]/5 border-[#8a3ffc]/10"
           }[stat.accent]!;
 
           return (
             <Reveal key={i} delay={i * 0.05}>
-              <div className="group relative bg-[var(--surface-1)] border border-[var(--border-subtle)] p-6 rounded-2xl hover:border-[var(--border-hover)] transition-all duration-300">
-                <div className="flex items-center justify-between mb-5">
-                   <div className={cn("p-2.5 rounded-xl border", accColor)}>
-                      <stat.icon size={18} />
+              <div className="group relative bg-white border border-[#e6e6e6] p-5 rounded-md shadow-sm transition-all duration-200">
+                <div className="flex items-center justify-between mb-4">
+                   <div className={cn("p-2 rounded-md border", accColor)}>
+                      <stat.icon size={16} />
                    </div>
                    <div className={cn(
-                     "flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider",
-                     stat.positive ? "text-primary" : "text-red-400"
+                     "flex items-center gap-0.5 text-[9px] font-bold uppercase tracking-wider",
+                     stat.positive ? "text-[#1aae39]" : "text-red-500"
                    )}>
-                     {stat.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                     {stat.positive ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
                      {stat.trend}
                    </div>
                 </div>
                 
                 <div>
-                  <p className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-[0.1em] mb-1">{stat.label}</p>
-                  <h3 className="text-2xl font-bold text-white tracking-tight mb-2">{stat.value}</h3>
-                  <p className="text-[var(--text-tertiary)] text-[10px]">{stat.description}</p>
+                  <p className="text-[#615d59] text-[9px] font-bold uppercase tracking-[0.1em] mb-1">{stat.label}</p>
+                  <h3 className="text-xl font-bold text-neutral-900 -tracking-[0.025em] mb-1">{stat.value}</h3>
+                  <p className="text-[#a39e98] text-[9px]">{stat.description}</p>
                 </div>
               </div>
             </Reveal>
@@ -121,74 +121,74 @@ export default async function AdminDashboard() {
 
       {/* Charts & Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Revenue Chart */}
+        {/* Revenue Trajectory Chart */}
         <Reveal className="lg:col-span-2">
-          <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-2xl p-4 sm:p-8 h-full">
-             <div className="flex items-center justify-between mb-10">
-               <div className="flex items-center gap-3">
-                 <div className="p-2 bg-primary/10 rounded-lg">
-                    <TrendingUp className="text-primary" size={18} />
+          <div className="bg-white border border-[#e6e6e6] rounded-md p-5 sm:p-6 h-full shadow-sm">
+             <div className="flex items-center justify-between mb-8">
+               <div className="flex items-center gap-2.5">
+                 <div className="p-2 bg-[#0075de]/5 rounded-md border border-[#0075de]/10">
+                    <TrendingUp className="text-[#0075de]" size={16} />
                  </div>
-                 <h4 className="text-lg font-semibold text-white tracking-tight">Revenue Trajectory</h4>
+                 <h4 className="text-base font-bold text-neutral-900 -tracking-[0.02em]">Revenue Trajectory</h4>
                </div>
-               <select className="bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] outline-none hover:border-[var(--border-hover)] transition-all cursor-pointer">
+               <select className="bg-white border border-[#e6e6e6] rounded-md px-2.5 py-1 text-[10px] font-semibold text-neutral-700 outline-none hover:bg-[#f6f5f4] transition-all cursor-pointer">
                  <option>Last 30 Days</option>
                  <option>Last 6 Months</option>
                  <option>Annual View</option>
                </select>
              </div>
              
-             <div className="h-48 sm:h-64 flex items-end gap-1 sm:gap-2 md:gap-4 pb-2 border-b border-[var(--border-subtle)]">
-                {[45, 62, 58, 75, 90, 82, 95, 88, 100, 115, 105, 120].map((h, i) => (
-                  <div key={i} className="flex-1 group relative">
-                     <div 
-                      style={{ height: `${h}%` }} 
-                      className="w-full bg-primary/10 group-hover:bg-primary/30 rounded-t-lg transition-all duration-300 cursor-pointer border-x border-t border-transparent group-hover:border-primary/20"
-                     >
-                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-2.5 py-1 bg-white text-black text-[9px] font-bold rounded-md whitespace-nowrap shadow-xl z-20">
-                          ₹{(h * 1240).toLocaleString()}
-                        </div>
-                     </div>
-                  </div>
-                ))}
+             <div className="h-48 sm:h-60 flex items-end gap-1 sm:gap-2 md:gap-4 pb-2 border-b border-[#e6e6e6]">
+                 {[45, 62, 58, 75, 90, 82, 95, 88, 100, 115, 105, 120].map((h, i) => (
+                   <div key={i} className="flex-1 group relative">
+                      <div 
+                       style={{ height: `${h}%` }} 
+                       className="w-full bg-[#0075de]/10 group-hover:bg-[#0075de]/30 rounded-t-sm transition-all duration-200 cursor-pointer border-x border-t border-transparent group-hover:border-[#0075de]/20"
+                      >
+                         <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-2 py-0.5 bg-white border border-[#e6e6e6] text-neutral-900 text-[9px] font-semibold rounded shadow-md whitespace-nowrap z-20">
+                           ₹{(h * 1240).toLocaleString()}
+                         </div>
+                      </div>
+                   </div>
+                 ))}
              </div>
-             <div className="flex justify-between px-1 mt-4">
+             <div className="flex justify-between px-1 mt-3">
                  {["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"].map((m, i) => (
-                   <span key={i} className="text-[7px] sm:text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-widest">{m}</span>
-                ))}
+                   <span key={i} className="text-[8px] font-bold text-[#a39e98] uppercase tracking-widest">{m}</span>
+                 ))}
              </div>
           </div>
         </Reveal>
 
-        {/* Recent Enrollments */}
+        {/* Recent Activity */}
         <Reveal>
-          <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-2xl p-4 sm:p-8 h-full flex flex-col">
-             <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-blue-400/10 rounded-lg">
-                   <Activity className="text-blue-400" size={18} />
-                </div>
-                <h4 className="text-lg font-semibold text-white tracking-tight">Recent Activity</h4>
+          <div className="bg-white border border-[#e6e6e6] rounded-md p-5 sm:p-6 h-full flex flex-col shadow-sm">
+             <div className="flex items-center gap-2.5 mb-6">
+                 <div className="p-2 bg-[#8a3ffc]/5 rounded-md border border-[#8a3ffc]/10">
+                    <Activity className="text-[#8a3ffc]" size={16} />
+                 </div>
+                 <h4 className="text-base font-bold text-neutral-900 -tracking-[0.02em]">Recent Activity</h4>
              </div>
-             <div className="flex-1 space-y-5 overflow-hidden">
+             <div className="flex-1 space-y-4 overflow-hidden">
                {((enrollments?.length ? enrollments : Array.from({length: 6}).map((_, i) => ({ purchase_price: 1999 + (i * 500) }))) as any[]).slice(0, 6).map((en, i) => (
-                 <div key={i} className="flex items-center justify-between group p-2 hover:bg-white/[0.02] rounded-xl transition-all">
-                   <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[var(--surface-2)] border border-[var(--border-subtle)] flex items-center justify-center font-bold text-[10px] text-[var(--text-secondary)]">
-                         {i + 1}
-                      </div>
-                      <div>
-                         <p className="text-white font-semibold text-xs leading-none mb-1">Student #{i+1024}</p>
-                         <p className="text-[var(--text-muted)] text-[9px] font-medium uppercase tracking-wider">Confirmed enrollment</p>
-                      </div>
+                 <div key={i} className="flex items-center justify-between group p-2 hover:bg-[#f6f5f4] rounded-md transition-all">
+                   <div className="flex items-center gap-2.5">
+                       <div className="w-6 h-6 rounded bg-[#f6f5f4] border border-[#e6e6e6] flex items-center justify-center font-bold text-[9px] text-[#615d59]">
+                          {i + 1}
+                       </div>
+                       <div>
+                          <p className="text-neutral-900 font-semibold text-xs leading-none mb-1">Student #{i+1024}</p>
+                          <p className="text-[#a39e98] text-[8px] font-medium uppercase tracking-wider">Confirmed enrollment</p>
+                       </div>
                    </div>
                    <div className="text-right">
-                      <p className="text-white font-bold text-xs">₹{en?.purchase_price || "1,999"}</p>
-                      <p className="text-[var(--text-muted)] text-[8px] font-medium uppercase tracking-widest">Success</p>
+                       <p className="text-neutral-900 font-bold text-xs">₹{en?.purchase_price || "1,999"}</p>
+                       <p className="text-[#a39e98] text-[8px] font-medium uppercase tracking-widest">Success</p>
                    </div>
                  </div>
                ))}
              </div>
-             <button className="mt-8 w-full py-3 bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-white hover:border-[var(--border-hover)] transition-all">
+             <button className="mt-6 w-full py-2 bg-white border border-[#e6e6e6] rounded-md text-[10px] font-bold uppercase tracking-wider text-[#615d59] hover:text-neutral-900 hover:bg-[#f6f5f4] hover:border-[#a39e98] transition-all shadow-sm">
                View Activity Log
              </button>
           </div>

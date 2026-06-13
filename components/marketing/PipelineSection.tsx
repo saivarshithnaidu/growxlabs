@@ -15,33 +15,39 @@ export function PipelineSection() {
   const [activeNode, setActiveNode] = useState<string | null>(null);
 
   const column0: Node[] = [
-    { id: "A0", cx: 15, cy: 20, label: "Design", desc: "Crafting modern, premium user interfaces that convert" },
-    { id: "A1", cx: 15, cy: 40, label: "Code", desc: "Clean, high-performance web applications built to scale" },
-    { id: "A2", cx: 15, cy: 60, label: "Data", desc: "Organizing your business information for clear analytics" },
-    { id: "A3", cx: 15, cy: 80, label: "API", desc: "Seamless database and third-party software integrations" },
+    { id: "A0", cx: 15, cy: 10, label: "Design", desc: "Premium interfaces" },
+    { id: "A1", cx: 15, cy: 30, label: "Code", desc: "Clean frontend" },
+    { id: "A2", cx: 15, cy: 50, label: "Data", desc: "Structured schemas" },
+    { id: "A3", cx: 15, cy: 70, label: "API", desc: "Secure endpoints" },
+    { id: "A4", cx: 15, cy: 90, label: "Logic", desc: "Business rules" },
   ];
 
   const column1: Node[] = [
-    { id: "B0", cx: 42, cy: 30, label: "Automation", desc: "Automating repetitive work to save hours of manual labor" },
-    { id: "B1", cx: 42, cy: 50, label: "AI Hub", desc: "Adding intelligent bots and smart text processing to workflows" },
-    { id: "B2", cx: 42, cy: 70, label: "CRM Sync", desc: "Syncing client data across your tools in real-time" },
+    { id: "B0", cx: 42, cy: 20, label: "Frontend", desc: "React components" },
+    { id: "B1", cx: 42, cy: 40, label: "Backend", desc: "Node runtimes" },
+    { id: "B2", cx: 42, cy: 60, label: "Database", desc: "Relational storage" },
+    { id: "B3", cx: 42, cy: 80, label: "Caching", desc: "Fast retrieval" },
   ];
 
   const column2: Node[] = [
-    { id: "C0", cx: 68, cy: 50, label: "GrowX Studio", desc: "Engineered systems shipped for your business" },
+    { id: "C0", cx: 68, cy: 30, label: "AI Core", desc: "Neural engines" },
+    { id: "C1", cx: 68, cy: 50, label: "Orchestration", desc: "Workflow agents" },
+    { id: "C2", cx: 68, cy: 70, label: "Security", desc: "Secure tokens" },
   ];
 
   const column3: Node[] = [
-    { id: "D0", cx: 94, cy: 30, label: "WhatsApp", desc: "Sending instant alerts and chats to your customers" },
-    { id: "D1", cx: 94, cy: 50, label: "Email", desc: "Automating personalized email updates and nurtures" },
-    { id: "D2", cx: 94, cy: 70, label: "Stripe", desc: "Processing secure payments and generating subscriptions" },
+    { id: "D0", cx: 94, cy: 20, label: "Integration", desc: "Third-party APIs" },
+    { id: "D1", cx: 94, cy: 40, label: "Messaging", desc: "Real-time updates" },
+    { id: "D2", cx: 94, cy: 60, label: "Payments", desc: "Stripe billing" },
+    { id: "D3", cx: 94, cy: 80, label: "Webhooks", desc: "Event listeners" },
   ];
 
   const column4: Node[] = [
-    { id: "E0", cx: 121, cy: 20, label: "Leads", desc: "Capturing and qualifying incoming customer inquiries" },
-    { id: "E1", cx: 121, cy: 40, label: "Sales", desc: "Closing deals and driving revenue automatically" },
-    { id: "E2", cx: 121, cy: 60, label: "Uptime", desc: "Keeping your systems running 24/7 with zero downtime" },
-    { id: "E3", cx: 121, cy: 80, label: "Growth", desc: "Scaling your customer base and expanding business operations" },
+    { id: "E0", cx: 121, cy: 10, label: "Deployment", desc: "Cloud deployment" },
+    { id: "E1", cx: 121, cy: 30, label: "Scaling", desc: "Load balancers" },
+    { id: "E2", cx: 121, cy: 50, label: "Monitoring", desc: "Log tracking" },
+    { id: "E3", cx: 121, cy: 70, label: "CDN", desc: "Edge networks" },
+    { id: "E4", cx: 121, cy: 90, label: "Uptime", desc: "Continuous uptime" },
   ];
 
   const allNodes = [...column0, ...column1, ...column2, ...column3, ...column4];
@@ -60,13 +66,13 @@ export function PipelineSection() {
               y1={nFrom.cy}
               x2={nTo.cx}
               y2={nTo.cy}
-              stroke={isActive ? "#C0F0FB" : "rgba(255, 255, 255, 0.08)"}
-              strokeWidth={isActive ? 1.0 : 0.4}
+              stroke={isActive ? "#C0F0FB" : "rgba(255, 255, 255, 0.07)"}
+              strokeWidth={isActive ? 0.8 : 0.35}
               transition={{ duration: 0.3 }}
             />
             {/* Pulsing particles along active lines */}
             {isActive && (
-              <circle r="0.8" fill="#C0F0FB">
+              <circle r="0.6" fill="#C0F0FB">
                 <animateMotion
                   path={`M ${nFrom.cx} ${nFrom.cy} L ${nTo.cx} ${nTo.cy}`}
                   dur="1.8s"
@@ -95,16 +101,14 @@ export function PipelineSection() {
           <p className="text-muted-foreground text-[15px] sm:text-[16px] leading-relaxed max-w-xl mx-auto lg:mx-0">
             We are an AI-native product studio. We design, build, and automate custom pipelines to ship your systems at production speed.
           </p>
-
-
         </div>
 
         {/* Right Column: Visual Neural Graph */}
         <div className="lg:col-span-7 flex justify-center items-center w-full z-10">
-          <div className="relative w-full max-w-[680px] aspect-[136/100] border border-border/20 bg-[#111111]/45 p-4 sm:p-6 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm">
+          <div className="relative w-full max-w-[680px] aspect-[136/100]">
             {/* Subtle glow hubs in background */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-[#355CFF]/5 blur-[80px] pointer-events-none" />
-            <div className="absolute top-1/2 left-[68%] -translate-x-1/2 -translate-y-1/2 w-36 h-36 rounded-full bg-[#C0F0FB]/5 blur-[60px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-[#355CFF]/3 blur-[80px] pointer-events-none" />
+            <div className="absolute top-1/2 left-[68%] -translate-x-1/2 -translate-y-1/2 w-36 h-36 rounded-full bg-[#C0F0FB]/3 blur-[60px] pointer-events-none" />
 
             <svg
               viewBox="0 0 136 100"
@@ -118,23 +122,23 @@ export function PipelineSection() {
               {renderConnections(column3, column4)}
 
               {/* Pulse animation for steady state background data flow */}
-              <circle r="0.5" fill="rgba(255, 255, 255, 0.3)">
+              <circle r="0.4" fill="rgba(255, 255, 255, 0.25)">
                 <animateMotion
-                  path={`M 15 60 L 42 50 L 68 50 L 94 50 L 121 40`}
+                  path="M 15 50 L 42 40 L 68 50 L 94 40 L 121 50"
                   dur="4s"
                   repeatCount="indefinite"
                 />
               </circle>
-              <circle r="0.5" fill="rgba(192, 240, 251, 0.4)">
+              <circle r="0.4" fill="rgba(192, 240, 251, 0.3)">
                 <animateMotion
-                  path={`M 15 20 L 42 30 L 68 50 L 94 30 L 121 20`}
+                  path="M 15 10 L 42 20 L 68 30 L 94 20 L 121 10"
                   dur="3.2s"
                   repeatCount="indefinite"
                 />
               </circle>
-              <circle r="0.5" fill="rgba(255, 255, 255, 0.3)">
+              <circle r="0.4" fill="rgba(255, 255, 255, 0.25)">
                 <animateMotion
-                  path={`M 15 80 L 42 70 L 68 50 L 94 70 L 121 80`}
+                  path="M 15 90 L 42 80 L 68 70 L 94 80 L 121 90"
                   dur="4.5s"
                   repeatCount="indefinite"
                 />
@@ -143,7 +147,6 @@ export function PipelineSection() {
               {/* Nodes rendering */}
               {allNodes.map((node) => {
                 const isActive = activeNode === node.id;
-                const isHub = node.id === "C0";
 
                 return (
                   <g
@@ -152,36 +155,26 @@ export function PipelineSection() {
                     onMouseEnter={() => setActiveNode(node.id)}
                     onMouseLeave={() => setActiveNode(null)}
                   >
-                    {/* Hover larger glow ring */}
+                    {/* Hover larger transparent target for easy mousing */}
                     <circle
                       cx={node.cx}
                       cy={node.cy}
-                      r={isHub ? 4.5 : 3.5}
+                      r={4}
                       fill="transparent"
-                      className="transition-colors duration-300"
                     />
 
-                    {/* Outer border ring */}
+                    {/* Node Dot */}
                     <motion.circle
                       cx={node.cx}
                       cy={node.cy}
-                      r={isHub ? 3.2 : 2.2}
-                      fill={isHub ? "#0A0A0A" : "#111111"}
-                      stroke={isActive ? "#C0F0FB" : isHub ? "#355CFF" : "rgba(255,255,255,0.3)"}
-                      strokeWidth={isHub ? 0.9 : isActive ? 0.8 : 0.5}
+                      r={isActive ? 1.4 : 0.9}
+                      fill={isActive ? "#C0F0FB" : "rgba(255, 255, 255, 0.35)"}
+                      stroke={isActive ? "rgba(192, 240, 251, 0.4)" : "rgba(255, 255, 255, 0.12)"}
+                      strokeWidth={isActive ? 0.8 : 0.4}
                       animate={{
                         scale: isActive ? 1.25 : 1,
                       }}
                       transition={{ duration: 0.2 }}
-                    />
-
-                    {/* Inner core dot */}
-                    <circle
-                      cx={node.cx}
-                      cy={node.cy}
-                      r={isHub ? 1.4 : 0.9}
-                      fill={isActive ? "#C0F0FB" : isHub ? "#C0F0FB" : "rgba(255, 255, 255, 0.5)"}
-                      className="transition-colors duration-200"
                     />
                   </g>
                 );

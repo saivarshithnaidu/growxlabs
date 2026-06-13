@@ -63,13 +63,13 @@ export default function ClientDashboard() {
 
 
   return (
-    <div className="space-y-12 pb-12">
+    <div className="space-y-8 pb-12">
       {/* Welcome Header */}
       <Reveal y={-20}>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-white tracking-tight">Welcome to GrowXLabsTech</h1>
-            <p className="text-[var(--text-secondary)] text-sm max-w-xl">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold text-neutral-900 -tracking-[0.025em]">Welcome to GrowXLabsTech</h1>
+            <p className="text-[#615d59] text-sm max-w-xl">
               Check your project progress, pay bills, and chat with us.
             </p>
           </div>
@@ -79,21 +79,21 @@ export default function ClientDashboard() {
       {/* Quick Stats Bento */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <DashboardStat 
-          icon={<FileText size={18} />} 
+          icon={<FileText size={16} />} 
           label="Working Plan" 
           status={data?.agreements?.[0]?.status || "No Active Plan"} 
           link={data?.agreements?.[0] ? `/client/dashboard/agreements/${data.agreements[0].id}` : "#"}
           accent="blue"
         />
         <DashboardStat 
-          icon={<CreditCard size={18} />} 
+          icon={<CreditCard size={16} />} 
           label="Payments" 
           status={(data?.invoices || []).some(inv => inv.status === 'pending') ? "Pending" : "All Paid"} 
           link="/client/invoices"
           accent="amber"
         />
         <DashboardStat 
-          icon={<Rocket size={18} />} 
+          icon={<Rocket size={16} />} 
           label="Current Stage" 
           status={data?.projects?.[0]?.status || "Active"} 
           link="/client/project"
@@ -101,60 +101,59 @@ export default function ClientDashboard() {
         />
       </div>
 
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Project Progress */}
         <Reveal className="lg:col-span-2">
-          <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-2xl p-8 h-full">
-             <h3 className="text-lg font-bold text-white tracking-tight mb-8">Project Progress</h3>
+          <div className="bg-white border border-[#e6e6e6] rounded-md p-5 sm:p-6 h-full shadow-sm">
+             <h3 className="text-base font-bold text-neutral-900 -tracking-[0.02em] mb-6">Project Progress</h3>
              
-             <div className="space-y-8">
-                {(data.projects.length ? data.projects : []).map(p => {
-                  const stageIndex = getStageIndex(p.progress);
-                  return (
-                    <div key={p.id} className="space-y-8">
-                      <div className="flex justify-between items-end">
-                         <div>
-                            <p className="text-xl font-bold text-white mb-1">{p.title}</p>
-                            <p className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-widest">Currently: {PROJECT_STAGES[stageIndex]}</p>
+             <div className="space-y-6">
+                 {(data.projects.length ? data.projects : []).map(p => {
+                   const stageIndex = getStageIndex(p.progress);
+                   return (
+                     <div key={p.id} className="space-y-6">
+                       <div className="flex justify-between items-end">
+                          <div>
+                             <p className="text-lg font-bold text-neutral-900 -tracking-[0.02em] mb-1">{p.title}</p>
+                             <p className="text-[#a39e98] text-[8px] font-bold uppercase tracking-widest">Currently: {PROJECT_STAGES[stageIndex]}</p>
+                          </div>
+                          <div className="text-right">
+                             <span className="text-xl font-bold text-neutral-900 leading-none">{p.progress}%</span>
+                          </div>
+                       </div>
+                       
+                       {/* Progress Stages Bar */}
+                       <div className="relative pt-1">
+                         <div className="flex items-center gap-2">
+                           {PROJECT_STAGES.map((stage, i) => (
+                             <div key={stage} className="flex-1 space-y-2">
+                               <div className={cn(
+                                 "h-1.5 rounded-full transition-all duration-700",
+                                 i <= stageIndex ? "bg-[#0075de]" : "bg-[#f6f5f4] border border-[#e6e6e6]"
+                               )} />
+                               <p className={cn(
+                                 "text-[8px] font-bold uppercase tracking-wider text-center",
+                                 i <= stageIndex ? "text-[#0075de]" : "text-[#615d59]"
+                               )}>
+                                 {stage}
+                               </p>
+                             </div>
+                           ))}
                          </div>
-                         <div className="text-right">
-                            <span className="text-2xl font-bold text-white leading-none">{p.progress}%</span>
-                         </div>
-                      </div>
-                      
-                      {/* Progress Stages Bar */}
-                      <div className="relative pt-2">
-                        <div className="flex items-center gap-2">
-                          {PROJECT_STAGES.map((stage, i) => (
-                            <div key={stage} className="flex-1 space-y-3">
-                              <div className={cn(
-                                "h-1.5 rounded-full transition-all duration-700",
-                                i <= stageIndex ? "bg-primary" : "bg-[var(--surface-2)]"
-                              )} />
-                              <p className={cn(
-                                "text-[9px] font-bold uppercase tracking-wider text-center",
-                                i <= stageIndex ? "text-primary" : "text-[var(--text-muted)]"
-                              )}>
-                                {stage}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                       </div>
 
-                      <div className="p-5 bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded-xl flex items-center gap-4">
-                         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <CheckCircle2 size={20} className="text-primary" />
-                         </div>
-                         <div>
-                            <p className="text-xs font-bold text-white mb-0.5">What's Next</p>
-                            <p className="text-[10px] text-[var(--text-secondary)]">We are setting up your project and will update you soon.</p>
-                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                       <div className="p-4 bg-[#f6f5f4]/50 border border-[#e6e6e6] rounded-md flex items-center gap-4">
+                          <div className="w-8 h-8 rounded-md bg-[#0075de]/10 flex items-center justify-center shrink-0">
+                             <CheckCircle2 size={16} className="text-[#0075de]" />
+                          </div>
+                          <div>
+                             <p className="text-xs font-bold text-neutral-900 mb-0.5">What's Next</p>
+                             <p className="text-[10px] text-[#615d59]">We are setting up your project and will update you soon.</p>
+                          </div>
+                       </div>
+                     </div>
+                   );
+                 })}
              </div>
           </div>
         </Reveal>
@@ -162,16 +161,16 @@ export default function ClientDashboard() {
         {/* Support & Documents Sidebar */}
         <div className="space-y-6">
           <Reveal delay={0.1}>
-            <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-2xl p-8 text-center flex flex-col items-center">
-                <div className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
-                   <ShieldCheck size={28} className="text-primary" />
+            <div className="bg-white border border-[#e6e6e6] rounded-md p-5 sm:p-6 text-center flex flex-col items-center shadow-sm">
+                <div className="h-10 w-10 rounded-md bg-[#0075de]/5 border border-[#0075de]/10 flex items-center justify-center mb-4">
+                   <ShieldCheck size={20} className="text-[#0075de]" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Project Agreement</h3>
-                <p className="text-[var(--text-tertiary)] text-[10px] uppercase tracking-widest font-bold mb-4">Safe & Private</p>
-                <p className="text-[var(--text-secondary)] text-xs leading-relaxed mb-6">
+                <h3 className="text-base font-bold text-neutral-900 mb-1">Project Agreement</h3>
+                <p className="text-[#a39e98] text-[9px] uppercase tracking-widest font-bold mb-3">Safe & Private</p>
+                <p className="text-[#615d59] text-xs leading-relaxed mb-4">
                   Access your project agreement and documents at any time.
                 </p>
-                <Button variant="outline" className="w-full h-11 rounded-xl text-xs font-bold uppercase tracking-widest border-[var(--border-subtle)]">
+                <Button variant="outline" className="w-full h-9 rounded-md text-[10px] font-bold uppercase tracking-wider border-[#e6e6e6] hover:bg-[#f6f5f4]">
                    View Documents
                 </Button>
             </div>
@@ -184,15 +183,15 @@ export default function ClientDashboard() {
               rel="noopener noreferrer"
               className="block"
             >
-              <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] p-6 rounded-2xl flex items-center gap-5 hover:border-primary/40 transition-all group">
-                <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0 group-hover:scale-110 transition-transform">
-                  <MessageCircle size={22} className="text-primary" />
+              <div className="bg-white border border-[#e6e6e6] p-4 rounded-md flex items-center gap-4 hover:border-[#a39e98] transition-all group shadow-sm">
+                <div className="h-10 w-10 rounded-md bg-[#0075de]/5 flex items-center justify-center border border-[#0075de]/10 shrink-0 group-hover:scale-105 transition-transform">
+                  <MessageCircle size={18} className="text-[#0075de]" />
                 </div>
                 <div>
-                  <p className="text-white font-bold text-sm leading-none mb-1.5">Chat with us</p>
-                  <p className="text-[var(--text-muted)] text-[10px] uppercase tracking-wider font-bold">We are online</p>
+                  <p className="text-neutral-900 font-bold text-sm leading-none mb-1">Chat with us</p>
+                  <p className="text-[#a39e98] text-[8px] uppercase tracking-wider font-bold">We are online</p>
                 </div>
-                <ArrowUpRight className="ml-auto text-[var(--text-muted)] group-hover:text-primary transition-colors" size={16} />
+                <ArrowUpRight className="ml-auto text-[#a39e98] group-hover:text-[#0075de] transition-colors" size={14} />
               </div>
             </a>
           </Reveal>
@@ -204,25 +203,25 @@ export default function ClientDashboard() {
 
 function DashboardStat({ icon, label, status, link, accent }: any) {
   const accColors = {
-    blue: "text-blue-400 bg-blue-400/10 border-blue-400/20",
-    green: "text-primary bg-primary/10 border-primary/20",
-    amber: "text-amber-400 bg-amber-400/10 border-amber-400/20"
+    blue: "text-[#0075de] bg-[#0075de]/5 border-[#0075de]/10",
+    green: "text-[#1aae39] bg-[#1aae39]/5 border-[#1aae39]/10",
+    amber: "text-[#dd5b00] bg-[#dd5b00]/5 border-[#dd5b00]/10"
   }[accent as "blue" | "green" | "amber"]!;
 
   return (
     <Link href={link}>
       <Reveal delay={0.05}>
-        <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] p-6 rounded-2xl hover:border-[var(--border-hover)] transition-all group flex justify-between items-start cursor-pointer">
+        <div className="bg-white border border-[#e6e6e6] p-5 rounded-md shadow-sm hover:border-[#a39e98] transition-all group flex justify-between items-start cursor-pointer">
            <div className="space-y-4">
-              <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center border", accColors)}>
+              <div className={cn("h-8 w-8 rounded-md flex items-center justify-center border", accColors)}>
                  {icon}
               </div>
               <div>
-                 <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-1">{label}</p>
-                 <h4 className="text-lg font-bold text-white">{status}</h4>
+                 <p className="text-[9px] font-bold uppercase tracking-wider text-[#615d59] mb-1">{label}</p>
+                 <h4 className="text-base font-bold text-neutral-900">{status}</h4>
               </div>
            </div>
-           <ArrowUpRight className="text-[var(--text-muted)] group-hover:text-primary transition-colors" size={16} />
+           <ArrowUpRight className="text-[#a39e98] group-hover:text-[#0075de] transition-colors" size={14} />
         </div>
       </Reveal>
     </Link>

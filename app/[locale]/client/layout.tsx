@@ -12,7 +12,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
+      <div className="notion-theme min-h-screen bg-[var(--background)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="animate-spin h-8 w-8 text-primary/40" />
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--text-muted)]">Loading Portal</p>
@@ -28,12 +28,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     if (status === "unauthenticated") {
        router.push(`/${window.location.pathname.split('/')[1] || 'en-IN'}/login`);
        return null;
-    }
+     }
   }
 
 
   return (
-    <div className="dark min-h-screen bg-[var(--background)] pt-28 pb-20">
+    <div className="notion-theme min-h-screen bg-[var(--background)] text-[var(--text-primary)] pt-28 pb-20">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <ClientNav />
         <main className="animate-in fade-in slide-in-from-bottom-2 duration-700">
