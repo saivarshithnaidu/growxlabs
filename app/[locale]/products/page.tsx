@@ -9,6 +9,13 @@ import { PageHero } from "@/components/marketing/PageHero";
 
 const products = [
   {
+    title: "3RDMIND",
+    description: "An autonomous startup simulation platform where C-suite agents collaborate, run business tasks, and improve via feedback loops.",
+    features: ["Agent Collaboration", "Feedback Loops", "Simulation Engine"],
+    stack: "Next.js, Supabase, OpenRouter",
+    icon: Network,
+  },
+  {
     title: "Pipper",
     description: "A developer-focused local agent harness and desktop runtime to run and orchestrate Codex, Claude-Code, and OpenCode workflows side-by-side.",
     features: ["Subscription Hub", "Shared Context", "Cross-Verification"],
@@ -35,13 +42,6 @@ const products = [
     features: ["Sentiment Analysis", "Skill Scoring", "n8n Automation"],
     stack: "Next.js, n8n, Tailwind CSS",
     icon: Users,
-  },
-  {
-    title: "3RDMIND",
-    description: "An autonomous startup simulation platform where C-suite agents collaborate, run business tasks, and improve via feedback loops.",
-    features: ["Agent Collaboration", "Feedback Loops", "Simulation Engine"],
-    stack: "Next.js, Supabase, OpenRouter",
-    icon: Network,
   },
 ];
 

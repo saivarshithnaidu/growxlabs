@@ -25,33 +25,6 @@ export interface CaseStudy {
 
 export const projects: CaseStudy[] = [
   {
-    slug: "pipper",
-    title: "Pipper",
-    tag: "AI Agent Harness",
-    category: "AI Developer Tools",
-    description: "Unified agent developer harness and desktop runtime that lets developers orchestrate Codex, Claude-Code, and OpenCode workflows side-by-side in one local hub.",
-    image: "/portfolio/pipper.png",
-    problem: "Software developers suffer from velocity bottlenecks when managing disconnected terminal runtimes and multiple individual subscriptions for different AI coding agents.",
-    solution: "Built a unified local desktop harness (Omni) and secure web hub (pipper.dev) that centralizes agent access, shares local filesystem context, and enables parallel model cross-verification.",
-    tech: ["Electron", "Next.js", "Node.js", "AI Agents"],
-    metric: "Integrated Agents",
-    link: "https://pipper.dev",
-    status: "Development",
-    results: [
-      { label: "Agent Runtimes", value: "3 Integrated" },
-      { label: "Workspace State", value: "Unified" },
-      { label: "Subscriptions", value: "All-in-One" },
-      { label: "Code Verification", value: "Parallel" }
-    ],
-    gallery: [],
-    features: [
-      { title: "Subscription Hub", desc: "Manage and authorize your Codex, Claude-Code, and OpenCode subscriptions under a single client session." },
-      { title: "Side-by-Side Orchestration", desc: "Run code execution agents concurrently, allowing models to cross-verify code or collaborate on complex tasks." },
-      { title: "Local Workspace Harness", desc: "Seamless filesystem integration with safety boundaries, allowing agents to read and modify your project structure directly." },
-      { title: "Omni Desktop Environment", desc: "A premium, minimalist desktop shell that groups agent workspaces and execution terminals in a tabbed panel interface." }
-    ]
-  },
-  {
     slug: "3rdmind",
     title: "3rdMind",
     tag: "AI Agents",
@@ -77,6 +50,33 @@ export const projects: CaseStudy[] = [
       { title: "Council Matrix", desc: "AI board meetings where agents debate proposals and reach consensus before executing high-stakes decisions." },
       { title: "Outcome Tracking", desc: "Monitors real-world results like email replies, lead conversions, and code deployments to refine agent behavior." },
       { title: "Strategy Versioning", desc: "Compiled prompt upgrades with confidence scoring, decay algorithms, and safe rollback capabilities." }
+    ]
+  },
+  {
+    slug: "pipper",
+    title: "Pipper",
+    tag: "AI Agent Harness",
+    category: "AI Developer Tools",
+    description: "Unified agent developer harness and desktop runtime that lets developers orchestrate Codex, Claude-Code, and OpenCode workflows side-by-side in one local hub.",
+    image: "/portfolio/pipper.png",
+    problem: "Software developers suffer from velocity bottlenecks when managing disconnected terminal runtimes and multiple individual subscriptions for different AI coding agents.",
+    solution: "Built a unified local desktop harness (Omni) and secure web hub (pipper.dev) that centralizes agent access, shares local filesystem context, and enables parallel model cross-verification.",
+    tech: ["Electron", "Next.js", "Node.js", "AI Agents"],
+    metric: "Integrated Agents",
+    link: "https://pipper.dev",
+    status: "Development",
+    results: [
+      { label: "Agent Runtimes", value: "3 Integrated" },
+      { label: "Workspace State", value: "Unified" },
+      { label: "Subscriptions", value: "All-in-One" },
+      { label: "Code Verification", value: "Parallel" }
+    ],
+    gallery: [],
+    features: [
+      { title: "Subscription Hub", desc: "Manage and authorize your Codex, Claude-Code, and OpenCode subscriptions under a single client session." },
+      { title: "Side-by-Side Orchestration", desc: "Run code execution agents concurrently, allowing models to cross-verify code or collaborate on complex tasks." },
+      { title: "Local Workspace Harness", desc: "Seamless filesystem integration with safety boundaries, allowing agents to read and modify your project structure directly." },
+      { title: "Omni Desktop Environment", desc: "A premium, minimalist desktop shell that groups agent workspaces and execution terminals in a tabbed panel interface." }
     ]
   },
   {
