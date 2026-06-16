@@ -76,7 +76,7 @@ export function BlogShare({ title, slug }: { title: string; slug: string }) {
             "flex items-center gap-2 px-4 py-2.5 rounded-lg border text-[13px] font-medium transition-all duration-300 bg-white active:scale-[0.98] mr-auto",
             copied
               ? "border-[#22C55E] text-[#22C55E] bg-[#22C55E]/5"
-              : "border-border text-foreground/90 hover:border-[#355CFF] hover:text-[#355CFF] hover:bg-[#355CFF]/5"
+              : "border-border text-foreground/90 hover:border-primary hover:text-primary hover:bg-primary/5"
           )}
         >
           {copied ? (
@@ -112,10 +112,10 @@ export function NewsletterCTA() {
 
   return (
     <div className="bg-[#0F0F12] text-white rounded-2xl p-8 md:p-10 relative overflow-hidden border border-white/5 shadow-2xl my-16">
-      <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#355CFF]/8 rounded-full blur-[100px] -mr-32 -mt-32" />
+      <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#C0F0FB]/8 rounded-full blur-[100px] -mr-32 -mt-32" />
       <div className="relative z-10 space-y-6 max-w-2xl">
         <div className="inline-flex p-3 rounded-xl bg-white/5 border border-white/10">
-          <Mail className="w-6 h-6 text-[#355CFF]" />
+          <Mail className="w-6 h-6 text-primary" />
         </div>
         <div className="space-y-2">
           <h3 className="text-2xl md:text-3xl font-black tracking-tight leading-tight">Stay Ahead of the Curve</h3>
@@ -138,12 +138,12 @@ export function NewsletterCTA() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={status === "loading"}
               required
-              className="bg-white/5 border border-white/10 hover:border-white/20 focus:border-[#355CFF] focus:ring-1 focus:ring-[#355CFF]/20 rounded-xl px-5 py-4 text-[15px] placeholder-[#6B7280] text-white focus:outline-none transition-all duration-300 w-full disabled:opacity-55"
+              className="bg-white/5 border border-white/10 hover:border-white/20 focus:border-primary focus:ring-1 focus:ring-[#C0F0FB]/20 rounded-xl px-5 py-4 text-[15px] placeholder-[#6B7280] text-white focus:outline-none transition-all duration-300 w-full disabled:opacity-55"
             />
             <button
               type="submit"
               disabled={status === "loading"}
-              className="bg-[#355CFF] hover:bg-[#355CFF]/90 text-white font-bold text-[15px] px-8 py-4 rounded-xl transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2 shrink-0 disabled:opacity-55"
+              className="bg-[#C0F0FB] hover:bg-[#C0F0FB]/90 text-white font-bold text-[15px] px-8 py-4 rounded-xl transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2 shrink-0 disabled:opacity-55"
             >
               {status === "loading" ? "Subscribing..." : "Subscribe"}
               <Send className="w-4 h-4" />

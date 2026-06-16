@@ -189,7 +189,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
   ];
 
   return (
-    <div className="w-full bg-background min-h-screen text-foreground selection:bg-[#355CFF]/10 selection:text-[#355CFF] pt-32 pb-24">
+    <div className="w-full bg-background min-h-screen text-foreground selection:bg-primary/10 selection:text-primary pt-32 pb-24">
       {/* JSON-LD Structured Data */}
       <Script
         id="nvidia-gtc-editorial-schema"
@@ -215,7 +215,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
           <Reveal y={20}>
             {/* Category Tags */}
             <div className="flex gap-2 justify-center items-center mb-6">
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-[#355CFF]/5 px-2.5 py-1 rounded">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 AI Industry
               </span>
               <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
@@ -236,21 +236,21 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
             <h2 className="text-[clamp(32px,4.5vw,56px)] font-black leading-[1.1] tracking-tighter text-foreground mb-8 max-w-4xl mx-auto font-serif">
               NVIDIA&apos;s Vision for the <span className="italic font-serif font-normal">Future</span> of AI:
               <br />
-              <span className="text-[#355CFF] font-sans font-black tracking-tighter block mt-2">From Agentic AI to Useful AI</span>
+              <span className="text-primary font-sans font-black tracking-tighter block mt-2">From Agentic AI to Useful AI</span>
             </h2>
 
             {/* Meta Bar */}
             <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
-                <User className="w-3.5 h-3.5 text-[#355CFF]" />
+                <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabs Team</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Clock className="w-3.5 h-3.5 text-primary" />
                 <span>14 min read</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Calendar className="w-3.5 h-3.5 text-primary" />
                 <span>June 4, 2026</span>
               </div>
             </div>
@@ -311,7 +311,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
             {/* ─────────────────────────────────────── */}
             <section id="introduction" className="scroll-mt-32 space-y-6">
               <div className="text-[18px] md:text-[20px] leading-[1.7] text-foreground/90 font-normal space-y-6 font-lora">
-                <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
+                <p className="first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:mr-3 first-letter:float-left">
                   Artificial intelligence is undergoing its most significant transition since the launch of ChatGPT.
                 </p>
                 <p>
@@ -323,7 +323,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
                 <p>
                   At NVIDIA GTC, Jensen Huang laid out a vision that signals the end of this introductory phase. The next chapter of artificial intelligence is not about generating text or images. It is about systems that reason, plan, coordinate tools, and execute workflows in the background. It is the evolution from chatbots to autonomous agentic architectures, and ultimately, toward what NVIDIA defines as <strong>Useful AI</strong>.
                 </p>
-                <p className="text-xl font-bold text-foreground border-l-2 border-[#355CFF] pl-4">
+                <p className="text-xl font-bold text-foreground border-l-2 border-primary pl-4">
                   For NVIDIA, the metric of success is no longer a model&apos;s raw intelligence on paper. It is the model&apos;s capacity for practical execution.
                 </p>
               </div>
@@ -378,9 +378,9 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
                 </p>
                 <div className="bg-[#EDEAE4] border border-border rounded-xl p-6 my-8 space-y-4">
                   <h4 className="text-sm font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
-                    <Cpu size={16} className="text-[#355CFF]" /> Infrastructure as the Real Competitive Moat
+                    <Cpu size={16} className="text-primary" /> Infrastructure as the Real Competitive Moat
                   </h4>
-                  <p className="text-sm text-[#4B5563] leading-relaxed">
+                  <p className="text-sm text-[#A1A1AA] leading-relaxed">
                     While startup model companies bleed venture capital training frontier networks from scratch, NVIDIA has quietly built the hardware-software stack that all these models must run on. If a new model comes out, it runs on NVIDIA chips. If an agency builds a multi-agent system, they optimize it using NVIDIA software. By securing the execution layer, NVIDIA controls the economic landscape of the AI economy.
                   </p>
                 </div>
@@ -408,7 +408,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
                 <p>
                   Historically, these libraries were highly technical assets. They required advanced degrees in computer science, mathematics, or physics to operate. A developer had to read dense documentation, understand parallel thread allocation, write C++ or Fortran wrappers, and manually debug memory allocation on GPU clusters.
                 </p>
-                <p className="text-xl font-bold text-foreground border-l-2 border-[#355CFF] pl-4">
+                <p className="text-xl font-bold text-foreground border-l-2 border-primary pl-4">
                   NVIDIA&apos;s new architectural paradigm transforms this software catalog from a developer toolset into an ecosystem of skills for AI agents.
                 </p>
                 <p>

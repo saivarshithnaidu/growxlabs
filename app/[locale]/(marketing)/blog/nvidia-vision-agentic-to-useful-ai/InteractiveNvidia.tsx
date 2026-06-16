@@ -49,7 +49,7 @@ function NodeCluster({ dataRate }: { dataRate: number }) {
       <mesh>
         <boxGeometry args={[1.6, 1.6, 1.6]} />
         <meshStandardMaterial 
-          color="#355CFF" 
+          color="#C0F0FB" 
           emissive="#2A4AD4"
           emissiveIntensity={0.8}
           roughness={0.2}
@@ -131,7 +131,7 @@ function Particle({ initialData, dataRate }: { initialData: any; dataRate: numbe
   return (
     <mesh ref={meshRef}>
       <sphereGeometry args={[0.05, 8, 8]} />
-      <meshBasicMaterial color="#355CFF" toneMapped={false} />
+      <meshBasicMaterial color="#C0F0FB" toneMapped={false} />
     </mesh>
   );
 }
@@ -141,7 +141,7 @@ function FallbackVisual() {
   return (
     <div className="w-full h-full bg-[#0F0F12] flex items-center justify-center rounded-xl border border-white/5">
       <div className="text-center space-y-4">
-        <RefreshCw className="w-10 h-10 text-[#355CFF] animate-spin mx-auto opacity-40" />
+        <RefreshCw className="w-10 h-10 text-primary animate-spin mx-auto opacity-40" />
         <p className="text-xs text-[#6B7280] font-mono uppercase tracking-wider">Loading compute cell...</p>
       </div>
     </div>
@@ -186,7 +186,7 @@ export function AIFactoryVisualizerClient() {
         {/* Status Indicators overlay */}
         <div className="absolute top-4 left-4 font-mono text-[10px] space-y-2 uppercase text-white tracking-widest bg-black/40 border border-white/10 px-3 py-2.5 rounded-md backdrop-blur-md">
           <div className="flex items-center gap-2">
-            <span className={cn("w-2 h-2 rounded-full", isProcessing ? "bg-[#355CFF] animate-ping" : "bg-[#10B981]")} />
+            <span className={cn("w-2 h-2 rounded-full", isProcessing ? "bg-[#C0F0FB] animate-ping" : "bg-[#10B981]")} />
             <span>Core: Active</span>
           </div>
           <div>Data Flow: {dataRate === 1 ? "1.2 GB/s" : "4.8 GB/s (BOOST)"}</div>
@@ -205,8 +205,8 @@ export function AIFactoryVisualizerClient() {
           className={cn(
             "h-9 px-5 text-xs font-bold uppercase tracking-wider rounded-md inline-flex items-center gap-1.5 transition-all cursor-pointer",
             isProcessing 
-              ? "bg-[#355CFF]/20 text-[#355CFF] border border-[#355CFF]/30 cursor-not-allowed" 
-              : "bg-[#355CFF] hover:bg-[#2A4AD4] text-white"
+              ? "bg-[#C0F0FB]/20 text-primary border border-primary/30 cursor-not-allowed" 
+              : "bg-[#C0F0FB] hover:bg-[#2A4AD4] text-white"
           )}
         >
           <Play size={12} className={cn(isProcessing && "animate-pulse")} />
@@ -239,7 +239,7 @@ export function AIPipelineEvolution() {
       title: "Agentic AI (Reasoning Loop)",
       subtitle: "The Action-Centric Wave",
       icon: Workflow,
-      color: "border-[#355CFF] text-[#355CFF]",
+      color: "border-primary text-primary",
       glow: "shadow-[0_0_15px_rgba(53,92,255,0.2)]",
       desc: "Second wave (2025-2026) optimized for loops. Formulates a multi-step plan, utilizes tools, reviews output, and corrects errors.",
       workflow: ["Goal Set", "Task Planning", "Tool Call (API/SQL)", "Verify Output", "Repeat Loop"],
@@ -260,7 +260,7 @@ export function AIPipelineEvolution() {
   return (
     <div className="w-full bg-card border border-border rounded-xl p-6 md:p-8 my-10 shadow-sm animate-fade-in">
       <div className="text-center mb-8">
-        <span className="text-[10px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-[#355CFF]/5 px-2.5 py-1 rounded">
+        <span className="text-[10px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
           Evolutionary Blueprint
         </span>
         <h4 className="text-xl font-black text-foreground mt-3 tracking-tight">The Journey from Generation to Utility</h4>
@@ -284,7 +284,7 @@ export function AIPipelineEvolution() {
                   ? idx === 2 
                     ? "bg-[#10B981] text-white shadow-sm"
                     : idx === 1
-                    ? "bg-[#355CFF] text-white shadow-sm"
+                    ? "bg-[#C0F0FB] text-white shadow-sm"
                     : "bg-white text-foreground shadow-sm"
                   : "text-[#6B7280] hover:text-foreground"
               )}
@@ -313,7 +313,7 @@ export function AIPipelineEvolution() {
                 <h5 className="font-black text-lg text-foreground">{steps[activeStep].title}</h5>
                 <p className="text-[11px] font-mono text-[#6B7280] uppercase tracking-wider mt-0.5">{steps[activeStep].subtitle}</p>
               </div>
-              <p className="text-[14px] leading-relaxed text-[#4B5563]">{steps[activeStep].desc}</p>
+              <p className="text-[14px] leading-relaxed text-[#A1A1AA]">{steps[activeStep].desc}</p>
               
               {/* Animated Workflow Visualizer */}
               <div className="space-y-2 pt-2">
@@ -388,10 +388,10 @@ export function CudaXSkillsExplorer() {
 
   return (
     <div className="w-full bg-[#14141A] border border-white/5 rounded-xl p-6 md:p-8 my-10 text-white shadow-2xl animate-fade-in relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-[#355CFF]/3 rounded-full blur-[80px]" />
+      <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-[#C0F0FB]/3 rounded-full blur-[80px]" />
       
       <div className="text-center mb-8 relative z-10">
-        <span className="text-[10px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-white/5 px-2.5 py-1 rounded border border-white/10">
+        <span className="text-[10px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-white/5 px-2.5 py-1 rounded border border-white/10">
           Software Interface Layer
         </span>
         <h4 className="text-xl font-black mt-3 tracking-tight">CUDA-X Agent Integration Hub</h4>
@@ -410,7 +410,7 @@ export function CudaXSkillsExplorer() {
               className={cn(
                 "h-12 border rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center cursor-pointer",
                 isActive 
-                  ? "bg-[#355CFF] border-[#355CFF] text-white shadow-md shadow-[#355CFF]/20" 
+                  ? "bg-[#C0F0FB] border-primary text-white shadow-md shadow-[#C0F0FB]/20" 
                   : "bg-white/5 border-white/10 text-[#888899] hover:border-white/20 hover:text-white"
               )}
             >
@@ -434,7 +434,7 @@ export function CudaXSkillsExplorer() {
             <h5 className="font-bold text-white text-base">
               {skills[selectedSkill as keyof typeof skills].name}
             </h5>
-            <span className="text-[10px] font-mono text-[#355CFF] uppercase bg-[#355CFF]/10 px-2 py-0.5 rounded border border-[#355CFF]/20">
+            <span className="text-[10px] font-mono text-primary uppercase bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
               {skills[selectedSkill as keyof typeof skills].useCase}
             </span>
           </div>
@@ -481,9 +481,9 @@ export function ModelVsInfrastructure() {
   ];
 
   const infraMetrics = [
-    { label: "Execution Speed", value: 95, prev: 40, delta: "+137%", color: "#355CFF" },
-    { label: "Agent Autonomy", value: 88, prev: 15, delta: "+487%", color: "#355CFF" },
-    { label: "Integration Depth", value: 92, prev: 20, delta: "+360%", color: "#355CFF" },
+    { label: "Execution Speed", value: 95, prev: 40, delta: "+137%", color: "#C0F0FB" },
+    { label: "Agent Autonomy", value: 88, prev: 15, delta: "+487%", color: "#C0F0FB" },
+    { label: "Integration Depth", value: 92, prev: 20, delta: "+360%", color: "#C0F0FB" },
     { label: "Business Impact", value: 85, prev: 10, delta: "+750%", color: "#10B981" },
   ];
 
@@ -491,11 +491,11 @@ export function ModelVsInfrastructure() {
 
   return (
     <div className="w-full bg-[#0F0F12] rounded-xl border border-white/5 p-6 md:p-8 my-10 shadow-2xl overflow-hidden relative">
-      <div className="absolute top-0 left-0 w-[250px] h-[250px] bg-[#355CFF]/[0.03] rounded-full blur-[100px]" />
+      <div className="absolute top-0 left-0 w-[250px] h-[250px] bg-[#C0F0FB]/[0.03] rounded-full blur-[100px]" />
 
       <div className="relative z-10">
         <div className="text-center mb-8">
-          <span className="text-[10px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-white/5 px-2.5 py-1 rounded border border-white/10">
+          <span className="text-[10px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-white/5 px-2.5 py-1 rounded border border-white/10">
             Value Comparison
           </span>
           <h4 className="text-xl font-black text-white mt-3 tracking-tight">
@@ -525,7 +525,7 @@ export function ModelVsInfrastructure() {
             className={cn(
               "py-3 text-[11px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer flex items-center justify-center gap-2",
               activeView === "infra"
-                ? "bg-[#355CFF] text-white shadow-md shadow-[#355CFF]/20"
+                ? "bg-[#C0F0FB] text-white shadow-md shadow-[#C0F0FB]/20"
                 : "text-[#6B7280] hover:text-white"
             )}
           >
@@ -556,7 +556,7 @@ export function ModelVsInfrastructure() {
                       ? "bg-red-500/10 text-red-400"
                       : activeView === "model"
                       ? "bg-[#D97706]/10 text-[#D97706]"
-                      : "bg-[#355CFF]/10 text-[#355CFF]"
+                      : "bg-primary/10 text-primary"
                   )}>
                     {m.delta}
                   </span>
@@ -571,7 +571,7 @@ export function ModelVsInfrastructure() {
                         ? "linear-gradient(90deg, #10B981, #34D399)"
                         : activeView === "model"
                         ? "linear-gradient(90deg, #D97706, #F59E0B)"
-                        : "linear-gradient(90deg, #355CFF, #6366F1)"
+                        : "linear-gradient(90deg, #C0F0FB, #6366F1)"
                     }}
                     initial={{ width: "0%" }}
                     animate={{ width: mounted ? `${m.value}%` : "0%" }}
@@ -597,7 +597,7 @@ export function ModelVsInfrastructure() {
             "mt-8 p-4 rounded-lg border text-[12px] font-mono leading-relaxed",
             activeView === "model"
               ? "bg-[#D97706]/5 border-[#D97706]/20 text-[#F59E0B]"
-              : "bg-[#355CFF]/5 border-[#355CFF]/20 text-[#93A3FF]"
+              : "bg-primary/5 border-primary/20 text-[#93A3FF]"
           )}
         >
           {activeView === "model"
@@ -646,7 +646,7 @@ function RoboticArm({ simSpeed }: { simSpeed: number }) {
       </mesh>
 
       {/* Grid lines on ground */}
-      <gridHelper args={[12, 20, "#355CFF", "#1a1a3e"]} position={[0, -1.49, 0]} />
+      <gridHelper args={[12, 20, "#C0F0FB", "#1a1a3e"]} position={[0, -1.49, 0]} />
 
       {/* Robot base */}
       <group ref={armRef}>
@@ -659,7 +659,7 @@ function RoboticArm({ simSpeed }: { simSpeed: number }) {
         {/* Lower arm */}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[0.35, 2.5, 0.35]} />
-          <meshStandardMaterial color="#355CFF" emissive="#2A4AD4" emissiveIntensity={0.3} roughness={0.2} metalness={0.9} />
+          <meshStandardMaterial color="#C0F0FB" emissive="#2A4AD4" emissiveIntensity={0.3} roughness={0.2} metalness={0.9} />
         </mesh>
 
         {/* Joint */}
@@ -672,7 +672,7 @@ function RoboticArm({ simSpeed }: { simSpeed: number }) {
           {/* Upper arm */}
           <mesh position={[0.8, 0.6, 0]}>
             <boxGeometry args={[1.8, 0.25, 0.25]} />
-            <meshStandardMaterial color="#4B5563" roughness={0.2} metalness={0.9} />
+            <meshStandardMaterial color="#A1A1AA" roughness={0.2} metalness={0.9} />
           </mesh>
 
           {/* Claw / end effector */}
@@ -703,7 +703,7 @@ function RoboticArm({ simSpeed }: { simSpeed: number }) {
       {/* Simulation boundary walls (wireframe) */}
       <mesh position={[0, 0.5, -5]}>
         <planeGeometry args={[12, 4]} />
-        <meshBasicMaterial color="#355CFF" wireframe opacity={0.15} transparent />
+        <meshBasicMaterial color="#C0F0FB" wireframe opacity={0.15} transparent />
       </mesh>
     </group>
   );
@@ -748,7 +748,7 @@ export function PhysicalAISimulator() {
         <Canvas camera={{ position: [4, 3, 6], fov: 40 }}>
           <ambientLight intensity={0.4} />
           <pointLight position={[8, 8, 8]} intensity={1.5} color="#ffffff" />
-          <pointLight position={[-5, 3, -5]} intensity={0.6} color="#355CFF" />
+          <pointLight position={[-5, 3, -5]} intensity={0.6} color="#C0F0FB" />
           <RoboticArm simSpeed={simSpeed} />
         </Canvas>
 
@@ -770,7 +770,7 @@ export function PhysicalAISimulator() {
             { label: "Healthcare", icon: Shield }
           ].map((tag) => (
             <div key={tag.label} className="flex items-center gap-1.5 bg-black/50 backdrop-blur-md border border-white/10 rounded px-2.5 py-1.5 text-[9px] font-mono text-[#888899] uppercase tracking-wider">
-              <tag.icon size={10} className="text-[#355CFF]" />
+              <tag.icon size={10} className="text-primary" />
               {tag.label}
             </div>
           ))}
@@ -821,7 +821,7 @@ export function UsefulAIOrchestrator() {
 
   const nodes = [
     { label: "Monitor Email", icon: Eye, color: "#6B7280", desc: "Scans inbox for project updates and client requests" },
-    { label: "Generate Tasks", icon: FileCode, color: "#355CFF", desc: "Breaks down requests into discrete, assignable work items" },
+    { label: "Generate Tasks", icon: FileCode, color: "#C0F0FB", desc: "Breaks down requests into discrete, assignable work items" },
     { label: "Assign to Team", icon: Users, color: "#8B5CF6", desc: "Routes tasks to team members based on skill and capacity" },
     { label: "Create Branches", icon: GitBranch, color: "#10B981", desc: "Opens Git branches and scaffolds boilerplate code" },
     { label: "Schedule Review", icon: Target, color: "#F59E0B", desc: "Books code review slots and sets deadline reminders" },
@@ -850,7 +850,7 @@ export function UsefulAIOrchestrator() {
   return (
     <div className="w-full bg-card border border-border rounded-xl p-6 md:p-8 my-10 shadow-sm overflow-hidden relative">
       <div className="text-center mb-8">
-        <span className="text-[10px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-[#355CFF]/5 px-2.5 py-1 rounded">
+        <span className="text-[10px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
           Autonomous Execution Loop
         </span>
         <h4 className="text-xl font-black text-foreground mt-3 tracking-tight">
@@ -875,10 +875,10 @@ export function UsefulAIOrchestrator() {
                 className={cn(
                   "relative flex flex-col items-center text-center p-4 rounded-xl border transition-all duration-300 cursor-pointer",
                   isActive
-                    ? "border-[#355CFF] bg-[#355CFF]/5 shadow-md shadow-[#355CFF]/10"
+                    ? "border-primary bg-primary/5 shadow-md shadow-[#C0F0FB]/10"
                     : isComplete
                     ? "border-[#10B981]/30 bg-[#10B981]/5"
-                    : "border-border bg-[#F9F8F6] hover:border-[#355CFF]/30"
+                    : "border-border bg-[#F9F8F6] hover:border-primary/30"
                 )}
                 onClick={() => { if (!isRunning) setActiveNode(idx); }}
                 animate={isActive ? { scale: [1, 1.03, 1] } : {}}
@@ -890,7 +890,7 @@ export function UsefulAIOrchestrator() {
                   isComplete
                     ? "bg-[#10B981] text-white"
                     : isActive
-                    ? "bg-[#355CFF] text-white"
+                    ? "bg-[#C0F0FB] text-white"
                     : "bg-[#E5E2DC] text-[#6B7280]"
                 )}>
                   {isComplete ? "✓" : idx + 1}
@@ -898,16 +898,16 @@ export function UsefulAIOrchestrator() {
 
                 <div className={cn(
                   "w-10 h-10 rounded-lg flex items-center justify-center mb-2",
-                  isActive ? "bg-[#355CFF]/10" : isComplete ? "bg-[#10B981]/10" : "bg-[#E5E2DC]"
+                  isActive ? "bg-primary/10" : isComplete ? "bg-[#10B981]/10" : "bg-[#E5E2DC]"
                 )}>
                   <Icon
                     size={18}
-                    style={{ color: isActive ? "#355CFF" : isComplete ? "#10B981" : node.color }}
+                    style={{ color: isActive ? "#C0F0FB" : isComplete ? "#10B981" : node.color }}
                   />
                 </div>
                 <span className={cn(
                   "text-[10px] font-bold uppercase tracking-wider",
-                  isActive ? "text-[#355CFF]" : isComplete ? "text-[#10B981]" : "text-[#6B7280]"
+                  isActive ? "text-primary" : isComplete ? "text-[#10B981]" : "text-[#6B7280]"
                 )}>
                   {node.label}
                 </span>
@@ -926,7 +926,7 @@ export function UsefulAIOrchestrator() {
             transition={{ duration: 0.2 }}
             className="mt-6 bg-[#F9F8F6] border border-border rounded-lg p-5 flex items-start gap-4"
           >
-            <div className="w-10 h-10 rounded-lg bg-[#355CFF]/10 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
               {React.createElement(nodes[activeNode].icon, { size: 18, style: { color: nodes[activeNode].color } })}
             </div>
             <div>
@@ -945,8 +945,8 @@ export function UsefulAIOrchestrator() {
           className={cn(
             "h-10 px-6 text-[12px] font-bold uppercase tracking-wider rounded-lg inline-flex items-center gap-2 transition-all cursor-pointer",
             isRunning
-              ? "bg-[#355CFF]/10 text-[#355CFF] border border-[#355CFF]/20 cursor-not-allowed"
-              : "bg-[#355CFF] hover:bg-[#2A4AD4] text-white shadow-md shadow-[#355CFF]/15"
+              ? "bg-primary/10 text-primary border border-primary/20 cursor-not-allowed"
+              : "bg-[#C0F0FB] hover:bg-[#2A4AD4] text-white shadow-md shadow-[#C0F0FB]/15"
           )}
         >
           <Play size={12} className={cn(isRunning && "animate-pulse")} />
@@ -976,7 +976,7 @@ export function BusinessReadinessGauge() {
       key: "workflow" as const,
       label: "Workflow Mapping",
       icon: Workflow,
-      color: "#355CFF",
+      color: "#C0F0FB",
       desc: "How well-documented are your business processes?",
       levels: [
         { value: 25, label: "Ad-hoc / Undocumented" },
@@ -1016,7 +1016,7 @@ export function BusinessReadinessGauge() {
   const getReadinessLabel = (score: number) => {
     if (score <= 25) return { label: "Not Ready", color: "#EF4444" };
     if (score <= 50) return { label: "Early Stage", color: "#F59E0B" };
-    if (score <= 75) return { label: "Progressing", color: "#355CFF" };
+    if (score <= 75) return { label: "Progressing", color: "#C0F0FB" };
     return { label: "Agent-Ready", color: "#10B981" };
   };
 
@@ -1025,7 +1025,7 @@ export function BusinessReadinessGauge() {
   return (
     <div className="w-full bg-card border border-border rounded-xl p-6 md:p-8 my-10 shadow-sm">
       <div className="text-center mb-8">
-        <span className="text-[10px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-[#355CFF]/5 px-2.5 py-1 rounded">
+        <span className="text-[10px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
           Self-Assessment
         </span>
         <h4 className="text-xl font-black text-foreground mt-3 tracking-tight">
@@ -1134,8 +1134,8 @@ export function DeveloperRoleShift() {
     { name: "Writing Boilerplate", pct: 85, color: "#6B7280", fading: true },
     { name: "Syntax & Debugging", pct: 75, color: "#6B7280", fading: true },
     { name: "Manual Testing", pct: 65, color: "#6B7280", fading: true },
-    { name: "System Architecture", pct: 30, color: "#355CFF", fading: false },
-    { name: "Security Engineering", pct: 20, color: "#355CFF", fading: false },
+    { name: "System Architecture", pct: 30, color: "#C0F0FB", fading: false },
+    { name: "Security Engineering", pct: 20, color: "#C0F0FB", fading: false },
     { name: "Agent Coordination", pct: 5, color: "#10B981", fading: false },
   ];
 
@@ -1143,7 +1143,7 @@ export function DeveloperRoleShift() {
     { name: "Writing Boilerplate", pct: 10, color: "#EF4444", fading: true },
     { name: "Syntax & Debugging", pct: 15, color: "#EF4444", fading: true },
     { name: "Manual Testing", pct: 10, color: "#EF4444", fading: true },
-    { name: "System Architecture", pct: 80, color: "#355CFF", fading: false },
+    { name: "System Architecture", pct: 80, color: "#C0F0FB", fading: false },
     { name: "Security Engineering", pct: 70, color: "#8B5CF6", fading: false },
     { name: "Agent Coordination", pct: 90, color: "#10B981", fading: false },
   ];

@@ -134,14 +134,14 @@ export function InteractiveIOArchitecture() {
   };
 
   return (
-    <div className="w-full bg-background border border-[#9CA3AF] rounded-2xl p-6 md:p-8 shadow-sm flex flex-col gap-6 select-none relative overflow-hidden">
+    <div className="w-full bg-background border border-white/10 rounded-2xl p-6 md:p-8 shadow-sm flex flex-col gap-6 select-none relative overflow-hidden">
       
       {/* ─── Top Control Panel ─── */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-[#9CA3AF] gap-4 z-10">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-white/10 gap-4 z-10">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#355CFF] animate-ping" />
-            <h4 className="font-mono text-[11px] tracking-[0.18em] text-[#355CFF] uppercase font-bold">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#C0F0FB] animate-ping" />
+            <h4 className="font-mono text-[11px] tracking-[0.18em] text-[#C0F0FB] uppercase font-bold">
               AI-Native Internet Blueprint
             </h4>
           </div>
@@ -154,7 +154,7 @@ export function InteractiveIOArchitecture() {
           {!isSimulating ? (
             <button
               onClick={startSimulation}
-              className="bg-[#355CFF] hover:bg-[#2A4AD4] text-white font-mono text-[11px] font-bold px-4 py-2 rounded-md shadow-sm flex items-center gap-2 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              className="bg-[#C0F0FB] hover:bg-primary/80 text-primary-foreground font-mono text-[11px] font-bold px-4 py-2 rounded-md shadow-sm flex items-center gap-2 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>TRACE SYSTEM FLOW</span>
@@ -162,7 +162,7 @@ export function InteractiveIOArchitecture() {
           ) : (
             <button
               onClick={stopSimulation}
-              className="bg-[#EF4444] hover:bg-[#DC2626] text-white font-mono text-[11px] font-bold px-4 py-2 rounded-md shadow-sm flex items-center gap-2 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              className="bg-[#EF4444] hover:bg-[#DC2626] text-primary-foreground font-mono text-[11px] font-bold px-4 py-2 rounded-md shadow-sm flex items-center gap-2 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>RESET BLUEPRINT</span>
@@ -175,7 +175,7 @@ export function InteractiveIOArchitecture() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative">
         
         {/* Left Column: Unified Responsive SVG blueprint (8 cols) */}
-        <div className="lg:col-span-8 bg-card border border-[#9CA3AF] rounded-xl p-3 md:p-5 relative flex items-center justify-center">
+        <div className="lg:col-span-8 bg-card border border-white/10 rounded-xl p-3 md:p-5 relative flex items-center justify-center">
           <svg
             viewBox="0 0 1000 860"
             className="w-full h-auto select-none"
@@ -188,26 +188,26 @@ export function InteractiveIOArchitecture() {
                 <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(26,26,26,0.015)" strokeWidth="0.8" />
               </pattern>
               <pattern id="secure-hatch" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-                <line x1="0" y1="0" x2="0" y2="10" stroke="#9CA3AF" strokeWidth="0.8" opacity="0.3" />
+                <line x1="0" y1="0" x2="0" y2="10" stroke="rgba(255,255,255,0.1)" strokeWidth="0.8" opacity="0.3" />
               </pattern>
             </defs>
             <rect width="1000" height="860" fill="url(#architecture-grid)" />
 
             {/* Poster Header Title Block */}
-            <text x="50" y="55" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="18" fontWeight="bold" letterSpacing="0.05em">
+            <text x="50" y="55" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="18" fontWeight="bold" letterSpacing="0.05em">
               GOOGLE I/O 2026: AI-NATIVE INTERNET ARCHITECTURES
             </text>
-            <text x="50" y="78" fill="#6B7280" fontFamily="monospace" fontSize="10.5" letterSpacing="0.1em">
+            <text x="50" y="78" fill="#A1A1AA" fontFamily="monospace" fontSize="10.5" letterSpacing="0.1em">
               INTEGRATED DISTRIBUTED SYSTEM PROTOCOLS
             </text>
 
             {/* Swiss Editorial Border Delimiters */}
-            <line x1="50" x2="950" y1="92" y2="92" stroke="#9CA3AF" strokeWidth="1.5" />
-            <line x1="50" x2="950" y1="815" y2="815" stroke="#9CA3AF" strokeWidth="1.5" />
+            <line x1="50" x2="950" y1="92" y2="92" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" />
+            <line x1="50" x2="950" y1="815" y2="815" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" />
 
             {/* Main Quad dividing axes */}
-            <line x1="500" x2="500" y1="92" y2="815" stroke="#9CA3AF" strokeWidth="1.5" />
-            <line x1="50" x2="950" y1="453" y2="453" stroke="#9CA3AF" strokeWidth="1.5" />
+            <line x1="500" x2="500" y1="92" y2="815" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" />
+            <line x1="50" x2="950" y1="453" y2="453" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" />
 
 
             {/* ═══════════════════════════════════════════════════ */}
@@ -225,16 +225,16 @@ export function InteractiveIOArchitecture() {
                 width="420"
                 height="325"
                 rx="8"
-                fill={isModuleActive("intelligent_layers") ? "rgba(53,92,255,0.015)" : "transparent"}
-                stroke={isModuleActive("intelligent_layers") ? "#355CFF" : "transparent"}
+                fill={isModuleActive("intelligent_layers") ? "rgba(192,240,251,0.02)" : "transparent"}
+                stroke={isModuleActive("intelligent_layers") ? "#C0F0FB" : "transparent"}
                 strokeWidth="1.5"
                 className="transition-all duration-300"
               />
 
-              <text x="75" y="140" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="12" fontWeight="bold" letterSpacing="0.08em">
+              <text x="75" y="140" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="12" fontWeight="bold" letterSpacing="0.08em">
                 ANTIGRAVITY DEV FRAMEWORK
               </text>
-              <text x="75" y="155" fill="#6B7280" fontFamily="monospace" fontSize="8" letterSpacing="0.1em">
+              <text x="75" y="155" fill="#A1A1AA" fontFamily="monospace" fontSize="8" letterSpacing="0.1em">
                 AGENT ORCHESTRATION ENGINE // MULTI-AGENT STATE GRID
               </text>
             </g>
@@ -251,18 +251,18 @@ export function InteractiveIOArchitecture() {
                 width="390"
                 height="65"
                 rx="6"
-                fill={isModuleActive("neural_protocols") ? "rgba(53,92,255,0.03)" : "#FAF9F6"}
-                stroke={isModuleActive("neural_protocols") ? "#355CFF" : "#9CA3AF"}
+                fill={isModuleActive("neural_protocols") ? "rgba(192,240,251,0.05)" : "#FAF9F6"}
+                stroke={isModuleActive("neural_protocols") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth={isModuleActive("neural_protocols") ? "2" : "1.2"}
                 className="transition-all duration-300"
               />
-              <text x="90" y="210" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="10.5" fontWeight="bold">
+              <text x="90" y="210" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="10.5" fontWeight="bold">
                 GEMINI SPARK RUNTIME
               </text>
-              <text x="90" y="226" fill="#4B5563" fontFamily="monospace" fontSize="7.5">
+              <text x="90" y="226" fill="#9CA3AF" fontFamily="monospace" fontSize="7.5">
                 Autonomous 24/7 background agent execution cycles
               </text>
-              <circle cx="430" cy="212" r="10" fill={isModuleActive("neural_protocols") ? "#355CFF" : "#9CA3AF"} className="transition-colors" />
+              <circle cx="430" cy="212" r="10" fill={isModuleActive("neural_protocols") ? "#C0F0FB" : "rgba(255,255,255,0.15)"} className="transition-colors" />
               <path d="M 425,212 L 435,212 M 430,207 L 430,217" stroke="white" strokeWidth="1.2" />
             </g>
 
@@ -278,18 +278,18 @@ export function InteractiveIOArchitecture() {
                 width="390"
                 height="65"
                 rx="6"
-                fill={isModuleActive("dynamic_agents") ? "rgba(53,92,255,0.03)" : "#FAF9F6"}
-                stroke={isModuleActive("dynamic_agents") ? "#355CFF" : "#9CA3AF"}
+                fill={isModuleActive("dynamic_agents") ? "rgba(192,240,251,0.05)" : "#FAF9F6"}
+                stroke={isModuleActive("dynamic_agents") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth={isModuleActive("dynamic_agents") ? "2" : "1.2"}
                 className="transition-all duration-300"
               />
-              <text x="90" y="295" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="10.5" fontWeight="bold">
+              <text x="90" y="295" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="10.5" fontWeight="bold">
                 COLLABORATIVE AGENTS
               </text>
-              <text x="90" y="311" fill="#4B5563" fontFamily="monospace" fontSize="7.5">
+              <text x="90" y="311" fill="#9CA3AF" fontFamily="monospace" fontSize="7.5">
                 Synchronizing multiple specialized coding and data threads
               </text>
-              <circle cx="430" cy="297" r="10" fill={isModuleActive("dynamic_agents") ? "#355CFF" : "#9CA3AF"} className="transition-colors" />
+              <circle cx="430" cy="297" r="10" fill={isModuleActive("dynamic_agents") ? "#C0F0FB" : "rgba(255,255,255,0.15)"} className="transition-colors" />
               <path d="M 426,297 Q 430,293 434,297" stroke="white" strokeWidth="1.2" fill="none" />
             </g>
 
@@ -305,18 +305,18 @@ export function InteractiveIOArchitecture() {
                 width="390"
                 height="65"
                 rx="6"
-                fill={isModuleActive("distributed_compute") ? "rgba(53,92,255,0.03)" : "#FAF9F6"}
-                stroke={isModuleActive("distributed_compute") ? "#355CFF" : "#9CA3AF"}
+                fill={isModuleActive("distributed_compute") ? "rgba(192,240,251,0.05)" : "#FAF9F6"}
+                stroke={isModuleActive("distributed_compute") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth={isModuleActive("distributed_compute") ? "2" : "1.2"}
                 className="transition-all duration-300"
               />
-              <text x="90" y="380" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="10.5" fontWeight="bold">
+              <text x="90" y="380" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="10.5" fontWeight="bold">
                 SANDBOXED COMPUTE
               </text>
-              <text x="90" y="396" fill="#4B5563" fontFamily="monospace" fontSize="7.5">
+              <text x="90" y="396" fill="#9CA3AF" fontFamily="monospace" fontSize="7.5">
                 Isolated runtimes protecting local environment files
               </text>
-              <circle cx="430" cy="382" r="10" fill={isModuleActive("distributed_compute") ? "#355CFF" : "#9CA3AF"} className="transition-colors" />
+              <circle cx="430" cy="382" r="10" fill={isModuleActive("distributed_compute") ? "#C0F0FB" : "rgba(255,255,255,0.15)"} className="transition-colors" />
               <path d="M 425,382 L 435,382" stroke="white" strokeWidth="1.2" />
             </g>
 
@@ -325,14 +325,14 @@ export function InteractiveIOArchitecture() {
             {/* Intelligent Network Layers -> Emergent AI Services */}
             <path
               d="M 465,212 L 535,212"
-              stroke={isModuleActive("emergent_services") ? "#355CFF" : "#9CA3AF"}
+              stroke={isModuleActive("emergent_services") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
               strokeWidth={isModuleActive("emergent_services") ? "2" : "1.5"}
               strokeDasharray={isModuleActive("emergent_services") ? "3 3" : "none"}
             />
             {/* Distributed Compute -> Decentralized Structures */}
             <path
               d="M 270,415 L 270,490"
-              stroke={isModuleActive("decentralized_structures") ? "#355CFF" : "#9CA3AF"}
+              stroke={isModuleActive("decentralized_structures") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
               strokeWidth={isModuleActive("decentralized_structures") ? "2" : "1.5"}
             />
 
@@ -351,28 +351,28 @@ export function InteractiveIOArchitecture() {
                 width="420"
                 height="325"
                 rx="8"
-                fill={isModuleActive("emergent_services") ? "rgba(53,92,255,0.015)" : "transparent"}
-                stroke={isModuleActive("emergent_services") ? "#355CFF" : "transparent"}
+                fill={isModuleActive("emergent_services") ? "rgba(192,240,251,0.02)" : "transparent"}
+                stroke={isModuleActive("emergent_services") ? "#C0F0FB" : "transparent"}
                 strokeWidth="1.5"
                 className="transition-all duration-300"
               />
 
-              <text x="535" y="140" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="12" fontWeight="bold" letterSpacing="0.08em">
+              <text x="535" y="140" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="12" fontWeight="bold" letterSpacing="0.08em">
                 GEMINI 3.5 FLASH ENGINE
               </text>
-              <text x="535" y="155" fill="#6B7280" fontFamily="monospace" fontSize="8" letterSpacing="0.1em">
+              <text x="535" y="155" fill="#A1A1AA" fontFamily="monospace" fontSize="8" letterSpacing="0.1em">
                 LOW-LATENCY TOKEN GENERATION // MULTIMODAL CONTEXT PIPELINES
               </text>
 
               {/* Diagonal Trajectory Vector */}
               <path
                 d="M 540,360 L 860,190"
-                stroke={isModuleActive("emergent_services") ? "#355CFF" : "#9CA3AF"}
+                stroke={isModuleActive("emergent_services") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth={isModuleActive("emergent_services") ? "2.5" : "1.5"}
               />
               <polygon
                 points="860,185 865,198 850,196"
-                fill={isModuleActive("emergent_services") ? "#355CFF" : "#9CA3AF"}
+                fill={isModuleActive("emergent_services") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
               />
 
               {/* Data packet orbits on the trajectory */}
@@ -388,14 +388,14 @@ export function InteractiveIOArchitecture() {
                     cx={orbit.cx}
                     cy={orbit.cy}
                     r={isModuleActive("emergent_services") ? "7" : "5"}
-                    fill={isModuleActive("emergent_services") ? "#355CFF" : "#9CA3AF"}
+                    fill={isModuleActive("emergent_services") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                     className="transition-all duration-300"
                   />
                   <circle
                     cx={orbit.cx}
                     cy={orbit.cy}
                     r="12"
-                    stroke={isModuleActive("emergent_services") ? "#355CFF" : "#9CA3AF"}
+                    stroke={isModuleActive("emergent_services") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                     strokeWidth="0.8"
                     opacity={isModuleActive("emergent_services") ? "0.8" : "0.3"}
                     strokeDasharray="2 2"
@@ -406,7 +406,7 @@ export function InteractiveIOArchitecture() {
               {/* Context flow sine waveform at bottom of Quad 2 */}
               <path
                 d="M 535,400 Q 575,375 615,400 T 695,400 T 775,400 T 855,400 T 935,400"
-                stroke={isModuleActive("emergent_services") ? "#355CFF" : "#9CA3AF"}
+                stroke={isModuleActive("emergent_services") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth="1.5"
                 fill="none"
               />
@@ -427,16 +427,16 @@ export function InteractiveIOArchitecture() {
                 width="420"
                 height="325"
                 rx="8"
-                fill={isModuleActive("decentralized_structures") ? "rgba(53,92,255,0.015)" : "transparent"}
-                stroke={isModuleActive("decentralized_structures") ? "#355CFF" : "transparent"}
+                fill={isModuleActive("decentralized_structures") ? "rgba(192,240,251,0.02)" : "transparent"}
+                stroke={isModuleActive("decentralized_structures") ? "#C0F0FB" : "transparent"}
                 strokeWidth="1.5"
                 className="transition-all duration-300"
               />
 
-              <text x="75" y="500" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="12" fontWeight="bold" letterSpacing="0.08em">
+              <text x="75" y="500" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="12" fontWeight="bold" letterSpacing="0.08em">
                 MULTI-AGENT STATE MESH
               </text>
-              <text x="75" y="515" fill="#6B7280" fontFamily="monospace" fontSize="8" letterSpacing="0.1em">
+              <text x="75" y="515" fill="#A1A1AA" fontFamily="monospace" fontSize="8" letterSpacing="0.1em">
                 STATE CONCURRENCY // DATA PARALLEL STATE SYNC
               </text>
 
@@ -458,7 +458,7 @@ export function InteractiveIOArchitecture() {
                   y1={line.y1}
                   x2={line.x2}
                   y2={line.y2}
-                  stroke={isModuleActive("decentralized_structures") ? "#355CFF" : "#9CA3AF"}
+                  stroke={isModuleActive("decentralized_structures") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                   strokeWidth={isModuleActive("decentralized_structures") ? "1.5" : "1"}
                   opacity={isModuleActive("decentralized_structures") ? "0.8" : "0.4"}
                 />
@@ -469,14 +469,14 @@ export function InteractiveIOArchitecture() {
                 cx="270"
                 cy="650"
                 r="18"
-                fill={isModuleActive("decentralized_structures") ? "#355CFF" : "#9CA3AF"}
+                fill={isModuleActive("decentralized_structures") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 className="transition-colors duration-300"
               />
               <circle
                 cx="270"
                 cy="650"
                 r="26"
-                stroke={isModuleActive("decentralized_structures") ? "#355CFF" : "#9CA3AF"}
+                stroke={isModuleActive("decentralized_structures") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth="1.2"
                 fill="none"
                 strokeDasharray="3 3"
@@ -494,7 +494,7 @@ export function InteractiveIOArchitecture() {
                   cx={dot.cx}
                   cy={dot.cy}
                   r="8"
-                  fill={isModuleActive("decentralized_structures") ? "#355CFF" : "#9CA3AF"}
+                  fill={isModuleActive("decentralized_structures") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                   stroke="white"
                   strokeWidth="1.5"
                   className="transition-colors duration-300"
@@ -505,7 +505,7 @@ export function InteractiveIOArchitecture() {
             {/* Decentralized Structures -> Seamless AI Ecosystem */}
             <path
               d="M 440,650 L 535,650"
-              stroke={isModuleActive("seamless_ecosystem") ? "#355CFF" : "#9CA3AF"}
+              stroke={isModuleActive("seamless_ecosystem") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
               strokeWidth={isModuleActive("seamless_ecosystem") ? "2" : "1.5"}
               strokeDasharray={isModuleActive("seamless_ecosystem") ? "3 3" : "none"}
             />
@@ -527,7 +527,7 @@ export function InteractiveIOArchitecture() {
                 height="150"
                 rx="12"
                 fill="url(#secure-hatch)"
-                stroke={isModuleActive("secure_fabric") ? "#355CFF" : "#9CA3AF"}
+                stroke={isModuleActive("secure_fabric") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth={isModuleActive("secure_fabric") ? "2" : "1"}
                 className="transition-all duration-300"
               />
@@ -537,11 +537,11 @@ export function InteractiveIOArchitecture() {
                 width="140"
                 height="20"
                 rx="4"
-                fill={isModuleActive("secure_fabric") ? "rgba(53,92,255,0.06)" : "#9CA3AF"}
+                fill={isModuleActive("secure_fabric") ? "rgba(192,240,251,0.1)" : "#9CA3AF"}
                 opacity={isModuleActive("secure_fabric") ? "1" : "0.2"}
                 className="transition-all duration-300"
               />
-              <text x="785" y="333" fill={isModuleActive("secure_fabric") ? "#355CFF" : "#1A1A1A"} fontFamily="monospace" fontSize="7.5" fontWeight="bold" className="transition-colors">
+              <text x="785" y="333" fill={isModuleActive("secure_fabric") ? "#C0F0FB" : "#FFFFFF"} fontFamily="monospace" fontSize="7.5" fontWeight="bold" className="transition-colors">
                 SPARK CLOUD PERSISTENCE
               </text>
 
@@ -550,16 +550,16 @@ export function InteractiveIOArchitecture() {
                 cx="845"
                 cy="395"
                 r="22"
-                fill={isModuleActive("secure_fabric") ? "rgba(53,92,255,0.05)" : "#FAF9F6"}
-                stroke={isModuleActive("secure_fabric") ? "#355CFF" : "#9CA3AF"}
+                fill={isModuleActive("secure_fabric") ? "rgba(192,240,251,0.08)" : "#FAF9F6"}
+                stroke={isModuleActive("secure_fabric") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth="1.5"
                 className="transition-all duration-300"
               />
-              <foreignObject x="836" y="386" width="18" height="18" className={isModuleActive("secure_fabric") ? "text-[#355CFF]" : "text-muted-foreground"}>
+              <foreignObject x="836" y="386" width="18" height="18" className={isModuleActive("secure_fabric") ? "text-[#C0F0FB]" : "text-muted-foreground"}>
                 <Shield className="w-4 h-4 shrink-0" />
               </foreignObject>
 
-              <text x="785" y="440" fill="#6B7280" fontFamily="monospace" fontSize="6.5">
+              <text x="785" y="440" fill="#A1A1AA" fontFamily="monospace" fontSize="6.5">
                 [SPARK.CORE // PERSIST-V2]
               </text>
             </g>
@@ -579,16 +579,16 @@ export function InteractiveIOArchitecture() {
                 width="420"
                 height="325"
                 rx="8"
-                fill={isModuleActive("seamless_ecosystem") ? "rgba(53,92,255,0.015)" : "transparent"}
-                stroke={isModuleActive("seamless_ecosystem") ? "#355CFF" : "transparent"}
+                fill={isModuleActive("seamless_ecosystem") ? "rgba(192,240,251,0.02)" : "transparent"}
+                stroke={isModuleActive("seamless_ecosystem") ? "#C0F0FB" : "transparent"}
                 strokeWidth="1.5"
                 className="transition-all duration-300"
               />
 
-              <text x="535" y="500" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="12" fontWeight="bold" letterSpacing="0.08em">
+              <text x="535" y="500" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="12" fontWeight="bold" letterSpacing="0.08em">
                 WORKSPACE & N8N INTEGRATION
               </text>
-              <text x="535" y="515" fill="#6B7280" fontFamily="monospace" fontSize="8" letterSpacing="0.1em">
+              <text x="535" y="515" fill="#A1A1AA" fontFamily="monospace" fontSize="8" letterSpacing="0.1em">
                 GMAIL & DOCS EVENT TRIGGERS // N8N PIPELINE SETTLEMENTS
               </text>
 
@@ -605,19 +605,19 @@ export function InteractiveIOArchitecture() {
                     width="110"
                     height="35"
                     rx="5"
-                    fill="#FAF9F6"
-                    stroke={isModuleActive("seamless_ecosystem") ? "#355CFF" : "#9CA3AF"}
+                    fill="#1A1A1A"
+                    stroke={isModuleActive("seamless_ecosystem") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                     strokeWidth="1"
                     className="transition-all"
                   />
-                  <text x={input.x + 8} y={input.y + 20} fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="8.5" fontWeight="bold">
+                  <text x={input.x + 8} y={input.y + 20} fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="8.5" fontWeight="bold">
                     {input.label}
                   </text>
                   
                   {/* Tracing lines from inputs down to Gateway processor */}
                   <path
                     d={`M ${input.x + 55},${input.y + 35} L ${input.x + 55},595 L 730,595 L 730,625`}
-                    stroke={isModuleActive("seamless_ecosystem") ? "#355CFF" : "#9CA3AF"}
+                    stroke={isModuleActive("seamless_ecosystem") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                     strokeWidth="1"
                     fill="none"
                   />
@@ -631,22 +631,22 @@ export function InteractiveIOArchitecture() {
                 width="190"
                 height="60"
                 rx="6"
-                fill={isModuleActive("seamless_ecosystem") ? "rgba(53,92,255,0.03)" : "#FAF9F6"}
-                stroke={isModuleActive("seamless_ecosystem") ? "#355CFF" : "#9CA3AF"}
+                fill={isModuleActive("seamless_ecosystem") ? "rgba(192,240,251,0.05)" : "#FAF9F6"}
+                stroke={isModuleActive("seamless_ecosystem") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth={isModuleActive("seamless_ecosystem") ? "2" : "1.2"}
                 className="transition-all"
               />
-              <text x="650" y="650" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="10" fontWeight="bold">
+              <text x="650" y="650" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="10" fontWeight="bold">
                 GEMINI SPARK ORCHESTRATOR
               </text>
-              <text x="650" y="666" fill="#4B5563" fontFamily="monospace" fontSize="7.5">
+              <text x="650" y="666" fill="#9CA3AF" fontFamily="monospace" fontSize="7.5">
                 Autonomous background execution flow
               </text>
 
               {/* Gateway to resolution endpoint path */}
               <path
                 d="M 730,685 L 730,730"
-                stroke={isModuleActive("seamless_ecosystem") ? "#355CFF" : "#9CA3AF"}
+                stroke={isModuleActive("seamless_ecosystem") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth="1.5"
               />
 
@@ -657,11 +657,11 @@ export function InteractiveIOArchitecture() {
                 width="230"
                 height="45"
                 rx="6"
-                fill="#FAF9F6"
-                stroke={isModuleActive("seamless_ecosystem") ? "#355CFF" : "#9CA3AF"}
+                fill="#1A1A1A"
+                stroke={isModuleActive("seamless_ecosystem") ? "#C0F0FB" : "rgba(255,255,255,0.15)"}
                 strokeWidth="1.5"
               />
-              <text x="625" y="756" fill="#1A1A1A" fontFamily="system-ui, sans-serif" fontSize="9" fontWeight="bold">
+              <text x="625" y="756" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontSize="9" fontWeight="bold">
                 RESOLVED BUSINESS SETTLEMENT
               </text>
             </g>
@@ -673,15 +673,15 @@ export function InteractiveIOArchitecture() {
         <div className="lg:col-span-4 flex flex-col gap-5 justify-between">
           
           {/* Status Inspector Box */}
-          <div className="bg-card border border-[#9CA3AF] rounded-xl p-5 flex-grow flex flex-col justify-between">
+          <div className="bg-card border border-white/10 rounded-xl p-5 flex-grow flex flex-col justify-between">
             <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-[#9CA3AF] pb-3">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <span className="font-mono text-[9px] tracking-wider text-muted-foreground uppercase flex items-center gap-1.5">
-                  <Terminal className="w-3 h-3 text-[#355CFF]" />
+                  <Terminal className="w-3 h-3 text-[#C0F0FB]" />
                   <span>Ecosystem Inspector</span>
                 </span>
                 <span className="font-mono text-[9px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-100 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF] animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB] animate-pulse" />
                   <span>ACTIVE</span>
                 </span>
               </div>
@@ -697,7 +697,7 @@ export function InteractiveIOArchitecture() {
                     className="space-y-3.5"
                   >
                     <div>
-                      <span className="text-[9px] font-mono tracking-wider text-[#355CFF] bg-[#355CFF]/5 px-2 py-0.5 rounded uppercase font-bold">
+                      <span className="text-[9px] font-mono tracking-wider text-[#C0F0FB] bg-[#C0F0FB]/5 px-2 py-0.5 rounded uppercase font-bold">
                         {moduleDetails[hoveredModule].category}
                       </span>
                       <h4 className="text-lg font-black text-foreground mt-2 tracking-tight">
@@ -709,7 +709,7 @@ export function InteractiveIOArchitecture() {
                       {moduleDetails[hoveredModule].description}
                     </p>
 
-                    <div className="bg-background border border-[#9CA3AF] p-3 rounded-lg font-mono text-[9.5px] text-muted-foreground space-y-1">
+                    <div className="bg-background border border-white/10 p-3 rounded-lg font-mono text-[9.5px] text-muted-foreground space-y-1">
                       <span className="text-foreground font-bold block mb-1">MODULE SPECS:</span>
                       <span className="block">{moduleDetails[hoveredModule].metrics}</span>
                       <span className="block">Status: SECURED // Verification: PASS</span>
@@ -732,22 +732,22 @@ export function InteractiveIOArchitecture() {
             </div>
 
             {/* Core Load Telemetry Charts */}
-            <div className="border-t border-[#9CA3AF] pt-4 mt-6">
+            <div className="border-t border-white/10 pt-4 mt-6">
               <span className="font-mono text-[9px] tracking-wider text-muted-foreground uppercase block mb-3">
                 Global Gateway Telemetry
               </span>
               <div className="space-y-2.5">
                 {[
-                  { label: "Intelligent Ingestion", val: isSimulating ? 82 : 45, color: "bg-[#355CFF]" },
+                  { label: "Intelligent Ingestion", val: isSimulating ? 82 : 45, color: "bg-[#C0F0FB]" },
                   { label: "Fabric Validation", val: isSimulating ? 96 : 28, color: "bg-[#6B7280]" },
-                  { label: "Ecosystem Settlement", val: isSimulating ? 99 : 88, color: isSimulating ? "bg-emerald-500" : "bg-[#355CFF]" }
+                  { label: "Ecosystem Settlement", val: isSimulating ? 99 : 88, color: isSimulating ? "bg-emerald-500" : "bg-[#C0F0FB]" }
                 ].map((bar) => (
                   <div key={bar.label} className="space-y-1">
                     <div className="flex justify-between text-[9.5px] font-mono">
                       <span className="text-muted-foreground">{bar.label}</span>
                       <span className="font-bold text-foreground">{bar.val}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-background border border-[#9CA3AF] rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-background border border-white/10 rounded-full overflow-hidden">
                       <motion.div
                         className={`h-full ${bar.color}`}
                         initial={{ width: 0 }}
@@ -762,11 +762,11 @@ export function InteractiveIOArchitecture() {
           </div>
 
           {/* Model Status Card */}
-          <div className="bg-background border border-[#9CA3AF] rounded-xl p-4 flex items-center justify-between shadow-inner">
+          <div className="bg-background border border-white/10 rounded-xl p-4 flex items-center justify-between shadow-inner">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-card border border-[#9CA3AF] flex items-center justify-center">
+              <div className="w-9 h-9 rounded-full bg-card border border-white/10 flex items-center justify-center">
                 {isSimulating ? (
-                  <Activity className="w-4 h-4 text-[#355CFF] animate-spin" />
+                  <Activity className="w-4 h-4 text-[#C0F0FB] animate-spin" />
                 ) : (
                   <Workflow className="w-4 h-4 text-emerald-500" />
                 )}
@@ -779,7 +779,7 @@ export function InteractiveIOArchitecture() {
               </div>
             </div>
             {isSimulating && (
-              <span className="text-[8px] font-mono tracking-widest text-[#355CFF] bg-[#355CFF]/5 border border-[#355CFF]/15 px-1.5 py-0.5 rounded animate-pulse">
+              <span className="text-[8px] font-mono tracking-widest text-[#C0F0FB] bg-[#C0F0FB]/5 border border-[#C0F0FB]/15 px-1.5 py-0.5 rounded animate-pulse">
                 TRACE_RUNNING
               </span>
             )}

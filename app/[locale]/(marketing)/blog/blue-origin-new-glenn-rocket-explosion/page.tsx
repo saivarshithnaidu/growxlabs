@@ -185,7 +185,7 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
   ];
 
   return (
-    <div className="w-full bg-background min-h-screen text-foreground selection:bg-[#355CFF]/10 selection:text-[#355CFF] pt-32 pb-24">
+    <div className="w-full bg-background min-h-screen text-foreground selection:bg-primary/10 selection:text-primary pt-32 pb-24">
       {/* JSON-LD Structured Data */}
       <Script
         id="blue-origin-explosion-schema"
@@ -211,7 +211,7 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
           <Reveal y={20}>
             {/* Category Tags */}
             <div className="flex gap-2 justify-center items-center mb-6">
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-[#355CFF]/5 px-2.5 py-1 rounded">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 Space
               </span>
               <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
@@ -232,21 +232,21 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
             <h2 className="text-[clamp(32px,4.5vw,56px)] font-black leading-[1.1] tracking-tighter text-foreground mb-8 max-w-4xl mx-auto font-serif">
               Blue Origin’s New Glenn Rocket <span className="italic font-serif font-normal">Explodes</span> During Test:
               <br />
-              <span className="text-[#355CFF] font-sans font-black tracking-tighter block mt-2">What Happened?</span>
+              <span className="text-primary font-sans font-black tracking-tighter block mt-2">What Happened?</span>
             </h2>
 
             {/* Meta Bar */}
             <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
-                <User className="w-3.5 h-3.5 text-[#355CFF]" />
+                <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabsTech</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Clock className="w-3.5 h-3.5 text-primary" />
                 <span>5 min read</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Calendar className="w-3.5 h-3.5 text-primary" />
                 <span>May 30, 2026</span>
               </div>
             </div>
@@ -310,7 +310,7 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
                 Blue Origin Faces Major Setback as New Glenn Rocket Explodes
               </h2>
               <div className="text-[18px] md:text-[20px] leading-[1.7] text-foreground/90 font-normal space-y-6 font-lora">
-                <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
+                <p className="first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:mr-3 first-letter:float-left">
                   Jeff Bezos&apos; space company, Blue Origin, suffered a significant setback after its New Glenn rocket exploded during a hot-fire test at Cape Canaveral, Florida.
                 </p>
                 <p>
@@ -337,10 +337,10 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
                 </p>
                 <div className="bg-card border border-border rounded-xl p-6 space-y-4">
                   <p className="font-semibold text-foreground flex items-center gap-2">
-                    <Rocket className="w-5 h-5 text-[#355CFF]" />
+                    <Rocket className="w-5 h-5 text-primary" />
                     <span>The rocket plays a critical role in:</span>
                   </p>
-                  <ul className="list-none space-y-2.5 pl-4 border-l-2 border-[#355CFF]/30">
+                  <ul className="list-none space-y-2.5 pl-4 border-l-2 border-primary/30">
                     {[
                       "Commercial satellite launches",
                       "Amazon's Project Kuiper internet constellation",
@@ -349,7 +349,7 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
                       "Future deep-space missions"
                     ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 text-[16px] text-foreground/90">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -418,7 +418,7 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
                 <p>
                   Following the explosion, Jeff Bezos described the event as a &ldquo;very rough day&rdquo; for the company.
                 </p>
-                <blockquote className="border-l-4 border-[#355CFF] bg-[#355CFF]/[0.03] pl-6 pr-6 py-6 my-8 rounded-r-xl">
+                <blockquote className="border-l-4 border-primary bg-[#C0F0FB]/[0.03] pl-6 pr-6 py-6 my-8 rounded-r-xl">
                   <p className="text-[17px] italic leading-relaxed text-foreground/90 font-medium">
                     &ldquo;...very rough day&rdquo;
                   </p>
@@ -475,7 +475,7 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
                     "Jeff Bezos has confirmed the company will rebuild and continue development efforts."
                   ].map((takeaway, i) => (
                     <li key={i} className="flex items-start gap-3.5 text-[16px] text-foreground/90 leading-relaxed">
-                      <span className="w-2 h-2 rounded-full bg-[#355CFF] mt-2.5 shrink-0" />
+                      <span className="w-2 h-2 rounded-full bg-[#C0F0FB] mt-2.5 shrink-0" />
                       <span>{takeaway}</span>
                     </li>
                   ))}

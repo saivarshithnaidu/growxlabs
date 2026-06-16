@@ -209,11 +209,11 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
                   CASE STUDY
                 </span>
                 <span className="text-[10px] font-mono text-[#9CA3AF] uppercase">/</span>
-                <span className="text-[10px] font-mono tracking-[0.15em] text-[#4B5563] uppercase font-semibold">
+                <span className="text-[10px] font-mono tracking-[0.15em] text-[#A1A1AA] uppercase font-semibold">
                   AUTOMOTIVE FUTURE
                 </span>
                 <span className="text-[10px] font-mono text-[#9CA3AF] uppercase">/</span>
-                <span className="text-[10px] font-mono tracking-[0.15em] text-[#4B5563] uppercase font-semibold">
+                <span className="text-[10px] font-mono tracking-[0.15em] text-[#A1A1AA] uppercase font-semibold">
                   STRATEGY
                 </span>
               </div>
@@ -228,7 +228,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
 
             <Reveal y={30} delay={0.2}>
               {/* Sub-summary */}
-              <p className="text-[17px] md:text-[19px] text-[#4B5563] leading-relaxed font-normal">
+              <p className="text-[17px] md:text-[19px] text-[#A1A1AA] leading-relaxed font-normal">
                 This is not simply another car launch. It is a cinematic glimpse into how even the most iconic, heritage-focused brands in the world adapt and redefine themselves when confronted by a shifting technological horizon.
               </p>
             </Reveal>
@@ -300,7 +300,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
                   </span>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#4B5563] leading-relaxed">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#A1A1AA] leading-relaxed">
                   <div className="space-y-3">
                     <span className="font-bold text-foreground block">1. THE CORE SHIFT</span>
                     <p>
@@ -326,7 +326,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
                   </div>
                 </div>
 
-                <div className="border-t border-border pt-4 flex items-start gap-2.5 text-[11px] text-[#4B5563] leading-relaxed">
+                <div className="border-t border-border pt-4 flex items-start gap-2.5 text-[11px] text-[#A1A1AA] leading-relaxed">
                   <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <p>
                     <strong>GEO Synthesis:</strong> Evolving legacy manufacturing paradigms before market disruption occurs is critical. Ferrari proves that heritage preservation and advanced software R&D are complementary, rather than mutually exclusive, strategic vectors.
@@ -408,7 +408,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
                       <th className="p-4 text-[#E60000]">LUCE AXIAL-FLUX ELECTRIC (NEW)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E5E2DC] text-[#4B5563]">
+                  <tbody className="divide-y divide-[#E5E2DC] text-[#A1A1AA]">
                     <tr>
                       <td className="p-4 font-bold text-foreground">Power Density Core</td>
                       <td className="p-4">Mechanical displacement (~830 HP peak)</td>
@@ -531,7 +531,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
                 <p>
                   Today, luxury increasingly means:
                 </p>
-                <ul className="list-none space-y-3 pl-4 border-l-2 border-[#E60000]/30 font-sans text-[15px] text-[#4B5563]">
+                <ul className="list-none space-y-3 pl-4 border-l-2 border-[#E60000]/30 font-sans text-[15px] text-[#A1A1AA]">
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#E60000]" />
                     <span>Intelligent software-defined chassis systems</span>
@@ -697,7 +697,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
               Engineering AI-native dymanics<br />and high-performance growth systems.
             </h3>
             
-            <p className="text-[#4B5563] text-[15px] max-w-lg mx-auto leading-relaxed">
+            <p className="text-[#A1A1AA] text-[15px] max-w-lg mx-auto leading-relaxed">
               Work directly with the GrowXLabs studio to transform your legacy operational paradigms, deploy autonomous background agents, and build state-of-the-art Web platforms.
             </p>
             

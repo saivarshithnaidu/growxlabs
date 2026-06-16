@@ -172,7 +172,7 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
   ];
 
   return (
-    <div className="w-full bg-background min-h-screen text-foreground selection:bg-[#355CFF]/10 selection:text-[#355CFF] pt-32 pb-24">
+    <div className="w-full bg-background min-h-screen text-foreground selection:bg-primary/10 selection:text-primary pt-32 pb-24">
       {/* Dynamic JSON-LD Structured Data */}
       <Script
         id="ai-coding-tools-schemas"
@@ -198,7 +198,7 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
           <Reveal y={20}>
             {/* Category Tag */}
             <div className="flex gap-2 justify-center items-center mb-6">
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-[#355CFF]/5 px-2.5 py-1 rounded">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 Engineering
               </span>
               <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
@@ -219,26 +219,26 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
             <h2 className="text-[clamp(32px,4.5vw,56px)] font-black leading-[1.1] tracking-tighter text-foreground mb-8 max-w-4xl mx-auto">
               AI Coding Tools Are Reshaping
               <br />
-              <span className="text-[#355CFF]">Modern Software Engineering</span>
+              <span className="text-primary">Modern Software Engineering</span>
             </h2>
 
             {/* Excerpt */}
-            <p className="text-[18px] md:text-[20px] text-[#4B5563] leading-relaxed max-w-3xl mx-auto mb-10 font-normal">
+            <p className="text-[18px] md:text-[20px] text-[#A1A1AA] leading-relaxed max-w-3xl mx-auto mb-10 font-normal">
               Software engineering is accelerating at an unprecedented rate. In 2026, autonomous terminal agents and dynamic build frameworks are no longer experimental—they are baseline infrastructure.
             </p>
 
             {/* Meta Details Grid */}
             <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
-                <User className="w-3.5 h-3.5 text-[#355CFF]" />
+                <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabsTech</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Clock className="w-3.5 h-3.5 text-primary" />
                 <span>5 min read</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Calendar className="w-3.5 h-3.5 text-primary" />
                 <span>May 27, 2026</span>
               </div>
             </div>
@@ -273,7 +273,7 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
 
             {/* Intro Content */}
             <div className="text-[17px] leading-[1.9] text-foreground/90 font-normal space-y-8 font-sans blog-prose">
-              <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
+              <p className="first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:mr-3 first-letter:float-left">
                 The software industry is changing more rapidly than ever.
               </p>
               <p>
@@ -326,7 +326,7 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
                 <p>
                   Technical environments powered by Claude, Gemini, and GitHub Copilot allow small product teams to build, test, modify, and deploy clean, fully production-ready code blocks in minutes.
                 </p>
-                <blockquote className="my-10 pl-6 border-l-3 border-[#355CFF] italic text-[20px] text-[#4B5563] font-serif leading-relaxed">
+                <blockquote className="my-10 pl-6 border-l-3 border-primary italic text-[20px] text-[#A1A1AA] font-serif leading-relaxed">
                   "Execution cycles have collapsed. A single engineer armed with highly integrated agentic workflows can now research, prototype, write, lint, test, and deploy features faster than entire legacy development divisions."
                 </blockquote>
               </div>
@@ -419,7 +419,7 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
             </section>
 
             {/* Section 8 */}
-            <section id="final-thoughts" className="scroll-mt-32 mt-16 space-y-6 font-serif italic text-[#4B5563]">
+            <section id="final-thoughts" className="scroll-mt-32 mt-16 space-y-6 font-serif italic text-[#A1A1AA]">
               <h2 className="text-3xl font-black tracking-tight text-foreground leading-tight not-italic font-sans">
                 Final Thoughts
               </h2>
@@ -439,7 +439,7 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
             {/* ═══════════════════════════════════════════════════ */}
             <section id="faq" className="scroll-mt-32 mt-16 pt-16 border-t border-border space-y-8">
               <div className="text-center md:text-left space-y-3">
-                <span className="text-[11px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold">
+                <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold">
                   Common Q&A
                 </span>
                 <h3 className="text-3xl font-black tracking-tight text-foreground">
@@ -462,7 +462,7 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
             {/* ═══════════════════════════════════════════════════ */}
             <Reveal y={20}>
               <div className="my-16 bg-[#EDEAE4] rounded-2xl p-8 md:p-12 border border-border text-center space-y-6">
-                <span className="text-[11px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold">
+                <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold">
                   Next-Gen digital engineering
                 </span>
                 <h3 className="text-[28px] md:text-[38px] font-black tracking-tight leading-tight text-foreground">
@@ -475,7 +475,7 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
                 </p>
                 <div className="pt-4">
                   <Link href="/contact">
-                    <Button className="bg-[#355CFF] text-white hover:bg-[#2A4AD4] rounded-md px-8 h-12 text-[15px] font-semibold transition-all inline-flex items-center gap-2 hover:gap-3">
+                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-8 h-12 text-[15px] font-semibold transition-all inline-flex items-center gap-2 hover:gap-3">
                       Work With GrowXLabsTech <ArrowRight className="w-4.5 h-4.5" />
                     </Button>
                   </Link>
@@ -491,7 +491,7 @@ export default async function AICodingToolsPage({ params }: { params: Promise<{ 
                 <h4 className="font-mono text-[11px] tracking-[0.15em] text-[#6B7280] uppercase font-bold">
                   Related Insights
                 </h4>
-                <Link href="/blog" className="text-[12px] font-bold text-[#355CFF] hover:underline inline-flex items-center gap-1">
+                <Link href="/blog" className="text-[12px] font-bold text-primary hover:underline inline-flex items-center gap-1">
                   View all articles <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

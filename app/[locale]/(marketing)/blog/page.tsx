@@ -38,16 +38,24 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   // Blog posts database
   const featuredPost = {
-    slug: "nvidia-vision-agentic-to-useful-ai",
-    title: "NVIDIA's Vision for the Future of AI: From Agentic AI to Useful AI",
-    excerpt: "Analyze Jensen Huang's GTC vision: CUDA-X, AI Factories, Physical AI, and the historic shift from reactive chatbots to proactive execution systems.",
-    category: "AI Industry / Infrastructure / Analysis",
-    date: "June 4, 2026",
-    readTime: "14 min read",
-    image: "/images/nvidia-vision-agentic-to-useful-ai.png"
+    slug: "elon-musks-path-to-becoming-the-worlds-first-trillionaire",
+    title: "Elon Musk's Path to Becoming the World's First Trillionaire",
+    excerpt: "Analyze Elon Musk's path to becoming the world's first trillionaire. Explore valuation trends across Tesla, SpaceX, xAI, Starlink, and Neuralink, with data-driven projections, risks, and AGI trends.",
+    category: "Business / AI / Aerospace",
+    date: "June 16, 2026",
+    readTime: "12 min read",
+    image: "/images/blog-elon-trillionaire.png"
   };
 
   const regularPosts = [
+    {
+      slug: "elon-musks-path-to-becoming-the-worlds-first-trillionaire",
+      title: "Elon Musk's Path to Becoming the World's First Trillionaire",
+      excerpt: "Analyze Elon Musk's path to becoming the world's first trillionaire. Explore valuation trends across Tesla, SpaceX, xAI, Starlink, and Neuralink, with data-driven projections, risks, and AGI trends.",
+      category: "Business / AI / Aerospace",
+      date: "June 16, 2026",
+      readTime: "12 min read"
+    },
     {
       slug: "nvidia-vision-agentic-to-useful-ai",
       title: "NVIDIA's Vision for the Future of AI: From Agentic AI to Useful AI",

@@ -198,7 +198,7 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
   ];
 
   return (
-    <div className="w-full bg-background min-h-screen text-foreground selection:bg-[#355CFF]/10 selection:text-[#355CFF] pt-32 pb-24">
+    <div className="w-full bg-background min-h-screen text-foreground selection:bg-primary/10 selection:text-primary pt-32 pb-24">
       {/* Dynamic JSON-LD Structured Data */}
       <Script
         id="google-io-schemas"
@@ -224,7 +224,7 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
           <Reveal y={20}>
             {/* Category Tag */}
             <div className="flex gap-2 justify-center items-center mb-6">
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-[#355CFF]/5 px-2.5 py-1 rounded">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 AI
               </span>
               <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
@@ -245,26 +245,26 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
             <h2 className="text-[clamp(32px,4.5vw,56px)] font-black leading-[1.1] tracking-tighter text-foreground mb-8 max-w-4xl mx-auto">
               Google I/O 2026:
               <br />
-              <span className="text-[#355CFF]">The Beginning of the AI-Native Internet</span>
+              <span className="text-primary">The Beginning of the AI-Native Internet</span>
             </h2>
 
             {/* Excerpt */}
-            <p className="text-[18px] md:text-[20px] text-[#4B5563] leading-relaxed max-w-3xl mx-auto mb-10 font-normal">
+            <p className="text-[18px] md:text-[20px] text-[#A1A1AA] leading-relaxed max-w-3xl mx-auto mb-10 font-normal">
               Explore the historic transition from reactive AI chatbots to proactive, 24/7 background AI infrastructure. Discover how Gemini 3.5 Flash, Gemini Spark, and Antigravity are redefining the modern internet and developer ecosystems.
             </p>
 
             {/* Meta Details Grid */}
             <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
-                <User className="w-3.5 h-3.5 text-[#355CFF]" />
+                <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabsTech</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Clock className="w-3.5 h-3.5 text-primary" />
                 <span>6 min read</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Calendar className="w-3.5 h-3.5 text-primary" />
                 <span>May 27, 2026</span>
               </div>
             </div>
@@ -299,7 +299,7 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
 
             {/* Intro Content */}
             <div className="text-[18px] leading-[1.85] text-foreground/90 font-normal space-y-8 font-sans">
-              <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
+              <p className="first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:mr-3 first-letter:float-left">
                 Google I/O 2026 was not just another developer conference.
               </p>
               <p>
@@ -308,29 +308,29 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
               <p>
                 This year, Google focused heavily on:
               </p>
-              <ul className="list-none space-y-2 pl-4 border-l-2 border-[#355CFF]/30">
+              <ul className="list-none space-y-2 pl-4 border-l-2 border-primary/30">
                 <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                   <span>AI agents capable of autonomous multi-step execution</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                   <span>Deeply integrated multimodal systems</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                   <span>Seamless AI-native developer workflows</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                   <span>Background execution and scheduling</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                   <span>Developer acceleration platforms</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                   <span>Real-time dynamic generative interfaces</span>
                 </li>
               </ul>
@@ -351,18 +351,18 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
                 <p>
                   For nearly two decades, Google Search worked like this:
                 </p>
-                <div className="bg-white/40 border border-border rounded-lg p-5 font-mono text-[12px] text-[#4B5563] space-y-2 max-w-md">
+                <div className="bg-white/[0.04] border border-border rounded-lg p-5 font-mono text-[12px] text-[#A1A1AA] space-y-2 max-w-md">
                   <div className="flex items-center gap-2">
-                    <span className="text-[#355CFF] font-bold">1.</span> Type query in browser
+                    <span className="text-primary font-bold">1.</span> Type query in browser
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[#355CFF] font-bold">2.</span> Scan index of links
+                    <span className="text-primary font-bold">2.</span> Scan index of links
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[#355CFF] font-bold">3.</span> Open third-party websites
+                    <span className="text-primary font-bold">3.</span> Open third-party websites
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[#355CFF] font-bold">4.</span> Manually extract information
+                    <span className="text-primary font-bold">4.</span> Manually extract information
                   </div>
                 </div>
                 <p>
@@ -409,7 +409,7 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
                 </p>
                 
                 {/* Blockquote styling */}
-                <blockquote className="my-10 pl-6 border-l-3 border-[#355CFF] italic text-[20px] text-[#4B5563] font-serif leading-relaxed">
+                <blockquote className="my-10 pl-6 border-l-3 border-primary italic text-[20px] text-[#A1A1AA] font-serif leading-relaxed">
                   "Even after closing your laptop, Spark can continue operating in the cloud. This is extremely important because the industry is now shifting from 'AI that answers' to 'AI that acts.' That single difference changes everything."
                 </blockquote>
 
@@ -574,7 +574,7 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
               <h2 className="text-3xl font-black tracking-tight text-foreground leading-tight">
                 Final Thoughts
               </h2>
-              <div className="text-[18px] md:text-[20px] leading-[1.7] text-foreground/90 font-normal space-y-6 font-lora font-serif italic text-[#4B5563]">
+              <div className="text-[18px] md:text-[20px] leading-[1.7] text-foreground/90 font-normal space-y-6 font-lora font-serif italic text-[#A1A1AA]">
                 <p>
                   Google I/O 2026 was not just a product launch event. It was a preview of how software, search, workflows, and digital products may function in the AI-native era.
                 </p>
@@ -595,7 +595,7 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
             {/* ═══════════════════════════════════════════════════ */}
             <section id="faq" className="scroll-mt-32 mt-16 pt-16 border-t border-border space-y-8">
               <div className="text-center md:text-left space-y-3">
-                <span className="text-[11px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold">
+                <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold">
                   Common Q&A
                 </span>
                 <h3 className="text-3xl font-black tracking-tight text-foreground">
@@ -618,7 +618,7 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
             {/* ═══════════════════════════════════════════════════ */}
             <Reveal y={20}>
               <div className="my-16 bg-[#EDEAE4] rounded-2xl p-8 md:p-12 border border-border text-center space-y-6">
-                <span className="text-[11px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold">
+                <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold">
                   Next-Gen digital engineering
                 </span>
                 <h3 className="text-[28px] md:text-[38px] font-black tracking-tight leading-tight text-foreground">
@@ -631,7 +631,7 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
                 </p>
                 <div className="pt-4">
                   <Link href="/contact">
-                    <Button className="bg-[#355CFF] text-white hover:bg-[#2A4AD4] rounded-md px-8 h-12 text-[15px] font-semibold transition-all inline-flex items-center gap-2 hover:gap-3">
+                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-8 h-12 text-[15px] font-semibold transition-all inline-flex items-center gap-2 hover:gap-3">
                       Work With GrowXLabsTech <ArrowRight className="w-4.5 h-4.5" />
                     </Button>
                   </Link>
@@ -647,7 +647,7 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
                 <h4 className="font-mono text-[11px] tracking-[0.15em] text-[#6B7280] uppercase font-bold">
                   Related Insights
                 </h4>
-                <Link href="/blog" className="text-[12px] font-bold text-[#355CFF] hover:underline inline-flex items-center gap-1">
+                <Link href="/blog" className="text-[12px] font-bold text-primary hover:underline inline-flex items-center gap-1">
                   View all articles <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -657,18 +657,18 @@ npx antigravity run --orchestrate=asynchronous-workflow`;
                   <Link 
                     key={index} 
                     href={article.href}
-                    className="group flex flex-col justify-between p-6 bg-card border border-border rounded-xl hover:border-[#355CFF]/30 hover:shadow-sm transition-all duration-300 min-h-[160px]"
+                    className="group flex flex-col justify-between p-6 bg-card border border-border rounded-xl hover:border-primary/30 hover:shadow-sm transition-all duration-300 min-h-[160px]"
                   >
                     <div className="space-y-3">
                       <div className="flex justify-between items-center font-mono text-[9px] tracking-wider text-[#6B7280] uppercase">
                         <span>{article.date}</span>
                         <span>{article.readTime}</span>
                       </div>
-                      <h5 className="font-bold text-foreground text-[14px] leading-snug group-hover:text-[#355CFF] transition-colors line-clamp-3">
+                      <h5 className="font-bold text-foreground text-[14px] leading-snug group-hover:text-primary transition-colors line-clamp-3">
                         {article.title}
                       </h5>
                     </div>
-                    <div className="pt-4 flex items-center gap-1.5 text-[11px] font-bold text-[#355CFF] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="pt-4 flex items-center gap-1.5 text-[11px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <span>Read article</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </div>

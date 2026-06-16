@@ -185,7 +185,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
   ];
 
   return (
-    <div className="w-full bg-background min-h-screen text-foreground selection:bg-[#355CFF]/10 selection:text-[#355CFF] pt-32 pb-24">
+    <div className="w-full bg-background min-h-screen text-foreground selection:bg-primary/10 selection:text-primary pt-32 pb-24">
       {/* JSON-LD Structured Data */}
       <Script
         id="ai-agents-explosion-schema"
@@ -211,7 +211,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
           <Reveal y={20}>
             {/* Category Tags */}
             <div className="flex gap-2 justify-center items-center mb-6">
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#355CFF] uppercase font-bold bg-[#355CFF]/5 px-2.5 py-1 rounded">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 AI
               </span>
               <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
@@ -232,21 +232,21 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
             <h2 className="text-[clamp(32px,4.5vw,56px)] font-black leading-[1.1] tracking-tighter text-foreground mb-8 max-w-4xl mx-auto font-serif">
               Chatbots Are <span className="italic font-serif font-normal">Dying</span>.
               <br />
-              <span className="text-[#355CFF] font-sans font-black tracking-tighter block mt-2">Agents Are Taking Over.</span>
+              <span className="text-primary font-sans font-black tracking-tighter block mt-2">Agents Are Taking Over.</span>
             </h2>
 
             {/* Meta Bar */}
             <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
-                <User className="w-3.5 h-3.5 text-[#355CFF]" />
+                <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabs Team</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Clock className="w-3.5 h-3.5 text-primary" />
                 <span>6 min read</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-3.5 h-3.5 text-[#355CFF]" />
+                <Calendar className="w-3.5 h-3.5 text-primary" />
                 <span>June 1, 2026</span>
               </div>
             </div>
@@ -307,7 +307,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
             {/* ─────────────────────────────────────── */}
             <section id="introduction" className="scroll-mt-32 space-y-6">
               <div className="text-[18px] md:text-[20px] leading-[1.7] text-foreground/90 font-normal space-y-6 font-lora">
-                <p className="first-letter:text-5xl first-letter:font-black first-letter:text-[#355CFF] first-letter:mr-3 first-letter:float-left">
+                <p className="first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:mr-3 first-letter:float-left">
                   The AI industry is entering its next major shift.
                 </p>
                 <p>
@@ -316,7 +316,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 <p>
                   But the future of AI isn&apos;t conversation.
                 </p>
-                <p className="text-xl font-bold text-foreground border-l-2 border-[#355CFF] pl-4">
+                <p className="text-xl font-bold text-foreground border-l-2 border-primary pl-4">
                   It&apos;s execution.
                 </p>
                 <p>
@@ -356,29 +356,29 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                     <p className="text-[15px] text-[#6B7280]">Produces raw text copy. The user must manually copy, paste, select the client, send it, and manually update the platform database.</p>
                   </div>
                   
-                  <div className="bg-[#355CFF]/[0.02] border border-[#355CFF]/20 rounded-xl p-6 space-y-3 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-[#355CFF]/5 rounded-full blur-2xl" />
-                    <span className="text-[10px] font-mono tracking-widest text-[#355CFF] uppercase font-bold flex items-center gap-1.5">
+                  <div className="bg-[#C0F0FB]/[0.02] border border-primary/20 rounded-xl p-6 space-y-3 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-primary/5 rounded-full blur-2xl" />
+                    <span className="text-[10px] font-mono tracking-widest text-primary uppercase font-bold flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5" /> Agentic AI
                     </span>
                     <ul className="space-y-1.5 font-mono text-[13px] text-foreground/90">
                       <li className="flex items-center gap-2">
-                        <span className="text-[#355CFF]">→</span> Finds the lead.
+                        <span className="text-primary">→</span> Finds the lead.
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-[#355CFF]">→</span> Researches the company.
+                        <span className="text-primary">→</span> Researches the company.
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-[#355CFF]">→</span> Writes the email.
+                        <span className="text-primary">→</span> Writes the email.
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-[#355CFF]">→</span> Sends it.
+                        <span className="text-primary">→</span> Sends it.
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-[#355CFF]">→</span> Tracks the response.
+                        <span className="text-primary">→</span> Tracks the response.
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-[#355CFF]">→</span> Updates the CRM.
+                        <span className="text-primary">→</span> Updates the CRM.
                       </li>
                     </ul>
                   </div>
@@ -422,7 +422,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 <p className="text-2xl font-black tracking-tight text-foreground">
                   They need more outcomes.
                 </p>
-                <blockquote className="border-l-4 border-[#355CFF] bg-[#355CFF]/[0.03] pl-6 pr-6 py-6 rounded-r-xl">
+                <blockquote className="border-l-4 border-primary bg-[#C0F0FB]/[0.03] pl-6 pr-6 py-6 rounded-r-xl">
                   <p className="text-[17px] italic leading-relaxed text-foreground/90 font-medium">
                     &ldquo;The real value of AI isn&apos;t generating text. It&apos;s generating results.&rdquo;
                   </p>
@@ -441,7 +441,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                   ].map((agent, i) => (
                     <div key={i} className="bg-card border border-border rounded-xl p-5 space-y-1">
                       <p className="text-[15px] font-bold text-foreground flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                         <span>{agent.name}</span>
                       </p>
                       <p className="text-[12px] text-[#6B7280] leading-snug">{agent.desc}</p>
@@ -451,17 +451,17 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 <p className="pt-4 font-semibold text-foreground">
                   The goal is simple:
                 </p>
-                <ul className="list-none space-y-1.5 pl-4 border-l-2 border-[#355CFF]/30">
+                <ul className="list-none space-y-1.5 pl-4 border-l-2 border-primary/30">
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                     <span>Reduce manual work.</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                     <span>Increase execution speed.</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#355CFF]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                     <span>Scale without increasing headcount.</span>
                   </li>
                 </ul>
@@ -517,9 +517,9 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                     { label: "Customer", value: "Better Support" },
                     { label: "Growth", value: "Scalability" }
                   ].map((metric, i) => (
-                    <div key={i} className="bg-[#355CFF]/[0.02] border border-[#355CFF]/10 rounded-xl p-4 text-center">
+                    <div key={i} className="bg-[#C0F0FB]/[0.02] border border-primary/10 rounded-xl p-4 text-center">
                       <p className="text-[10px] font-mono text-[#6B7280] uppercase tracking-wider">{metric.label}</p>
-                      <p className="text-[15px] font-black text-[#355CFF] mt-1">{metric.value}</p>
+                      <p className="text-[15px] font-black text-primary mt-1">{metric.value}</p>
                     </div>
                   ))}
                 </div>
@@ -559,7 +559,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                     </div>
                     <div>
                       <p className="text-lg font-black text-foreground mb-1">2026</p>
-                      <p className="text-[#355CFF] font-bold">AI Agents</p>
+                      <p className="text-primary font-bold">AI Agents</p>
                     </div>
                   </div>
                 </div>
@@ -582,7 +582,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 <p className="font-bold text-foreground">
                   The gap won&apos;t be small.
                 </p>
-                <p className="text-[#355CFF] font-extrabold">
+                <p className="text-primary font-extrabold">
                   It will compound every day.
                 </p>
               </div>
@@ -607,7 +607,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 <p>
                   The question is:
                 </p>
-                <p className="text-2xl font-black tracking-tight text-[#355CFF]">
+                <p className="text-2xl font-black tracking-tight text-primary">
                   &ldquo;Which parts of our business should AI execute?&rdquo;
                 </p>
                 <p>
@@ -667,11 +667,11 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 </p>
                 
                 <div className="bg-[#1A1A1A] text-white rounded-xl p-6 relative overflow-hidden border border-white/5 my-8">
-                  <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-[#355CFF]/10 rounded-full blur-xl" />
-                  <p className="font-mono text-[11px] text-[#355CFF] tracking-[0.25em] uppercase font-bold mb-2">Core Era Shift</p>
+                  <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-primary/10 rounded-full blur-xl" />
+                  <p className="font-mono text-[11px] text-primary tracking-[0.25em] uppercase font-bold mb-2">Core Era Shift</p>
                   <p className="text-lg font-bold leading-relaxed">
                     The AI era was about answers. <br className="hidden sm:block" />
-                    <span className="text-[#355CFF]">The Agent Era is about outcomes.</span>
+                    <span className="text-primary">The Agent Era is about outcomes.</span>
                   </p>
                 </div>
 
