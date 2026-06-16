@@ -11,18 +11,18 @@ export function ProjectCard({ slug, title, tag, description, tech, metric, link,
       <div className="h-full flex flex-col bg-card border border-border rounded-lg overflow-hidden transition-[opacity,background-color,border-color] duration-200 shadow-sm group-hover:border-primary/20">
         
         {/* Clickable Image Section */}
-        <Link href={`/portfolio/${slug}`} className="relative h-48 w-full overflow-hidden rounded-t-lg block">
+        <Link href={`/portfolio/${slug}`} className="relative h-48 w-full overflow-hidden rounded-t-lg block bg-[#050505] border-b border-border/10">
           {image && (
             <>
               <Image
                 src={image}
                 alt={title}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-102"
+                className="object-contain p-4 transition-transform duration-500 group-hover:scale-101"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-40" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-40 pointer-events-none" />
             </>
           )}
           <div className="absolute top-4 left-4">

@@ -16,6 +16,11 @@ export interface CaseStudy {
     value: string;
   }[];
   gallery: string[];
+  video?: string;
+  features?: {
+    title: string;
+    desc: string;
+  }[];
 }
 
 export const projects: CaseStudy[] = [
@@ -24,12 +29,12 @@ export const projects: CaseStudy[] = [
     title: "ResumeForgeAI",
     tag: "AI Product",
     category: "AI Product",
-    description: "AI powered career platform for Indian professionals. Resume builder, ATS optimizer, and job matching. Helping professionals get hired faster.",
+    description: "AI-powered career platform that helps developers craft ATS-optimized resumes, practice real-time voice mock interviews, and auto-generate project documentation.",
     image: "/portfolio/resumeforgeai.png",
-    problem: "Indian job seekers lack affordable, ATS compliant resume tools tailored to the local market, resulting in low interview conversion rates.",
-    solution: "Built an AI powered platform using Claude AI for intelligent resume generation, ATS scoring, and job resume matching. all optimized for Indian hiring patterns.",
-    tech: ["Next.js", "Claude AI", "Supabase"],
-    metric: "Active Platform",
+    problem: "Developers struggle to pass automated resume filters, practice realistic technical interviews, and professionally document their engineering work.",
+    solution: "Built a modular career intelligence platform with ten specialized modules that track job readiness, simulate live interview panels, and generate specs from codebases.",
+    tech: ["Next.js", "Claude AI", "Supabase", "WebRTC"],
+    metric: "Career Intel",
     link: "https://resumeforgeai.in",
     status: "Live",
     results: [
@@ -37,18 +42,23 @@ export const projects: CaseStudy[] = [
       { label: "Community", value: "Growing" },
       { label: "Success Rate", value: "High" }
     ],
-    gallery: []
+    gallery: [],
+    features: [
+      { title: "ATS Optimization", desc: "Real-time resume alignment and scoring against target job descriptions." },
+      { title: "Voice Mock Interviews", desc: "High-pressure, real-time audio simulation of technical engineering interviews." },
+      { title: "Codebase Documentation", desc: "Automated generation of Software Requirement Specifications (SRS) from repositories." }
+    ]
   },
   {
     slug: "universalai",
     title: "UniversalAI",
     tag: "AI Platform",
     category: "AI Platform",
-    description: "Multi model AI chat platform supporting Claude, GPT 4, and Gemini in one unified interface with plugin marketplace.",
+    description: "Unified AI workspace that runs multiple language models side-by-side, enabling real-time comparison, document intelligence, and autonomous code generation.",
     image: "/portfolio/universalai.png",
-    problem: "Users need to switch between multiple AI platforms to access different models, losing context and productivity.",
-    solution: "Created a unified AI chat interface that aggregates Claude, GPT 4, and Gemini into one platform with a plugin marketplace for extended capabilities.",
-    tech: ["Next.js", "OpenAI", "Anthropic"],
+    problem: "Teams waste hours switching between disconnected AI tools, losing context and slowing critical decisions.",
+    solution: "Designed a single workspace where multiple AI models respond in parallel, documents are intelligently queried, and code agents build projects autonomously.",
+    tech: ["Next.js 15", "PostgreSQL", "OpenRouter", "Gemini API", "Prisma"],
     metric: "Multi-Model",
     link: "https://universalai.co.in",
     status: "Live",
@@ -57,27 +67,41 @@ export const projects: CaseStudy[] = [
       { label: "Speed", value: "Instant" },
       { label: "System", value: "Ready" }
     ],
-    gallery: []
+    gallery: [],
+    video: "/portfolio/universalai.mp4",
+    features: [
+      { title: "Parallel Execution", desc: "Run and compare responses from GPT-4o, Gemini, and Claude side-by-side in real-time." },
+      { title: "Agent Workspace", desc: "Integrated developer sandbox allowing AI agents to build and preview code live." },
+      { title: "Document Intelligence", desc: "Retrieval-Augmented Generation (RAG) engine for querying complex technical files." }
+    ]
   },
   {
     slug: "recruitai",
     title: "RecruitAI",
-    tag: "Automation Platform",
-    category: "Automation Platform",
-    description: "AI recruitment automation with intelligent screening, lead scoring, and n8n workflow integration.",
+    tag: "AI Automation",
+    category: "AI Recruitment Automation",
+    description: "AI-driven hiring platform that screens resumes, conducts proctored assessments, and delivers scored candidate shortlists in minutes.",
     image: "/portfolio/recruitai.png",
-    problem: "Recruitment agencies spend 70% of their time on repetitive screening and follow up tasks instead of closing candidates.",
-    solution: "Built an AI powered recruitment pipeline with automated candidate screening, intelligent lead scoring, and n8n workflow integration for end to end automation.",
-    tech: ["Next.js", "n8n", "Supabase"],
-    metric: "Process Automation",
+    problem: "Recruitment teams spend the majority of their time manually sorting unqualified applications, delaying candidate submissions and losing revenue.",
+    solution: "Built an end-to-end recruitment automation system with AI-powered resume scoring, dual-camera proctored exams, and voice-based interview evaluation.",
+    tech: ["Next.js 15", "n8n Workflow", "Supabase DB", "Claude API", "PostgreSQL"],
+    metric: "Automation",
     link: "https://recruitaitech.in",
     status: "Live",
     results: [
-      { label: "Workflows", value: "Automated" },
-      { label: "Time Saved", value: "Significant" },
-      { label: "Efficiency", value: "Optimized" }
+      { label: "Time Saved", value: "70%" },
+      { label: "Screening Velocity", value: "3x Faster" },
+      { label: "Workflow Automation", value: "90%" },
+      { label: "Manual Labors Reduced", value: "50%" }
     ],
-    gallery: []
+    gallery: [],
+    features: [
+      { title: "Automated Screening", desc: "Filters and qualifies candidate profiles autonomously within seconds of submission." },
+      { title: "AI Scoring", desc: "Matches CV capabilities to complex JD criteria with high precision scoring." },
+      { title: "Candidate Pipeline", desc: "Unified visual dashboard for tracking candidate stages and qualification status." },
+      { title: "Workflow Automation", desc: "Seamless workflow architecture routing candidate alerts straight to client CRMs." },
+      { title: "Analytics Dashboard", desc: "Real-time visibility into screening latency, source channels, and match quality." }
+    ]
   },
   /*
   {
