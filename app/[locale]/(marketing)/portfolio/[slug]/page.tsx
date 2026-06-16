@@ -402,7 +402,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                     AI Platform
                   </span>
                   
-                  <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase">
+                  <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase break-words">
                     UniversalAI.
                   </h1>
                   
@@ -834,7 +834,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                     AI Product
                   </span>
                   
-                  <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase">
+                  <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase break-words">
                     ResumeForgeAI.
                   </h1>
                   
@@ -1229,7 +1229,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                   AI Recruitment Automation
                 </span>
                 
-                <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase break-words">
                   RecruitAI.
                 </h1>
                 
@@ -1604,7 +1604,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                     AI Developer Tools
                   </span>
                   
-                  <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase">
+                  <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase break-words">
                     Pipper.
                   </h1>
                   
@@ -1926,7 +1926,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                     AI Agent Platform
                   </span>
                   
-                  <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase">
+                  <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase break-words">
                     3RDMIND.
                   </h1>
                   
@@ -2266,7 +2266,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                   {project.category}
                 </span>
                 
-                <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase break-words">
                   {project.title}.
                 </h1>
                 
