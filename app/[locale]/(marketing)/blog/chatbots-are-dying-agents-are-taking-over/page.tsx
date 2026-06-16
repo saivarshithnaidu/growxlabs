@@ -214,16 +214,16 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
               <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 AI
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Automation
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Scale
               </span>
             </div>
@@ -236,7 +236,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
             </h2>
 
             {/* Meta Bar */}
-            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
+            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#9CA3AF] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
                 <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabs Team</span>
@@ -351,9 +351,9 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 {/* Comparison Card Block */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
                   <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-                    <span className="text-[10px] font-mono tracking-widest text-[#6B7280] uppercase font-bold">Old AI: Chatbot</span>
+                    <span className="text-[10px] font-mono tracking-widest text-[#9CA3AF] uppercase font-bold">Old AI: Chatbot</span>
                     <p className="text-foreground font-bold text-lg">&ldquo;Write me an email.&rdquo;</p>
-                    <p className="text-[15px] text-[#6B7280]">Produces raw text copy. The user must manually copy, paste, select the client, send it, and manually update the platform database.</p>
+                    <p className="text-[15px] text-[#9CA3AF]">Produces raw text copy. The user must manually copy, paste, select the client, send it, and manually update the platform database.</p>
                   </div>
                   
                   <div className="bg-[#C0F0FB]/[0.02] border border-primary/20 rounded-xl p-6 space-y-3 relative overflow-hidden">
@@ -403,7 +403,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 Why Every Major AI Company Is Betting On Agents
               </h2>
               <div className="text-[18px] md:text-[20px] leading-[1.7] text-foreground/90 font-normal space-y-6 font-lora">
-                <div className="flex flex-wrap items-center gap-3 font-mono text-[13px] text-[#6B7280]">
+                <div className="flex flex-wrap items-center gap-3 font-mono text-[13px] text-[#9CA3AF]">
                   <span>OpenAI</span><span>·</span>
                   <span>Anthropic</span><span>·</span>
                   <span>Google</span><span>·</span>
@@ -444,7 +444,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                         <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB]" />
                         <span>{agent.name}</span>
                       </p>
-                      <p className="text-[12px] text-[#6B7280] leading-snug">{agent.desc}</p>
+                      <p className="text-[12px] text-[#9CA3AF] leading-snug">{agent.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -518,7 +518,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                     { label: "Growth", value: "Scalability" }
                   ].map((metric, i) => (
                     <div key={i} className="bg-[#C0F0FB]/[0.02] border border-primary/10 rounded-xl p-4 text-center">
-                      <p className="text-[10px] font-mono text-[#6B7280] uppercase tracking-wider">{metric.label}</p>
+                      <p className="text-[10px] font-mono text-[#9CA3AF] uppercase tracking-wider">{metric.label}</p>
                       <p className="text-[15px] font-black text-primary mt-1">{metric.value}</p>
                     </div>
                   ))}
@@ -548,7 +548,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 
                 {/* Visual grid overlay */}
                 <div className="bg-card border border-border rounded-xl p-6 my-6">
-                  <div className="grid grid-cols-3 gap-4 text-center font-mono text-[11px] text-[#6B7280]">
+                  <div className="grid grid-cols-3 gap-4 text-center font-mono text-[11px] text-[#9CA3AF]">
                     <div>
                       <p className="text-lg font-black text-foreground mb-1">1995</p>
                       <p>The Internet</p>
@@ -601,7 +601,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                 <p>
                   The question is no longer:
                 </p>
-                <p className="italic font-medium text-[#6B7280]">
+                <p className="italic font-medium text-[#9CA3AF]">
                   &ldquo;Should we use AI?&rdquo;
                 </p>
                 <p>
@@ -675,7 +675,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
                   </p>
                 </div>
 
-                <p className="font-mono text-[12px] tracking-[0.1em] text-[#6B7280] uppercase">
+                <p className="font-mono text-[12px] tracking-[0.1em] text-[#9CA3AF] uppercase">
                   — GXL Insights
                 </p>
               </div>
@@ -692,7 +692,7 @@ export default async function ChatbotsDyingPage({ params }: { params: Promise<{ 
 
             {/* Related Essays Section */}
             <div className="mt-16 pt-16 border-t border-[#E5E2DC]">
-              <h3 className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase font-bold mb-8">Related Essays</h3>
+              <h3 className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase font-bold mb-8">Related Essays</h3>
               <RelatedEssaysList essays={relatedEssays} />
             </div>
 

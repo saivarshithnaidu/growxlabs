@@ -218,16 +218,16 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
               <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 AI Industry
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Infrastructure
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Analysis
               </span>
             </div>
@@ -240,7 +240,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
             </h2>
 
             {/* Meta Bar */}
-            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
+            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#9CA3AF] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
                 <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabs Team</span>
@@ -528,21 +528,21 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
                   To capture the real opportunity of this shift, businesses must focus on three areas:
                 </p>
                 <div className="space-y-4">
-                  <div className="p-5 border border-border bg-white rounded-lg">
+                  <div className="p-5 border border-white/10 bg-white/[0.02] rounded-lg">
                     <h5 className="font-bold text-foreground mb-1.5">1. Workflow Mapping</h5>
-                    <p className="text-sm text-[#6B7280]">
+                    <p className="text-sm text-[#9CA3AF]">
                       Before deploying AI agents, you must document your existing workflows in detail. An agent cannot automate a process that is undefined or relies on undocumented human intuition.
                     </p>
                   </div>
-                  <div className="p-5 border border-border bg-white rounded-lg">
+                  <div className="p-5 border border-white/10 bg-white/[0.02] rounded-lg">
                     <h5 className="font-bold text-foreground mb-1.5">2. Unified Data Infrastructure</h5>
-                    <p className="text-sm text-[#6B7280]">
+                    <p className="text-sm text-[#9CA3AF]">
                       AI agents require secure, real-time access to corporate databases, CRMs, and project management tools. Siloed, fragmented data is the single greatest bottleneck to agentic execution.
                     </p>
                   </div>
-                  <div className="p-5 border border-border bg-white rounded-lg">
+                  <div className="p-5 border border-white/10 bg-white/[0.02] rounded-lg">
                     <h5 className="font-bold text-foreground mb-1.5">3. Guardrails and Oversight</h5>
-                    <p className="text-sm text-[#6B7280]">
+                    <p className="text-sm text-[#9CA3AF]">
                       Because agents take actions (sending emails, committing code, running transactions), companies must implement clear boundaries, verification steps, and human-in-the-loop approvals.
                     </p>
                   </div>
@@ -624,7 +624,7 @@ export default async function NvidiaGtcPage({ params }: { params: Promise<{ loca
       {/* Related Essays */}
       <footer className="w-full bg-[#FDFAF7] border-t border-border py-20 px-6 md:px-10 xl:px-16 2xl:px-24">
         <div className="max-w-3xl mx-auto space-y-12">
-          <h4 className="font-mono text-[11px] tracking-[0.2em] text-[#6B7280] uppercase font-bold text-left">
+          <h4 className="font-mono text-[11px] tracking-[0.2em] text-[#9CA3AF] uppercase font-bold text-left">
             Related Essays
           </h4>
           <RelatedEssaysList essays={relatedEssays} />

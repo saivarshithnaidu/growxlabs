@@ -298,16 +298,16 @@ console.log(data.content);`;
               <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 AI
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Anthropic
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Engineering
               </span>
             </div>
@@ -325,7 +325,7 @@ console.log(data.content);`;
             </p>
 
             {/* Meta Bar */}
-            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
+            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#9CA3AF] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
                 <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabsTech</span>
@@ -354,7 +354,7 @@ console.log(data.content);`;
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-4xl md:text-5xl font-black tracking-tight">Claude Opus 4.8</h3>
-                    <p className="text-[#6B7280] font-mono text-sm">Model ID: claude-opus-4-8 · Developer: Anthropic</p>
+                    <p className="text-[#9CA3AF] font-mono text-sm">Model ID: claude-opus-4-8 · Developer: Anthropic</p>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-white/10">
                     {[
@@ -364,7 +364,7 @@ console.log(data.content);`;
                       { label: "Code Review", value: "4×", delta: "Better" },
                     ].map((stat, i) => (
                       <div key={i} className="space-y-1">
-                        <p className="text-[10px] font-mono tracking-wider text-[#6B7280] uppercase">{stat.label}</p>
+                        <p className="text-[10px] font-mono tracking-wider text-[#9CA3AF] uppercase">{stat.label}</p>
                         <p className="text-2xl font-black tracking-tight">{stat.value}</p>
                         <p className="text-[11px] font-mono text-[#22C55E] font-bold">{stat.delta}</p>
                       </div>
@@ -413,7 +413,7 @@ console.log(data.content);`;
                 <p className="text-[17px] italic leading-relaxed text-foreground/90 font-medium">
                   &ldquo;Stronger across coding, agentic tasks, and professional work, Opus 4.8 has the consistency and autonomy to keep working on long-running tasks.&rdquo;
                 </p>
-                <cite className="text-[13px] text-[#6B7280] font-mono mt-3 block not-italic">— Anthropic</cite>
+                <cite className="text-[13px] text-[#9CA3AF] font-mono mt-3 block not-italic">— Anthropic</cite>
               </blockquote>
 
               <div className="text-[18px] leading-[1.85] text-foreground/90 font-normal space-y-4 font-sans">
@@ -438,7 +438,7 @@ console.log(data.content);`;
                   { label: "Price Change", value: "NONE" },
                 ].map((fact, i) => (
                   <div key={i} className="bg-card border border-border rounded-xl p-4 space-y-1">
-                    <p className="text-[10px] font-mono tracking-[0.15em] text-[#6B7280] uppercase">{fact.label}</p>
+                    <p className="text-[10px] font-mono tracking-[0.15em] text-[#9CA3AF] uppercase">{fact.label}</p>
                     <p className="text-[15px] font-bold text-foreground">{fact.value}</p>
                   </div>
                 ))}
@@ -465,7 +465,7 @@ console.log(data.content);`;
                   <p>The most emphasized improvement in Opus 4.8 is <strong className="text-foreground">honesty</strong>. AI models often jump to conclusions and claim progress without evidence. Opus 4.8 is trained to actively fight this problem.</p>
                 </div>
                 <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-                  <p className="text-[11px] font-mono tracking-[0.15em] text-[#6B7280] uppercase font-bold">Results</p>
+                  <p className="text-[11px] font-mono tracking-[0.15em] text-[#9CA3AF] uppercase font-bold">Results</p>
                   <ul className="list-none space-y-2">
                     {[
                       "4x LESS likely to allow code flaws to go unremarked",
@@ -484,7 +484,7 @@ console.log(data.content);`;
                   <p className="text-[16px] italic leading-relaxed text-foreground/90">
                     &ldquo;Early testers report that Opus 4.8 is more likely to flag uncertainties about its work and less likely to make unsupported claims.&rdquo;
                   </p>
-                  <cite className="text-[13px] text-[#6B7280] font-mono mt-2 block not-italic">— Anthropic</cite>
+                  <cite className="text-[13px] text-[#9CA3AF] font-mono mt-2 block not-italic">— Anthropic</cite>
                 </blockquote>
               </div>
 
@@ -578,7 +578,7 @@ console.log(data.content);`;
 
               {/* Competitor Comparison */}
               <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-                <p className="text-[11px] font-mono tracking-[0.15em] text-[#6B7280] uppercase font-bold">vs Competitors</p>
+                <p className="text-[11px] font-mono tracking-[0.15em] text-[#9CA3AF] uppercase font-bold">vs Competitors</p>
                 <ul className="list-none space-y-2">
                   <li className="flex items-start gap-3 text-[15px] text-foreground/90">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] mt-2.5 shrink-0" />
@@ -596,7 +596,7 @@ console.log(data.content);`;
               </div>
 
               {/* Notes */}
-              <div className="bg-[#C0F0FB]/[0.03] border border-primary/10 rounded-xl p-5 text-[14px] text-[#6B7280] space-y-2">
+              <div className="bg-[#C0F0FB]/[0.03] border border-primary/10 rounded-xl p-5 text-[14px] text-[#9CA3AF] space-y-2">
                 <p className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-bold">Notes</p>
                 <ul className="list-disc list-inside space-y-1 text-[14px]">
                   <li>Terminal-Bench tested using Terminus-2 public harness for Opus 4.8</li>
@@ -622,7 +622,7 @@ console.log(data.content);`;
                   <h3 className="text-xl font-bold text-foreground">Dynamic Workflows — Claude Code</h3>
                   <span className="text-[10px] font-mono tracking-wider text-[#D97706] bg-[#D97706]/10 px-2 py-0.5 rounded font-bold uppercase">Research Preview</span>
                 </div>
-                <div className="flex gap-4 flex-wrap text-[13px] font-mono text-[#6B7280]">
+                <div className="flex gap-4 flex-wrap text-[13px] font-mono text-[#9CA3AF]">
                   <span>Plans: Enterprise, Team, Max</span>
                   <span>·</span>
                   <span>Tool: Claude Code</span>
@@ -665,7 +665,7 @@ console.log(data.content);`;
                   <h3 className="text-xl font-bold text-foreground">Effort Control — claude.ai &amp; Cowork</h3>
                   <span className="text-[10px] font-mono tracking-wider text-[#22C55E] bg-[#22C55E]/10 px-2 py-0.5 rounded font-bold uppercase">Live</span>
                 </div>
-                <div className="flex gap-4 flex-wrap text-[13px] font-mono text-[#6B7280]">
+                <div className="flex gap-4 flex-wrap text-[13px] font-mono text-[#9CA3AF]">
                   <span>Plans: ALL plans</span>
                   <span>·</span>
                   <span>Location: Alongside the model selector</span>
@@ -824,7 +824,7 @@ console.log(data.content);`;
                     <div className="flex items-center gap-2">
                       <div className="w-1 h-4 bg-[#C0F0FB] rounded-full" />
                       <cite className="text-[13px] text-foreground font-semibold not-italic">{t.author}</cite>
-                      <span className="text-[12px] text-[#6B7280]">— {t.title}</span>
+                      <span className="text-[12px] text-[#9CA3AF]">— {t.title}</span>
                     </div>
                   </blockquote>
                 ))}
@@ -853,7 +853,7 @@ console.log(data.content);`;
                       <th className="px-6 py-4 text-[12px] font-mono tracking-[0.1em] uppercase font-bold text-right">Price per 1M Tokens</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-[#E5E2DC]">
+                  <tbody className="bg-transparent divide-y divide-white/10">
                     {[
                       { mode: "Standard — Input", price: "$5.00" },
                       { mode: "Standard — Output", price: "$25.00" },
@@ -870,7 +870,7 @@ console.log(data.content);`;
               </div>
 
               <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-                <p className="text-[11px] font-mono tracking-[0.15em] text-[#6B7280] uppercase font-bold">Key Points</p>
+                <p className="text-[11px] font-mono tracking-[0.15em] text-[#9CA3AF] uppercase font-bold">Key Points</p>
                 <ul className="list-none space-y-2">
                   {[
                     "Zero price increase from Opus 4.7",
@@ -903,7 +903,7 @@ console.log(data.content);`;
               {/* Python */}
               <div className="bg-[#0F0F12] rounded-xl overflow-hidden border border-white/5">
                 <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
-                  <span className="text-[11px] font-mono tracking-[0.1em] text-[#6B7280] uppercase">Python</span>
+                  <span className="text-[11px] font-mono tracking-[0.1em] text-[#9CA3AF] uppercase">Python</span>
                   <CopyCodeButton code={pythonCode} />
                 </div>
                 <pre className="p-5 overflow-x-auto text-[14px] leading-relaxed">
@@ -914,7 +914,7 @@ console.log(data.content);`;
               {/* JavaScript */}
               <div className="bg-[#0F0F12] rounded-xl overflow-hidden border border-white/5">
                 <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
-                  <span className="text-[11px] font-mono tracking-[0.1em] text-[#6B7280] uppercase">JavaScript / Node.js</span>
+                  <span className="text-[11px] font-mono tracking-[0.1em] text-[#9CA3AF] uppercase">JavaScript / Node.js</span>
                   <CopyCodeButton code={jsCode} />
                 </div>
                 <pre className="p-5 overflow-x-auto text-[14px] leading-relaxed">
@@ -925,7 +925,7 @@ console.log(data.content);`;
               {/* cURL */}
               <div className="bg-[#0F0F12] rounded-xl overflow-hidden border border-white/5">
                 <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
-                  <span className="text-[11px] font-mono tracking-[0.1em] text-[#6B7280] uppercase">cURL</span>
+                  <span className="text-[11px] font-mono tracking-[0.1em] text-[#9CA3AF] uppercase">cURL</span>
                   <CopyCodeButton code={curlCode} />
                 </div>
                 <pre className="p-5 overflow-x-auto text-[14px] leading-relaxed">
@@ -935,7 +935,7 @@ console.log(data.content);`;
 
               {/* Availability */}
               <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-                <p className="text-[11px] font-mono tracking-[0.15em] text-[#6B7280] uppercase font-bold">Available Via</p>
+                <p className="text-[11px] font-mono tracking-[0.15em] text-[#9CA3AF] uppercase font-bold">Available Via</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
                     { name: "Anthropic API", url: "platform.claude.com" },
@@ -945,7 +945,7 @@ console.log(data.content);`;
                   ].map((p, i) => (
                     <div key={i} className="bg-background rounded-lg p-3 space-y-1 text-center">
                       <p className="text-[13px] font-bold text-foreground">{p.name}</p>
-                      <p className="text-[11px] text-[#6B7280] font-mono">{p.url}</p>
+                      <p className="text-[11px] text-[#9CA3AF] font-mono">{p.url}</p>
                     </div>
                   ))}
                 </div>
@@ -993,11 +993,11 @@ console.log(data.content);`;
                     <div className={`absolute -left-[calc(2rem+5px)] w-3 h-3 rounded-full border-2 ${entry.current ? 'bg-[#C0F0FB] border-primary' : 'bg-card border-[#D1D5DB]'}`} />
                     <div className={`${entry.current ? 'bg-[#C0F0FB]/[0.03] border border-primary/10' : 'bg-card border border-border'} rounded-xl p-5 space-y-2`}>
                       <div className="flex items-center gap-3 flex-wrap">
-                        <span className="text-[12px] font-mono text-[#6B7280]">{entry.date}</span>
+                        <span className="text-[12px] font-mono text-[#9CA3AF]">{entry.date}</span>
                         {entry.current && <span className="text-[9px] font-mono tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded font-bold uppercase">Current</span>}
                       </div>
                       <p className="text-[17px] font-bold text-foreground">{entry.model}</p>
-                      <p className="text-[14px] text-[#6B7280]">{entry.highlight}</p>
+                      <p className="text-[14px] text-[#9CA3AF]">{entry.highlight}</p>
                     </div>
                   </div>
                 ))}
@@ -1044,7 +1044,7 @@ console.log(data.content);`;
                   <p className="text-[16px] italic leading-relaxed text-foreground/90">
                     &ldquo;We plan to release a new class of model with even higher intelligence than Opus. We expect to bring Mythos-class models to all customers in the coming weeks.&rdquo;
                   </p>
-                  <cite className="text-[13px] text-[#6B7280] font-mono mt-2 block not-italic">— Anthropic</cite>
+                  <cite className="text-[13px] text-[#9CA3AF] font-mono mt-2 block not-italic">— Anthropic</cite>
                 </blockquote>
 
                 <div className="text-[18px] leading-[1.85] text-foreground/90 space-y-4">
@@ -1058,15 +1058,15 @@ console.log(data.content);`;
                 <div className="grid grid-cols-3 gap-6">
                   <div className="space-y-1">
                     <p className="text-3xl font-black tracking-tight">$65B</p>
-                    <p className="text-[12px] font-mono text-[#6B7280]">Series H Raised</p>
+                    <p className="text-[12px] font-mono text-[#9CA3AF]">Series H Raised</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-3xl font-black tracking-tight">$965B</p>
-                    <p className="text-[12px] font-mono text-[#6B7280]">Valuation</p>
+                    <p className="text-[12px] font-mono text-[#9CA3AF]">Valuation</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xl font-black tracking-tight leading-snug">Largest AI round in history</p>
-                    <p className="text-[12px] font-mono text-[#6B7280]">As of May 2026</p>
+                    <p className="text-[12px] font-mono text-[#9CA3AF]">As of May 2026</p>
                   </div>
                 </div>
               </div>
@@ -1090,7 +1090,7 @@ console.log(data.content);`;
                       <th className="px-5 py-3 text-[11px] font-mono tracking-[0.1em] uppercase font-bold">Value</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-[#E5E2DC]">
+                  <tbody className="bg-transparent divide-y divide-white/10">
                     {[
                       ["Model Name", "Claude Opus 4.8"],
                       ["API Model ID", "claude-opus-4-8"],
@@ -1125,7 +1125,7 @@ console.log(data.content);`;
                       ["Anthropic Valuation", "$965 Billion"],
                     ].map(([prop, val], i) => (
                       <tr key={i} className="hover:bg-background transition-colors">
-                        <td className="px-5 py-3 font-medium text-[#6B7280]">{prop}</td>
+                        <td className="px-5 py-3 font-medium text-[#9CA3AF]">{prop}</td>
                         <td className="px-5 py-3 font-semibold text-foreground">{val}</td>
                       </tr>
                     ))}
@@ -1152,11 +1152,11 @@ console.log(data.content);`;
                   <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[14px] text-primary hover:text-foreground transition-colors group">
                     <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     <span className="font-medium">{s.label}</span>
-                    <span className="text-[12px] text-[#6B7280] font-mono truncate hidden sm:inline">{s.url}</span>
+                    <span className="text-[12px] text-[#9CA3AF] font-mono truncate hidden sm:inline">{s.url}</span>
                   </a>
                 ))}
               </div>
-              <p className="text-[13px] text-[#6B7280] text-center italic mt-4">All data sourced from Anthropic&apos;s official release — May 28, 2026</p>
+              <p className="text-[13px] text-[#9CA3AF] text-center italic mt-4">All data sourced from Anthropic&apos;s official release — May 28, 2026</p>
             </section>
 
             <div className="w-full h-px bg-[#E5E2DC] my-14" />
@@ -1181,10 +1181,10 @@ console.log(data.content);`;
                 <span className="text-xl font-black text-primary">G</span>
               </div>
               <div className="space-y-2">
-                <p className="text-[11px] font-mono tracking-[0.15em] text-[#6B7280] uppercase">Published by</p>
+                <p className="text-[11px] font-mono tracking-[0.15em] text-[#9CA3AF] uppercase">Published by</p>
                 <p className="text-lg font-bold text-foreground">GrowXLabsTech</p>
-                <p className="text-[15px] text-[#6B7280] leading-relaxed">
-                  Engineering digital growth through premium web systems, intelligent automation, and AI-native infrastructure. Based in India, serving businesses globally.
+                <p className="text-[15px] text-[#9CA3AF] leading-relaxed">
+                  Developing scalable software systems, advanced automation engines, and AGI-native infrastructure. Based in India, serving businesses globally.
                 </p>
                 <a href="https://growxlabs.tech" target="_blank" rel="noopener noreferrer" className="text-[13px] text-primary font-mono font-bold hover:underline inline-flex items-center gap-1.5 mt-2">
                   growxlabs.tech <ArrowUpRight className="w-3 h-3" />
@@ -1205,7 +1205,7 @@ console.log(data.content);`;
                     <div className="flex items-start justify-between gap-4">
                       <div className="space-y-2">
                         <h3 className="text-[17px] font-bold text-foreground group-hover:text-primary transition-colors leading-snug">{article.title}</h3>
-                        <div className="flex items-center gap-4 font-mono text-[11px] text-[#6B7280] tracking-wider uppercase">
+                        <div className="flex items-center gap-4 font-mono text-[11px] text-[#9CA3AF] tracking-wider uppercase">
                           <span>{article.date}</span>
                           <span>·</span>
                           <span>{article.readTime}</span>

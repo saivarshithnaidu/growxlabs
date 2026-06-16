@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     title: "GrowXLabsTech Insights — AI, Automation & High-Performance Engineering",
-    description: "Explore premium editorial insights, research, and deep-dives on background AI agents, business automation workflows, Next.js engineering, and digital growth systems from the GrowXLabsTech studio.",
+    description: "Explore engineering insights, research papers, and technical deep-dives on background AI agents, backend automation engines, Next.js architecture, and AI-native software infrastructure from the GrowXLabsTech team.",
     alternates: {
       canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages
@@ -169,7 +169,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
     "@id": `https://growxlabs.tech/${locale}/blog/#webpage`,
     "url": `https://growxlabs.tech/${locale}/blog`,
     "name": "GrowXLabsTech Insights — AI, Automation & High-Performance Engineering",
-    "description": "Explore premium editorial insights, research, and deep-dives on background AI agents, business automation workflows, Next.js engineering, and digital growth systems from the GrowXLabsTech studio.",
+    "description": "Explore engineering insights, research papers, and technical deep-dives on background AI agents, backend automation engines, Next.js architecture, and AI-native software infrastructure from the GrowXLabsTech team.",
     "publisher": {
       "@type": "Organization",
       "name": "GrowXLabsTech",
@@ -211,7 +211,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
               Insights
             </h1>
             <p className="text-[14px] text-muted-foreground leading-relaxed max-w-xl mx-auto">
-              Curated case studies, engineering papers, and deep-dives from the GrowXLabsTech studio.
+              Curated engineering papers, case studies, and technical deep-dives from the GrowXLabsTech team.
             </p>
           </Reveal>
         </header>

@@ -235,7 +235,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
 
             {/* Swiss Grid Metadata Box */}
             <Reveal y={35} delay={0.3}>
-              <div className="grid grid-cols-3 gap-6 font-mono text-[10px] tracking-[0.15em] text-[#6B7280] uppercase border-t border-b border-border py-6">
+              <div className="grid grid-cols-3 gap-6 font-mono text-[10px] tracking-[0.15em] text-[#9CA3AF] uppercase border-t border-b border-border py-6">
                 <div>
                   <span className="text-[#9CA3AF] block mb-1">Author</span>
                   <div className="flex items-center gap-1.5 text-foreground font-bold">
@@ -399,7 +399,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
                 TECHNICAL COMPARATIVE MATRIX (GEO MATRIX)
               </span>
               
-              <div className="w-full overflow-x-auto border border-border rounded-xl bg-white">
+              <div className="w-full overflow-x-auto border border-border rounded-xl bg-transparent">
                 <table className="w-full text-left font-mono text-xs border-collapse">
                   <thead>
                     <tr className="bg-background border-b border-border text-foreground font-bold">
@@ -408,7 +408,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
                       <th className="p-4 text-[#E60000]">LUCE AXIAL-FLUX ELECTRIC (NEW)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E5E2DC] text-[#A1A1AA]">
+                  <tbody className="divide-y divide-white/10 text-[#A1A1AA]">
                     <tr>
                       <td className="p-4 font-bold text-foreground">Power Density Core</td>
                       <td className="p-4">Mechanical displacement (~830 HP peak)</td>
@@ -639,7 +639,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
                 </p>
 
                 <div className="pt-6 font-mono text-sm font-bold text-[#E60000]">
-                  — GrowXLabsTech Editorial Studio
+                  — GrowXLabsTech Engineering Team
                 </div>
               </div>
             </section>
@@ -698,7 +698,7 @@ export default async function FerrariLuceBlogPage({ params }: { params: Promise<
             </h3>
             
             <p className="text-[#A1A1AA] text-[15px] max-w-lg mx-auto leading-relaxed">
-              Work directly with the GrowXLabs studio to transform your legacy operational paradigms, deploy autonomous background agents, and build state-of-the-art Web platforms.
+              Work directly with the GrowXLabs software engineering team to deploy autonomous background agents, scale backend systems, and build state-of-the-art software platforms.
             </p>
             
             <div className="pt-4">

@@ -493,22 +493,22 @@ export default async function ElonTrillionairePage({ params }: { params: Promise
 
             {/* FINAL CTA SECTION */}
             <Reveal y={20}>
-              <div className="my-16 bg-card rounded-2xl p-8 md:p-12 border border-border text-center space-y-6">
+              <div className="my-16 bg-transparent border border-white/10 rounded-2xl p-8 md:p-12 text-center space-y-6">
                 <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold">
                   Next-Gen digital engineering
                 </span>
                 <h3 className="text-[28px] md:text-[38px] font-black tracking-tight leading-tight text-foreground">
                   Building AI-native products
                   <br />
-                  and modern digital systems.
+                  and AI engineering labs.
                 </h3>
                 <p className="text-muted-foreground text-[15px] max-w-md mx-auto leading-relaxed">
-                  We design high-performance websites, advanced background automations, and custom workflows tailored for global scale.
+                  We build high-performance software, advanced backend automations, and custom infrastructure tailored for global scale.
                 </p>
                 <div className="pt-4">
                   <Link href="/contact">
-                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-8 h-12 text-[15px] font-semibold transition-all inline-flex items-center gap-2 hover:gap-3">
-                      Work With GrowXLabsTech <ArrowRight className="w-4.5 h-4.5" />
+                    <Button variant="outline" className="border-primary/20 hover:border-primary/50 text-primary rounded-md px-8 h-12 text-[15px] font-semibold transition-all">
+                      <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">Work With GrowXLabsTech <ArrowRight className="w-4 h-4 shrink-0" /></span>
                     </Button>
                   </Link>
                 </div>

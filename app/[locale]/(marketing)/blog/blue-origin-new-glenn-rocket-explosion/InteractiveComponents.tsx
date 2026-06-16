@@ -53,7 +53,7 @@ export function BlogShare({ title, slug }: { title: string; slug: string }) {
 
   return (
     <div className="flex flex-col gap-4 py-6 border-t border-b border-border my-10 animate-fade-in">
-      <p className="font-mono text-[10px] tracking-[0.2em] text-[#6B7280] uppercase">Share this article</p>
+      <p className="font-mono text-[10px] tracking-[0.2em] text-[#9CA3AF] uppercase">Share this article</p>
       <div className="flex flex-wrap items-center gap-3">
         {shareLinks.map((link) => (
           <a
@@ -62,7 +62,7 @@ export function BlogShare({ title, slug }: { title: string; slug: string }) {
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-white text-foreground/90 text-[13px] font-medium transition-all duration-300 hover:border-current active:scale-[0.98]",
+              "flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/10 bg-transparent text-white text-[13px] font-medium transition-all duration-300 hover:border-current active:scale-[0.98]",
               link.color
             )}
           >
@@ -73,7 +73,7 @@ export function BlogShare({ title, slug }: { title: string; slug: string }) {
         <button
           onClick={handleCopy}
           className={cn(
-            "flex items-center gap-2 px-4 py-2.5 rounded-lg border text-[13px] font-medium transition-all duration-300 bg-white active:scale-[0.98] mr-auto",
+            "flex items-center gap-2 px-4 py-2.5 rounded-lg border text-[13px] font-medium transition-all duration-300 bg-transparent border border-white/10 active:scale-[0.98] mr-auto",
             copied
               ? "border-[#22C55E] text-[#22C55E] bg-[#22C55E]/5"
               : "border-border text-foreground/90 hover:border-primary hover:text-primary hover:bg-primary/5"
@@ -150,7 +150,7 @@ export function NewsletterCTA() {
             </button>
           </form>
         )}
-        <p className="text-[11px] text-[#6B7280] font-mono tracking-wide">
+        <p className="text-[11px] text-[#9CA3AF] font-mono tracking-wide">
           By subscribing, you agree to receive communications from GrowXLabsTech.
         </p>
       </div>

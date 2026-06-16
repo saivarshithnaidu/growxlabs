@@ -142,7 +142,7 @@ function FallbackVisual() {
     <div className="w-full h-full bg-[#0F0F12] flex items-center justify-center rounded-xl border border-white/5">
       <div className="text-center space-y-4">
         <RefreshCw className="w-10 h-10 text-primary animate-spin mx-auto opacity-40" />
-        <p className="text-xs text-[#6B7280] font-mono uppercase tracking-wider">Loading compute cell...</p>
+        <p className="text-xs text-[#9CA3AF] font-mono uppercase tracking-wider">Loading compute cell...</p>
       </div>
     </div>
   );
@@ -229,7 +229,7 @@ export function AIPipelineEvolution() {
       title: "Generative AI (Reactive)",
       subtitle: "The Text-Generation Wave",
       icon: Sparkles,
-      color: "border-[#D1D5DB] text-[#6B7280]",
+      color: "border-[#D1D5DB] text-[#9CA3AF]",
       glow: "shadow-[0_0_15px_rgba(107,114,128,0.15)]",
       desc: "First wave (2022-2024) optimized for passive content creation. Responds only when prompted and forgets context immediately.",
       workflow: ["User Input", "LLM Inference", "Output Generated", "Session Terminated"],
@@ -264,13 +264,13 @@ export function AIPipelineEvolution() {
           Evolutionary Blueprint
         </span>
         <h4 className="text-xl font-black text-foreground mt-3 tracking-tight">The Journey from Generation to Utility</h4>
-        <p className="text-xs text-[#6B7280] mt-1 max-w-md mx-auto">
+        <p className="text-xs text-[#9CA3AF] mt-1 max-w-md mx-auto">
           Click on any phase below to examine the internal loop architecture, metrics, and business impact.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="grid grid-cols-3 gap-2 p-1 bg-[#EDEAE4] rounded-lg border border-border mb-8">
+      <div className="grid grid-cols-3 gap-2 p-1 bg-white/[0.03] rounded-lg border border-white/10 mb-8">
         {steps.map((step, idx) => {
           const Icon = step.icon;
           const isActive = idx === activeStep;
@@ -285,8 +285,8 @@ export function AIPipelineEvolution() {
                     ? "bg-[#10B981] text-white shadow-sm"
                     : idx === 1
                     ? "bg-[#C0F0FB] text-white shadow-sm"
-                    : "bg-white text-foreground shadow-sm"
-                  : "text-[#6B7280] hover:text-foreground"
+                    : "bg-white/10 text-white shadow-sm"
+                  : "text-[#9CA3AF] hover:text-foreground"
               )}
             >
               <Icon size={12} className={cn(!isActive && "opacity-75")} />
@@ -311,13 +311,13 @@ export function AIPipelineEvolution() {
             <div className="space-y-4">
               <div>
                 <h5 className="font-black text-lg text-foreground">{steps[activeStep].title}</h5>
-                <p className="text-[11px] font-mono text-[#6B7280] uppercase tracking-wider mt-0.5">{steps[activeStep].subtitle}</p>
+                <p className="text-[11px] font-mono text-[#9CA3AF] uppercase tracking-wider mt-0.5">{steps[activeStep].subtitle}</p>
               </div>
               <p className="text-[14px] leading-relaxed text-[#A1A1AA]">{steps[activeStep].desc}</p>
               
               {/* Animated Workflow Visualizer */}
               <div className="space-y-2 pt-2">
-                <p className="font-mono text-[9px] uppercase tracking-widest text-[#6B7280]">System Pipeline:</p>
+                <p className="font-mono text-[9px] uppercase tracking-widest text-[#9CA3AF]">System Pipeline:</p>
                 <div className="flex flex-wrap items-center gap-2">
                   {steps[activeStep].workflow.map((node, nodeIdx) => (
                     <React.Fragment key={nodeIdx}>
@@ -325,7 +325,7 @@ export function AIPipelineEvolution() {
                         {node}
                       </span>
                       {nodeIdx < steps[activeStep].workflow.length - 1 && (
-                        <span className="text-xs text-[#6B7280]">➔</span>
+                        <span className="text-xs text-[#9CA3AF]">➔</span>
                       )}
                     </React.Fragment>
                   ))}
@@ -334,13 +334,13 @@ export function AIPipelineEvolution() {
             </div>
 
             {/* Right: Metrics Table */}
-            <div className="bg-[#F9F8F6] border border-border rounded-lg p-5 flex flex-col justify-center space-y-4">
-              <h6 className="font-mono text-[9px] uppercase tracking-wider text-[#6B7280] border-b border-border pb-2">
+            <div className="bg-white/[0.02] border border-border rounded-lg p-5 flex flex-col justify-center space-y-4">
+              <h6 className="font-mono text-[9px] uppercase tracking-wider text-[#9CA3AF] border-b border-border pb-2">
                 Performance Indicators
               </h6>
               {Object.entries(steps[activeStep].metrics).map(([key, val]) => (
                 <div key={key} className="flex justify-between items-center text-xs font-mono">
-                  <span className="capitalize text-[#6B7280]">{key}:</span>
+                  <span className="capitalize text-[#9CA3AF]">{key}:</span>
                   <span className="font-bold text-foreground">{val}</span>
                 </div>
               ))}
@@ -514,7 +514,7 @@ export function ModelVsInfrastructure() {
               "py-3 text-[11px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer flex items-center justify-center gap-2",
               activeView === "model"
                 ? "bg-[#D97706] text-white shadow-md"
-                : "text-[#6B7280] hover:text-white"
+                : "text-[#9CA3AF] hover:text-white"
             )}
           >
             <Cpu size={13} />
@@ -526,7 +526,7 @@ export function ModelVsInfrastructure() {
               "py-3 text-[11px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer flex items-center justify-center gap-2",
               activeView === "infra"
                 ? "bg-[#C0F0FB] text-white shadow-md shadow-[#C0F0FB]/20"
-                : "text-[#6B7280] hover:text-white"
+                : "text-[#9CA3AF] hover:text-white"
             )}
           >
             <Factory size={13} />
@@ -856,7 +856,7 @@ export function UsefulAIOrchestrator() {
         <h4 className="text-xl font-black text-foreground mt-3 tracking-tight">
           How Useful AI Replaces Manual Workflows
         </h4>
-        <p className="text-xs text-[#6B7280] mt-1 max-w-md mx-auto">
+        <p className="text-xs text-[#9CA3AF] mt-1 max-w-md mx-auto">
           Watch the AI system autonomously execute a full project management cycle — no human prompts required.
         </p>
       </div>
@@ -878,7 +878,7 @@ export function UsefulAIOrchestrator() {
                     ? "border-primary bg-primary/5 shadow-md shadow-[#C0F0FB]/10"
                     : isComplete
                     ? "border-[#10B981]/30 bg-[#10B981]/5"
-                    : "border-border bg-[#F9F8F6] hover:border-primary/30"
+                    : "border-border bg-white/[0.02] hover:border-primary/30"
                 )}
                 onClick={() => { if (!isRunning) setActiveNode(idx); }}
                 animate={isActive ? { scale: [1, 1.03, 1] } : {}}
@@ -891,7 +891,7 @@ export function UsefulAIOrchestrator() {
                     ? "bg-[#10B981] text-white"
                     : isActive
                     ? "bg-[#C0F0FB] text-white"
-                    : "bg-[#E5E2DC] text-[#6B7280]"
+                    : "bg-[#E5E2DC] text-[#9CA3AF]"
                 )}>
                   {isComplete ? "✓" : idx + 1}
                 </span>
@@ -907,7 +907,7 @@ export function UsefulAIOrchestrator() {
                 </div>
                 <span className={cn(
                   "text-[10px] font-bold uppercase tracking-wider",
-                  isActive ? "text-primary" : isComplete ? "text-[#10B981]" : "text-[#6B7280]"
+                  isActive ? "text-primary" : isComplete ? "text-[#10B981]" : "text-[#9CA3AF]"
                 )}>
                   {node.label}
                 </span>
@@ -924,14 +924,14 @@ export function UsefulAIOrchestrator() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.2 }}
-            className="mt-6 bg-[#F9F8F6] border border-border rounded-lg p-5 flex items-start gap-4"
+            className="mt-6 bg-white/[0.02] border border-border rounded-lg p-5 flex items-start gap-4"
           >
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
               {React.createElement(nodes[activeNode].icon, { size: 18, style: { color: nodes[activeNode].color } })}
             </div>
             <div>
               <h5 className="font-bold text-foreground text-sm">{nodes[activeNode].label}</h5>
-              <p className="text-xs text-[#6B7280] mt-1 leading-relaxed">{nodes[activeNode].desc}</p>
+              <p className="text-xs text-[#9CA3AF] mt-1 leading-relaxed">{nodes[activeNode].desc}</p>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -1031,7 +1031,7 @@ export function BusinessReadinessGauge() {
         <h4 className="text-xl font-black text-foreground mt-3 tracking-tight">
           Is Your Business Agent-Ready?
         </h4>
-        <p className="text-xs text-[#6B7280] mt-1 max-w-md mx-auto">
+        <p className="text-xs text-[#9CA3AF] mt-1 max-w-md mx-auto">
           Rate your organization across the three critical pillars. Adjust the sliders to see your readiness score.
         </p>
       </div>
@@ -1054,7 +1054,7 @@ export function BusinessReadinessGauge() {
           </svg>
           <div className="text-center z-10">
             <span className="text-3xl font-black text-foreground">{totalScore}</span>
-            <span className="text-xs text-[#6B7280] block font-mono">/ 100</span>
+            <span className="text-xs text-[#9CA3AF] block font-mono">/ 100</span>
           </div>
         </div>
       </div>
@@ -1082,7 +1082,7 @@ export function BusinessReadinessGauge() {
                 </div>
                 <div>
                   <h5 className="font-bold text-foreground text-[13px]">{pillar.label}</h5>
-                  <p className="text-[10px] text-[#6B7280]">{pillar.desc}</p>
+                  <p className="text-[10px] text-[#9CA3AF]">{pillar.desc}</p>
                 </div>
               </div>
 
@@ -1096,7 +1096,7 @@ export function BusinessReadinessGauge() {
                       "py-2.5 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all cursor-pointer text-center",
                       scores[pillar.key] === level.value
                         ? "text-white shadow-sm"
-                        : "border-border text-[#6B7280] hover:border-current bg-[#F9F8F6]"
+                        : "border-border text-[#9CA3AF] hover:border-current bg-white/[0.02]"
                     )}
                     style={
                       scores[pillar.key] === level.value
@@ -1175,7 +1175,7 @@ export function DeveloperRoleShift() {
               "py-3 text-[11px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer flex items-center justify-center gap-2",
               era === "before"
                 ? "bg-[#6B7280] text-white"
-                : "text-[#6B7280] hover:text-white"
+                : "text-[#9CA3AF] hover:text-white"
             )}
           >
             <Code size={13} />
@@ -1187,7 +1187,7 @@ export function DeveloperRoleShift() {
               "py-3 text-[11px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer flex items-center justify-center gap-2",
               era === "after"
                 ? "bg-[#10B981] text-white shadow-md shadow-[#10B981]/20"
-                : "text-[#6B7280] hover:text-white"
+                : "text-[#9CA3AF] hover:text-white"
             )}
           >
             <Bot size={13} />
@@ -1210,7 +1210,7 @@ export function DeveloperRoleShift() {
                 <div className="flex items-center justify-between mb-1.5">
                   <span className={cn(
                     "text-[12px] font-medium tracking-tight flex items-center gap-2",
-                    skill.fading && era === "after" ? "text-[#6B7280] line-through opacity-60" : "text-white"
+                    skill.fading && era === "after" ? "text-[#9CA3AF] line-through opacity-60" : "text-white"
                   )}>
                     {skill.name}
                     {skill.fading && era === "after" && (

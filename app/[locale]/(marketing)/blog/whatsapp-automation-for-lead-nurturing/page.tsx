@@ -200,16 +200,16 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
               <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 WhatsApp
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Marketing
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Conversion
               </span>
             </div>
@@ -227,7 +227,7 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
             </p>
 
             {/* Meta Details Grid */}
-            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
+            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#9CA3AF] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
                 <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabsTech</span>
@@ -417,7 +417,7 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
                 <h3 className="text-3xl font-black tracking-tight text-foreground">
                   Frequently Asked Questions
                 </h3>
-                <p className="text-[#6B7280] text-[15px] max-w-xl leading-relaxed">
+                <p className="text-[#9CA3AF] text-[15px] max-w-xl leading-relaxed">
                   Key technical details regarding conversational sales architectures and WhatsApp API compliance.
                 </p>
               </div>
@@ -440,15 +440,15 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
                 <h3 className="text-[28px] md:text-[38px] font-black tracking-tight leading-tight text-foreground">
                   Building AI-native products
                   <br />
-                  and modern digital systems.
+                  and AI engineering labs.
                 </h3>
-                <p className="text-[#6B7280] text-[15px] max-w-md mx-auto leading-relaxed">
-                  We design high-performance websites, advanced background automations, and custom workflows tailored for global scale.
+                <p className="text-[#9CA3AF] text-[15px] max-w-md mx-auto leading-relaxed">
+                  We build high-performance software, advanced backend automations, and custom infrastructure tailored for global scale.
                 </p>
                 <div className="pt-4">
                   <Link href="/contact">
-                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-8 h-12 text-[15px] font-semibold transition-all inline-flex items-center gap-2 hover:gap-3">
-                      Work With GrowXLabsTech <ArrowRight className="w-4.5 h-4.5" />
+                    <Button variant="outline" className="border-primary/20 hover:border-primary/50 text-primary rounded-md px-8 h-12 text-[15px] font-semibold transition-all">
+                      <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">Work With GrowXLabsTech <ArrowRight className="w-4 h-4 shrink-0" /></span>
                     </Button>
                   </Link>
                 </div>
@@ -460,7 +460,7 @@ export default async function WhatsappAutomationStrategyPage({ params }: { param
             {/* ═══════════════════════════════════════════════════ */}
             <section className="mt-16 space-y-8">
               <div className="flex items-center justify-between pb-4 border-b border-border">
-                <h4 className="font-mono text-[11px] tracking-[0.15em] text-[#6B7280] uppercase font-bold">
+                <h4 className="font-mono text-[11px] tracking-[0.15em] text-[#9CA3AF] uppercase font-bold">
                   Related Insights
                 </h4>
                 <Link href="/blog" className="text-[12px] font-bold text-primary hover:underline inline-flex items-center gap-1">

@@ -214,16 +214,16 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
               <span className="text-[11px] font-mono tracking-[0.2em] text-primary uppercase font-bold bg-primary/5 px-2.5 py-1 rounded">
                 Space
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Technology
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 /
               </span>
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase">
+              <span className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase">
                 Innovation
               </span>
             </div>
@@ -236,7 +236,7 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
             </h2>
 
             {/* Meta Bar */}
-            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#6B7280] uppercase border-t border-b border-border py-5">
+            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-6 sm:gap-10 font-mono text-[11px] tracking-[0.1em] text-[#9CA3AF] uppercase border-t border-b border-border py-5">
               <div className="flex items-center gap-2">
                 <User className="w-3.5 h-3.5 text-primary" />
                 <span>By GrowXLabsTech</span>
@@ -422,7 +422,7 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
                   <p className="text-[17px] italic leading-relaxed text-foreground/90 font-medium">
                     &ldquo;...very rough day&rdquo;
                   </p>
-                  <cite className="text-[13px] text-[#6B7280] font-mono mt-3 block not-italic">— Jeff Bezos</cite>
+                  <cite className="text-[13px] text-[#9CA3AF] font-mono mt-3 block not-italic">— Jeff Bezos</cite>
                 </blockquote>
                 <p>
                   Despite the setback, Blue Origin has made it clear that development will continue. The company plans to investigate the root cause of the anomaly, rebuild, and return New Glenn to flight operations as quickly as possible.
@@ -519,7 +519,7 @@ export default async function NewGlennExplosionPage({ params }: { params: Promis
 
             {/* Related Essays Section */}
             <div className="mt-16 pt-16 border-t border-[#E5E2DC]">
-              <h3 className="text-[11px] font-mono tracking-[0.2em] text-[#6B7280] uppercase font-bold mb-8">Related Essays</h3>
+              <h3 className="text-[11px] font-mono tracking-[0.2em] text-[#9CA3AF] uppercase font-bold mb-8">Related Essays</h3>
               <RelatedEssaysList essays={relatedEssays} />
             </div>
 
