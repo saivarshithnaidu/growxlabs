@@ -50,10 +50,10 @@ export default function ProductsPage() {
   return (
     <>
       <PageHero
-        title="Products"
-        viewingText="PRODUCTS"
-        exploreText="CATALOG"
-        tagline="OWN PRODUCTS"
+        title="AI Lab"
+        viewingText="AI LAB"
+        exploreText="LABS"
+        tagline="OWN LABS"
       />
 
       <div className="w-full px-6 md:px-10 xl:px-16 2xl:px-24 pb-24 border-t border-border/20 pt-16">
@@ -65,10 +65,10 @@ export default function ProductsPage() {
             className="mb-14 md:mb-16 text-center pt-10 md:pt-12"
           >
             <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.2em] text-[#355CFF] mb-4 block">
-              Product catalog
+              AI LAB
             </span>
             <h2 className="text-[clamp(1.65rem,4vw,2.75rem)] font-black text-foreground tracking-tight mb-5 leading-[1.12] max-w-4xl mx-auto">
-              Products that prove our engineering speed.
+              Labs that prove our engineering speed.
             </h2>
 
           </motion.div>
