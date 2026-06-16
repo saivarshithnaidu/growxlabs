@@ -25,6 +25,34 @@ export interface CaseStudy {
 
 export const projects: CaseStudy[] = [
   {
+    slug: "3rdmind",
+    title: "3rdMind",
+    tag: "AI Agents",
+    category: "AI Agent Platform",
+    description: "Multi-agent startup orchestration platform where AI C-suite executives collaborate, execute real business tasks, and continuously improve through a compounding intelligence loop.",
+    image: "/portfolio/3rdmind.png",
+    problem: "Solo founders and lean teams lack the bandwidth to handle strategy, marketing, sales, finance, and engineering simultaneously — leading to slow execution and missed opportunities.",
+    solution: "Built an autonomous agent squad of six AI C-suite roles that decompose founder goals into executable tasks, learn from real-world outcomes, and compound their effectiveness over time.",
+    tech: ["Next.js", "Supabase Realtime", "OpenRouter", "Multi-Agent"],
+    metric: "Agent Intelligence",
+    link: "https://3rdmind.growxlabs.tech",
+    status: "Beta",
+    results: [
+      { label: "AI Agents", value: "6 C-Suite" },
+      { label: "Feedback Loops", value: "3 Signals" },
+      { label: "Self-Improvement", value: "Active" },
+      { label: "Task Automation", value: "85%" }
+    ],
+    gallery: [],
+    features: [
+      { title: "C-Suite Agent Squad", desc: "Six specialized AI agents (CEO, CMO, CTO, CFO, CRO, CSO) that collaborate on real business decisions." },
+      { title: "Compounding Intelligence", desc: "Self-improving feedback loop where agents learn from judge scores, outcome tracking, and human feedback." },
+      { title: "Council Matrix", desc: "AI board meetings where agents debate proposals and reach consensus before executing high-stakes decisions." },
+      { title: "Outcome Tracking", desc: "Monitors real-world results like email replies, lead conversions, and code deployments to refine agent behavior." },
+      { title: "Strategy Versioning", desc: "Compiled prompt upgrades with confidence scoring, decay algorithms, and safe rollback capabilities." }
+    ]
+  },
+  {
     slug: "resumeforgeai",
     title: "ResumeForgeAI",
     tag: "AI Product",
@@ -101,34 +129,6 @@ export const projects: CaseStudy[] = [
       { title: "Candidate Pipeline", desc: "Unified visual dashboard for tracking candidate stages and qualification status." },
       { title: "Workflow Automation", desc: "Seamless workflow architecture routing candidate alerts straight to client CRMs." },
       { title: "Analytics Dashboard", desc: "Real-time visibility into screening latency, source channels, and match quality." }
-    ]
-  },
-  {
-    slug: "3rdmind",
-    title: "3rdMind",
-    tag: "AI Agents",
-    category: "AI Agent Platform",
-    description: "Multi-agent startup orchestration platform where AI C-suite executives collaborate, execute real business tasks, and continuously improve through a compounding intelligence loop.",
-    image: "/portfolio/3rdmind.png",
-    problem: "Solo founders and lean teams lack the bandwidth to handle strategy, marketing, sales, finance, and engineering simultaneously — leading to slow execution and missed opportunities.",
-    solution: "Built an autonomous agent squad of six AI C-suite roles that decompose founder goals into executable tasks, learn from real-world outcomes, and compound their effectiveness over time.",
-    tech: ["Next.js", "Supabase Realtime", "OpenRouter", "Multi-Agent"],
-    metric: "Agent Intelligence",
-    link: "https://3rdmind.growxlabs.tech",
-    status: "Beta",
-    results: [
-      { label: "AI Agents", value: "6 C-Suite" },
-      { label: "Feedback Loops", value: "3 Signals" },
-      { label: "Self-Improvement", value: "Active" },
-      { label: "Task Automation", value: "85%" }
-    ],
-    gallery: [],
-    features: [
-      { title: "C-Suite Agent Squad", desc: "Six specialized AI agents (CEO, CMO, CTO, CFO, CRO, CSO) that collaborate on real business decisions." },
-      { title: "Compounding Intelligence", desc: "Self-improving feedback loop where agents learn from judge scores, outcome tracking, and human feedback." },
-      { title: "Council Matrix", desc: "AI board meetings where agents debate proposals and reach consensus before executing high-stakes decisions." },
-      { title: "Outcome Tracking", desc: "Monitors real-world results like email replies, lead conversions, and code deployments to refine agent behavior." },
-      { title: "Strategy Versioning", desc: "Compiled prompt upgrades with confidence scoring, decay algorithms, and safe rollback capabilities." }
     ]
   },
   /*
