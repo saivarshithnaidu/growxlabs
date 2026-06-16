@@ -56,15 +56,15 @@ export default function ProductsPage() {
         tagline="OWN LABS"
       />
 
-      <div className="w-full px-6 md:px-10 xl:px-16 2xl:px-24 pb-24 border-t border-border/20 pt-16">
-        <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
+      <div className="w-full px-4 sm:px-6 md:px-8 xl:px-10 pb-24 border-t border-border/20 pt-16">
+        <div className="max-w-[1780px] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
             className="mb-14 md:mb-16 text-center pt-10 md:pt-12"
           >
-            <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.2em] text-[#355CFF] mb-4 block">
+            <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.2em] text-primary mb-4 block">
               AI LAB
             </span>
             <h2 className="text-[clamp(1.65rem,4vw,2.75rem)] font-black text-foreground tracking-tight mb-5 leading-[1.12] max-w-4xl mx-auto">
@@ -85,7 +85,7 @@ export default function ProductsPage() {
                 <Card className="p-7 h-full flex flex-col justify-between">
                   <div className="space-y-6">
                     <div className="h-12 w-12 rounded-md bg-secondary flex items-center justify-center">
-                      <product.icon size={24} className="text-[#355CFF]" aria-hidden="true" />
+                      <product.icon size={24} className="text-primary" aria-hidden="true" />
                     </div>
                     <h3 className="text-2xl font-black text-foreground tracking-tight">{product.title}</h3>
                     <p className="text-muted-foreground leading-relaxed text-sm">{product.description}</p>
@@ -98,7 +98,7 @@ export default function ProductsPage() {
                             key={feature}
                             className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground bg-muted border border-border px-2.5 py-1 rounded-md"
                           >
-                            <CheckCircle2 className="h-3 w-3 text-[#355CFF]" aria-hidden="true" />
+                            <CheckCircle2 className="h-3 w-3 text-primary" aria-hidden="true" />
                             {feature}
                           </span>
                         ))}
@@ -114,8 +114,8 @@ export default function ProductsPage() {
                       <p className="text-sm font-semibold text-foreground">{product.stack}</p>
                     </div>
                     <Link href="/contact">
-                      <Button variant="outline" className="w-full h-12 rounded-md font-semibold inline-flex items-center gap-2">
-                        Request access <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                      <Button variant="outline" className="w-full h-12 rounded-md font-semibold flex items-center justify-center gap-1.5 text-xs sm:text-sm whitespace-nowrap px-3">
+                        Request Access <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                       </Button>
                     </Link>
                   </div>
