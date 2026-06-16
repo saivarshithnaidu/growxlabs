@@ -139,7 +139,9 @@ export default async function LocaleLayout({
                     "AI Chatbots",
                     "Generative AI",
                     "Prompt Engineering",
-                    "RAG Systems"
+                    "RAG Systems",
+                    "Multi-Agent Systems",
+                    "Agentic AI"
                   ],
                   "sameAs": [
                     "https://www.linkedin.com/company/growxlabs",
@@ -195,6 +197,16 @@ export default async function LocaleLayout({
                   "operatingSystem": "Web",
                   "creator": { "@id": "https://growxlabs.tech/#organization" },
                   "description": "AI driven recruitment and talent acquisition platform."
+                },
+                {
+                  "@type": "SoftwareApplication",
+                  "@id": "https://growxlabs.tech/products/3rdmind#product",
+                  "name": "3RDMIND",
+                  "applicationCategory": "BusinessApplication",
+                  "operatingSystem": "Web",
+                  "creator": { "@id": "https://growxlabs.tech/#organization" },
+                  "description": "Autonomous startup simulation and multi-agent coordination system that automates business operations.",
+                  "url": "https://growxlabs.tech/products/3rdmind"
                 }
               ]
             })
@@ -244,7 +256,9 @@ export default async function LocaleLayout({
                 "Restaurant Technology",
                 "Real Estate CRM",
                 "WhatsApp Automation",
-                "Lead Generation"
+                "Lead Generation",
+                "Multi-Agent Systems",
+                "Agentic AI"
               ]
             })
           }}

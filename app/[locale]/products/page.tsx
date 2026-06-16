@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cpu, Users, ChevronRight, Binary, CheckCircle2 } from "lucide-react";
+import { Cpu, Users, ChevronRight, Binary, CheckCircle2, Network } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
@@ -28,6 +28,13 @@ const products = [
     features: ["Sentiment Analysis", "Skill Scoring", "n8n Automation"],
     stack: "Next.js, n8n, Tailwind CSS",
     icon: Users,
+  },
+  {
+    title: "3RDMIND",
+    description: "An autonomous startup simulation platform where C-suite agents collaborate, run business tasks, and improve via feedback loops.",
+    features: ["Agent Collaboration", "Feedback Loops", "Simulation Engine"],
+    stack: "Next.js, Supabase, OpenRouter",
+    icon: Network,
   },
 ];
 
@@ -59,7 +66,7 @@ export default function ProductsPage() {
 
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {products.map((product, index) => (
               <motion.div
                 key={product.title}

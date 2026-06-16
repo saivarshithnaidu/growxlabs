@@ -288,8 +288,8 @@ export function BlogInteractiveList({ posts, featuredPost }: BlogInteractiveList
                 </h3>
               </div>
 
-              {/* 3-column Projects grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* 4-column Projects grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
                   {
                     name: "ResumeForgeAI",
@@ -314,6 +314,14 @@ export function BlogInteractiveList({ posts, featuredPost }: BlogInteractiveList
                     link: "https://recruitaitech.in",
                     bannerColor: "border-emerald-900/40 text-emerald-300",
                     label: "Automation Portal"
+                  },
+                  {
+                    name: "3RDMIND",
+                    desc: "Autonomous multi-agent startup simulation and self-improving operational intelligence platform.",
+                    image: "/portfolio/3rdmind.png",
+                    link: "https://3rdmind.growxlabs.tech",
+                    bannerColor: "border-cyan-900/40 text-cyan-300",
+                    label: "Agentic AI Platform"
                   }
                 ].map((proj) => (
                   <div key={proj.name} className="bg-transparent border border-white/10 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-white/20 transition-all duration-300 h-full group/card">
