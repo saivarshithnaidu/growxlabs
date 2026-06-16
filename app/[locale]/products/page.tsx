@@ -1,13 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cpu, Users, ChevronRight, Binary, CheckCircle2, Network } from "lucide-react";
+import { Cpu, Users, ChevronRight, Binary, CheckCircle2, Network, Terminal } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { PageHero } from "@/components/marketing/PageHero";
 
 const products = [
+  {
+    title: "Pipper",
+    description: "A developer-focused local agent harness and desktop runtime to run and orchestrate Codex, Claude-Code, and OpenCode workflows side-by-side.",
+    features: ["Subscription Hub", "Shared Context", "Cross-Verification"],
+    stack: "Electron, Next.js, Node.js",
+    icon: Terminal,
+  },
   {
     title: "ResumeForgeAI",
     description: "An intelligent career platform that helps job seekers create structured, ATS-aware resumes with role-specific positioning.",
@@ -66,7 +73,7 @@ export default function ProductsPage() {
 
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {products.map((product, index) => (
               <motion.div
                 key={product.title}

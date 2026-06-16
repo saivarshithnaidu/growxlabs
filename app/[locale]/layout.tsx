@@ -141,7 +141,10 @@ export default async function LocaleLayout({
                     "Prompt Engineering",
                     "RAG Systems",
                     "Multi-Agent Systems",
-                    "Agentic AI"
+                    "Agentic AI",
+                    "AI Developer Tools",
+                    "Agent Runtimes",
+                    "Multi-Agent Orchestration"
                   ],
                   "sameAs": [
                     "https://www.linkedin.com/company/growxlabs",
@@ -207,6 +210,16 @@ export default async function LocaleLayout({
                   "creator": { "@id": "https://growxlabs.tech/#organization" },
                   "description": "Autonomous startup simulation and multi-agent coordination system that automates business operations.",
                   "url": "https://growxlabs.tech/products/3rdmind"
+                },
+                {
+                  "@type": "SoftwareApplication",
+                  "@id": "https://growxlabs.tech/products/pipper#product",
+                  "name": "Pipper",
+                  "applicationCategory": "DeveloperApplication",
+                  "operatingSystem": "All",
+                  "creator": { "@id": "https://growxlabs.tech/#organization" },
+                  "description": "Unified agent developer harness and desktop runtime for Codex, Claude-Code, and OpenCode orchestration.",
+                  "url": "https://growxlabs.tech/products/pipper"
                 }
               ]
             })

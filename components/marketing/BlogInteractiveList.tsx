@@ -288,9 +288,17 @@ export function BlogInteractiveList({ posts, featuredPost }: BlogInteractiveList
                 </h3>
               </div>
 
-              {/* 4-column Projects grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* 5-column Projects grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                 {[
+                  {
+                    name: "Pipper",
+                    desc: "Developer-focused local agent harness and desktop runtime to run Codex, Claude-Code, and OpenCode workflows side-by-side.",
+                    image: "/portfolio/pipper.png",
+                    link: "https://pipper.dev",
+                    bannerColor: "border-indigo-900/40 text-indigo-300",
+                    label: "Developer Tool"
+                  },
                   {
                     name: "ResumeForgeAI",
                     desc: "AI powered career platform for Indian professionals. Resume builder, ATS optimizer, and job matching.",

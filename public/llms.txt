@@ -21,6 +21,8 @@ Specialization: Businesses in USA, UK,
 Australia, UAE, Canada, and globally.
 
 ## Live Products
+- Pipper: Unified agent developer harness and desktop runtime for Codex, Claude-Code, and OpenCode (pipper.dev)
+- 3RDMIND: Autonomous multi-agent startup simulation and self-improving operational intelligence platform (3rdmind.growxlabs.tech)
 - ResumeForgeAI: AI career platform, 500+ users
 - UniversalAI: Multi-model AI chat platform
 - RecruitAI: AI recruitment automation

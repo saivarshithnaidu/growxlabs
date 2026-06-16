@@ -47,6 +47,16 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
   // Define dynamic blueprints for other projects
   const blueprints: Record<string, { title: string; code: string }[]> = {
+    pipper: [
+      {
+        title: "Agent Multi-Runtime Spawn",
+        code: `// Spawn Codex, Claude-Code, and OpenCode workflows side-by-side\nconst harness = new AgentHarness({\n  workspace: "./src",\n  subscriptions: {\n    codex: process.env.CODEX_TOKEN,\n    claude: process.env.CLAUDE_TOKEN,\n    opencode: process.env.OPENCODE_TOKEN\n  }\n});\n\nawait harness.orchestrate({\n  task: "Implement authentication and cross-verify implementation",\n  collaborators: ["claude-code", "opencode"]\n});`
+      },
+      {
+        title: "Workspace Credential Hub",
+        code: `// Securely inject shared workspace context and credentials\nconst session = await CredentialHub.authorize({\n  provider: "pipper.dev",\n  scope: ["codex", "claude-code", "opencode"]\n});\n\nconst workspace = await LocalWorkspace.bind(session.workspaceId);`
+      }
+    ],
     universalai: [
       {
         title: "Multi-Model Router",
@@ -89,6 +99,32 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
     solutionPoints: string[];
     engineeringScope: string[];
   }> = {
+    pipper: {
+      oneLineValueProp: "Unified developer harness to orchestrate Codex, Claude-Code, and OpenCode side-by-side.",
+      challengeTitle: "The Challenge",
+      challengeDesc: "Software engineers waste valuable developer velocity switching between proprietary terminal interfaces, managing multiple disconnected AI subscriptions, and lacking a unified workspace to cross-verify agent output.",
+      challengePoints: [
+        "Fragmented local execution loops for terminal-based AI tools.",
+        "High cost of maintaining multiple individual agent enterprise subscriptions.",
+        "Risk of code regression from unchecked single-agent generation.",
+        "No shared filesystem context or context-aware clipboard across model providers."
+      ],
+      solutionTitle: "The Solution",
+      solutionDesc: "A sleek local desktop harness (Omni) and secure web hub (pipper.dev) that centralizes agent access, shares credentials securely, and coordinates multi-agent development tasks in real-time.",
+      solutionPoints: [
+        "Unified API Hub: Single subscription gateway for Codex, Claude-Code, and OpenCode runtimes.",
+        "Omni Desktop Shell: Tabbed local runtime workspace linking terminals directly to the project filesystem.",
+        "Parallel Agent Verification: Multi-agent execution where one agent checks and edits the code output of another.",
+        "Local Sandboxed State: Full filesystem boundaries preventing agents from reading or writing unauthorized folders."
+      ],
+      engineeringScope: [
+        "Electron Desktop Runtime",
+        "Multi-Agent Terminal Emulation",
+        "Credential Hub Architecture",
+        "Local Filesystem Security Boundaries",
+        "TypeScript/Node Core Client"
+      ]
+    },
     universalai: {
       oneLineValueProp: "Bridging linguistic diversity and multi-model execution through autonomous orchestration.",
       challengeTitle: "The Challenge",
@@ -231,6 +267,45 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       bullets: [
         "Preserved Syntax Translation: Dynamically translates active chat threads across languages without breaking code snippet blocks or Markdown elements.",
         "Usage Metering & billing: Stripe and Razorpay integrations monitor account limits and lock premium capabilities behind secure sub checks."
+      ]
+    }
+  ];
+
+  const pipperSpecs = [
+    { component: "Desktop Runtime", tech: "Electron, HTML5, Vanilla CSS", description: "Provides a lightweight desktop container that integrates local terminal shells and workspaces." },
+    { component: "Orchestration Client", tech: "Node.js v20+, TypeScript", description: "Runs parallel subprocess instances of Codex, Claude-Code, and OpenCode, managing standard streams." },
+    { component: "Workspace Sandboxing", tech: "Node fs & OS Security Boundaries", description: "Enforces strict read/write boundaries for agent file access, preventing modification of external directories." },
+    { component: "Credential Gateway", tech: "pipper.dev API Service", description: "Centralized authorization service validating model subscriptions and session tokens." },
+    { component: "Cross-Verification Engine", tech: "Llama 3 & Claude Sonnet", description: "Compares agent-generated code drafts, runs automated syntax parsers, and merges refined blocks." }
+  ];
+
+  const pipperFeatures = [
+    {
+      title: "Subscription Hub & Authentication",
+      bullets: [
+        "Single-Sign-On Access: Authenticate your Codex, Claude-Code, and OpenCode enterprise subscriptions in a unified login session.",
+        "Secure Token Storage: Uses standard keychain encryption to securely store API credentials locally without exposing them to cloud relays."
+      ]
+    },
+    {
+      title: "Side-by-Side Agent Orchestration",
+      bullets: [
+        "Concurrent Runtimes: Runs multiple terminal-based AI agents concurrently to perform separate project development tasks.",
+        "Interactive Terminal Panel: Premium tabbed terminal grid allowing you to view running stdout/stderr of each agent live."
+      ]
+    },
+    {
+      title: "Parallel Agent Code Verification",
+      bullets: [
+        "Double-Agent Auditing: Configures one agent runtime to audit and review the code modifications of another agent prior to saving.",
+        "Syntax Checkers & Compilers: Auto-executes local build scripts and syntax check tools to verify correctness of generated codes."
+      ]
+    },
+    {
+      title: "Safe Local Workspace Harness",
+      bullets: [
+        "Filesystem Safety Boundaries: Enforces sandboxing controls where agents can only access files inside the approved project root folder.",
+        "Smart Workspace Diffing: Generates git-compatible diff patches, allowing developers to review changes before committing them."
       ]
     }
   ];
@@ -1474,6 +1549,328 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
               </div>
             </section>
 
+          </div>
+        </div>
+      </>
+    );
+  } else if (project.slug === "pipper") {
+    return (
+      <>
+        <DynamicSchema
+          graph={[
+            {
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "@id": "https://growxlabs.tech/portfolio/pipper#product",
+              "name": "Pipper",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "All",
+              "description": "Unified agent developer harness and desktop runtime that lets developers orchestrate Codex, Claude-Code, and OpenCode workflows side-by-side in one local hub.",
+              "offers": {
+                "@type": "Offer",
+                "price": "0"
+              }
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "CreativeWork",
+              "@id": "https://growxlabs.tech/portfolio/pipper#case-study",
+              "name": "How We Built Pipper",
+              "headline": "Pipper — Unified Agent Developer Harness & Desktop Runtime Built by GrowXLabs",
+              "description": "An in-depth look at how GrowXLabs engineered a secure, parallel local agent workspace harness.",
+              "author": {
+                "@type": "Organization",
+                "name": "GrowXLabs",
+                "url": "https://growxlabs.tech"
+              }
+            }
+          ]}
+        />
+        <div className="pt-24 pb-32 w-full bg-[#050505] text-zinc-300 font-sans selection:bg-primary/20 selection:text-white">
+          <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-12 xl:px-16 w-full">
+            
+            {/* Hero Section */}
+            <section className="mb-20">
+              <Link href="/portfolio" className="inline-block mb-10">
+                <Button variant="ghost" className="text-zinc-500 hover:text-white h-auto py-1 pl-0 font-bold tracking-tight text-xs uppercase cursor-pointer">
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Portfolio
+                </Button>
+              </Link>
+ 
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                {/* Left Column: Content */}
+                <div className="lg:col-span-6 space-y-6">
+                  <span className="px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary border border-primary/20 inline-block w-fit">
+                    AI Developer Tools
+                  </span>
+                  
+                  <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-none uppercase">
+                    Pipper.
+                  </h1>
+                  
+                  <p className="text-zinc-400 text-lg sm:text-xl md:text-2xl font-light leading-relaxed tracking-tight max-w-3xl">
+                    Unified Multi-Agent Harness &amp; Desktop Runtime for AI-Native Engineering.
+                  </p>
+                  
+                  {/* Tech Chips & Live Case study button */}
+                  <div className="flex flex-wrap items-center gap-4 pt-4">
+                    <div className="flex flex-wrap gap-2">
+                      {project.tech.map((t, i) => (
+                        <span key={i} className="px-3 py-1 bg-white/[0.03] border border-white/[0.08] rounded-full text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    {project.link && (
+                      <a href={project.link} target="_blank" rel="noopener noreferrer" className="inline-block">
+                        <Button className="h-9 px-5 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 text-xs font-bold uppercase tracking-wider rounded-full cursor-pointer">
+                          Live Site &rarr;
+                        </Button>
+                      </a>
+                    )}
+                  </div>
+                </div>
+ 
+                {/* Right Column: Showcase Image */}
+                <div className="lg:col-span-6 relative">
+                  {/* Background Glow */}
+                  <div className="absolute -inset-4 bg-primary/10 blur-2xl rounded-full opacity-40 pointer-events-none" />
+                  
+                  <div className="relative w-full h-0 pb-[56.25%] rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.01] shadow-2xl group transition-all duration-500 hover:scale-[1.01]">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-transparent opacity-40 pointer-events-none" />
+                    <Image
+                      src={project.image}
+                      alt="Pipper Showcase Screen"
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                </div>
+              </div>
+ 
+              {/* Metrics Grid */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-16">
+                {project.results.map((result, i) => (
+                  <div key={i} className="bg-white/[0.02] border border-white/[0.06] rounded-[24px] p-6 md:p-8 relative overflow-hidden group hover:border-white/[0.12] transition-all duration-300 shadow-sm">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    <span className="text-3xl md:text-5xl font-extrabold text-primary mb-2 tracking-tight block leading-none">{result.value}</span>
+                    <span className="text-zinc-500 uppercase text-[10px] font-bold tracking-widest block">{result.label}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+ 
+            {/* Overview Section */}
+            <section className="my-20 border-t border-white/[0.06] pt-20">
+              <div className="max-w-4xl space-y-6">
+                <span className="text-primary font-mono text-[10px] uppercase tracking-widest">01 / Overview</span>
+                <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Overview</h2>
+                <p className="text-zinc-400 text-lg font-light leading-relaxed">
+                  Pipper is a local developer harness and desktop interface (Omni) that centralizes agent-based coding runtimes. By launching Codex, Claude-Code, and OpenCode subprocesses concurrently within a single sandboxed session, the runtime shares workspace context, synchronizes credential access, and coordinates parallel agent operations. Developers can instruct one agent to implement feature blocks, while other runtimes actively audit outputs, run syntax compilers, and perform local check routines before safe write-backs to the project file system. Powered by Electron and Node, Pipper bridges the gap between fragmented command-line agents and unified IDE workflows.
+                </p>
+              </div>
+            </section>
+ 
+            {/* Technical Specifications Section */}
+            <section className="my-20 border-t border-white/[0.06] pt-20">
+              <div className="mb-10">
+                <span className="text-primary font-mono text-[10px] uppercase tracking-widest">02 / Architecture Specs</span>
+                <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mt-2">Technical Specifications</h2>
+              </div>
+              <div className="overflow-x-auto border border-white/[0.08] rounded-2xl bg-white/[0.01]">
+                <table className="min-w-full divide-y divide-white/[0.08] text-sm text-left">
+                  <thead className="bg-white/[0.02] text-xs font-bold uppercase tracking-wider text-zinc-400">
+                    <tr>
+                      <th className="px-6 py-4">Component</th>
+                      <th className="px-6 py-4">Technology / Tool</th>
+                      <th className="px-6 py-4">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.06] text-zinc-300">
+                    {pipperSpecs.map((spec, i) => (
+                      <tr key={i} className="hover:bg-white/[0.01] transition-colors">
+                        <td className="px-6 py-4 font-bold text-white">{spec.component}</td>
+                        <td className="px-6 py-4 font-semibold text-primary">{spec.tech}</td>
+                        <td className="px-6 py-4 text-zinc-400 font-light">{spec.description}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+ 
+            {/* Core Features Section */}
+            <section className="my-20 border-t border-white/[0.06] pt-20">
+              <div className="mb-10">
+                <span className="text-primary font-mono text-[10px] uppercase tracking-widest">03 / Platform Modules</span>
+                <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mt-2">Core Features</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {pipperFeatures.map((feat, i) => (
+                  <div key={i} className="bg-white/[0.01] border border-white/[0.05] rounded-[24px] p-8 hover:border-white/[0.1] hover:bg-white/[0.02] transition-all duration-300 shadow-sm relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    <span className="text-primary font-mono text-xs font-bold block mb-2">0{i + 1}</span>
+                    <h3 className="text-xl font-bold text-white tracking-tight mb-4">{feat.title}</h3>
+                    <ul className="space-y-3">
+                      {feat.bullets.map((bullet, idx) => (
+                        <li key={idx} className="flex items-start gap-3 text-sm text-zinc-400 font-light leading-relaxed">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+ 
+            {/* Architecture & Flow Section */}
+            <section className="my-20 border-t border-white/[0.06] pt-20">
+              <div className="mb-10">
+                <span className="text-primary font-mono text-[10px] uppercase tracking-widest">04 / Systems Flow</span>
+                <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mt-2">Architecture & System Flow</h2>
+              </div>
+              
+              <div className="space-y-12">
+                {/* 2D SVG Diagram */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-white tracking-tight uppercase font-mono text-zinc-500">Workspace Orchestration Loop</h3>
+                  <div className="w-full border border-white/[0.08] bg-white/[0.01] rounded-2xl p-6 overflow-x-auto flex justify-center">
+                    <svg width="800" height="500" viewBox="0 0 800 500" fill="none" className="min-w-[800px] text-[10px] font-mono select-none">
+                      <defs>
+                        <linearGradient id="cardGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.04" />
+                          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.01" />
+                        </linearGradient>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#355CFF" />
+                        </marker>
+                      </defs>
+ 
+                      {/* Background grid */}
+                      <g stroke="#ffffff" strokeOpacity="0.02" strokeWidth="1">
+                        <path d="M0,50 H800 M0,100 H800 M0,150 H800 M0,200 H800 M0,250 H800 M0,300 H800 M0,350 H800 M0,400 H800 M0,450 H800" />
+                        <path d="M100,0 V500 M200,0 V500 M300,0 V500 M400,0 V500 M500,0 V500 M600,0 V500 M700,0 V500" />
+                      </g>
+ 
+                      {/* Flows / Lines */}
+                      <path d="M220,95 H320" stroke="#355CFF" strokeWidth="1.5" markerEnd="url(#arrow)" />
+                      <text x="230" y="85" fill="#355CFF">1. Trigger Goal</text>
+ 
+                      <path d="M460,95 H580" stroke="#355CFF" strokeWidth="1.5" markerEnd="url(#arrow)" />
+                      <text x="475" y="85" fill="#355CFF">2. Bind Workspace</text>
+ 
+                      <path d="M650,130 V240" stroke="#355CFF" strokeWidth="1.5" markerEnd="url(#arrow)" />
+                      <text x="660" y="185" fill="#355CFF">3. Parallel Exec</text>
+ 
+                      <path d="M580,275 H460" stroke="#355CFF" strokeWidth="1.5" markerEnd="url(#arrow)" />
+                      <text x="480" y="265" fill="#355CFF">4. Draft Diffs</text>
+ 
+                      <path d="M320,275 H220" stroke="#a7f3d0" strokeWidth="1.5" markerEnd="url(#arrow)" />
+                      <text x="235" y="265" fill="#a7f3d0">5. Verify & Compile</text>
+ 
+                      <path d="M150,240 V130" stroke="#a7f3d0" strokeWidth="1.5" strokeDasharray="3,3" markerEnd="url(#arrow)" />
+                      <text x="160" y="185" fill="#a7f3d0">6. Safe Write-Back</text>
+ 
+                      {/* Boxes */}
+                      <rect x="80" y="60" width="140" height="70" rx="12" fill="url(#cardGrad)" stroke="#ffffff" strokeOpacity="0.08" />
+                      <text x="95" y="95" fill="#fff" fontWeight="bold">Developer IDE</text>
+                      <text x="95" y="112" fill="#888" fontSize="8">Workspace / Files</text>
+ 
+                      <rect x="320" y="60" width="140" height="70" rx="12" fill="url(#cardGrad)" stroke="#ffffff" strokeOpacity="0.08" />
+                      <text x="335" y="95" fill="#fff" fontWeight="bold">Omni Desktop</text>
+                      <text x="335" y="112" fill="#888" fontSize="8">Secure Shell Harness</text>
+ 
+                      <rect x="580" y="60" width="140" height="70" rx="12" fill="url(#cardGrad)" stroke="#ffffff" strokeOpacity="0.08" />
+                      <text x="595" y="95" fill="#fff" fontWeight="bold">Agent Router</text>
+                      <text x="595" y="112" fill="#888" fontSize="8">Codex/Claude/OpenCode</text>
+ 
+                      <rect x="580" y="240" width="140" height="70" rx="12" fill="url(#cardGrad)" stroke="#ffffff" strokeOpacity="0.08" />
+                      <text x="595" y="275" fill="#fff" fontWeight="bold">Agent Runtimes</text>
+                      <text x="595" y="292" fill="#888" fontSize="8">Subprocess Shells</text>
+ 
+                      <rect x="320" y="240" width="140" height="70" rx="12" fill="url(#cardGrad)" stroke="#ffffff" strokeOpacity="0.08" />
+                      <text x="335" y="275" fill="#fff" fontWeight="bold">Cross-Verifier</text>
+                      <text x="335" y="292" fill="#888" fontSize="8">AST / Syntax Audits</text>
+ 
+                      <rect x="80" y="240" width="140" height="70" rx="12" fill="url(#cardGrad)" stroke="#ffffff" strokeOpacity="0.08" />
+                      <text x="95" y="275" fill="#fff" fontWeight="bold">Sandboxed OS</text>
+                      <text x="95" y="292" fill="#888" fontSize="8">Strict folder lock</text>
+                    </svg>
+                  </div>
+                </div>
+ 
+                {/* Conceptual Data Model */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-6">
+                  <div className="bg-white/[0.01] border border-white/[0.05] rounded-xl p-6">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary block mb-2 font-mono">Module 01</span>
+                    <h4 className="text-white font-bold mb-2">Omni Desktop App</h4>
+                    <p className="text-xs text-zinc-400 leading-relaxed font-light">
+                      Minimalist terminal container launching agent sub-processes, embedding shared credentials.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-white/[0.01] border border-white/[0.05] rounded-xl p-6">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary block mb-2 font-mono">Module 02</span>
+                    <h4 className="text-white font-bold mb-2">Credential Vault</h4>
+                    <p className="text-xs text-zinc-400 leading-relaxed font-light">
+                      Locally securely binds model authorization tokens for Codex, Claude-Code, and OpenCode interfaces.
+                    </p>
+                  </div>
+ 
+                  <div className="bg-white/[0.01] border border-white/[0.05] rounded-xl p-6">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary block mb-2 font-mono">Module 03</span>
+                    <h4 className="text-white font-bold mb-2">Security Shield</h4>
+                    <p className="text-xs text-zinc-400 leading-relaxed font-light">
+                      Monitors agent syscalls, preventing unauthorized directory traversals or outbound API calls.
+                    </p>
+                  </div>
+ 
+                  <div className="bg-white/[0.01] border border-white/[0.05] rounded-xl p-6">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary block mb-2 font-mono">Module 04</span>
+                    <h4 className="text-white font-bold mb-2">AST Merge Tool</h4>
+                    <p className="text-xs text-zinc-400 leading-relaxed font-light">
+                      Parses abstract syntax trees from different agents to resolve git conflict styles and verify structure.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+ 
+            {/* Redesigned Agency CTA */}
+            <section className="mt-32">
+              <div className="bg-[#080808] border border-white/[0.05] hover:border-white/[0.12] transition-all duration-500 rounded-[32px] p-12 md:p-20 text-center relative overflow-hidden group">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f1f1f_1px,transparent_1px),linear-gradient(to_bottom,#1f1f1f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30" />
+                <div className="absolute -top-40 left-1/4 w-[300px] h-[300px] bg-purple-600/10 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute -bottom-40 right-1/4 w-[300px] h-[300px] bg-pink-600/10 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+                
+                <div className="relative z-10 space-y-6">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary block font-mono">
+                    Let's build together
+                  </span>
+                  
+                  <h2 className="text-3xl md:text-5xl font-extrabold font-sans text-white tracking-tight max-w-3xl mx-auto leading-tight">
+                    Need a similar <span className="text-[#C0F0FB]">developer harness?</span>
+                  </h2>
+                  
+                  <p className="text-zinc-400 text-sm md:text-base max-w-xl mx-auto font-light leading-relaxed">
+                    We design, build, and deploy custom developer workflows, terminal CLI wrappers, and custom desktop platforms.
+                  </p>
+                  
+                  <div className="pt-4">
+                    <Link href="/contact">
+                      <Button className="h-12 px-8 bg-white text-black hover:bg-zinc-200 font-bold tracking-tight text-xs rounded-full shadow-lg shadow-white/5 cursor-pointer">
+                        Book Strategy Call
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </section>
+ 
           </div>
         </div>
       </>
