@@ -458,11 +458,11 @@ export default function WishGamePage() {
               <li>You are 18 years or older</li>
               <li>You understand this is purely for entertainment purposes only</li>
               <li>The wish consequences are AI-generated fiction and have no real-world effect</li>
-              <li>GrowX Labs holds no responsibility for any emotional distress, discomfort, or misinterpretation of content</li>
+              <li>GrowxLabsTech holds no responsibility for any emotional distress, discomfort, or misinterpretation of content</li>
               <li>This experience contains dark themes, horror elements, and unsettling content</li>
             </ul>
             <p className="disclaimer-footer">
-              GrowX Labs is not affiliated with the movie Obsession or Focus Features in any way. This is an independent AI creative experience.
+              GrowxLabsTech is not affiliated with the movie Obsession or Focus Features in any way. This is an independent AI creative experience.
             </p>
           </div>
 
@@ -487,7 +487,7 @@ export default function WishGamePage() {
           </div>
 
           <p className="bottom-small-text">
-            © 2026 GrowX Labs. For entertainment purposes only.
+            © 2026 GrowxLabsTech. For entertainment purposes only.
           </p>
         </div>
       </section>
