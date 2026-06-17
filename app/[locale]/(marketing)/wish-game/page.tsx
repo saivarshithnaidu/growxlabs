@@ -387,6 +387,25 @@ export default function WishGamePage() {
 
   return (
     <main className={`wish-game ${dmSans.className}`}>
+      {/* Decorative polaroids in the background empty space */}
+      <div className="background-gallery">
+        <div className="polaroid polaroid-left-1">
+          <div className="tape" />
+          <img src="/images/willow-whole-table.jpg" alt="Unbroken Willow" />
+          <p className="polaroid-caption">Specimen A: Unbroken</p>
+        </div>
+        <div className="polaroid polaroid-left-2">
+          <div className="tape" />
+          <img src="/images/willow-snapped-table.jpg" alt="Broken Willow" />
+          <p className="polaroid-caption">Specimen B: Cursed</p>
+        </div>
+        <div className="polaroid polaroid-right-1">
+          <div className="tape" />
+          <img src="/images/willow-snapping-action.png" alt="Willow Snap" />
+          <p className="polaroid-caption">The Crack of Doom</p>
+        </div>
+      </div>
+
       <section className={`game-screen email-screen ${screen === "gate" ? "active" : ""}`} aria-hidden={screen !== "gate"}>
         <div className="box-panel">
           <div className="packaging-header">
@@ -425,6 +444,9 @@ export default function WishGamePage() {
             </button>
           </form>
           {error && screen === "gate" ? <p className="error-text">{error}</p> : null}
+          <div className="box-poster">
+            <img src="/images/willow-poster-bg.png" alt="One Wish Willow Poster" />
+          </div>
         </div>
       </section>
 
@@ -452,6 +474,9 @@ export default function WishGamePage() {
           </button>
           <p className="warning-text">⚠ You only get one wish. Choose wisely.</p>
           {error && screen === "wish" ? <p className="error-text">{error}</p> : null}
+          <div className="box-poster">
+            <img src="/images/willow-poster-bg.png" alt="One Wish Willow Poster" />
+          </div>
         </div>
       </section>
 
@@ -491,6 +516,9 @@ export default function WishGamePage() {
           <button className="play-button" onClick={playAgain} type="button">
             PLAY AGAIN
           </button>
+          <div className="box-poster">
+            <img src="/images/willow-poster-bg.png" alt="One Wish Willow Poster" />
+          </div>
         </div>
       </section>
 
@@ -509,6 +537,112 @@ export default function WishGamePage() {
           min-height: 100svh;
           overflow: hidden;
           position: relative;
+        }
+
+        .box-poster {
+          width: calc(100% - 32px);
+          margin: 18px auto 4px auto;
+          border: 4px solid var(--stick);
+          box-shadow: 5px 5px 0 var(--shadow);
+          background: var(--cream);
+          overflow: hidden;
+        }
+
+        .box-poster img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        .background-gallery {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 1;
+          overflow: hidden;
+        }
+
+        .polaroid {
+          background: #FDFBF7;
+          border: 1px solid rgba(59, 42, 26, 0.15);
+          box-shadow: 0 8px 25px rgba(59, 42, 26, 0.15), 0 1px 3px rgba(59, 42, 26, 0.05);
+          padding: 8px 8px 18px 8px;
+          position: absolute;
+          width: 190px;
+          transition: all 400ms ease;
+          display: none;
+          pointer-events: auto;
+        }
+
+        @media (min-width: 1200px) {
+          .polaroid {
+            display: block;
+          }
+        }
+
+        .polaroid img {
+          width: 100%;
+          height: 120px;
+          object-fit: cover;
+          border: 1px solid rgba(59, 42, 26, 0.08);
+          filter: sepia(0.25) contrast(1.05) brightness(0.95);
+        }
+
+        .polaroid-caption {
+          font-family: monospace;
+          font-size: 0.75rem;
+          color: rgba(26, 26, 26, 0.6);
+          margin-top: 8px;
+          text-align: center;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .tape {
+          background: rgba(230, 220, 195, 0.5);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+          height: 16px;
+          left: 50%;
+          position: absolute;
+          top: -8px;
+          transform: translateX(-50%) rotate(-2deg);
+          width: 65px;
+        }
+
+        .polaroid-left-1 {
+          left: 4%;
+          bottom: 6%;
+          transform: rotate(-6deg);
+        }
+
+        .polaroid-left-2 {
+          left: 15%;
+          bottom: 12%;
+          transform: rotate(5deg);
+        }
+
+        .polaroid-right-1 {
+          right: 5%;
+          bottom: 8%;
+          transform: rotate(6deg);
+        }
+
+        .polaroid-left-1:hover {
+          transform: scale(1.06) translateY(-5px) rotate(-3deg);
+          box-shadow: 0 15px 35px rgba(59, 42, 26, 0.25);
+          z-index: 10;
+        }
+
+        .polaroid-left-2:hover {
+          transform: scale(1.06) translateY(-5px) rotate(2deg);
+          box-shadow: 0 15px 35px rgba(59, 42, 26, 0.25);
+          z-index: 10;
+        }
+
+        .polaroid-right-1:hover {
+          transform: scale(1.06) translateY(-5px) rotate(3deg);
+          box-shadow: 0 15px 35px rgba(59, 42, 26, 0.25);
+          z-index: 10;
         }
 
         .game-screen {
