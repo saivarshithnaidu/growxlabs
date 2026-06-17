@@ -14,6 +14,7 @@ const openrouter = new OpenAI({
 const SYSTEM_PROMPT = `You are the GXL Command Center Central Orchestrator, an AI-native operational system for GrowX Labs.
 You lead a team of digital agents (CEO, CFO, Sales, Marketing, Research, Content, SEO, CTO, and Engineering).
 You have access to real tools to view/insert leads, query statistics, generate client proposals (SOW), and search the web.
+Additionally, you have tools to query the blogs database and one wish willow game telemetry/subscriber data.
 
 When a user asks you a question, you should analyze it and execute any necessary tools to fetch data or perform operations.
 Then, you must synthesize the outputs and respond directly to the user.
@@ -24,14 +25,16 @@ Then, you must synthesize the outputs and respond directly to the user.
 - **CFO Agent**: Analyzes pricing, margins, packages, and corporate stats.
 - **Proposal Agent**: Drafts scopes of work (SOW) and creates proposals.
 - **CEO Agent**: Makes strategic recommendations and sets company vision.
-- **Content / SEO Agent**: Writes editorial briefs and social copy.
+- **Content / SEO Agent**: Writes editorial briefs and social copy. Exposes blog posts metrics and subscriber newsletter topics.
 - **CTO / Engineering Agent**: Analyzes codebase, tech specs, and performance.
 
 ### OPERATING POLICIES:
 1. **Tool Invocation**: If you need information you don't have (e.g. lead count, specific lead details, real-time web info), use the appropriate tool immediately.
 2. **Real-time Stats**: Always use 'get_company_stats' or 'query_leads' when asked about leads, numbers, or performance. Do not guess.
 3. **Proposal Creation**: If the user asks for a proposal or SOW (e.g. "create a proposal for ABC Hospital"), call the 'generate_proposal' tool. Then, summarize the generated proposal using markdown in your final response.
-4. **Markdown Formatting**: Use clean Notion-like markdown formatting. Use tables, bold headers, and structured bullets.
+4. **Blogs & Telemetry**: If the user asks about blog posts, newsletter dispatches, subscriber pools, or wish telemetry, call 'get_blog_posts_stats' or 'query_wish_game_data'.
+5. **Email/Newsletter Dispatch**: If the user says "send a blog", "dispatch newsletter", "email blog", etc., check if they specified *which* blog. If not, CALL 'get_blog_posts_stats' to retrieve all posts, present the list of blog posts to the user (highlighting which ones are sent or pending), and ask them to pick which one to send. Once they specify or confirm the blog, call 'send_blog_to_subscribers' with the corresponding UUID of the selected blog post to dispatch it.
+6. **Markdown Formatting**: Use clean Notion-like markdown formatting. Use tables, bold headers, and structured bullets.
 
 Keep responses detailed, professional, and action-oriented.`;
 
@@ -113,6 +116,40 @@ const TOOLS_DEFINITIONS = [
         mission: { type: "string", description: "The specific mission or goal, e.g. 'Identify top real estate agencies in Miami'" }
       },
       required: ["name", "focus", "mission"]
+    }
+  },
+  {
+    name: "get_blog_posts_stats",
+    description: "Retrieve all blog posts from the database including their title, slug, sent status, and published date.",
+    parameters: {
+      type: "object",
+      properties: {
+        limit: { type: "number", description: "Maximum number of records to return (default 20)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "query_wish_game_data",
+    description: "Query the wish game subscribers and telemetry logs from the database.",
+    parameters: {
+      type: "object",
+      properties: {
+        searchQuery: { type: "string", description: "Search by name, email, or wish text" },
+        limit: { type: "number", description: "Maximum number of records to return (default 20)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "send_blog_to_subscribers",
+    description: "Send/dispatch a specific blog post to all active subscribers via email newsletter.",
+    parameters: {
+      type: "object",
+      properties: {
+        blogPostId: { type: "string", description: "The UUID of the blog post to dispatch to subscribers." }
+      },
+      required: ["blogPostId"]
     }
   }
 ];
@@ -355,7 +392,80 @@ async function execute_spawn_subagent(
   };
 }
 
-async function handleToolCall(name: string, args: any, sendEvent?: (event: string, data: any) => void) {
+async function execute_get_blog_posts_stats(args: { limit?: number }) {
+  const limit = args.limit || 20;
+  const { data, error } = await supabaseAdmin
+    .from("blog_posts")
+    .select("id, title, slug, excerpt, published_at, sent_to_subscribers")
+    .order("published_at", { ascending: false })
+    .limit(limit);
+    
+  if (error) throw error;
+  return data;
+}
+
+async function execute_query_wish_game_data(args: { searchQuery?: string; limit?: number }) {
+  const limit = args.limit || 20;
+  let telemetryQuery = supabaseAdmin.from("wish_game_data").select("*");
+  
+  if (args.searchQuery) {
+    telemetryQuery = telemetryQuery.or(
+      `name.ilike.%${args.searchQuery}%,email.ilike.%${args.searchQuery}%,wish.ilike.%${args.searchQuery}%`
+    );
+  }
+  
+  const { data: telemetry, error: telemetryError } = await telemetryQuery
+    .order("created_at", { ascending: false })
+    .limit(limit);
+    
+  if (telemetryError) throw telemetryError;
+  
+  let subscribersQuery = supabaseAdmin.from("wish_subscribers").select("*");
+  if (args.searchQuery) {
+    subscribersQuery = subscribersQuery.or(
+      `name.ilike.%${args.searchQuery}%,email.ilike.%${args.searchQuery}%`
+    );
+  }
+  
+  const { data: subscribers, error: subsError } = await subscribersQuery
+    .order("created_at", { ascending: false })
+    .limit(limit);
+    
+  if (subsError) throw subsError;
+  
+  return {
+    telemetryLogs: telemetry || [],
+    activeSubscribers: subscribers || []
+  };
+}
+
+async function execute_send_blog_to_subscribers(args: { blogPostId: string }, baseUrl: string) {
+  if (!args.blogPostId) {
+    return { error: "blogPostId is required." };
+  }
+  
+  try {
+    const res = await fetch(`${baseUrl}/api/send-blog-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ blog_post_id: args.blogPostId })
+    });
+    
+    if (!res.ok) {
+      const errText = await res.text();
+      return { error: `Server returned error ${res.status}: ${errText}` };
+    }
+    
+    return await res.json();
+  } catch (error: any) {
+    console.error("Error sending blog email via tool:", error);
+    return { error: error.message || "Failed to send email." };
+  }
+}
+
+async function handleToolCall(name: string, args: any, sendEvent?: (event: string, data: any) => void, baseUrl?: string) {
   switch (name) {
     case "get_company_stats":
       return await execute_get_company_stats();
@@ -372,6 +482,12 @@ async function handleToolCall(name: string, args: any, sendEvent?: (event: strin
         return await execute_spawn_subagent(args, sendEvent);
       }
       return { error: "Streaming context unavailable for spawning subagent" };
+    case "get_blog_posts_stats":
+      return await execute_get_blog_posts_stats(args);
+    case "query_wish_game_data":
+      return await execute_query_wish_game_data(args);
+    case "send_blog_to_subscribers":
+      return await execute_send_blog_to_subscribers(args, baseUrl || "http://localhost:3000");
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
@@ -413,6 +529,10 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    const host = req.headers.get("host") || "localhost:3000";
+    const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+    const baseUrl = `${protocol}://${host}`;
+
     let { message, conversationId, history } = await req.json();
 
     if (!message) {
@@ -525,7 +645,7 @@ export async function POST(req: Request) {
 
                   let toolResult;
                   try {
-                    toolResult = await handleToolCall(call.name, call.args, sendEvent);
+                    toolResult = await handleToolCall(call.name, call.args, sendEvent, baseUrl);
                   } catch (e: any) {
                     toolResult = { error: e.message };
                   }
@@ -655,7 +775,7 @@ export async function POST(req: Request) {
 
                   let toolResult;
                   try {
-                    toolResult = await handleToolCall(call.function.name, parsedArgs, sendEvent);
+                    toolResult = await handleToolCall(call.function.name, parsedArgs, sendEvent, baseUrl);
                   } catch (e: any) {
                     toolResult = { error: e.message };
                   }

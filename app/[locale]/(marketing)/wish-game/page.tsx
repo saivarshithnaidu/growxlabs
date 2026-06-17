@@ -345,6 +345,13 @@ export default function WishGamePage() {
         throw new Error(data?.error || "The willow refused the entry.");
       }
 
+      // Track email_gate screen reached
+      fetch("/api/track-wish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: cleanName, email: cleanEmail, screen_reached: "email_gate" }),
+      }).catch((err) => console.error("Tracking error:", err));
+
       setScreen("wish");
     } catch (subscriberError) {
       setError(subscriberError instanceof Error ? subscriberError.message : "The willow refused the entry.");
@@ -369,6 +376,17 @@ export default function WishGamePage() {
     setScreen("cracking");
     setIsGenerating(true);
 
+    // Track wish_input screen reached
+    fetch("/api/track-wish", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase(),
+        wish: cleanWish,
+        screen_reached: "wish_input"
+      }),
+    }).catch((err) => console.error("Tracking error:", err));
+
     const reveal = new Promise<void>((resolve) => {
       window.setTimeout(() => {
         playSnapSound();
@@ -388,6 +406,17 @@ export default function WishGamePage() {
           throw new Error(data?.error || "The wish curdled before it could answer.");
         }
         setConsequence(data.consequence);
+
+        // Track consequence screen reached
+        fetch("/api/track-wish", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email.trim().toLowerCase(),
+            consequence: data.consequence,
+            screen_reached: "consequence"
+          }),
+        }).catch((err) => console.error("Tracking error:", err));
       })
       .catch((generateError) => {
         setError(generateError instanceof Error ? generateError.message : "The wish curdled before it could answer.");
@@ -409,6 +438,16 @@ export default function WishGamePage() {
     setError("");
     setIsGenerating(false);
     setScreen("wish");
+
+    // Track play again click (increments count)
+    fetch("/api/track-wish", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase(),
+        play_again: true
+      }),
+    }).catch((err) => console.error("Tracking error:", err));
   }
 
   if (!mounted) {
@@ -442,6 +481,9 @@ export default function WishGamePage() {
         className={`game-screen warning-screen ${screen === "warning" ? "active" : ""}`}
         aria-hidden={screen !== "warning"}
       >
+        <div className="background-watermark">
+          <WillowStick broken={true} cracking={true} />
+        </div>
         <div className="warning-panel">
           <div className="warning-icon">⚠</div>
           
@@ -1190,28 +1232,48 @@ export default function WishGamePage() {
           z-index: 100;
         }
 
+        .background-watermark {
+          position: absolute;
+          top: 55%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: min(80vw, 400px);
+          height: min(80vw, 400px);
+          opacity: 0.05;
+          pointer-events: none;
+          z-index: 0;
+          color: var(--red);
+        }
+
+        .background-watermark svg {
+          width: 100%;
+          height: 100%;
+        }
+
         .warning-panel {
+          position: relative;
+          z-index: 1;
           align-items: center;
           display: flex;
           flex-direction: column;
-          max-height: calc(100svh - 24px);
+          max-height: calc(100svh - 32px);
           max-width: 520px;
           overflow-y: auto;
-          padding: 16px 0 24px;
-          width: min(100%, 520px);
+          padding: 8px 16px 20px;
+          width: 100%;
         }
 
         .warning-icon {
-          font-size: 64px;
+          font-size: 52px;
           color: #CC1F1F;
           line-height: 1;
-          margin-bottom: 8px;
+          margin-bottom: 6px;
         }
 
         .warning-heading {
-          font-size: clamp(26px, 6vw, 36px);
+          font-size: clamp(22px, 6.5vw, 32px);
           color: #CC1F1F;
-          margin-bottom: 24px;
+          margin-bottom: 16px;
           text-align: center;
           line-height: 1.1;
           text-shadow: 2px 2px 0 var(--shadow);
@@ -1221,18 +1283,19 @@ export default function WishGamePage() {
           background: #FFFFFF;
           border: 2px solid #CC1F1F;
           border-radius: 8px;
-          padding: 24px;
-          margin: 0 16px;
+          padding: 16px;
+          margin: 0;
           color: #3B2A1A;
           font-family: inherit;
-          font-size: 15px;
-          line-height: 1.8;
+          font-size: 14px;
+          line-height: 1.6;
           text-align: left;
           box-shadow: 5px 5px 0 var(--shadow);
+          width: 100%;
         }
 
         .disclaimer-box p {
-          margin: 0 0 12px;
+          margin: 0 0 10px;
         }
 
         .disclaimer-box p:last-of-type {
@@ -1240,28 +1303,28 @@ export default function WishGamePage() {
         }
 
         .disclaimer-list {
-          margin: 0 0 16px 20px;
+          margin: 0 0 12px 16px;
           list-style-type: disc;
         }
 
         .disclaimer-list li {
-          margin-bottom: 8px;
+          margin-bottom: 6px;
         }
 
         .disclaimer-footer {
-          font-size: 13px;
+          font-size: 12px;
           opacity: 0.8;
           border-top: 1px dashed rgba(204, 31, 31, 0.2);
-          padding-top: 12px;
-          margin-top: 12px;
+          padding-top: 10px;
+          margin-top: 10px;
         }
 
         .acceptance-container {
-          width: calc(100% - 32px);
-          margin: 20px auto 0;
+          width: 100%;
+          margin-top: 16px;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 12px;
           align-items: center;
         }
 
@@ -1270,7 +1333,7 @@ export default function WishGamePage() {
           align-items: flex-start;
           gap: 10px;
           font-family: inherit;
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 700;
           color: #3B2A1A;
           cursor: pointer;
@@ -1293,8 +1356,8 @@ export default function WishGamePage() {
           color: #FFFFFF !important;
           font-family: inherit;
           width: 100%;
-          padding: 16px !important;
-          font-size: 1.1rem !important;
+          padding: 12px !important;
+          font-size: 1rem !important;
           border: 4px solid var(--stick) !important;
           box-shadow: 6px 6px 0 var(--shadow) !important;
           transition: all 150ms ease !important;
@@ -1311,8 +1374,55 @@ export default function WishGamePage() {
           font-size: 11px;
           color: #999;
           text-align: center;
-          margin-top: 16px;
+          margin-top: 14px;
           width: 100%;
+        }
+
+        @media (min-width: 768px) {
+          .warning-panel {
+            padding: 16px 0 24px;
+          }
+          .warning-icon {
+            font-size: 64px;
+            margin-bottom: 8px;
+          }
+          .warning-heading {
+            font-size: clamp(26px, 6vw, 36px);
+            margin-bottom: 24px;
+          }
+          .disclaimer-box {
+            padding: 24px;
+            font-size: 15px;
+            line-height: 1.8;
+            margin: 0 16px;
+            width: auto;
+          }
+          .disclaimer-list {
+            margin: 0 0 16px 20px;
+          }
+          .disclaimer-list li {
+            margin-bottom: 8px;
+          }
+          .disclaimer-footer {
+            font-size: 13px;
+            padding-top: 12px;
+            margin-top: 12px;
+          }
+          .acceptance-container {
+            width: calc(100% - 32px);
+            margin: 20px auto 0;
+            gap: 16px;
+          }
+          .checkbox-label {
+            font-size: 14px;
+          }
+          .accept-button {
+            padding: 16px !important;
+            font-size: 1.1rem !important;
+          }
+          .bottom-small-text {
+            margin-top: 16px;
+          }
         }
       `}</style>
     </main>

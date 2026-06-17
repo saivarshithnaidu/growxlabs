@@ -7,7 +7,7 @@ import {
   BarChart3, Users, Target, Inbox, Terminal,
   FileText, Zap, ShieldCheck, Rocket, FileCheck, LogOut, PanelLeftClose, PanelLeft,
   GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
-  TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X
+  TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2
 } from "lucide-react";
 
 const navItems = [
@@ -21,6 +21,7 @@ const navItems = [
   { name: "Clients", href: "/admin/clients", icon: Users },
   { name: "Outreach", href: "/admin/outreach", icon: Inbox },
   { name: "Onboarding", href: "/admin/onboarding", icon: Rocket },
+  { name: "Wish Game", href: "/admin/wish-game", icon: Gamepad2 },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
@@ -67,7 +68,8 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
     : navItems;
 
   const renderLink = (item: any) => {
-    const isActive = pathname === item.href;
+    const isWishAdmin = item.href === "/wish-admin";
+    const isActive = isWishAdmin ? pathname.includes("/wish-admin") : pathname === item.href;
     return (
       <Link
         key={item.href}

@@ -32,6 +32,47 @@ export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const hostname = req.headers.get('host') || '';
 
+  // Redirect old /wish-admin path to the new unified /admin/wish-game path
+  if (pathname.includes('/wish-admin')) {
+    const url = req.nextUrl.clone();
+    url.pathname = pathname.replace('/wish-admin', '/admin/wish-game');
+    return NextResponse.redirect(url, 301);
+  }
+
+  // Protect /admin/wish-game route with ADMIN_SECRET query parameter or active Admin session
+  if (pathname.includes('/admin/wish-game')) {
+    const secret = req.nextUrl.searchParams.get("secret");
+    const isSecretValid = !!(process.env.ADMIN_SECRET && secret === process.env.ADMIN_SECRET);
+
+    let isAdmin = false;
+    try {
+      const cookieName = process.env.NODE_ENV === 'production' 
+        ? '__Secure-next-auth.session-token' 
+        : 'next-auth.session-token';
+      const token = await getToken({ 
+        req, 
+        secret: process.env.NEXTAUTH_SECRET,
+        cookieName: cookieName
+      });
+      if (token && (token.role === 'ADMIN' || token.role === 'CO_ADMIN')) {
+        isAdmin = true;
+      }
+    } catch (e) {
+      console.error("Token verification failed for admin/wish-game in middleware:", e);
+    }
+
+    if (!isSecretValid && !isAdmin) {
+      const url = req.nextUrl.clone();
+      const segments = pathname.split('/').filter(Boolean);
+      const firstSegment = segments[0];
+      const localesList = ['en', 'en-IN', 'en-US', 'ar'];
+      const locale = firstSegment && localesList.includes(firstSegment) ? firstSegment : 'en-IN';
+      url.pathname = `/${locale}/wish-game`;
+      url.search = "";
+      return NextResponse.redirect(url, 302);
+    }
+  }
+
   // Redirect underscores in locale and path if they match wish_game or en_IN
   let rewrittenPath = pathname;
   let shouldRedirect = false;
@@ -218,7 +259,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   // 5. RBAC Check (Admin & Client Portals)
-  const isAdminPath = pathname.includes('/admin');
+  const isAdminPath = pathname.includes('/admin') && !pathname.includes('/wish-admin');
   const isClientPath = pathname.includes('/client');
 
   if (isAdminPath || isClientPath) {
