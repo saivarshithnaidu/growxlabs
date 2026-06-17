@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { Alfa_Slab_One, DM_Sans } from "next/font/google";
 
 const alfa = Alfa_Slab_One({
@@ -11,6 +11,155 @@ const alfa = Alfa_Slab_One({
 const dmSans = DM_Sans({
   subsets: ["latin"],
 });
+
+let audioCtx: AudioContext | null = null;
+let ambientOsc: OscillatorNode | null = null;
+let ambientGain: GainNode | null = null;
+
+function initAudio() {
+  if (typeof window === "undefined") return;
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+}
+
+function startAmbientSound() {
+  try {
+    initAudio();
+    if (!audioCtx || ambientOsc) return;
+
+    ambientOsc = audioCtx.createOscillator();
+    ambientGain = audioCtx.createGain();
+
+    ambientOsc.type = "sine";
+    ambientOsc.frequency.setValueAtTime(50, audioCtx.currentTime);
+
+    ambientGain.gain.setValueAtTime(0.012, audioCtx.currentTime);
+
+    ambientOsc.connect(ambientGain);
+    ambientGain.connect(audioCtx.destination);
+    ambientOsc.start();
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function playCreakSound() {
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(80, now);
+    osc.frequency.linearRampToValueAtTime(45, now + 0.45);
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(250, now);
+
+    gain.gain.setValueAtTime(0.05, now);
+    gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.45);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function playSnapSound() {
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+
+    const popOsc = audioCtx.createOscillator();
+    const popGain = audioCtx.createGain();
+    popOsc.type = "triangle";
+    popOsc.frequency.setValueAtTime(140, now);
+    popOsc.frequency.exponentialRampToValueAtTime(10, now + 0.08);
+    popGain.gain.setValueAtTime(0.2, now);
+    popGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+    
+    popOsc.connect(popGain);
+    popGain.connect(audioCtx.destination);
+    popOsc.start(now);
+    popOsc.stop(now + 0.08);
+
+    const bufferSize = audioCtx.sampleRate * 0.12;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noiseNode = audioCtx.createBufferSource();
+    noiseNode.buffer = buffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(550, now);
+    filter.Q.setValueAtTime(3.0, now);
+
+    const noiseGain = audioCtx.createGain();
+    noiseGain.gain.setValueAtTime(0.15, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.005, now + 0.12);
+
+    noiseNode.connect(filter);
+    filter.connect(noiseGain);
+    noiseGain.connect(audioCtx.destination);
+
+    noiseNode.start(now);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function playTypewriterSound() {
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+
+    const bufferSize = audioCtx.sampleRate * 0.01;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noiseNode = audioCtx.createBufferSource();
+    noiseNode.buffer = buffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = "highpass";
+    filter.frequency.setValueAtTime(2200, now);
+
+    const gainNode = audioCtx.createGain();
+    const vol = 0.012 + Math.random() * 0.012;
+    gainNode.gain.setValueAtTime(vol, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.008);
+
+    noiseNode.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    noiseNode.start(now);
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 type Screen = "gate" | "wish" | "cracking" | "consequence";
 
@@ -99,9 +248,31 @@ export default function WishGamePage() {
   const [email, setEmail] = useState("");
   const [wish, setWish] = useState("");
   const [consequence, setConsequence] = useState("");
+  const [displayedConsequence, setDisplayedConsequence] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!consequence) {
+      setDisplayedConsequence("");
+      return;
+    }
+    
+    let index = 0;
+    setDisplayedConsequence("");
+    
+    const interval = setInterval(() => {
+      setDisplayedConsequence((prev) => prev + consequence.charAt(index));
+      playTypewriterSound();
+      index++;
+      if (index >= consequence.length) {
+        clearInterval(interval);
+      }
+    }, 45);
+    
+    return () => clearInterval(interval);
+  }, [consequence]);
 
   async function submitSubscriber(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -145,6 +316,9 @@ export default function WishGamePage() {
       return;
     }
 
+    startAmbientSound();
+    playCreakSound();
+
     setError("");
     setConsequence("");
     setScreen("cracking");
@@ -152,6 +326,7 @@ export default function WishGamePage() {
 
     const reveal = new Promise<void>((resolve) => {
       window.setTimeout(() => {
+        playSnapSound();
         setScreen("consequence");
         resolve();
       }, 2000);
@@ -203,11 +378,12 @@ export default function WishGamePage() {
           <p className={`one-wish ${alfa.className}`}>YOU ONLY GET ONE WISH</p>
           <p className="novelty-copy">Amaze your friends!</p>
 
-          <form className="retro-form" onSubmit={submitSubscriber}>
+          <form className="retro-form" onSubmit={(e) => { startAmbientSound(); submitSubscriber(e); }}>
             <input
               aria-label="Your name"
               autoComplete="name"
               onChange={(event) => setName(event.target.value)}
+              onFocus={startAmbientSound}
               placeholder="Your name..."
               type="text"
               value={name}
@@ -216,11 +392,12 @@ export default function WishGamePage() {
               aria-label="Your email"
               autoComplete="email"
               onChange={(event) => setEmail(event.target.value)}
+              onFocus={startAmbientSound}
               placeholder="Your email..."
               type="email"
               value={email}
             />
-            <button disabled={isSaving} type="submit">
+            <button disabled={isSaving} type="submit" onClick={startAmbientSound}>
               {isSaving ? "OPENING THE BOX..." : "ENTER TO MAKE YOUR WISH"}
             </button>
           </form>
@@ -243,6 +420,7 @@ export default function WishGamePage() {
             aria-label="Your wish"
             maxLength={260}
             onChange={(event) => setWish(event.target.value)}
+            onFocus={startAmbientSound}
             placeholder="I wish..."
             value={wish}
           />
@@ -278,7 +456,7 @@ export default function WishGamePage() {
           </div>
 
           {consequence ? (
-            <p className={`consequence-copy ${alfa.className}`}>{consequence}</p>
+            <p className={`consequence-copy ${alfa.className}`}>{displayedConsequence}</p>
           ) : (
             <p className={`consequence-copy waiting ${alfa.className}`}>
               {isGenerating ? "THE WILLOW IS LISTENING..." : "THE WILLOW WENT SILENT."}
