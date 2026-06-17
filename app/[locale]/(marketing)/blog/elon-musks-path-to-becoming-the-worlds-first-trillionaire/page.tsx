@@ -249,17 +249,12 @@ export default async function ElonTrillionairePage({ params }: { params: Promise
             </div>
           </Reveal>
 
-          {/* Premium Banner image block */}
+          {/* Premium Banner gradient block */}
           <Reveal y={30} delay={0.2}>
-            <div className="mt-14 w-full max-w-5xl mx-auto rounded-2xl overflow-hidden border border-border/50 relative aspect-[16/10] md:aspect-[21/9]">
-              <Image 
-                src="/images/blog-elon-trillionaire.png" 
-                alt="Elon Musk Trillionaire Path banner"
-                fill
-                priority
-                className="object-cover"
-                sizes="(max-width: 1280px) 100vw, 1200px"
-              />
+            <div className="mt-14 w-full max-w-5xl mx-auto rounded-2xl overflow-hidden border border-white/10 relative aspect-[16/10] md:aspect-[21/9] bg-gradient-to-br from-[#0B0D19] via-[#020205] to-[#120516] flex items-center justify-center">
+              <div className="absolute w-[300px] h-[300px] rounded-full bg-primary/5 blur-[120px]" />
+              <div className="absolute w-[150px] h-[150px] rounded-full bg-cyan-500/5 blur-[80px] animate-pulse" />
+              <span className="font-sans font-black text-white/5 text-[180px] select-none tracking-tighter">X</span>
             </div>
           </Reveal>
         </div>
