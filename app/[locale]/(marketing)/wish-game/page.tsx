@@ -161,7 +161,7 @@ function playTypewriterSound() {
   }
 }
 
-type Screen = "gate" | "wish" | "cracking" | "consequence" | "video";
+type Screen = "warning" | "gate" | "wish" | "cracking" | "consequence" | "video";
 
 function WillowStick({
   animated = false,
@@ -243,6 +243,7 @@ function WillowStick({
 }
 
 export default function WishGamePage() {
+  const [mounted, setMounted] = useState(false);
   const [screen, setScreen] = useState<Screen>("gate");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -252,6 +253,27 @@ export default function WishGamePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [acceptedCheckbox, setAcceptedCheckbox] = useState(false);
+
+  // Check acceptance status on mount to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window !== "undefined") {
+      const accepted = sessionStorage.getItem("wish_disclaimer_accepted");
+      if (accepted === "true") {
+        setScreen("gate");
+      } else {
+        setScreen("warning");
+      }
+    }
+  }, []);
+
+  function handleAcceptDisclaimer() {
+    if (acceptedCheckbox) {
+      sessionStorage.setItem("wish_disclaimer_accepted", "true");
+      setScreen("gate");
+    }
+  }
 
   useEffect(() => {
     if (!consequence) {
@@ -389,6 +411,12 @@ export default function WishGamePage() {
     setScreen("wish");
   }
 
+  if (!mounted) {
+    return (
+      <main className={`wish-game ${dmSans.className}`} style={{ opacity: 0 }} />
+    );
+  }
+
   return (
     <main className={`wish-game ${dmSans.className}`}>
       {/* Decorative polaroids in the background empty space */}
@@ -409,6 +437,60 @@ export default function WishGamePage() {
           <p className="polaroid-caption">The Crack of Doom</p>
         </div>
       </div>
+
+      <section
+        className={`game-screen warning-screen ${screen === "warning" ? "active" : ""}`}
+        aria-hidden={screen !== "warning"}
+      >
+        <div className="warning-panel">
+          <div className="warning-icon">⚠</div>
+          
+          <h1 className={`${alfa.className} warning-heading`}>
+            BEFORE YOU MAKE YOUR WISH
+          </h1>
+          
+          <div className="disclaimer-box">
+            <p>
+              This is an AI-powered interactive horror experience inspired by the movie <strong>Obsession (2025)</strong>.
+            </p>
+            <p>By proceeding you confirm that:</p>
+            <ul className="disclaimer-list">
+              <li>You are 18 years or older</li>
+              <li>You understand this is purely for entertainment purposes only</li>
+              <li>The wish consequences are AI-generated fiction and have no real-world effect</li>
+              <li>GrowX Labs holds no responsibility for any emotional distress, discomfort, or misinterpretation of content</li>
+              <li>This experience contains dark themes, horror elements, and unsettling content</li>
+            </ul>
+            <p className="disclaimer-footer">
+              GrowX Labs is not affiliated with the movie Obsession or Focus Features in any way. This is an independent AI creative experience.
+            </p>
+          </div>
+
+          <div className="acceptance-container">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={acceptedCheckbox}
+                onChange={(e) => setAcceptedCheckbox(e.target.checked)}
+              />
+              <span>I understand this is fiction and I am 18 or older</span>
+            </label>
+
+            <button
+              className="accept-button"
+              disabled={!acceptedCheckbox}
+              onClick={handleAcceptDisclaimer}
+              type="button"
+            >
+              I ACCEPT — MAKE MY WISH
+            </button>
+          </div>
+
+          <p className="bottom-small-text">
+            © 2026 GrowX Labs. For entertainment purposes only.
+          </p>
+        </div>
+      </section>
 
       <section className={`game-screen email-screen ${screen === "gate" ? "active" : ""}`} aria-hidden={screen !== "gate"}>
         <div className="box-panel">
@@ -1095,6 +1177,142 @@ export default function WishGamePage() {
           background: var(--red) !important;
           color: var(--white) !important;
           border-style: solid !important;
+        }
+
+        .wish-game::before {
+          content: "";
+          position: fixed;
+          inset: 0;
+          background-image: url('/images/grain-texture.jpg');
+          background-repeat: repeat;
+          opacity: 0.08;
+          pointer-events: none;
+          z-index: 100;
+        }
+
+        .warning-panel {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          max-height: calc(100svh - 24px);
+          max-width: 520px;
+          overflow-y: auto;
+          padding: 16px 0 24px;
+          width: min(100%, 520px);
+        }
+
+        .warning-icon {
+          font-size: 64px;
+          color: #CC1F1F;
+          line-height: 1;
+          margin-bottom: 8px;
+        }
+
+        .warning-heading {
+          font-size: clamp(26px, 6vw, 36px);
+          color: #CC1F1F;
+          margin-bottom: 24px;
+          text-align: center;
+          line-height: 1.1;
+          text-shadow: 2px 2px 0 var(--shadow);
+        }
+
+        .disclaimer-box {
+          background: #FFFFFF;
+          border: 2px solid #CC1F1F;
+          border-radius: 8px;
+          padding: 24px;
+          margin: 0 16px;
+          color: #3B2A1A;
+          font-family: inherit;
+          font-size: 15px;
+          line-height: 1.8;
+          text-align: left;
+          box-shadow: 5px 5px 0 var(--shadow);
+        }
+
+        .disclaimer-box p {
+          margin: 0 0 12px;
+        }
+
+        .disclaimer-box p:last-of-type {
+          margin-bottom: 0;
+        }
+
+        .disclaimer-list {
+          margin: 0 0 16px 20px;
+          list-style-type: disc;
+        }
+
+        .disclaimer-list li {
+          margin-bottom: 8px;
+        }
+
+        .disclaimer-footer {
+          font-size: 13px;
+          opacity: 0.8;
+          border-top: 1px dashed rgba(204, 31, 31, 0.2);
+          padding-top: 12px;
+          margin-top: 12px;
+        }
+
+        .acceptance-container {
+          width: calc(100% - 32px);
+          margin: 20px auto 0;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          align-items: center;
+        }
+
+        .checkbox-label {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          font-family: inherit;
+          font-size: 14px;
+          font-weight: 700;
+          color: #3B2A1A;
+          cursor: pointer;
+          text-align: left;
+          width: 100%;
+        }
+
+        .checkbox-label input {
+          width: 18px;
+          height: 18px;
+          accent-color: #CC1F1F;
+          margin-top: 2px;
+          cursor: pointer;
+          box-shadow: none;
+          border: 2px solid var(--stick);
+        }
+
+        .accept-button {
+          background: #CC1F1F !important;
+          color: #FFFFFF !important;
+          font-family: inherit;
+          width: 100%;
+          padding: 16px !important;
+          font-size: 1.1rem !important;
+          border: 4px solid var(--stick) !important;
+          box-shadow: 6px 6px 0 var(--shadow) !important;
+          transition: all 150ms ease !important;
+        }
+
+        .accept-button:disabled {
+          opacity: 0.4 !important;
+          cursor: not-allowed !important;
+          transform: none !important;
+          box-shadow: 6px 6px 0 var(--shadow) !important;
+        }
+
+        .bottom-small-text {
+          font-size: 11px;
+          color: #999;
+          text-align: center;
+          margin-top: 16px;
+          width: 100%;
         }
       `}</style>
     </main>
