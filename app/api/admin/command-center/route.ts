@@ -533,7 +533,7 @@ export async function POST(req: Request) {
     const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
     const baseUrl = `${protocol}://${host}`;
 
-    let { message, conversationId, history } = await req.json();
+    let { message, conversationId, history, systemMessageText } = await req.json();
 
     if (!message) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -549,6 +549,38 @@ export async function POST(req: Request) {
 
       if (createError) throw createError;
       conversationId = newConvo.id;
+    }
+
+    if (systemMessageText) {
+      // Save user log message
+      const { error: userMsgError } = await supabaseAdmin
+        .from("command_center_messages")
+        .insert({
+          conversation_id: conversationId,
+          sender: "user",
+          text: message
+        });
+      if (userMsgError) throw userMsgError;
+
+      // Save GXL synthesized message
+      const { data: synthMsg, error: synthError } = await supabaseAdmin
+        .from("command_center_messages")
+        .insert({
+          conversation_id: conversationId,
+          sender: "gxl",
+          text: systemMessageText
+        })
+        .select()
+        .single();
+      if (synthError) throw synthError;
+
+      // Bump updated_at timestamp
+      await supabaseAdmin
+        .from("command_center_conversations")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", conversationId);
+
+      return NextResponse.json({ success: true, message: synthMsg });
     }
 
     // Save the user's message

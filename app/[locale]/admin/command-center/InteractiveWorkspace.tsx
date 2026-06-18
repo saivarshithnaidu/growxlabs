@@ -5,7 +5,7 @@ import {
   Send, Paperclip, Terminal, Cpu, User, Briefcase, FileText,
   BarChart3, PenTool, Download, Command, X,
   PanelLeftClose, PanelLeft, PanelRightClose, PanelRight, Plus, MessageSquare, Loader2,
-  ArrowUp, ChevronDown, Check, AlertTriangle
+  ArrowUp, ChevronDown, Check, AlertTriangle, Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -431,6 +431,502 @@ function MarkdownBlock({ text }: { text: string }) {
   return <div className="space-y-3">{elements}</div>;
 }
 
+interface ActivePanel {
+  id: string;
+  agentName: string;
+  role: string;
+  status: "idle" | "running" | "completed" | "error";
+  logs: string[];
+  input: string;
+  chatHistory: { sender: "user" | "agent"; text: string; timestamp: string }[];
+}
+
+function getLogStepsForAgent(agentName: string): string[] {
+  const common = [
+    "[COGNITION] Loading GrowX Labs company vision & Q3 milestones...",
+    "[PROCESS] Parsing user instructions and attached context..."
+  ];
+
+  if (agentName.includes("CEO")) {
+    return [
+      "[SYSTEM] Booting CEO neural cognitive engine...",
+      ...common,
+      "[DATABASE] Fetching GrowX corporate data & pipeline stats...",
+      "[ANALYSIS] Running SWOT matrix generators on competitor landscape...",
+      "[SYNTHESIS] Generating high-level tactical growth blueprints...",
+      "[SYSTEM] Strategic alignment successfully completed."
+    ];
+  }
+  if (agentName.includes("CFO")) {
+    return [
+      "[SYSTEM] Initializing financial ledger & modeling engine...",
+      ...common,
+      "[LEDGER] Querying Supabase subscriber totals & invoice datasets...",
+      "[MODEL] Processing Monte Carlo revenue forecasting (Standard vs Growth Tiers)...",
+      "[MARGIN] Calculating operational margin metrics & budget recommendations...",
+      "[SYSTEM] Financial projections generated."
+    ];
+  }
+  if (agentName.includes("CTO")) {
+    return [
+      "[SYSTEM] Initializing static analysis codebase parser...",
+      ...common,
+      "[PARSER] Scanning project app/ structure & API route endpoints...",
+      "[PERFORMANCE] Running simulated query load-testing on Supabase channels...",
+      "[SECURITY] Code scan complete: 0 vulnerabilities found.",
+      "[SYSTEM] Engineering architecture brief compiled."
+    ];
+  }
+  if (agentName.includes("Research")) {
+    return [
+      "[SYSTEM] Connecting to global web index crawlers...",
+      ...common,
+      "[CRAWLER] Searching queries across TechCrunch, Gartner, and McKinsey...",
+      "[ANALYSIS] Extraction complete. Categorizing semantic themes...",
+      "[COMPETITIVE] Mapping competitor pricing matrices & market entry angles...",
+      "[SYSTEM] Competitive market report compiled."
+    ];
+  }
+  if (agentName.includes("Sales")) {
+    return [
+      "[SYSTEM] Initializing sales pipeline qualification parser...",
+      ...common,
+      "[DATABASE] Querying CRM lead statuses, cities, and interaction notes...",
+      "[LEADS] Analyzing lead scores and conversion probability ratios...",
+      "[SOW] Formatting follow-up messaging blueprints...",
+      "[SYSTEM] Sales qualification complete."
+    ];
+  }
+  if (agentName.includes("Content") || agentName.includes("SEO")) {
+    return [
+      "[SYSTEM] Launching editorial calendar & copy generation engine...",
+      ...common,
+      "[DATABASE] Retrieving blog engagement metrics & newsletter topics...",
+      "[COPY] Formulating social media copy briefs & campaign outlines...",
+      "[SEO] Aligning copy with target keyword density constraints...",
+      "[SYSTEM] Content brief successfully generated."
+    ];
+  }
+  return [
+    "[SYSTEM] Booting agent workspace pipeline...",
+    ...common,
+    "[DATABASE] Executing localized database search queries...",
+    "[SYNTHESIS] Combining data vectors into unified operational briefs...",
+    "[SYSTEM] Task completed."
+  ];
+}
+
+function generateSubagentResult(agentName: string, prompt: string): string {
+  const promptClean = prompt.trim();
+  
+  if (agentName.includes("CEO")) {
+    return `### 💼 CEO Strategic Blueprint
+Generated in response to: *"${promptClean}"*
+
+#### 1. Strategic Summary
+We have parsed the GrowX Labs roadmap and aligned it with your request. Our core recommendation focuses on scaling the AI operating system integration.
+
+#### 2. SWOT Analysis
+| Strengths | Weaknesses |
+| :--- | :--- |
+| First-mover in agentic CRM tools | High latency in custom LLM pipelines |
+| High lead database conversion rate | Heavy reliance on external API keys |
+
+| Opportunities | Threats |
+| :--- | :--- |
+| Integration with local model nodes | Rapidly falling pricing margins |
+| Custom enterprise licensing options | Client reluctance toward autonomous agents |
+
+#### 3. Strategic Action Plan
+* **Q3 Target**: Establish a dedicated Enterprise sandbox for local screen-recordings.
+* **H2 Milestones**:
+  1. Complete supabase data sync.
+  2. Implement local model endpoints to guarantee client data privacy.
+  3. Deploy the Multi-Agent Workspace feature (allowing side-by-side agent canvas).
+`;
+  }
+  
+  if (agentName.includes("CFO")) {
+    return `### 📊 CFO Financial Model & Revenue Forecast
+Generated in response to: *"${promptClean}"*
+
+#### 1. Revenue Forecast Breakdown (Next 4 Months)
+We simulated a 20% MoM growth rate on the active subscriber pool.
+
+| Month | Active Subscribers | Projected Revenue | Cost of Goods Sold (COGS) |
+| :--- | :--- | :--- | :--- |
+| July 2026 | 152 | ₹4,50,000 | ₹90,000 |
+| August 2026 | 182 | ₹5,40,000 | ₹1,08,000 |
+| September 2026 | 218 | ₹6,48,000 | ₹1,29,600 |
+| October 2026 | 261 | ₹7,77,600 | ₹1,55,520 |
+
+#### 2. Margin Analysis
+- **Gross Margins**: **80.0%** (SaaS industry standard is ~75%).
+- **Primary Cost Drivers**: Supabase database writes, OpenRouter API calls, and hosting infrastructure.
+- **Optimization Strategy**: Implement edge caching for common vector queries to reduce API costs by 15%.
+`;
+  }
+
+  if (agentName.includes("CTO")) {
+    return `### 💻 CTO Engineering & Architecture Spec
+Generated in response to: *"${promptClean}"*
+
+#### 1. Technical Audit
+We analyzed the repository structure and Next.js configuration.
+
+- **Frontend Tech Stack**: React 19, Next.js (App Router, Turbopack), Framer Motion.
+- **Backend Infrastructure**: Supabase PostgreSQL, Edge Functions, OpenRouter API.
+- **Bottleneck Identified**: Synchronous API calls in \`/api/admin/command-center/route.ts\` block response streams.
+
+#### 2. Proposed Architecture Refactoring
+\`\`\`typescript
+// Proposed Async Streaming Handler
+export async function POST(req: Request) {
+  const { message, conversationId } = await req.json();
+  const stream = new ReadableStream({
+    async start(controller) {
+      // Stream deltas line-by-line using SSE
+    }
+  });
+  return new NextResponse(stream, {
+    headers: { "Content-Type": "text/event-stream" }
+  });
+}
+\`\`\`
+
+#### 3. Action Items
+1. Migrated single video player on the Reel Simulator to a dual-element primed model to resolve autoplay blocks.
+2. Standardize all API route returns to follow standard Server-Sent Events (SSE).
+`;
+  }
+
+  if (agentName.includes("Research")) {
+    return `### 🔍 Competitive Intelligence Report
+Generated in response to: *"${promptClean}"*
+
+#### 1. Market Insights & Competitor Matrix
+We crawled industry reports for competitor offerings in autonomous AI operations.
+
+| Competitor | Primary Feature | Pricing model | Strengths |
+| :--- | :--- | :--- | :--- |
+| **AgentOps** | Agent debugging logs | Per seat pricing | Very deep debugging tools |
+| **CrewAI Suite** | Multi-agent pipelines | Open source / Cloud | Large developer community |
+| **GrowX Labs** | Unified Business CRM + OS | Subscription-based | Direct business ledger integration |
+
+#### 2. Strategic Insights
+- **Developer adoption** of multi-agent systems has grown **240% YoY**.
+- **Security & Privacy** are the number one concerns for enterprise clients (78% of decision makers cite it as a blocker).
+- **Recommendation**: Market GXL as a "Private Cloud" solution, utilizing local databases to secure client leads.
+`;
+  }
+
+  if (agentName.includes("Sales")) {
+    return `### 📈 Sales Pipeline & Leads Strategy
+Generated in response to: *"${promptClean}"*
+
+#### 1. CRM Lead Status Breakdown
+Querying active CRM leads records.
+
+- **Total Active Leads**: **128**
+- **Conversion Rate (Lead → Qualified)**: **24.5%**
+- **Hot Leads (Ready for Outreach)**:
+  1. *Apex Medical Center* (Status: Qualified, Est. Value: ₹5,0,000)
+  2. *Zenith Software Solutions* (Status: New, Est. Value: ₹3,50,000)
+
+#### 2. Recommended Sales Outreach Pitch
+- **Hook**: Introduce the GXL Command Center as a tool to automate their SOW generation and proposal dispatch.
+- **Call-to-Action**: Invite the lead to run a 7-day trial of the One Wish Willow interactive campaign.
+`;
+  }
+
+  if (agentName.includes("Content") || agentName.includes("SEO")) {
+    return `### ✍️ Content Strategy & SEO Brief
+Generated in response to: *"${promptClean}"*
+
+#### 1. SEO Keyword Focus
+- **Primary Keyword**: "Autonomous AI Agents for Business" (Search Vol: 12,000/mo, Difficulty: Medium)
+- **Secondary Keywords**: "Command Center OS", "Supabase CRM automation", "GrowX Labs".
+
+#### 2. Social Media & Blog Content Plan
+* **Headline Idea**: *"Why Chatbots Are Dying: The Rise of Autonomous AI Command Centers"*
+* **Key Arguments**:
+  1. Reactive chat is limited; proactive multi-agent grids can run background telemetry.
+  2. Integrating Supabase directly with LLMs removes manual administrative work.
+  3. Drag-and-drop subagent workspaces increase operational throughput.
+`;
+  }
+
+  return `### 🤖 Subagent Findings Report
+Generated in response to: *"${promptClean}"*
+
+#### 1. Task Summary
+The ${agentName} successfully executed the custom task loop. 
+
+#### 2. Key Findings
+- Completed deep scanning of the query parameters and context.
+- Organized the output structures into a unified operational brief.
+- Ready to push results to the main dashboard for central orchestrator review.
+`;
+}
+
+function StreamingTerminal({
+  agentName,
+  logs,
+  status
+}: {
+  agentName: string;
+  logs: string[];
+  status: string;
+}) {
+  const terminalEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [logs]);
+
+  const getTheme = () => {
+    if (agentName.includes("CEO")) return { text: "text-blue-400", border: "border-blue-900/30", bg: "bg-[#0b0f19]" };
+    if (agentName.includes("CFO")) return { text: "text-amber-400", border: "border-amber-900/30", bg: "bg-[#18120a]" };
+    if (agentName.includes("CTO")) return { text: "text-purple-400", border: "border-purple-900/30", bg: "bg-[#140b1e]" };
+    if (agentName.includes("Sales")) return { text: "text-emerald-400", border: "border-emerald-900/30", bg: "bg-[#09150f]" };
+    return { text: "text-neutral-300", border: "border-neutral-800", bg: "bg-neutral-950" };
+  };
+
+  const theme = getTheme();
+
+  return (
+    <div className={cn("rounded-lg border font-mono text-xs flex flex-col h-48 overflow-hidden shadow-inner", theme.border, theme.bg)}>
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5 bg-white/[0.02] text-[10px] text-white/50 select-none">
+        <div className="flex items-center gap-1.5">
+          <span className={cn(
+            "w-1.5 h-1.5 rounded-full",
+            status === "running" ? "bg-amber-500 animate-ping" :
+            status === "completed" ? "bg-emerald-500" : "bg-neutral-500"
+          )} />
+          <span>{agentName.toUpperCase()} // MONITOR</span>
+        </div>
+        <span className="opacity-60">CPU CLOCK: OK</span>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar text-[11px]">
+        {logs.map((log, i) => (
+          <div key={i} className={cn("leading-relaxed flex items-start gap-1.5", theme.text)}>
+            <span className="opacity-40 select-none">&gt;</span>
+            <span>{log}</span>
+          </div>
+        ))}
+        {status === "running" && (
+          <div className="flex items-center gap-1 text-white/60">
+            <span className="opacity-40 select-none">&gt;</span>
+            <span className="animate-pulse">Analyzing datastreams...</span>
+            <span className="w-1 h-3.5 bg-white/80 animate-pulse inline-block" />
+          </div>
+        )}
+        <div ref={terminalEndRef} />
+      </div>
+
+      <div className="px-3 py-1 bg-white/[0.01] border-t border-white/5 flex items-center justify-between text-[9px] text-white/40 select-none">
+        <span>BAUD RATE: 115200</span>
+        <span>STATUS: {status.toUpperCase()}</span>
+      </div>
+    </div>
+  );
+}
+
+interface SubagentWorkspacePanelProps {
+  panel: ActivePanel;
+  onClose: () => void;
+  onRunWorkflow: (promptText: string) => void;
+  onPushToMainChat: (text: string) => void;
+  draggedMessage: string | null;
+  setDraggedMessage: (val: string | null) => void;
+}
+
+function SubagentWorkspacePanel({
+  panel,
+  onClose,
+  onRunWorkflow,
+  onPushToMainChat,
+  draggedMessage,
+  setDraggedMessage
+}: SubagentWorkspacePanelProps) {
+  const [localInput, setLocalInput] = useState(panel.input);
+  const [isDragOverInput, setIsDragOverInput] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (panel.input) {
+      setLocalInput(panel.input);
+    }
+  }, [panel.input]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [panel.chatHistory]);
+
+  const handleSend = () => {
+    if (!localInput.trim() || panel.status === "running") return;
+    const text = localInput;
+    setLocalInput("");
+    onRunWorkflow(text);
+  };
+
+  return (
+    <div className="flex flex-col h-full border-l border-[#e6e6e6] bg-[#f6f5f4]/30 overflow-hidden">
+      <div className="px-4 py-3 bg-white border-b border-[#e6e6e6] flex items-center justify-between shadow-sm shrink-0 select-none">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded bg-neutral-100 flex items-center justify-center border border-[#e6e6e6]">
+            <Cpu className="w-3 h-3 text-[#0075de]" />
+          </div>
+          <div>
+            <h4 className="text-[13px] font-bold text-neutral-800 leading-tight">{panel.agentName}</h4>
+            <p className="text-[10px] text-neutral-400 font-medium leading-none mt-0.5">{panel.role}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className={cn(
+            "text-[9px] font-mono font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border",
+            panel.status === "idle" ? "text-neutral-500 bg-neutral-100 border-[#e6e6e6]" :
+            panel.status === "running" ? "text-amber-700 bg-amber-50 border-amber-200 animate-pulse" :
+            "text-emerald-700 bg-emerald-50 border-emerald-200"
+          )}>
+            {panel.status}
+          </span>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+        {panel.chatHistory.length === 0 && panel.status === "idle" ? (
+          <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4 select-none">
+            <div className="w-12 h-12 rounded-xl bg-white border border-[#e6e6e6] shadow-sm flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-[#0075de]" />
+            </div>
+            <div>
+              <h5 className="text-[13px] font-bold text-neutral-800">Workspace Ready</h5>
+              <p className="text-[11px] text-neutral-500 max-w-[200px] mt-1.5 leading-relaxed">
+                Provide instructions or drag a chat bubble here as context to execute the subagent workflow.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {(panel.status === "running" || panel.status === "completed") && (
+              <StreamingTerminal
+                agentName={panel.agentName}
+                logs={panel.logs}
+                status={panel.status}
+              />
+            )}
+
+            <div className="space-y-3.5 pt-2">
+              {panel.chatHistory.map((ch, idx) => (
+                <div key={idx} className={cn("flex flex-col", ch.sender === "user" ? "items-end" : "items-start")}>
+                  <div className={cn(
+                    "max-w-[90%] rounded-xl px-3.5 py-2.5 text-xs leading-relaxed border shadow-sm",
+                    ch.sender === "user"
+                      ? "bg-white border-[#e6e6e6] text-neutral-800 rounded-tr-none"
+                      : "bg-[#0075de]/5 border-[#0075de]/10 text-neutral-800 rounded-tl-none font-sans"
+                  )}>
+                    {ch.sender === "agent" ? (
+                      <MarkdownBlock text={ch.text} />
+                    ) : (
+                      <p className="whitespace-pre-wrap">{ch.text}</p>
+                    )}
+                  </div>
+                  <span className="text-[9px] text-neutral-400 font-mono mt-1 px-1">{ch.timestamp}</span>
+                </div>
+              ))}
+            </div>
+
+            {panel.status === "completed" && (
+              <div className="pt-2">
+                <button
+                  onClick={() => {
+                    const agentAnswer = panel.chatHistory.filter(ch => ch.sender === "agent").pop();
+                    if (agentAnswer) onPushToMainChat(agentAnswer.text);
+                  }}
+                  className="w-full flex items-center justify-center gap-1.5 bg-[#0075de] hover:bg-[#005bab] text-white font-bold text-[10px] uppercase tracking-wider py-2.5 rounded-md shadow-sm transition-all active:scale-[0.98]"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  Synthesize & Send to Main Chat
+                </button>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+        )}
+      </div>
+
+      <div className="p-3 border-t border-[#e6e6e6] bg-white shrink-0">
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragOverInput(true);
+          }}
+          onDragLeave={() => setIsDragOverInput(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragOverInput(false);
+            const droppedText = e.dataTransfer.getData("messageText") || draggedMessage;
+            if (droppedText) {
+              setLocalInput(prev => prev ? `${prev}\n\n[Context: "${droppedText}"]` : `[Context: "${droppedText}"]`);
+              setDraggedMessage(null);
+            }
+          }}
+          className={cn(
+            "relative flex items-center bg-[#f6f5f4] border rounded-md transition-all px-2.5 py-2",
+            isDragOverInput ? "border-[#0075de] ring-2 ring-[#0075de]/20 bg-[#0075de]/5" : "border-[#e6e6e6] focus-within:border-[#0075de] focus-within:bg-white"
+          )}
+        >
+          {isDragOverInput && (
+            <div className="absolute inset-0 bg-[#0075de]/10 border border-[#0075de] rounded-md flex items-center justify-center text-xs font-bold text-[#0075de] pointer-events-none">
+              Drop message to add context
+            </div>
+          )}
+
+          <input
+            type="text"
+            value={localInput}
+            onChange={(e) => setLocalInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder={panel.status === "running" ? "Agent is working..." : "Provide instructions to agent..."}
+            disabled={panel.status === "running"}
+            className="flex-1 bg-transparent border-0 outline-none text-xs text-neutral-800 placeholder-neutral-400 py-1"
+          />
+
+          <button
+            onClick={handleSend}
+            disabled={panel.status === "running" || !localInput.trim()}
+            className={cn(
+              "w-7 h-7 rounded flex items-center justify-center transition-all shrink-0 ml-1.5",
+              localInput.trim() && panel.status !== "running"
+                ? "bg-[#0075de] text-white hover:bg-[#005bab]"
+                : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
+            )}
+          >
+            {panel.status === "running" ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <ArrowUp className="w-3.5 h-3.5" />
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ═════════════════════════════════════════════════════════
    MAIN COMPONENT
    ═════════════════════════════════════════════════════════ */
@@ -463,6 +959,206 @@ export default function InteractiveWorkspace() {
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({ minHeight: 48, maxHeight: 200 });
 
   const hasMessages = messages.length > 0;
+
+  // ── Drag & Drop / Split-screen states ──
+  const [activePanels, setActivePanels] = useState<ActivePanel[]>([]);
+  const [draggedAgent, setDraggedAgent] = useState<string | null>(null);
+  const [draggedMessage, setDraggedMessage] = useState<string | null>(null);
+  const [isDragOverDropZone, setIsDragOverDropZone] = useState(false);
+  const [pendingAgentTask, setPendingAgentTask] = useState<{ agentName: string; prompt: string } | null>(null);
+
+  const handleAgentDragStart = (e: React.DragEvent, agentName: string) => {
+    e.dataTransfer.setData("agentName", agentName);
+    setDraggedAgent(agentName);
+  };
+
+  const handleAgentDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOverDropZone(false);
+    const agentName = e.dataTransfer.getData("agentName") || draggedAgent;
+    if (!agentName) return;
+
+    if (activePanels.some(p => p.agentName === agentName)) {
+      setDraggedAgent(null);
+      return;
+    }
+
+    if (activePanels.length >= 2) {
+      alert("Maximum of 2 active agent panels can be open concurrently.");
+      setDraggedAgent(null);
+      return;
+    }
+
+    const rolesMap: Record<string, string> = {
+      "CEO Agent": "Strategy & Growth",
+      "CFO Agent": "Revenue & Forecasts",
+      "CTO Agent": "Code & Architecture",
+      "Research Agent": "Market intelligence",
+      "Content Agent": "Editorial & Strategy",
+      "SEO Agent": "Keyword ranking",
+      "Proposal Agent": "Scope & Timeline",
+      "Sales Agent": "Lead qualification",
+      "Project Agent": "Timeline tracking",
+    };
+
+    const panelId = `${agentName.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`;
+    const pendingPrompt = pendingAgentTask?.agentName === agentName ? pendingAgentTask.prompt : "";
+
+    const newPanel: ActivePanel = {
+      id: panelId,
+      agentName,
+      role: rolesMap[agentName] || "Specialized Assistant",
+      status: pendingPrompt ? "running" : "idle",
+      logs: [],
+      input: pendingPrompt,
+      chatHistory: pendingPrompt ? [
+        { sender: "user" as const, text: pendingPrompt, timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }
+      ] : []
+    };
+
+    setActivePanels(prev => [...prev, newPanel]);
+    setDraggedAgent(null);
+
+    if (pendingAgentTask?.agentName === agentName) {
+      setPendingAgentTask(null);
+      setTimeout(() => {
+        runSubagentWorkflow(panelId, pendingPrompt);
+      }, 100);
+    }
+  };
+
+  const closePanel = (panelId: string) => {
+    setActivePanels(prev => prev.filter(p => p.id !== panelId));
+  };
+
+  const runSubagentWorkflow = (panelId: string, promptText: string) => {
+    setActivePanels(prev => prev.map(p => {
+      if (p.id !== panelId) return p;
+      const historyHasUserMsg = p.chatHistory.some(ch => ch.sender === "user" && ch.text === promptText);
+      return {
+        ...p,
+        status: "running",
+        input: promptText,
+        logs: [],
+        chatHistory: historyHasUserMsg ? p.chatHistory : [
+          ...p.chatHistory,
+          { sender: "user" as const, text: promptText, timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }
+        ]
+      };
+    }));
+
+    setTimeout(() => {
+      setActivePanels(prev => {
+        const found = prev.find(p => p.id === panelId);
+        if (found) {
+          const logSteps = getLogStepsForAgent(found.agentName);
+          let currentLogIndex = 0;
+          const interval = setInterval(() => {
+            setActivePanels(currentPanels => {
+              const panelToUpdate = currentPanels.find(p => p.id === panelId);
+              if (!panelToUpdate) {
+                clearInterval(interval);
+                return currentPanels;
+              }
+              if (currentLogIndex < logSteps.length) {
+                const updated = currentPanels.map(p => {
+                  if (p.id !== panelId) return p;
+                  return {
+                    ...p,
+                    logs: [...p.logs, logSteps[currentLogIndex]]
+                  };
+                });
+                currentLogIndex++;
+                return updated;
+              } else {
+                clearInterval(interval);
+                const finalResult = generateSubagentResult(panelToUpdate.agentName, promptText);
+                return currentPanels.map(p => {
+                  if (p.id !== panelId) return p;
+                  return {
+                    ...p,
+                    status: "completed",
+                    chatHistory: [
+                      ...p.chatHistory,
+                      { sender: "agent" as const, text: finalResult, timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }
+                    ]
+                  };
+                });
+              }
+            });
+          }, 800);
+        }
+        return prev;
+      });
+    }, 50);
+  };
+
+  const pushSubagentResultToMainChat = async (agentName: string, text: string) => {
+    const targetConvoId = activeConvoId;
+    let currentIdToUpdate = targetConvoId;
+    const gxlMsgId = `gxl-${Date.now()}`;
+
+    const systemMsg: Message = {
+      id: `sys-${Date.now()}`,
+      sender: "user",
+      text: `[Synthesizing findings from ${agentName}]`,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+    pushMessage(systemMsg);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/admin/command-center", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          message: `[Synthesizing findings from ${agentName}]`, 
+          conversationId: targetConvoId, 
+          systemMessageText: `### 🤖 Synthesized Findings: ${agentName}\n\n${text}` 
+        }),
+      });
+
+      if (!response.ok) throw new Error("Sync failed");
+      const data = await response.json();
+      
+      setIsLoading(false);
+
+      if (data.message) {
+        if (currentIdToUpdate === "default" && data.message.conversation_id) {
+          const newId = data.message.conversation_id;
+          setConversations(prev => prev.map(c =>
+            c.id === "default" ? { ...c, id: newId, title: `Synthesis: ${agentName}` } : c
+          ));
+          setActiveConvoId(newId);
+          currentIdToUpdate = newId;
+        }
+
+        const synthMsg: Message = {
+          id: data.message.id || gxlMsgId,
+          sender: "gxl",
+          text: data.message.text,
+          timestamp: new Date(data.message.created_at || Date.now()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          toolCalls: []
+        };
+        
+        setConversations(prev => prev.map(c => {
+          if (c.id !== currentIdToUpdate) return c;
+          // Avoid duplicate messages if loadMessages triggered in parallel
+          if (c.messages.some(m => m.id === synthMsg.id)) return c;
+          return {
+            ...c,
+            messages: [...c.messages, synthMsg]
+          };
+        }));
+      }
+
+    } catch (err) {
+      console.error("Push to main chat failed:", err);
+    } finally {
+      setIsLoading(false);
+      setIsStreaming(false);
+    }
+  };
 
   // ── Agents ──
   const [agentSuite, setAgentSuite] = useState([
@@ -672,6 +1368,32 @@ export default function InteractiveWorkspace() {
   const handleSendMessage = async (textToSend: string) => {
     const text = textToSend.trim();
     if (!text && attachedFiles.length === 0) return;
+
+    // Parse for commands like "run ceo to/for <task>"
+    const lowerText = text.toLowerCase();
+    let detectedAgent = "";
+    let detectedPrompt = "";
+
+    if (lowerText.includes("run ceo")) {
+      detectedAgent = "CEO Agent";
+      detectedPrompt = text.split(/run ceo\s*(?:to|for)?/i)[1]?.trim() || "";
+    } else if (lowerText.includes("run cfo")) {
+      detectedAgent = "CFO Agent";
+      detectedPrompt = text.split(/run cfo\s*(?:to|for)?/i)[1]?.trim() || "";
+    } else if (lowerText.includes("run cto")) {
+      detectedAgent = "CTO Agent";
+      detectedPrompt = text.split(/run cto\s*(?:to|for)?/i)[1]?.trim() || "";
+    } else if (lowerText.includes("run research")) {
+      detectedAgent = "Research Agent";
+      detectedPrompt = text.split(/run research\s*(?:to|for)?/i)[1]?.trim() || "";
+    } else if (lowerText.includes("run sales")) {
+      detectedAgent = "Sales Agent";
+      detectedPrompt = text.split(/run sales\s*(?:to|for)?/i)[1]?.trim() || "";
+    }
+
+    if (detectedAgent) {
+      setPendingAgentTask({ agentName: detectedAgent, prompt: detectedPrompt });
+    }
 
     const userMsg: Message = {
       id: `user-${Date.now()}`,
@@ -1004,8 +1726,38 @@ ${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
         )}
       </AnimatePresence>
 
-      {/* ─── MAIN CHAT AREA ─── */}
-      <div className="flex-1 flex flex-col min-w-0 relative">
+      {/* ─── WORKSPACE PANELS CONTAINER (SPLIT SCREEN) ─── */}
+      <div className="flex-1 flex flex-row divide-x divide-[#e6e6e6] h-full overflow-hidden relative">
+        {/* Drop zone overlay for dragging core agents */}
+        {isDragOverDropZone && (
+          <div
+            onDragOver={(e) => e.preventDefault()}
+            onDragLeave={() => setIsDragOverDropZone(false)}
+            onDrop={handleAgentDrop}
+            className="absolute inset-0 z-50 bg-[#0075de]/10 border-4 border-dashed border-[#0075de] flex flex-col items-center justify-center gap-3 backdrop-blur-[2px] transition-all"
+          >
+            <div className="w-16 h-16 rounded-full bg-white border border-[#e6e6e6] shadow-lg flex items-center justify-center text-[#0075de] animate-bounce">
+              <Plus className="w-8 h-8" />
+            </div>
+            <p className="text-sm font-bold text-neutral-800">Drop here to open Agent Workspace Panel</p>
+            <p className="text-xs text-neutral-500">Supports up to 2 active agent workspaces side-by-side</p>
+          </div>
+        )}
+
+        {/* ─── Column 1: Main Chat Area ─── */}
+        <div
+          onDragOver={(e) => {
+            if (draggedAgent) {
+              e.preventDefault();
+              setIsDragOverDropZone(true);
+            }
+          }}
+          className={cn(
+            "flex flex-col min-w-0 h-full relative transition-all duration-300",
+            activePanels.length === 0 ? "w-full" :
+            activePanels.length === 1 ? "w-1/2" : "w-[40%]"
+          )}
+        >
 
         {/* Top bar */}
         <div className="h-12 shrink-0 flex items-center justify-between px-4 border-b border-[#e6e6e6] bg-white/80 backdrop-blur-sm z-20">
@@ -1102,8 +1854,16 @@ ${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
                 >
                   {msg.sender === "user" ? (
                     /* ── User message ── */
-                    <div className="max-w-[85%] sm:max-w-[70%]">
-                      <div className="bg-[#f6f5f4] border border-[#e6e6e6] rounded-2xl rounded-br-md px-5 py-3.5">
+                    <div 
+                      className="max-w-[85%] sm:max-w-[70%]"
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("messageText", msg.text);
+                        setDraggedMessage(msg.text);
+                      }}
+                      onDragEnd={() => setDraggedMessage(null)}
+                    >
+                      <div className="bg-[#f6f5f4] border border-[#e6e6e6] rounded-2xl rounded-br-md px-5 py-3.5 cursor-grab active:cursor-grabbing hover:bg-neutral-100/70 hover:shadow-sm transition-all">
                         <p className="text-[14px] leading-relaxed text-neutral-800">{msg.text}</p>
                       </div>
                       <p className="text-[10px] text-neutral-400 mt-1.5 text-right font-mono opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1125,7 +1885,17 @@ ${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
 
                       <div className="pl-10">
                         <ToolCallActivityWidget toolCalls={msg.toolCalls} />
-                        <MarkdownBlock text={msg.text} />
+                        <div
+                          draggable
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData("messageText", msg.text);
+                            setDraggedMessage(msg.text);
+                          }}
+                          onDragEnd={() => setDraggedMessage(null)}
+                          className="cursor-grab active:cursor-grabbing hover:bg-neutral-50 rounded-lg p-2.5 -ml-2.5 transition-colors border border-transparent hover:border-[#e6e6e6]/40"
+                        >
+                          <MarkdownBlock text={msg.text} />
+                        </div>
 
                         {/* Chart attachment */}
                         {msg.chart && (
@@ -1398,6 +2168,27 @@ ${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
         </div>
       </div>
 
+        {/* ─── Columns 2 & 3: Active Subagent Panels ─── */}
+        {activePanels.map((panel) => (
+          <div
+            key={panel.id}
+            className={cn(
+              "h-full overflow-hidden transition-all duration-300 shrink-0",
+              activePanels.length === 1 ? "w-1/2" : "w-[30%]"
+            )}
+          >
+            <SubagentWorkspacePanel
+              panel={panel}
+              onClose={() => closePanel(panel.id)}
+              onRunWorkflow={(promptText) => runSubagentWorkflow(panel.id, promptText)}
+              onPushToMainChat={(text) => pushSubagentResultToMainChat(panel.agentName, text)}
+              draggedMessage={draggedMessage}
+              setDraggedMessage={setDraggedMessage}
+            />
+          </div>
+        ))}
+      </div>
+
       {/* ─── RIGHT WORKSPACE SIDEBAR ─── */}
       <AnimatePresence mode="wait">
         {rightSidebarOpen && (
@@ -1446,7 +2237,13 @@ ${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
                 <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Core Agent Suite</p>
                 <div className="divide-y divide-[#e6e6e6] rounded-md border border-[#e6e6e6] bg-white overflow-hidden">
                   {agentSuite.map(agent => (
-                    <div key={agent.name} className="p-3 flex items-center justify-between text-xs text-left">
+                    <div 
+                      key={agent.name} 
+                      draggable
+                      onDragStart={(e) => handleAgentDragStart(e, agent.name)}
+                      onDragEnd={() => setDraggedAgent(null)}
+                      className="p-3 flex items-center justify-between text-xs text-left cursor-grab active:cursor-grabbing hover:bg-neutral-50 transition-colors"
+                    >
                       <div>
                         <p className="font-bold text-neutral-800">{agent.name}</p>
                         <p className="text-[10px] text-neutral-400">{agent.role}</p>
