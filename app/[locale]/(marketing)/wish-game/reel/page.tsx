@@ -18,6 +18,7 @@ export default function ReelRecorderPage() {
   const [state, setState] = useState<ReelState>("idle");
   const [countdown, setCountdown] = useState(3);
   const [videoSrc, setVideoSrc] = useState("/videos/obsession-video.mp4");
+  const [videoFit, setVideoFit] = useState<"contain" | "cover">("contain");
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Playback flow trigger
@@ -78,9 +79,31 @@ export default function ReelRecorderPage() {
           <ol>
             <li>Start your screen recording software.</li>
             <li>Crop the recording window to the phone frame.</li>
-            <li>Click <strong>Start Record Flow</strong> (gives you a 3s countdown).</li>
+            <li>Select your preferred video display ratio.</li>
+            <li>Click <strong>Start Record Flow</strong>.</li>
           </ol>
-          <button onClick={startRecordingFlow}>Start Record Flow</button>
+
+          <div className="settings-group">
+            <label>Game Video Display Ratio:</label>
+            <div className="toggle-buttons">
+              <button 
+                type="button"
+                className={videoFit === "contain" ? "active" : ""} 
+                onClick={() => setVideoFit("contain")}
+              >
+                Letterbox (16:9)
+              </button>
+              <button 
+                type="button"
+                className={videoFit === "cover" ? "active" : ""} 
+                onClick={() => setVideoFit("cover")}
+              >
+                Fill Screen (9:16 Crop)
+              </button>
+            </div>
+          </div>
+
+          <button className="primary-btn" onClick={startRecordingFlow}>Start Record Flow</button>
         </div>
       )}
 
@@ -134,7 +157,7 @@ export default function ReelRecorderPage() {
             {(state === "teaser-video" || state === "game-video") && (
               <video
                 ref={videoRef}
-                className={state === "game-video" ? "contain-video" : ""}
+                className={state === "game-video" ? (videoFit === "contain" ? "contain-video" : "cover-video") : ""}
                 src={videoSrc}
                 playsInline
                 autoPlay
@@ -440,8 +463,59 @@ export default function ReelRecorderPage() {
           object-fit: cover;
         }
 
-        .screen-video video.contain-video {
-          object-fit: contain;
+        .contain-video {
+          object-fit: contain !important;
+        }
+
+        .cover-video {
+          object-fit: cover !important;
+        }
+
+        /* Settings group on control panel */
+        .settings-group {
+          margin-bottom: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          text-align: left;
+        }
+
+        .settings-group label {
+          font-size: 0.85rem;
+          font-weight: bold;
+          color: #ff3333;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+        }
+
+        .toggle-buttons {
+          display: flex;
+          gap: 10px;
+        }
+
+        .toggle-buttons button {
+          flex: 1;
+          background: #22150a !important;
+          border: 1px solid #5a1212 !important;
+          color: #999 !important;
+          font-size: 0.75rem !important;
+          padding: 8px 10px !important;
+          min-height: auto !important;
+          cursor: pointer !important;
+          box-shadow: none !important;
+          border-radius: 4px !important;
+          text-transform: uppercase !important;
+        }
+
+        .toggle-buttons button.active {
+          background: #cc1f1f !important;
+          border-color: #cc1f1f !important;
+          color: white !important;
+          font-weight: bold !important;
+        }
+
+        .primary-btn {
+          margin-top: 10px;
         }
 
         .video-reel-caption {
