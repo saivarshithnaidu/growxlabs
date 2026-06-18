@@ -17,8 +17,8 @@ type ReelState = "idle" | "countdown" | "hook" | "teaser-video" | "game-video" |
 export default function ReelRecorderPage() {
   const [state, setState] = useState<ReelState>("idle");
   const [countdown, setCountdown] = useState(3);
-  const teaserRef = useRef<HTMLVideoElement>(null);
-  const gameRef = useRef<HTMLVideoElement>(null);
+  const [videoSrc, setVideoSrc] = useState("/videos/obsession-video.mp4");
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Playback flow trigger
   useEffect(() => {
@@ -38,6 +38,7 @@ export default function ReelRecorderPage() {
 
     if (state === "hook") {
       const timer = setTimeout(() => {
+        setVideoSrc("/videos/obsession-video.mp4");
         setState("teaser-video");
       }, 3500); // Show hook for 3.5 seconds
       return () => clearTimeout(timer);
@@ -46,26 +47,20 @@ export default function ReelRecorderPage() {
 
   // Video play controller
   useEffect(() => {
-    if (state === "teaser-video" && teaserRef.current) {
-      teaserRef.current.currentTime = 0;
-      teaserRef.current.play().catch((e) => console.log("Teaser autoplay block:", e));
-    } else if (state === "game-video" && gameRef.current) {
-      gameRef.current.currentTime = 0;
-      gameRef.current.play().catch((e) => console.log("Game autoplay block:", e));
+    if ((state === "teaser-video" || state === "game-video") && videoRef.current) {
+      videoRef.current.play().catch((e) => console.log("Video autoplay block:", e));
     }
-  }, [state]);
+  }, [state, videoSrc]);
 
   function startRecordingFlow() {
+    setVideoSrc("/videos/obsession-video.mp4");
     setState("countdown");
     setCountdown(3);
   }
 
   function resetFlow() {
-    if (teaserRef.current) {
-      teaserRef.current.pause();
-    }
-    if (gameRef.current) {
-      gameRef.current.pause();
+    if (videoRef.current) {
+      videoRef.current.pause();
     }
     setState("idle");
   }
@@ -134,35 +129,29 @@ export default function ReelRecorderPage() {
             </div>
           )}
 
-          {/* STATE: TEASER VIDEO */}
-          <div className={`screen-video ${state === "teaser-video" ? "active" : ""}`}>
-            {state === "teaser-video" && (
+          {/* STATE: TEASER & GAME VIDEO (Single Video Player to bypass browser unmuted autoplay block) */}
+          <div className={`screen-video ${(state === "teaser-video" || state === "game-video") ? "active" : ""}`}>
+            {(state === "teaser-video" || state === "game-video") && (
               <video
-                ref={teaserRef}
-                src="/videos/obsession-video.mp4"
+                ref={videoRef}
+                className={state === "game-video" ? "contain-video" : ""}
+                src={videoSrc}
                 playsInline
                 autoPlay
-                onEnded={() => setState("game-video")}
+                onEnded={() => {
+                  if (state === "teaser-video") {
+                    setVideoSrc("/videos/gxl-wish-game-22.mp4");
+                    setState("game-video");
+                  } else {
+                    setState("cta");
+                  }
+                }}
               />
             )}
             {state === "teaser-video" && (
               <div className="video-reel-caption">
                 <p className={alfa.className}>THE TEASER</p>
               </div>
-            )}
-          </div>
-
-          {/* STATE: GAME PLAY VIDEO */}
-          <div className={`screen-video ${state === "game-video" ? "active" : ""}`}>
-            {state === "game-video" && (
-              <video
-                ref={gameRef}
-                className="contain-video"
-                src="/videos/gxl-wish-game-22.mp4"
-                playsInline
-                autoPlay
-                onEnded={() => setState("cta")}
-              />
             )}
             {state === "game-video" && (
               <div className="video-reel-caption">
@@ -182,14 +171,6 @@ export default function ReelRecorderPage() {
                   Comment <strong className="glow-word">"WISH"</strong> below <br />
                   and I will DM you the game link instantly.
                 </p>
-                <div className="mock-chat-bubble">
-                  <div className="mock-user">@viewer:</div>
-                  <div className="mock-comment">WISH</div>
-                </div>
-                <div className="mock-chat-reply">
-                  <div className="mock-user">@wish_willow:</div>
-                  <div className="mock-reply">Link sent! Check DMs 🕯</div>
-                </div>
               </div>
             </div>
           )}
