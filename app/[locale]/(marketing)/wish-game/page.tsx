@@ -462,15 +462,35 @@ export default function WishGamePage() {
       <div className="background-gallery">
         <div className="polaroid polaroid-left-1">
           <div className="tape" />
+          <img src="/images/obsession-scene-1.jpg" alt="Obsession Scene 1" />
+          <p className="polaroid-caption">Obsession: Exhibit A</p>
+        </div>
+        <div className="polaroid polaroid-left-2">
+          <div className="tape" />
+          <img src="/images/obsession-scene-2.jpg" alt="Obsession Scene 2" />
+          <p className="polaroid-caption">Obsession: Exhibit B</p>
+        </div>
+        <div className="polaroid polaroid-left-3">
+          <div className="tape" />
           <img src="/images/willow-whole-table.jpg" alt="Unbroken Willow" />
           <p className="polaroid-caption">Specimen A: Unbroken</p>
         </div>
-        <div className="polaroid polaroid-left-2">
+        <div className="polaroid polaroid-left-4">
           <div className="tape" />
           <img src="/images/willow-snapped-table.jpg" alt="Broken Willow" />
           <p className="polaroid-caption">Specimen B: Cursed</p>
         </div>
         <div className="polaroid polaroid-right-1">
+          <div className="tape" />
+          <img src="/images/obsession-scene-3.jpg" alt="Obsession Scene 3" />
+          <p className="polaroid-caption">Obsession: Exhibit C</p>
+        </div>
+        <div className="polaroid polaroid-right-2">
+          <div className="tape" />
+          <img src="/images/obsession-scene-4.jpg" alt="Obsession Scene 4" />
+          <p className="polaroid-caption">Obsession: Exhibit D</p>
+        </div>
+        <div className="polaroid polaroid-right-3">
           <div className="tape" />
           <img src="/images/willow-snapping-action.png" alt="Willow Snap" />
           <p className="polaroid-caption">The Crack of Doom</p>
@@ -678,6 +698,12 @@ export default function WishGamePage() {
       </section>
 
       <style>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
         .wish-game {
           --cream: #F5EDD8;
           --red: #CC1F1F;
@@ -695,8 +721,12 @@ export default function WishGamePage() {
         }
 
         .box-poster {
-          width: calc(100% - 32px);
-          margin: 18px auto 4px auto;
+          display: block;
+          line-height: 0;
+          font-size: 0;
+          margin: 0;
+          padding: 0;
+          width: 100%;
           border: 4px solid var(--stick);
           box-shadow: 5px 5px 0 var(--shadow);
           background: var(--cream);
@@ -771,15 +801,39 @@ export default function WishGamePage() {
         }
 
         .polaroid-left-2 {
-          left: 15%;
-          bottom: 12%;
+          left: 14%;
+          bottom: 32%;
           transform: rotate(5deg);
         }
 
+        .polaroid-left-3 {
+          left: 5%;
+          top: 6%;
+          transform: rotate(4deg);
+        }
+
+        .polaroid-left-4 {
+          left: 15%;
+          top: 28%;
+          transform: rotate(-8deg);
+        }
+
         .polaroid-right-1 {
-          right: 5%;
+          right: 4%;
           bottom: 8%;
           transform: rotate(6deg);
+        }
+
+        .polaroid-right-2 {
+          right: 14%;
+          top: 32%;
+          transform: rotate(-5deg);
+        }
+
+        .polaroid-right-3 {
+          right: 5%;
+          top: 6%;
+          transform: rotate(-7deg);
         }
 
         .polaroid-left-1:hover {
@@ -794,20 +848,47 @@ export default function WishGamePage() {
           z-index: 10;
         }
 
+        .polaroid-left-3:hover {
+          transform: scale(1.06) translateY(-5px) rotate(1deg);
+          box-shadow: 0 15px 35px rgba(59, 42, 26, 0.25);
+          z-index: 10;
+        }
+
+        .polaroid-left-4:hover {
+          transform: scale(1.06) translateY(-5px) rotate(-4deg);
+          box-shadow: 0 15px 35px rgba(59, 42, 26, 0.25);
+          z-index: 10;
+        }
+
         .polaroid-right-1:hover {
           transform: scale(1.06) translateY(-5px) rotate(3deg);
           box-shadow: 0 15px 35px rgba(59, 42, 26, 0.25);
           z-index: 10;
         }
 
+        .polaroid-right-2:hover {
+          transform: scale(1.06) translateY(-5px) rotate(-2deg);
+          box-shadow: 0 15px 35px rgba(59, 42, 26, 0.25);
+          z-index: 10;
+        }
+
+        .polaroid-right-3:hover {
+          transform: scale(1.06) translateY(-5px) rotate(-3deg);
+          box-shadow: 0 15px 35px rgba(59, 42, 26, 0.25);
+          z-index: 10;
+        }
+
         .game-screen {
-          align-items: center;
           display: flex;
-          inset: 0;
+          flex-direction: column;
+          align-items: center;
           justify-content: center;
-          min-height: 100svh;
+          min-height: 100vh;
+          overflow: hidden;
+          inset: 0;
           opacity: 0;
-          padding: 18px;
+          padding: 0;
+          margin: 0;
           pointer-events: none;
           position: absolute;
           transform: translateY(16px) scale(0.985);
@@ -826,26 +907,31 @@ export default function WishGamePage() {
           align-items: center;
           display: flex;
           flex-direction: column;
-          max-height: calc(100svh - 24px);
+          max-height: 100vh;
           max-width: 440px;
           overflow-y: auto;
-          padding: 0 0 16px;
+          padding: 0;
+          margin: 0;
           width: min(100%, 440px);
+          flex-shrink: 0;
         }
 
         .packaging-header,
         .simple-banner {
           background: var(--red);
           border: 5px solid var(--stick);
+          border-top: none;
           box-shadow: 7px 7px 0 var(--shadow);
           color: var(--white);
           text-align: center;
           text-transform: uppercase;
           width: 100%;
+          margin-top: 0;
+          padding-top: 0;
         }
 
         .packaging-header {
-          padding: 14px 10px 18px;
+          padding: 0 10px 18px;
         }
 
         .packaging-header p {
@@ -867,7 +953,7 @@ export default function WishGamePage() {
         }
 
         .simple-banner {
-          padding: 13px 10px;
+          padding: 0 10px 13px;
         }
 
         .simple-banner h2 {
@@ -888,7 +974,7 @@ export default function WishGamePage() {
         }
 
         .hero-stick-broken {
-          margin-top: 18px;
+          margin-top: 12px;
           max-height: 28svh;
         }
 
@@ -1156,7 +1242,7 @@ export default function WishGamePage() {
 
         @media (min-width: 720px) {
           .game-screen {
-            padding: 30px;
+            padding: 0;
           }
 
           .box-panel {
@@ -1256,11 +1342,12 @@ export default function WishGamePage() {
           align-items: center;
           display: flex;
           flex-direction: column;
-          max-height: calc(100svh - 32px);
+          max-height: 100vh;
           max-width: 520px;
           overflow-y: auto;
-          padding: 8px 16px 20px;
+          padding: 0 16px 20px;
           width: 100%;
+          flex-shrink: 0;
         }
 
         .warning-icon {
@@ -1380,7 +1467,7 @@ export default function WishGamePage() {
 
         @media (min-width: 768px) {
           .warning-panel {
-            padding: 16px 0 24px;
+            padding: 0 0 24px;
           }
           .warning-icon {
             font-size: 64px;
