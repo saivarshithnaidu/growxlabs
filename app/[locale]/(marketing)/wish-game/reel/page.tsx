@@ -173,12 +173,12 @@ export default function ReelRecorderPage() {
             )}
             {state === "teaser-video" && (
               <div className="video-reel-caption">
-                <p className={alfa.className}>THE TEASER</p>
+                <p className={alfa.className}>OBSESSION</p>
               </div>
             )}
             {state === "game-video" && (
               <div className="video-reel-caption">
-                <p className={alfa.className}>GXL SHOT 22</p>
+                <p className={alfa.className}>WISH GAME</p>
               </div>
             )}
           </div>
