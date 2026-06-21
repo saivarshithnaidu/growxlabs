@@ -83,6 +83,13 @@ interface Subagent {
   result?: string;
 }
 
+const DEFAULT_CONVO: Conversation = {
+  id: "default",
+  title: "New conversation",
+  messages: [],
+  createdAt: new Date(0)
+};
+
 function mapToolToAgent(toolName: string): string {
   switch (toolName) {
     case "search_web":
@@ -904,7 +911,7 @@ export default function InteractiveWorkspace() {
   // ── Conversations & state ──
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConvoId, setActiveConvoId] = useState<string>("");
-  const activeConvo = conversations.find(c => c.id === activeConvoId) || { id: "default", title: "New conversation", messages: [], createdAt: new Date() };
+  const activeConvo = conversations.find(c => c.id === activeConvoId) || DEFAULT_CONVO;
   const messages = activeConvo.messages;
 
   const [inputValue, setInputValue] = useState("");
