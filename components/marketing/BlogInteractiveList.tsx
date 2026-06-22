@@ -35,7 +35,8 @@ const getPostImage = (slug: string): string => {
     "n8n-automation-for-business": "/images/blog-n8n-automation.png",
     "whatsapp-automation-for-lead-nurturing": "/images/blog-whatsapp-nurture.png",
     "restaurant-customer-retention-automation": "/images/blog-restaurant-retention.png",
-    "indian-restaurant-website-usa": "/images/blog-restaurant-website.png"
+    "indian-restaurant-website-usa": "/images/blog-restaurant-website.png",
+    "claude-fable-5-mythos-5-anthropic-models": "/images/blog-claude-fable-5-mythos-5.png"
   };
   return images[slug] || "/images/nvidia-vision-agentic-to-useful-ai.png";
 };
@@ -54,7 +55,8 @@ const getAccentWord = (slug: string): string => {
     "n8n-automation-for-business": "Automation",
     "whatsapp-automation-for-lead-nurturing": "Nurturing",
     "restaurant-customer-retention-automation": "Lose",
-    "indian-restaurant-website-usa": "Stop"
+    "indian-restaurant-website-usa": "Stop",
+    "claude-fable-5-mythos-5-anthropic-models": "Fable"
   };
   return accents[slug] || "";
 };

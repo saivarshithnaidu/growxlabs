@@ -34,3 +34,22 @@ export function randomFrom<T>(arr: T[]): T {
 export function degToRad(deg: number): number {
   return (deg * Math.PI) / 180
 }
+
+export function createToonRamp(): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 4
+  canvas.height = 1
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = '#555555' // Dark shadow
+  ctx.fillRect(0, 0, 1, 1)
+  ctx.fillStyle = '#999999' // Midtone
+  ctx.fillRect(1, 0, 2, 1)
+  ctx.fillStyle = '#ffffff' // Highlight
+  ctx.fillRect(3, 0, 1, 1)
+  
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.minFilter = THREE.NearestFilter
+  tex.magFilter = THREE.NearestFilter
+  tex.needsUpdate = true
+  return tex
+}

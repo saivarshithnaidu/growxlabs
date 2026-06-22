@@ -40,10 +40,8 @@ export class CollectibleSystem {
   private createCollectibles(): void {
     const geo = new THREE.CylinderGeometry(
       0.8, 0.8, 0.5, 12)
-    const mat = new THREE.MeshLambertMaterial({
-      color: 0xFFD700,
-      emissive: 0xFFD700,
-      emissiveIntensity: 0.8
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0xFFD700
     })
 
     this.POSITIONS.forEach((pos) => {

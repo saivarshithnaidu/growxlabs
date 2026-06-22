@@ -57,6 +57,14 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
       readTime: "12 min read"
     },
     {
+      slug: "claude-fable-5-mythos-5-anthropic-models",
+      title: "Claude Fable 5 & Mythos 5 Launch: Benchmarks & Guide",
+      excerpt: "Explore Anthropic's Claude Fable 5 and Mythos 5 models. Check out benchmarks, comparison specs, use cases, and details on global API availability.",
+      category: "AI / Anthropic / Engineering",
+      date: "June 9, 2026",
+      readTime: "10 min read"
+    },
+    {
       slug: "nvidia-vision-agentic-to-useful-ai",
       title: "NVIDIA's Vision for the Future of AI: From Agentic AI to Useful AI",
       excerpt: "Analyze Jensen Huang's GTC vision: CUDA-X, AI Factories, Physical AI, and the historic shift from reactive chatbots to proactive execution systems.",

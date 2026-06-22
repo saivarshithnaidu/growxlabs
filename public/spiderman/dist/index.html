@@ -7,7 +7,13 @@
     initial-scale=1.0, 
     maximum-scale=1.0, 
     user-scalable=no" />
-  <title>Spider-Man: Brand New Day</title>
+  <title>Spider Hero: Brand New Day</title>
+  
+  <!-- Premium Comic Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Bebas+Neue&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  
   <style>
     * {
       margin: 0;
@@ -15,11 +21,11 @@
       box-sizing: border-box;
     }
     body {
-      background: #000;
+      background: #0b0a2e;
       overflow: hidden;
       width: 100vw;
       height: 100vh;
-      font-family: 'Arial Black', Arial, sans-serif;
+      font-family: 'Outfit', 'Arial Black', sans-serif;
     }
     #game-canvas {
       display: block;
@@ -34,33 +40,39 @@
       height: 100%;
       pointer-events: none;
       z-index: 10;
+      display: none; /* Hidden until transition starts/ends */
     }
     #film-counter {
       position: absolute;
       top: 16px;
       left: 16px;
-      background: white;
-      border: 3px solid black;
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 18px;
+      background: linear-gradient(135deg, #FF3333, #CC0000);
+      border: 3.5px solid black;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 20px;
+      font-family: 'Bangers', sans-serif;
       font-weight: 900;
-      color: #CC0000;
-      box-shadow: 3px 3px 0px black;
+      color: white;
+      text-shadow: 2px 2px 0px black;
+      box-shadow: 4px 4px 0px black;
+      transition: transform 0.1s;
     }
     #timer {
       position: absolute;
       top: 16px;
       left: 50%;
       transform: translateX(-50%);
-      background: white;
-      border: 3px solid black;
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 18px;
+      background: linear-gradient(135deg, #11052C, #3E065F);
+      border: 3.5px solid black;
+      border-radius: 10px;
+      padding: 10px 22px;
+      font-size: 20px;
+      font-family: 'Bebas Neue', sans-serif;
       font-weight: 900;
-      color: #000;
-      box-shadow: 3px 3px 0px black;
+      color: white;
+      box-shadow: 4px 4px 0px black;
+      letter-spacing: 1.5px;
     }
     #compass {
       position: absolute;
@@ -68,6 +80,34 @@
       right: 16px;
       width: 80px;
       height: 80px;
+      filter: drop-shadow(4px 4px 0px black);
+    }
+    #btn-switch {
+      position: absolute;
+      top: 85px;
+      left: 16px;
+      background: linear-gradient(135deg, #52B788, #2E8B57);
+      color: white;
+      border: 3.5px solid black;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-family: 'Bangers', sans-serif;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 4px 4px 0px black;
+      pointer-events: all;
+      z-index: 15;
+      letter-spacing: 1px;
+      transition: transform 0.05s, box-shadow 0.05s;
+    }
+    #btn-switch:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0px black;
+    }
+    #btn-switch:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px black;
     }
     #state-indicator {
       position: absolute;
@@ -75,67 +115,84 @@
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 8px;
+      gap: 12px;
     }
     .state-badge {
-      padding: 4px 12px;
+      padding: 6px 16px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 14px;
+      font-family: 'Outfit', sans-serif;
       font-weight: 900;
-      border: 2px solid black;
+      border: 3.5px solid black;
       opacity: 0;
-      transition: opacity 0.2s;
+      transform: scale(0.8);
+      transition: opacity 0.25s, transform 0.25s;
+      box-shadow: 3px 3px 0px black;
     }
-    .state-badge.active { opacity: 1; }
-    #badge-swing { background: #4169E1; color: white; }
-    #badge-wall { background: #228B22; color: white; }
-    #badge-air { background: #888; color: white; }
+    .state-badge.active { 
+      opacity: 1; 
+      transform: scale(1.0);
+    }
+    #badge-swing { background: #4CC9F0; color: #111; }
+    #badge-wall { background: #FFEA88; color: #111; }
+    #badge-air { background: #F72585; color: white; }
+    
     #crosshair {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.6);
+      border: 3px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.15s;
     }
     #crosshair.anchor-found {
-      border-color: #00FF00;
-      background: rgba(0,255,0,0.3);
+      width: 24px;
+      height: 24px;
+      border-color: #00FF66;
+      background: rgba(0, 255, 102, 0.2);
+      box-shadow: 0 0 10px rgba(0, 255, 102, 0.6), inset 0 0 5px rgba(0, 255, 102, 0.6);
     }
+    
+    /* Victory Screen */
     #victory-screen {
       display: none;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: white;
-      border: 4px solid #CC0000;
-      border-radius: 16px;
+      background: linear-gradient(135deg, #FFFFFF, #FFF0E0);
+      border: 4px solid black;
+      border-radius: 20px;
       padding: 40px;
       text-align: center;
-      box-shadow: 6px 6px 0px black;
+      box-shadow: 8px 8px 0px black;
       pointer-events: all;
-      min-width: 320px;
+      min-width: 360px;
       z-index: 100;
     }
     #victory-screen h1 {
-      font-size: 36px;
+      font-size: 38px;
+      font-family: 'Bangers', sans-serif;
       color: #CC0000;
       text-shadow: 2px 2px 0px black;
       margin-bottom: 8px;
+      letter-spacing: 1px;
     }
     #victory-screen p {
       font-size: 16px;
       margin: 8px 0;
-      color: #333;
+      color: #222;
+      font-weight: 700;
     }
     #victory-time {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 900;
       color: #000;
       margin: 16px 0;
+      font-family: 'Bangers', sans-serif;
     }
     .victory-btn {
       display: inline-block;
@@ -143,11 +200,12 @@
       padding: 12px 24px;
       font-size: 16px;
       font-weight: 900;
-      border: 3px solid black;
-      border-radius: 8px;
+      border: 3.5px solid black;
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 3px 3px 0px black;
+      box-shadow: 4px 4px 0px black;
       pointer-events: all;
+      transition: transform 0.1s, box-shadow 0.1s;
     }
     #btn-restart {
       background: #CC0000;
@@ -159,45 +217,137 @@
     }
     .victory-btn:hover {
       transform: translate(-2px, -2px);
-      box-shadow: 5px 5px 0px black;
+      box-shadow: 6px 6px 0px black;
     }
+
+    /* Start Menu (Title Screen) */
     #title-screen {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: linear-gradient(
-        135deg, #0a0a2e 0%, #1a0a0a 100%);
+      background: transparent; /* Show 3D scene directly */
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       pointer-events: all;
       z-index: 200;
+      overflow: hidden;
+      transition: opacity 1.0s ease-out; /* Smooth transition fade */
     }
+    
+    /* Halftone dot comic overlay */
+    .halftone-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: radial-gradient(rgba(17, 5, 44, 0.18) 16%, transparent 17%);
+      background-size: 9px 9px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Vignette shading */
+    .menu-vignette {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle, transparent 30%, rgba(17, 5, 44, 0.6) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Title Logo Text styling */
+    .title-container {
+      position: relative;
+      overflow: hidden;
+      padding: 10px 40px;
+      z-index: 10;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    .shine-sweep {
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 80%;
+      height: 100%;
+      background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
+      transform: skew(-28deg);
+      pointer-events: none;
+      animation: shine 3.8s ease-in-out infinite;
+      z-index: 11;
+    }
+    @keyframes shine {
+      0%, 65% { left: -150%; }
+      100% { left: 150%; }
+    }
+
     #title-screen h1 {
-      font-size: 64px;
-      color: #CC0000;
-      text-shadow: 4px 4px 0px black,
-                   -2px -2px 0px black;
-      letter-spacing: 4px;
-      margin-bottom: 8px;
+      font-family: 'Bangers', 'Impact', sans-serif;
+      font-size: 92px;
+      font-weight: 900;
+      color: #FF3333;
+      /* 3D Extrusion with deep comic black shadow */
+      text-shadow: 
+        1px 1px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000,
+        2px 2px 0px #4169E1, 3px 3px 0px #4169E1, 4px 4px 0px #4169E1, 5px 5px 0px #000, 6px 6px 0px #000;
+      letter-spacing: 5px;
+      transform: skew(-10deg) scale(1.05);
+      z-index: 10;
+      animation: titleFloat 3.5s ease-in-out infinite;
     }
+    @keyframes titleFloat {
+      0%, 100% { transform: skew(-10deg) translateY(0) scale(1.03); }
+      50% { transform: skew(-10deg) translateY(-10px) scale(1.06); }
+    }
+
     #title-screen h2 {
-      font-size: 28px;
-      color: #4169E1;
-      text-shadow: 2px 2px 0px black;
-      letter-spacing: 8px;
-      margin-bottom: 48px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      font-weight: 900;
+      color: #FFEA88; /* warm sunset highlights */
+      text-shadow: 3px 3px 0px black, -1px -1px 0px black, 1px -1px 0px black, -1px 1px 0px black;
+      letter-spacing: 7px;
+      margin-bottom: 45px;
+      z-index: 10;
+      transform: skew(-10deg);
+      filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.5));
     }
-    #title-screen p {
-      font-size: 18px;
-      color: white;
-      animation: blink 1.2s infinite;
+
+    /* Start Button styling */
+    #btn-start {
+      font-family: 'Bangers', 'Impact', sans-serif;
+      font-size: 26px;
+      color: #111111;
+      background: linear-gradient(135deg, #FFEA88, #FFC72C);
+      border: 4.5px solid black;
+      border-radius: 14px;
+      padding: 16px 42px;
+      cursor: pointer;
+      box-shadow: 6px 6px 0px black;
+      pointer-events: all;
+      z-index: 20;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
+      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: buttonPulse 2s infinite;
     }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
+    #btn-start:hover {
+      transform: scale(1.1) rotate(-1deg);
+      box-shadow: 8px 8px 0px black;
+      background: linear-gradient(135deg, #FFF0B3, #FFD15C);
     }
+    #btn-start:active {
+      transform: scale(0.95) translate(4px, 4px);
+      box-shadow: 2px 2px 0px black;
+    }
+    @keyframes buttonPulse {
+      0%, 100% { box-shadow: 6px 6px 0px black; }
+      50% { box-shadow: 6px 6px 15px rgba(255, 234, 136, 0.8), 6px 6px 0px black; }
+    }
+
+    /* Touch Controls */
     #touch-controls {
       position: absolute;
       bottom: 0;
@@ -223,7 +373,7 @@
       height: 120px;
       border-radius: 50%;
       background: rgba(255,255,255,0.15);
-      border: 3px solid rgba(255,255,255,0.4);
+      border: 3.5px solid rgba(255,255,255,0.4);
       position: relative;
     }
     #joystick-inner {
@@ -245,31 +395,33 @@
       background: #CC0000;
       border: 3px solid black;
       color: white;
-      font-size: 14px;
+      font-size: 16px;
+      font-family: 'Bangers', sans-serif;
       font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
       pointer-events: all;
-      box-shadow: 3px 3px 0px black;
+      box-shadow: 4px 4px 0px black;
     }
     #btn-jump {
       position: absolute;
       bottom: 120px;
       right: 40px;
-      width: 60px;
-      height: 60px;
+      width: 65px;
+      height: 65px;
       border-radius: 50%;
       background: #4169E1;
       border: 3px solid black;
       color: white;
-      font-size: 12px;
+      font-size: 14px;
+      font-family: 'Bangers', sans-serif;
       font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
       pointer-events: all;
-      box-shadow: 3px 3px 0px black;
+      box-shadow: 4px 4px 0px black;
     }
     #flash-overlay {
       position: absolute;
@@ -282,14 +434,32 @@
       z-index: 50;
     }
   </style>
-  <script type="module" crossorigin src="/spiderman/dist/assets/index-C08hT5Py.js"></script>
+  <script type="module" crossorigin src="/spiderman/dist/assets/index-Bk8nOFNl.js"></script>
 </head>
 <body>
+  <div id="debug-log" style="display: none; position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.85); color: #00ff00; font-family: monospace; padding: 12px; z-index: 9999; pointer-events: none; font-size: 13px; border: 2px solid #00ff00; border-radius: 4px; line-height: 1.4; max-width: 450px; font-weight: bold;">
+    Loading debug state...
+  </div>
+  <script>
+    window.addEventListener('error', function(e) {
+      const debugLog = document.getElementById('debug-log');
+      if (debugLog) {
+        debugLog.innerHTML += '<div style="color: #ff3333; margin-top: 5px;">[ERR] ' + e.message + ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')</div>';
+      }
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      const debugLog = document.getElementById('debug-log');
+      if (debugLog) {
+        debugLog.innerHTML += '<div style="color: #ff3333; margin-top: 5px;">[REJ] ' + e.reason + '</div>';
+      }
+    });
+  </script>
   <canvas id="game-canvas"></canvas>
 
   <!-- HUD -->
   <div id="hud">
     <div id="film-counter">🎬 FILM: 0/10</div>
+    <button id="btn-switch">HULK</button>
     <div id="timer">⏱ 00:00</div>
     <canvas id="compass" width="80" height="80"></canvas>
     <div id="crosshair"></div>
@@ -322,9 +492,14 @@
 
   <!-- Title Screen -->
   <div id="title-screen">
-    <h1>SPIDER-MAN</h1>
+    <div class="halftone-overlay"></div>
+    <div class="menu-vignette"></div>
+    <div class="title-container">
+      <div class="shine-sweep"></div>
+      <h1>SPIDER HERO</h1>
+    </div>
     <h2>BRAND NEW DAY</h2>
-    <p>PRESS ENTER OR TAP TO START</p>
+    <div id="btn-start">[ START SWINGING ]</div>
   </div>
 
   <!-- Victory Screen -->
