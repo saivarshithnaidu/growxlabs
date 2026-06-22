@@ -195,7 +195,7 @@ export default async function ElonTrillionairePage({ params }: { params: Promise
         <div className="max-w-5xl mx-auto">
           {/* flickering swiss title */}
           <div className="w-full overflow-hidden flex justify-center items-end select-none pointer-events-none mb-10">
-            <h1 className="font-black select-none tracking-[-0.06em] text-foreground leading-[0.8] text-[8.5vw] uppercase whitespace-nowrap">
+            <h1 className="font-black select-none tracking-[-0.06em] text-foreground leading-[0.8] text-[clamp(2rem,5.5vw,80px)] uppercase whitespace-nowrap">
               <FlickerText text={titleName} />
             </h1>
           </div>

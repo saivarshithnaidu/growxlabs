@@ -274,7 +274,7 @@ console.log(data.content);`;
         <div className="max-w-5xl mx-auto">
           {/* Swiss Title */}
           <div className="w-full overflow-hidden flex justify-center items-end select-none pointer-events-none mb-10">
-            <h1 className="font-black select-none tracking-[-0.06em] text-foreground leading-[0.8] text-[9.2vw] uppercase whitespace-nowrap">
+            <h1 className="font-black select-none tracking-[-0.06em] text-foreground leading-[0.8] text-[clamp(2rem,9.2vw,130px)] uppercase whitespace-nowrap">
               <FlickerText text={titleName} />
             </h1>
           </div>
