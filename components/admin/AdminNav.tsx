@@ -10,6 +10,24 @@ import {
   TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2
 } from "lucide-react";
 
+const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg 
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    {...props}
+  >
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+  </svg>
+);
+
 const navItems = [
   { name: "Overview", href: "/admin", icon: BarChart3 },
   { name: "Command Center", href: "/admin/command-center", icon: Terminal },
@@ -21,6 +39,7 @@ const navItems = [
   { name: "Clients", href: "/admin/clients", icon: Users },
   { name: "Outreach", href: "/admin/outreach", icon: Inbox },
   { name: "Onboarding", href: "/admin/onboarding", icon: Rocket },
+  { name: "Carousel Creator", href: "/admin/instagram-carousel", icon: InstagramNavIcon },
   { name: "Wish Game", href: "/admin/wish-game", icon: Gamepad2 },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];

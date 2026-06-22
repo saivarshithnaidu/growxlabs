@@ -1,0 +1,163 @@
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import { NextResponse } from "next/server";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+
+const SYSTEM_PROMPT = `You are a professional social media content creator specializing in high-engagement Instagram carousel posts.
+Your goal is to structure a compelling, value-packed carousel post about the given topic.
+
+Follow these content guidelines:
+1. Slide 1 (The Hook): A strong, attention-grabbing title. Make it punchy (e.g., "STOP doing X", "5 AI Hacks for Y"). The subtitle should tease the value. Layout must be 'title-only'.
+2. Slide 2 to N-1 (The Value): Break down the core concepts into logical steps or points. Keep text minimal: 1 brief subtitle and 0-3 bullet points. No walls of text. Avoid fluff.
+3. Slide N (The CTA): The final slide must have a call to action. Prompt the user to follow, check out the website, or save the post. Layout must be 'cta'.
+4. Tone: Adjust tone to match the user's request: Hype, Professional, Casual, Technical, Minimalist.
+5. Theme suggestion: Recommend one of the following themes that fits the topic best:
+   - 'cyberpunk' (for futuristic, modern tech, AI topics)
+   - 'cream' (for lifestyle, design, advice, minimal topics)
+   - 'sunset' (for motivational, hype, marketing topics)
+   - 'terminal' (for code, deep tech, developers, systems)
+   - 'glass' (for business, SaaS, clean agency topics)
+   - 'emerald' (for organic tech, finance, environment, clean energy)
+   - 'minimal' (for stark contrast, high-fidelity layouts, thought leadership)
+   - 'gold' (for luxury branding, growth coaching, high-ticket sales)
+6. Graphics (SVG): For some slides (usually 1-2 value/educational slides), set 'imageEnabled: true' and generate a clean, responsive vector graphic in 'svgCode'.
+   - The graphic must be valid, well-formed inline SVG code inside <svg viewBox="0 0 400 400" width="100%" height="100%">...</svg>.
+   - Use vector elements like circles, rects, paths, lines, and text (standard fonts, e.g., sans-serif) to represent diagrams, flowcharts, technical blocks, graphs, or icons.
+   - Theme harmonization: Use styles/colors that match the recommended theme (e.g. glowing neon greens/pinks for 'cyberpunk', stark white/amber coordinates and code paths for 'terminal', soft clean blues/greens with gradients and rounded nodes for 'glass').
+   - Keep the SVG background transparent. Ensure all XML tags are strictly closed so it parses correctly. Do not wrap the JSON value in markdown code blocks.
+`;
+
+export async function POST(req: Request) {
+  try {
+    const { topic, tone = "Professional", slideCount = 5, slides, instruction } = await req.json();
+
+    if (!topic && (!slides || !instruction)) {
+      return NextResponse.json({ error: "Topic or refinement instructions are required" }, { status: 400 });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json(
+        { error: "GEMINI_API_KEY is not configured on the server" },
+        { status: 500 }
+      );
+    }
+
+    const targetSlideCount = slides ? slides.length : slideCount;
+
+    const generationConfig: any = {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: SchemaType.OBJECT,
+        properties: {
+          themeSuggestion: {
+            type: SchemaType.STRING,
+            description: "Suggested theme preset: cyberpunk, cream, sunset, terminal, glass, emerald, minimal, gold",
+          },
+          slides: {
+            type: SchemaType.ARRAY,
+            description: `List of exactly ${targetSlideCount} slides for the carousel.`,
+            items: {
+              type: SchemaType.OBJECT,
+              properties: {
+                title: { type: SchemaType.STRING, description: "Slide main header or hook. Keep it very punchy and short." },
+                subtitle: { type: SchemaType.STRING, description: "Slide subheader or additional text. Max 1-2 lines." },
+                bullets: {
+                  type: SchemaType.ARRAY,
+                  items: { type: SchemaType.STRING },
+                  description: "List of key takeaway points (optional, 0 to 3 items)."
+                },
+                layout: {
+                  type: SchemaType.STRING,
+                  description: "Visual layout style. Must be one of: 'title-only', 'bullets', 'quote', 'cta'."
+                },
+                quoteAuthor: { type: SchemaType.STRING, description: "Author of the quote if layout is 'quote', otherwise empty." },
+                imageEnabled: { type: SchemaType.BOOLEAN, description: "Whether to enable a graphical illustration image on this slide." },
+                svgCode: { type: SchemaType.STRING, description: "Valid, inline, responsive SVG code (wrapped in <svg viewBox=\"0 0 400 400\" width=\"100%\" height=\"100%\">...</svg>) representing the slide concept visually (e.g. diagrams, flowcharts, abstract tech nodes, icons). Use clean styles with color themes matching the suggested theme. Do not wrap in markdown code block ticks." }
+              },
+              required: ["title", "subtitle", "bullets", "layout"]
+            }
+          }
+        },
+        required: ["themeSuggestion", "slides"]
+      }
+    };
+
+    let userPrompt = "";
+    if (slides && instruction) {
+      userPrompt = `
+You are an expert editor refining an existing Instagram carousel.
+Please apply the user's instructions to refine the content while preserving the structure.
+
+Current Slides (JSON):
+${JSON.stringify(slides, null, 2)}
+
+Refinement Instruction: "${instruction}"
+
+Make sure there are exactly ${targetSlideCount} slides in the output. Keep the first slide as 'title-only' and the last slide as 'cta'.
+`;
+    } else {
+      userPrompt = `
+Generate an Instagram carousel post with exactly ${slideCount} slides.
+Topic: ${topic}
+Tone: ${tone}
+
+Make sure there are exactly ${slideCount} slides. The first slide MUST be 'title-only' (the hook), and the last slide MUST be 'cta' (the call to action).
+`;
+    }
+
+    let resultStream;
+    try {
+      // Primary model: gemini-2.5-flash
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash",
+        generationConfig
+      });
+      resultStream = await model.generateContentStream(`${SYSTEM_PROMPT}\n\n${userPrompt}`);
+    } catch (e) {
+      console.warn("Primary Gemini 2.5 Flash model failed, attempting fallback to Gemini 1.5 Flash:", e);
+      try {
+        // Fallback model: gemini-1.5-flash
+        const model = genAI.getGenerativeModel({
+          model: "gemini-1.5-flash",
+          generationConfig
+        });
+        resultStream = await model.generateContentStream(`${SYSTEM_PROMPT}\n\n${userPrompt}`);
+      } catch (errFallback) {
+        console.error("Fallback to Gemini 1.5 Flash model also failed:", errFallback);
+        throw errFallback;
+      }
+    }
+
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of resultStream.stream) {
+            const text = chunk.text();
+            if (text) {
+              controller.enqueue(encoder.encode(text));
+            }
+          }
+          controller.close();
+        } catch (err: any) {
+          console.error("Gemini stream generation error:", err);
+          controller.error(err);
+        }
+      }
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+      }
+    });
+  } catch (error: any) {
+    console.error("Generate Carousel API Error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to generate carousel content" },
+      { status: 500 }
+    );
+  }
+}
