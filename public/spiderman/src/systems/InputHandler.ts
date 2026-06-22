@@ -6,7 +6,6 @@ export interface InputState {
   sprinting: boolean
   webHeld: boolean
   cameraDelta: THREE.Vector2
-  swapHero: boolean
 }
 
 export class InputHandler {
@@ -20,9 +19,7 @@ export class InputHandler {
     new THREE.Vector2()
   private webPressed: boolean = false
   private jumpPressed: boolean = false
-  private swapPressed: boolean = false
   private touchStartId: number = -1
-  private isMouseDown: boolean = false
 
   constructor(canvas: HTMLCanvasElement) {
     this.bindKeyboard()
@@ -31,42 +28,12 @@ export class InputHandler {
     this.bindButtons()
   }
 
-  isKeyPressed(code: string): boolean {
-    return this.keys.has(code)
-  }
-
   private bindKeyboard(): void {
     window.addEventListener('keydown', e => {
       this.keys.add(e.code)
-      if (e.code === 'KeyC' || e.code === 'Tab') {
-        this.swapPressed = true
-      }
-      if (e.code === 'Backquote') {
-        const debugEl = document.getElementById('debug-log')
-        if (debugEl) {
-          debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none'
-        }
-      }
-      // Prevent browser default actions
-      const preventedKeys = [
-        'Space', 'Tab', 'KeyC', 'KeyE', 'KeyQ', 'KeyR', 'ShiftLeft', 'ShiftRight',
-        'Digit1', 'Digit2', 'Digit3',
-        'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'
-      ]
-      if (preventedKeys.includes(e.code)) {
-        e.preventDefault()
-      }
     })
     window.addEventListener('keyup', e => {
       this.keys.delete(e.code)
-      const preventedKeys = [
-        'Space', 'Tab', 'KeyC', 'KeyE', 'KeyQ', 'KeyR', 'ShiftLeft', 'ShiftRight',
-        'Digit1', 'Digit2', 'Digit3',
-        'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'
-      ]
-      if (preventedKeys.includes(e.code)) {
-        e.preventDefault()
-      }
     })
   }
 
@@ -85,17 +52,6 @@ export class InputHandler {
       if (this.isPointerLocked) {
         this.cameraDelta.x += e.movementX * 0.003
         this.cameraDelta.y += e.movementY * 0.003
-      }
-    })
-    // Mouse down / up events for web-slinging
-    window.addEventListener('mousedown', e => {
-      if (e.button === 0) { // Left click
-        this.isMouseDown = true
-      }
-    })
-    window.addEventListener('mouseup', e => {
-      if (e.button === 0) { // Left click
-        this.isMouseDown = false
       }
     })
   }
@@ -168,7 +124,6 @@ export class InputHandler {
   private bindButtons(): void {
     const webBtn = document.getElementById('btn-web')
     const jumpBtn = document.getElementById('btn-jump')
-    const switchBtn = document.getElementById('btn-switch')
 
     webBtn?.addEventListener('touchstart', (e) => {
       e.preventDefault()
@@ -184,14 +139,6 @@ export class InputHandler {
     }, { passive: false })
     jumpBtn?.addEventListener('touchend', () => {
       this.jumpPressed = false
-    })
-
-    switchBtn?.addEventListener('touchstart', (e) => {
-      e.preventDefault()
-      this.swapPressed = true
-    }, { passive: false })
-    switchBtn?.addEventListener('click', () => {
-      this.swapPressed = true
     })
   }
 
@@ -232,9 +179,6 @@ export class InputHandler {
     const cameraDelta = this.cameraDelta.clone()
     this.cameraDelta.set(0, 0)
 
-    const swapHero = this.swapPressed
-    this.swapPressed = false
-
     return {
       moveDir,
       jumping: this.keys.has('Space') || 
@@ -242,10 +186,8 @@ export class InputHandler {
       sprinting: this.keys.has('ShiftLeft') || 
                  this.keys.has('ShiftRight'),
       webHeld: this.keys.has('Space') || 
-               this.isMouseDown || 
                this.webPressed,
-      cameraDelta,
-      swapHero
+      cameraDelta
     }
   }
 }

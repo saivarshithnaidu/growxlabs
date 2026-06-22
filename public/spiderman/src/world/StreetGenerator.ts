@@ -1,9 +1,7 @@
 import * as THREE from 'three'
-import { createToonRamp } from '../utils/MathUtils'
 
 export class StreetGenerator {
   private scene: THREE.Scene
-  private ramp = createToonRamp()
 
   constructor(scene: THREE.Scene) {
     this.scene = scene
@@ -17,9 +15,8 @@ export class StreetGenerator {
 
   private createGround(): void {
     const geo = new THREE.PlaneGeometry(2000, 2000)
-    const mat = new THREE.MeshToonMaterial({
-      color: 0x221A30, // Deep sunset purple-grey ground
-      gradientMap: this.ramp
+    const mat = new THREE.MeshLambertMaterial({
+      color: 0x2C2C2C
     })
     const ground = new THREE.Mesh(geo, mat)
     ground.rotation.x = -Math.PI / 2
@@ -30,9 +27,8 @@ export class StreetGenerator {
   }
 
   private createRoads(): void {
-    const roadMat = new THREE.MeshToonMaterial({
-      color: 0x15111B, // Dark sunset asphalt
-      gradientMap: this.ramp
+    const roadMat = new THREE.MeshLambertMaterial({
+      color: 0x333333
     })
     // Horizontal roads every 100 units
     for (let i = -4; i <= 4; i++) {
@@ -47,8 +43,8 @@ export class StreetGenerator {
       for (let j = -10; j <= 10; j++) {
         const dashGeo = new THREE.PlaneGeometry(
           8, 0.5)
-        const dashMat = new THREE.MeshBasicMaterial(
-          { color: 0xFFAD00 }) // Sunset orange dashes
+        const dashMat = new THREE.MeshLambertMaterial(
+          { color: 0xFFFF00 })
         const dash = new THREE.Mesh(dashGeo, dashMat)
         dash.rotation.x = -Math.PI / 2
         dash.position.set(j * 20, 0.15, i * 100)
@@ -67,9 +63,8 @@ export class StreetGenerator {
   }
 
   private createSidewalks(): void {
-    const mat = new THREE.MeshToonMaterial({
-      color: 0x3E2E55, // violet sidewalk
-      gradientMap: this.ramp
+    const mat = new THREE.MeshLambertMaterial({
+      color: 0x8C8C8C
     })
     for (let i = -4; i <= 4; i++) {
       for (let j = -4; j <= 4; j++) {
