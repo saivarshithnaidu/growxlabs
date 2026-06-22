@@ -49,6 +49,14 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   const regularPosts = [
     {
+      slug: "claude-fable-5-mythos-5-banned-us-government",
+      title: "Claude Fable 5 & Mythos 5 Banned: Timeline & Impact",
+      excerpt: "Analyze the U.S. government export controls and global suspension of Anthropic's Claude Fable 5 and Mythos 5, cybersecurity concerns, and business mitigation strategies.",
+      category: "AI Regulation / Geopolitics / Cybersecurity",
+      date: "June 19, 2026",
+      readTime: "12 min read"
+    },
+    {
       slug: "elon-musks-path-to-becoming-the-worlds-first-trillionaire",
       title: "Elon Musk's Path to Becoming the World's First Trillionaire",
       excerpt: "Analyze Elon Musk's path to becoming the world's first trillionaire. Explore valuation trends across Tesla, SpaceX, xAI, Starlink, and Neuralink, with data-driven projections, risks, and AGI trends.",
