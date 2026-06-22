@@ -37,7 +37,8 @@ const getPostImage = (slug: string): string => {
     "restaurant-customer-retention-automation": "/images/blog-restaurant-retention.png",
     "indian-restaurant-website-usa": "/images/blog-restaurant-website.png",
     "claude-fable-5-mythos-5-anthropic-models": "/images/blog-claude-fable-5-mythos-5.png",
-    "claude-fable-5-mythos-5-banned-us-government": "/images/blog-claude-fable-5-mythos-5-banned.png"
+    "claude-fable-5-mythos-5-banned-us-government": "/images/blog-claude-fable-5-mythos-5-banned.png",
+    "elon-musks-path-to-becoming-the-worlds-first-trillionaire": "/images/blog-elon-trillionaire.png"
   };
   return images[slug] || "/images/nvidia-vision-agentic-to-useful-ai.png";
 };
@@ -58,7 +59,8 @@ const getAccentWord = (slug: string): string => {
     "restaurant-customer-retention-automation": "Lose",
     "indian-restaurant-website-usa": "Stop",
     "claude-fable-5-mythos-5-anthropic-models": "Fable",
-    "claude-fable-5-mythos-5-banned-us-government": "Banned"
+    "claude-fable-5-mythos-5-banned-us-government": "Banned",
+    "elon-musks-path-to-becoming-the-worlds-first-trillionaire": "Trillionaire"
   };
   return accents[slug] || "";
 };
