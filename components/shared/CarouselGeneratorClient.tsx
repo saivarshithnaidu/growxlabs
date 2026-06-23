@@ -205,6 +205,7 @@ export function CarouselGeneratorClient() {
   const [isRefining, setIsRefining] = useState(false);
   const [streamBuffer, setStreamBuffer] = useState("");
   const [aspectRatio, setAspectRatio] = useState<"3:4" | "4:5" | "1:1" | "1.91:1">("1:1");
+  const [visualMode, setVisualMode] = useState<"svg" | "image">("svg");
 
   const getDimensions = () => {
     switch (aspectRatio) {
@@ -963,7 +964,7 @@ export function CarouselGeneratorClient() {
       );
     }
     
-    if (slide.svgCode) {
+    if (visualMode === "svg" && slide.svgCode) {
       return (
         <div 
           style={{ 
@@ -1760,6 +1761,26 @@ export function CarouselGeneratorClient() {
       {/* Preview Panel (Right 5 Cols) */}
       <div className="lg:col-span-5 flex flex-col space-y-6 items-center">
         
+        {/* Toggle Visual Mode */}
+        <div className="flex border border-neutral-300 p-1 bg-neutral-100/80 rounded-xl w-full max-w-[370px]">
+          <button
+            onClick={() => setVisualMode("svg")}
+            className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+              visualMode === "svg" ? "tab-btn-active" : "tab-btn-inactive"
+            }`}
+          >
+            SVG Vector
+          </button>
+          <button
+            onClick={() => setVisualMode("image")}
+            className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+              visualMode === "image" ? "tab-btn-active" : "tab-btn-inactive"
+            }`}
+          >
+            AI Image
+          </button>
+        </div>
+
         {/* Instagram Phone Mock Frame */}
         <div className="phone-mock-frame w-full max-w-[370px] pt-10 pb-6 relative overflow-hidden flex flex-col">
           
