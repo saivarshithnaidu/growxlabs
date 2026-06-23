@@ -7,7 +7,7 @@ import {
   BarChart3, Users, Target, Inbox, Terminal,
   FileText, Zap, ShieldCheck, Rocket, FileCheck, LogOut, PanelLeftClose, PanelLeft,
   GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
-  TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2
+  TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2, Video
 } from "lucide-react";
 
 const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -40,6 +40,7 @@ const navItems = [
   { name: "Outreach", href: "/admin/outreach", icon: Inbox },
   { name: "Onboarding", href: "/admin/onboarding", icon: Rocket },
   { name: "Carousel Creator", href: "/admin/instagram-carousel", icon: InstagramNavIcon },
+  { name: "Reels Creator", href: "/admin/reels-creator", icon: Video },
   { name: "Wish Game", href: "/admin/wish-game", icon: Gamepad2 },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
