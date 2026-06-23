@@ -27,6 +27,38 @@ Follow these content guidelines:
    - Keep the SVG background transparent. Ensure all XML tags are strictly closed so it parses correctly. Do not wrap the JSON value in markdown code blocks.
 `;
 
+async function searchWeb(query: string): Promise<string> {
+  try {
+    const apiKey = process.env.SERPER_API_KEY;
+    if (!apiKey) return "";
+
+    const res = await fetch("https://google.serper.dev/search", {
+      method: "POST",
+      headers: {
+        "X-API-KEY": apiKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ q: query })
+    });
+
+    if (!res.ok) throw new Error(`Serper status ${res.status}`);
+    const data = await res.json();
+    
+    if (!data.organic || !Array.isArray(data.organic) || data.organic.length === 0) {
+      return "";
+    }
+
+    const snippets = data.organic.slice(0, 5).map((item: any, idx: number) => {
+      return `[${idx + 1}] ${item.title}\nSource: ${item.link}\nSnippet: ${item.snippet}`;
+    });
+
+    return snippets.join("\n\n");
+  } catch (e: any) {
+    console.error("Serper API error in generator route:", e);
+    return "";
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const { topic, tone = "Professional", slideCount = 5, slides, instruction } = await req.json();
@@ -82,6 +114,15 @@ export async function POST(req: Request) {
       }
     };
 
+    let searchContext = "";
+    if (process.env.SERPER_API_KEY && topic && !slides) {
+      try {
+        searchContext = await searchWeb(topic);
+      } catch (err) {
+        console.error("Web search failed during generation:", err);
+      }
+    }
+
     let userPrompt = "";
     if (slides && instruction) {
       userPrompt = `
@@ -100,6 +141,8 @@ Make sure there are exactly ${targetSlideCount} slides in the output. Keep the f
 Generate an Instagram carousel post with exactly ${slideCount} slides.
 Topic: ${topic}
 Tone: ${tone}
+
+${searchContext ? `Latest Google Search news/findings on the topic to ground your response:\n${searchContext}\n` : ""}
 
 Make sure there are exactly ${slideCount} slides. The first slide MUST be 'title-only' (the hook), and the last slide MUST be 'cta' (the call to action).
 `;
