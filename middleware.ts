@@ -140,9 +140,21 @@ export default async function middleware(req: NextRequest) {
   }
 
   // 2.5. Redirect main domain /careers and /courses to their subdomains
-  const lowerPath = pathname.toLowerCase();
-  const hasCourses = lowerPath.includes('/courses');
-  const hasCareers = lowerPath.includes('/careers');
+  let cleanPathForCheck = pathname;
+  const sortedLocales = [...locales].sort((a, b) => b.length - a.length);
+  for (const l of sortedLocales) {
+    if (cleanPathForCheck.startsWith(`/${l}/`)) {
+      cleanPathForCheck = '/' + cleanPathForCheck.substring(l.length + 2);
+      break;
+    } else if (cleanPathForCheck === `/${l}`) {
+      cleanPathForCheck = '/';
+      break;
+    }
+  }
+
+  const cleanLowerPath = cleanPathForCheck.toLowerCase();
+  const hasCourses = cleanLowerPath.startsWith('/courses');
+  const hasCareers = cleanLowerPath.startsWith('/careers');
 
   if (hasCourses || hasCareers) {
     const isCoursesSub = subdomain === 'courses';
@@ -152,7 +164,6 @@ export default async function middleware(req: NextRequest) {
       const targetSub = hasCourses ? 'courses' : 'careers';
       
       let cleanPath = pathname;
-      const sortedLocales = [...locales].sort((a, b) => b.length - a.length);
       for (const l of sortedLocales) {
         if (cleanPath.startsWith(`/${l}/`)) {
           cleanPath = '/' + cleanPath.substring(l.length + 2);
