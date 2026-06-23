@@ -39,6 +39,7 @@ const navItems = [
   { name: "Clients", href: "/admin/clients", icon: Users },
   { name: "Outreach", href: "/admin/outreach", icon: Inbox },
   { name: "Onboarding", href: "/admin/onboarding", icon: Rocket },
+  { name: "Careers", href: "/admin/careers", icon: ClipboardList },
   { name: "Carousel Creator", href: "/admin/instagram-carousel", icon: InstagramNavIcon },
   { name: "Reels Creator", href: "/admin/reels-creator", icon: Video },
   { name: "Wish Game", href: "/admin/wish-game", icon: Gamepad2 },

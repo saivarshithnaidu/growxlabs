@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Check, AlertCircle } from "lucide-react";
-import { useRouter } from "@/navigation";
+import { Check, AlertCircle, ArrowLeft, ArrowRight, Upload, Briefcase, User, Link2, FileText, Send, Loader2 } from "lucide-react";
+import { Link, useRouter } from "@/navigation";
 import { cn } from "@/lib/utils";
 
 // Roles list
@@ -14,16 +14,11 @@ const ROLES = [
   "Custom Automation Specialist",
 ];
 
-// Tech stack options
-const TECH_OPTIONS = [
-  "React / Next.js",
-  "Node.js / TypeScript",
-  "Python / FastAPI",
-  "LangChain / LlamaIndex",
-  "n8n / Workflows",
-  "Supabase / PostgreSQL",
-  "Figma / UI Design",
-  "Docker / AWS",
+// Employment type options
+const EMPLOYMENT_TYPES = [
+  "Full-Time (Remote)",
+  "Part-Time (Remote)",
+  "Contract / Freelance",
 ];
 
 // Notice period options
@@ -34,60 +29,11 @@ const NOTICE_PERIODS = [
   "60+ Days",
 ];
 
-// Employment type options
-const EMPLOYMENT_TYPES = [
-  "Full-Time (Remote)",
-  "Part-Time (Remote)",
-  "Contract / Freelance",
-];
-
 export function CareersContent() {
   const router = useRouter();
-  const [step, setStep] = useState(0); // 0 = Intro, 1-17 = Fields, 18 = Success
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [utcTime, setUtcTime] = useState("");
   const [error, setError] = useState("");
-  const [showForm, setShowForm] = useState(false);
-
-  // Trigger form view on interaction/mouse movement
-  useEffect(() => {
-    if (showForm) return;
-
-    let isEnabled = false;
-    const enableTimer = setTimeout(() => {
-      isEnabled = true;
-    }, 1200); // 1.2s delay to show the white screen
-
-    let hasTriggered = false;
-    const triggerTransition = () => {
-      if (!isEnabled || hasTriggered) return;
-      hasTriggered = true;
-      setShowForm(true);
-    };
-
-    const handleMouseMove = () => {
-      triggerTransition();
-    };
-
-    const handleTouchStart = () => {
-      triggerTransition();
-    };
-
-    const handleClick = () => {
-      triggerTransition();
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("click", handleClick);
-
-    return () => {
-      clearTimeout(enableTimer);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("click", handleClick);
-    };
-  }, [showForm]);
+  const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -96,7 +42,7 @@ export function CareersContent() {
     location: "",
     role: "",
     experience: "",
-    techStack: "", // will compile from array
+    techStack: "",
     github: "",
     linkedin: "",
     portfolio: "",
@@ -109,203 +55,58 @@ export function CareersContent() {
     motivation: "",
   });
 
-  // Selected tech stacks for Step 8
-  const [selectedTech, setSelectedTech] = useState<string[]>([]);
-
-  // Focus ref for inputs
-  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-
-  // UTC clock update
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const timeStr = now.toISOString().split("T")[1].slice(0, 8) + "Z";
-      setUtcTime(timeStr);
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Autofocus input on step change
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
     setError("");
-  }, [step]);
-
-  // Handle select inputs key triggers (1, 2, 3, 4)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // If intro step and press enter, start
-      if (step === 0 && e.key === "Enter") {
-        e.preventDefault();
-        handleNext();
-        return;
-      }
-
-      // Option selection via keyboard for specific steps
-      if (step === 5) {
-        // Role Selection
-        const num = parseInt(e.key);
-        if (num >= 1 && num <= ROLES.length) {
-          e.preventDefault();
-          selectRole(ROLES[num - 1]);
-        }
-      } else if (step === 16) {
-        // Notice Period Selection
-        const num = parseInt(e.key);
-        if (num >= 1 && num <= NOTICE_PERIODS.length) {
-          e.preventDefault();
-          selectNoticePeriod(NOTICE_PERIODS[num - 1]);
-        }
-      } else if (step === 15) {
-        // Employment Type Selection
-        const num = parseInt(e.key);
-        if (num >= 1 && num <= EMPLOYMENT_TYPES.length) {
-          e.preventDefault();
-          selectEmploymentType(EMPLOYMENT_TYPES[num - 1]);
-        }
-      }
-
-      // Enter key for next on text inputs
-      if (e.key === "Enter" && step > 0 && step !== 17 && step !== 8) {
-        // Exclude step 17 (textarea) and step 8 (multi-select)
-        e.preventDefault();
-        handleNext();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [step, formData, selectedTech]);
-
-  // Get current step category label
-  const getStepCategory = () => {
-    if (step === 0) return "INTRO";
-    if (step >= 1 && step <= 4) return "PERSONAL DETAILS";
-    if (step >= 5 && step <= 8) return "EXPERIENCE & SKILLS";
-    if (step >= 9 && step <= 12) return "PROFESSIONAL LINKS";
-    if (step >= 13 && step <= 16) return "LOGISTICS & PREFERENCES";
-    if (step === 17) return "MOTIVATION";
-    return "SUCCESS";
   };
 
-  // Field validation
-  const validateCurrentStep = () => {
-    switch (step) {
-      case 1:
-        if (!formData.name.trim()) return "Full name is required.";
-        break;
-      case 2:
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!formData.email.trim()) return "Email address is required.";
-        if (!emailRegex.test(formData.email.trim())) return "Please enter a valid email address.";
-        break;
-      case 3:
-        if (!formData.phone.trim()) return "Phone number is required.";
-        break;
-      case 4:
-        if (!formData.location.trim()) return "Current location is required.";
-        break;
-      case 5:
-        if (!formData.role) return "Please select a target role.";
-        break;
-      case 6:
-        if (!formData.experience.trim()) return "Years of experience is required.";
-        if (isNaN(Number(formData.experience))) return "Please enter a numerical value.";
-        break;
-      case 7:
-        if (!formData.techStack.trim()) return "Please enter your primary tool or language.";
-        break;
-      case 8:
-        if (selectedTech.length === 0) return "Select at least one skill option.";
-        break;
-      case 9:
-        if (formData.github && !formData.github.startsWith("http")) return "Must be a valid URL starting with http:// or https://";
-        break;
-      case 10:
-        if (formData.linkedin && !formData.linkedin.startsWith("http")) return "Must be a valid URL starting with http:// or https://";
-        break;
-      case 12:
-        if (!formData.resume.trim()) return "Resume URL is required.";
-        if (!formData.resume.startsWith("http")) return "Must be a valid link URL.";
-        break;
-      case 13:
-        if (!formData.jobTitle.trim()) return "Current/last job title is required.";
-        break;
-      case 14:
-        if (!formData.company.trim()) return "Current/last employer is required.";
-        break;
-      case 15:
-        if (!formData.employmentType) return "Please select employment preference.";
-        break;
-      case 16:
-        if (!formData.noticePeriod) return "Please select notice period.";
-        break;
-      case 17:
-        if (formData.motivation.trim().length < 15) return "Motivation statement must be at least 15 characters.";
-        break;
-      default:
-        break;
-    }
+  const handleSelectRole = (role: string) => {
+    setFormData(prev => ({ ...prev, role }));
+    setError("");
+  };
+
+  const handleSelectEmployment = (type: string) => {
+    setFormData(prev => ({ ...prev, employmentType: type }));
+    setError("");
+  };
+
+  const handleSelectNotice = (period: string) => {
+    setFormData(prev => ({ ...prev, noticePeriod: period }));
+    setError("");
+  };
+
+  const validate = () => {
+    if (!formData.name.trim()) return "Full name is required.";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) return "Email address is required.";
+    if (!emailRegex.test(formData.email.trim())) return "Please enter a valid email address.";
+    if (!formData.phone.trim()) return "Phone number is required.";
+    if (!formData.location.trim()) return "Current location is required.";
+    if (!formData.role) return "Please select a target role.";
+    if (!formData.experience.trim()) return "Years of experience is required.";
+    if (isNaN(Number(formData.experience))) return "Please enter a numeric value for experience.";
+    if (!formData.techStack.trim()) return "Please specify your primary technical stack/tools.";
+    if (!formData.resume.trim()) return "Resume link is required.";
+    if (!formData.resume.startsWith("http")) return "Resume must be a valid link URL (starting with http/https).";
+    if (!formData.jobTitle.trim()) return "Current/last job title is required.";
+    if (!formData.company.trim()) return "Current/last company is required.";
+    if (!formData.employmentType) return "Please select employment preference.";
+    if (!formData.noticePeriod) return "Please select your notice period.";
+    if (formData.motivation.trim().length < 15) return "Motivation statement must be at least 15 characters.";
     return "";
   };
 
-  // Navigations
-  const handleNext = () => {
-    const validationError = validateCurrentStep();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const validationError = validate();
     if (validationError) {
       setError(validationError);
+      // Scroll to error
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    if (step === 8) {
-      // Compile tech selection into techStack info
-      setFormData(prev => ({
-        ...prev,
-        techStack: `Primary: ${prev.techStack} | Skills: ${selectedTech.join(", ")}`
-      }));
-    }
-
-    if (step === 17) {
-      submitApplication();
-    } else {
-      setStep(prev => prev + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (step > 0) {
-      setStep(prev => prev - 1);
-    }
-  };
-
-  // Select handlers
-  const selectRole = (role: string) => {
-    setFormData(prev => ({ ...prev, role }));
-    setTimeout(() => setStep(prev => prev + 1), 200);
-  };
-
-  const selectNoticePeriod = (noticePeriod: string) => {
-    setFormData(prev => ({ ...prev, noticePeriod }));
-    setTimeout(() => setStep(prev => prev + 1), 200);
-  };
-
-  const selectEmploymentType = (employmentType: string) => {
-    setFormData(prev => ({ ...prev, employmentType }));
-    setTimeout(() => setStep(prev => prev + 1), 200);
-  };
-
-  const toggleTechOption = (tech: string) => {
-    setSelectedTech(prev => 
-      prev.includes(tech) ? prev.filter(t => t !== tech) : [...prev, tech]
-    );
-  };
-
-  // Submit API Call
-  const submitApplication = async () => {
     setIsSubmitting(true);
     setError("");
 
@@ -322,555 +123,408 @@ export function CareersContent() {
         throw new Error(data.error || "Submission failed.");
       }
 
-      setStep(18); // Success Step
+      setSuccess(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
-      setError(err.message || "Something went wrong. Please check your inputs and try again.");
+      setError(err.message || "An error occurred while submitting. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <AnimatePresence mode="wait">
-      {!showForm ? (
-        <motion.div
-          key="intro"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="fixed inset-0 w-full h-full bg-black text-white font-sans z-50 flex flex-col justify-between p-8 md:p-16 select-none overflow-hidden"
-        >
-          {/* Decorative Grid Mesh Background matching main site */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none -z-10" />
+    <div className="min-h-screen bg-black text-white font-sans pt-32 pb-24 px-6 md:px-12 relative overflow-hidden select-none">
+      {/* Decorative Grid Mesh Background matching main site */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none -z-10" />
 
-          {/* Top Row */}
-          <div className="flex justify-between items-center text-[10px] font-mono font-bold tracking-widest text-zinc-500">
-            <div>[GrowXLabs]</div>
-            <div>// INTRO</div>
-            <div>START</div>
-          </div>
+      <div className="max-w-4xl mx-auto space-y-12 relative z-10">
+        
+        <AnimatePresence mode="wait">
+          {!success ? (
+            <motion.div
+              key="form-container"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="space-y-12"
+            >
+              {/* Header section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-[10px] font-mono font-bold tracking-widest text-zinc-500 uppercase">
+                  <span>[ Careers ]</span>
+                  <span>//</span>
+                  <span>Join the intelligence engineering team</span>
+                </div>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-white leading-tight">
+                  Start Your Systems Application
+                </h1>
+                <p className="text-zinc-400 font-sans tracking-tight leading-relaxed max-w-2xl text-sm md:text-base">
+                  We look for curiosity, technical grit, and absolute honesty. Please fill out our professional dossier below. All fields are mandatory unless marked optional.
+                </p>
+              </div>
 
-          {/* Middle Row with columns */}
-          <div className="flex justify-end w-full mb-12">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 text-[9px] font-mono tracking-widest uppercase text-zinc-500 max-w-4xl w-full">
-              <div>
-                <p className="text-zinc-500 mb-1">We hire for</p>
-                <p className="text-white font-bold">Curiosity, grit,<br />honesty</p>
-              </div>
-              <div>
-                <p className="text-zinc-500 mb-1">{ROLES.length} roles</p>
-                <p className="text-white font-bold">open across<br />the company</p>
-              </div>
-              <div>
-                <p className="text-zinc-500 mb-1">Reply within</p>
-                <p className="text-white font-bold">7 days,<br />always a human</p>
-              </div>
-              <div>
-                <p className="text-zinc-500 mb-1">© 2026</p>
-                <p className="text-white font-bold">GrowX Labs<br />Pvt Ltd</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Row */}
-          <div className="w-full flex flex-col items-start">
-            <h1 className="text-[12vw] font-bold tracking-tighter leading-none select-none text-white">
-              Careers
-            </h1>
-          </div>
-        </motion.div>
-      ) : (
-        <motion.div
-          key="form"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="fixed inset-0 w-full h-full bg-black text-white font-sans z-40 flex flex-col justify-between pt-28 pb-8 px-8 md:pt-32 md:pb-12 md:px-12 xl:pt-36 xl:pb-16 xl:px-16 select-none overflow-hidden"
-        >
-          {/* Decorative Grid Mesh Background matching main site */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none -z-10" />
-
-          {/* ═══ TOP HEADER BAR ═══ */}
-          <header className="flex justify-between items-center text-xs font-mono font-bold tracking-widest text-zinc-500">
-            <div>// CAREERS</div>
-            <div className="text-zinc-400 transition-colors uppercase">{getStepCategory()}</div>
-            <div>
-              {step > 0 && step <= 17 ? (
-                <span>{String(step).padStart(2, "0")} / 17</span>
-              ) : step === 18 ? (
-                <span>COMPLETED</span>
-              ) : (
-                <span>START</span>
+              {/* Error box */}
+              {error && (
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-rose-950/20 border border-rose-900/30 text-rose-450 text-xs font-mono font-bold">
+                  <AlertCircle className="w-5 h-5 shrink-0 text-rose-500" />
+                  <span>{error}</span>
+                </div>
               )}
-            </div>
-          </header>
 
-          {/* ═══ MAIN STEP VIEWPORT ═══ */}
-          <main className="flex-grow flex flex-col justify-center max-w-4xl mx-auto w-full relative">
-            
-            {/* Back navigation indicator */}
-            {step > 0 && step < 18 && (
-              <button
-                onClick={handleBack}
-                className="absolute -left-12 lg:-left-20 top-1/2 -translate-y-1/2 p-2 hover:bg-white/5 rounded-full cursor-pointer transition-all active:scale-90 text-zinc-500 hover:text-white hidden md:block"
-                title="Go back"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-            )}
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={step}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="w-full flex flex-col items-start"
-              >
-                
-                {/* Step label comment */}
-                {step < 18 && (
-                  <span className="font-mono text-xs text-zinc-500 tracking-wider mb-3">
-                    // {step === 0 ? "CAREERS - 2026" : `QUESTION ${String(step).padStart(2, "0")}`}
-                  </span>
-                )}
-
-                {/* ═══ STEP 0: INTRO ═══ */}
-                {step === 0 && (
-                  <div className="space-y-8">
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-tight">
-                      Apply to GrowX Labs.
-                    </h1>
-                    <p className="text-lg md:text-xl text-zinc-400 font-sans tracking-tight leading-relaxed max-w-xl">
-                      Curious. Hard-working. Honest. About 10-15 minutes.
-                    </p>
-                    <div className="flex items-center gap-4 pt-4">
-                      <button
-                        onClick={handleNext}
-                        className="px-8 py-3.5 bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs uppercase tracking-wider rounded-md transition-all active:scale-95 shadow-md cursor-pointer"
-                      >
-                        Start
-                      </button>
-                      <span className="font-mono text-[10px] text-zinc-500">PRESS ENTER</span>
+              <form onSubmit={handleSubmit} className="space-y-10">
+                {/* ═══ SECTION 1: PERSONAL DETAILS ═══ */}
+                <div className="p-6 md:p-8 rounded-2xl bg-zinc-950/60 border border-zinc-900 space-y-6">
+                  <h3 className="text-xs font-mono font-bold text-primary tracking-widest uppercase flex items-center gap-2">// 01. Personal Identity</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Full Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="John Doe"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Email Address</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="john@example.com"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Phone Number</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="+91 99999 99999"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Current Location</label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        placeholder="City, Country"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
                     </div>
                   </div>
-                )}
+                </div>
 
-                {/* ═══ STEP 1: NAME ═══ */}
-                {step === 1 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your full name?
-                    </label>
-                    <input
-                      ref={inputRef as any}
-                      type="text"
-                      value={formData.name}
-                      onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Type your answer here..."
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 2: EMAIL ═══ */}
-                {step === 2 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your email address?
-                    </label>
-                    <input
-                      ref={inputRef as any}
-                      type="email"
-                      value={formData.email}
-                      onChange={e => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="name@example.com"
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 3: PHONE ═══ */}
-                {step === 3 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your phone number?
-                    </label>
-                    <input
-                      ref={inputRef as any}
-                      type="tel"
-                      value={formData.phone}
-                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="+1 (555) 000-0000"
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 4: LOCATION ═══ */}
-                {step === 4 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      Where are you currently located?
-                    </label>
-                    <input
-                      ref={inputRef as any}
-                      type="text"
-                      value={formData.location}
-                      onChange={e => setFormData({ ...formData, location: e.target.value })}
-                      placeholder="City, Country"
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 5: ROLE (Select) ═══ */}
-                {step === 5 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight block mb-6">
-                      What role are you applying for?
-                    </label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                      {ROLES.map((role, idx) => (
-                        <button
-                          key={role}
-                          onClick={() => selectRole(role)}
-                          className={cn(
-                            "w-full p-5 text-left border rounded-xl flex justify-between items-center transition-all cursor-pointer group",
-                            formData.role === role
-                              ? "border-[#C0F0FB] bg-[#C0F0FB]/10 text-white"
-                              : "border-white/10 bg-white/5 hover:border-[#C0F0FB]"
-                          )}
-                        >
-                          <span className="font-sans font-semibold text-white">{role}</span>
-                          <span className="font-mono text-[10px] bg-white/10 text-zinc-400 group-hover:bg-[#C0F0FB] group-hover:text-black px-2 py-1 rounded">
-                            [{idx + 1}]
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* ═══ STEP 6: EXP ═══ */}
-                {step === 6 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      How many years of professional experience do you have?
-                    </label>
-                    <input
-                      ref={inputRef as any}
-                      type="text"
-                      value={formData.experience}
-                      onChange={e => setFormData({ ...formData, experience: e.target.value })}
-                      placeholder="Years (e.g. 5)"
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 7: TECH STACK (TEXT) ═══ */}
-                {step === 7 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your primary programming language or design tool?
-                    </label>
-                    <input
-                      ref={inputRef as any}
-                      type="text"
-                      value={formData.techStack}
-                      onChange={e => setFormData({ ...formData, techStack: e.target.value })}
-                      placeholder="TypeScript, Python, Figma, etc."
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 8: TECH STACK OPTIONS (Multi-select) ═══ */}
-                {step === 8 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight block mb-6">
-                      Select other libraries and tools you are highly confident in:
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 w-full">
-                      {TECH_OPTIONS.map((tech) => {
-                        const isSelected = selectedTech.includes(tech);
+                {/* ═══ SECTION 2: POSITION & TARGET ═══ */}
+                <div className="p-6 md:p-8 rounded-2xl bg-zinc-950/60 border border-zinc-900 space-y-6">
+                  <h3 className="text-xs font-mono font-bold text-primary tracking-widest uppercase flex items-center gap-2">// 02. Role Preference</h3>
+                  
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500 block">Target Role</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                      {ROLES.map((role) => {
+                        const isSelected = formData.role === role;
                         return (
                           <button
-                            key={tech}
-                            onClick={() => toggleTechOption(tech)}
+                            key={role}
+                            type="button"
+                            onClick={() => handleSelectRole(role)}
                             className={cn(
-                              "p-3 text-center border rounded-lg transition-all text-xs font-semibold uppercase tracking-wider cursor-pointer",
+                              "p-4 text-left border rounded-xl flex justify-between items-center transition-all cursor-pointer",
                               isSelected
-                                ? "bg-white border-white text-black font-extrabold"
-                                : "bg-white/5 border-white/10 text-zinc-300 hover:border-[#C0F0FB] hover:text-white"
+                                ? "border-primary bg-primary/5 text-white"
+                                : "border-zinc-850 bg-zinc-900/30 text-zinc-400 hover:border-zinc-500"
                             )}
                           >
-                            {tech}
+                            <span className="text-xs font-bold">{role}</span>
+                            {isSelected && <Check className="h-4 w-4 text-primary shrink-0" />}
                           </button>
                         );
                       })}
                     </div>
-                    <div className="flex items-center gap-4 pt-6">
-                      <button
-                        onClick={handleNext}
-                        className="px-6 py-2.5 bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs uppercase tracking-wider rounded transition-all cursor-pointer"
-                      >
-                        Continue
-                      </button>
-                      <span className="font-mono text-[10px] text-zinc-500">click to continue</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500 block">Employment Preference</label>
+                      <div className="flex flex-col gap-2">
+                        {EMPLOYMENT_TYPES.map((type) => {
+                          const isSelected = formData.employmentType === type;
+                          return (
+                            <button
+                              key={type}
+                              type="button"
+                              onClick={() => handleSelectEmployment(type)}
+                              className={cn(
+                                "p-3 text-left border rounded-lg text-xs font-bold transition-all cursor-pointer flex justify-between items-center",
+                                isSelected 
+                                  ? "border-primary bg-primary/5 text-white" 
+                                  : "border-zinc-850 bg-zinc-900/20 text-zinc-450 hover:border-zinc-700"
+                              )}
+                            >
+                              <span>{type}</span>
+                              {isSelected && <Check className="h-3.5 w-3.5 text-primary shrink-0" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500 block">Availability / Notice Period</label>
+                      <div className="flex flex-col gap-2">
+                        {NOTICE_PERIODS.map((period) => {
+                          const isSelected = formData.noticePeriod === period;
+                          return (
+                            <button
+                              key={period}
+                              type="button"
+                              onClick={() => handleSelectNotice(period)}
+                              className={cn(
+                                "p-3 text-left border rounded-lg text-xs font-bold transition-all cursor-pointer flex justify-between items-center",
+                                isSelected 
+                                  ? "border-primary bg-primary/5 text-white" 
+                                  : "border-zinc-850 bg-zinc-900/20 text-zinc-450 hover:border-zinc-700"
+                              )}
+                            >
+                              <span>{period}</span>
+                              {isSelected && <Check className="h-3.5 w-3.5 text-primary shrink-0" />}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
-                )}
 
-                {/* ═══ STEP 9: GITHUB ═══ */}
-                {step === 9 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your GitHub profile URL? (Optional)
-                    </label>
+                  <div className="space-y-2 pt-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Expected Annual Compensation (e.g. ₹12,00,000 / $60,000)</label>
                     <input
-                      ref={inputRef as any}
-                      type="url"
-                      value={formData.github}
-                      onChange={e => setFormData({ ...formData, github: e.target.value })}
-                      placeholder="https://github.com/yourusername"
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 10: LINKEDIN ═══ */}
-                {step === 10 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your LinkedIn profile URL? (Optional)
-                    </label>
-                    <input
-                      ref={inputRef as any}
-                      type="url"
-                      value={formData.linkedin}
-                      onChange={e => setFormData({ ...formData, linkedin: e.target.value })}
-                      placeholder="https://linkedin.com/in/yourusername"
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 11: PORTFOLIO ═══ */}
-                {step === 11 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your portfolio or website URL? (Optional)
-                    </label>
-                    <input
-                      ref={inputRef as any}
-                      type="url"
-                      value={formData.portfolio}
-                      onChange={e => setFormData({ ...formData, portfolio: e.target.value })}
-                      placeholder="https://yourportfolio.com"
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 12: RESUME CV ═══ */}
-                {step === 12 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      Please provide a link to your resume or CV.
-                    </label>
-                    <input
-                      ref={inputRef as any}
-                      type="url"
-                      value={formData.resume}
-                      onChange={e => setFormData({ ...formData, resume: e.target.value })}
-                      placeholder="Google Drive, Dropbox, or custom PDF link..."
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
-                    />
-                  </div>
-                )}
-
-                {/* ═══ STEP 13: LAST TITLE ═══ */}
-                {step === 13 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your current or last job title?
-                    </label>
-                    <input
-                      ref={inputRef as any}
                       type="text"
-                      value={formData.jobTitle}
-                      onChange={e => setFormData({ ...formData, jobTitle: e.target.value })}
-                      placeholder="e.g. Senior Software Engineer"
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
+                      name="expectedSalary"
+                      value={formData.expectedSalary}
+                      onChange={handleChange}
+                      placeholder="e.g. ₹15 LPA / $75k"
+                      className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
                     />
                   </div>
-                )}
+                </div>
 
-                {/* ═══ STEP 14: LAST COMPANY ═══ */}
-                {step === 14 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your current or last company / employer?
-                    </label>
+                {/* ═══ SECTION 3: WORK HISTORY & SKILLS ═══ */}
+                <div className="p-6 md:p-8 rounded-2xl bg-zinc-950/60 border border-zinc-900 space-y-6">
+                  <h3 className="text-xs font-mono font-bold text-primary tracking-widest uppercase flex items-center gap-2">// 03. Competence & Experience</h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Years of Experience</label>
+                      <input
+                        type="text"
+                        name="experience"
+                        value={formData.experience}
+                        onChange={handleChange}
+                        placeholder="e.g. 4"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Current/Last Job Title</label>
+                      <input
+                        type="text"
+                        name="jobTitle"
+                        value={formData.jobTitle}
+                        onChange={handleChange}
+                        placeholder="e.g. Full-Stack Developer"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Current/Last Company</label>
+                      <input
+                        type="text"
+                        name="company"
+                        value={formData.company}
+                        onChange={handleChange}
+                        placeholder="e.g. Acme Corp"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Core Technical Stack & Tools (comma-separated)</label>
                     <input
-                      ref={inputRef as any}
                       type="text"
-                      value={formData.company}
-                      onChange={e => setFormData({ ...formData, company: e.target.value })}
-                      placeholder="Company name..."
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
+                      name="techStack"
+                      value={formData.techStack}
+                      onChange={handleChange}
+                      placeholder="React, Next.js, Node.js, Python, LangChain, TailwindCSS, Figma, AWS..."
+                      className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
                     />
                   </div>
-                )}
+                </div>
 
-                {/* ═══ STEP 15: EMPLOYMENT TYPE (Select) ═══ */}
-                {step === 15 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight block mb-6">
-                      Select your employment preference:
-                    </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-                      {EMPLOYMENT_TYPES.map((type, idx) => (
-                        <button
-                          key={type}
-                          onClick={() => selectEmploymentType(type)}
-                          className={cn(
-                            "p-5 text-left border rounded-xl flex justify-between items-center transition-all cursor-pointer group",
-                            formData.employmentType === type
-                              ? "border-[#C0F0FB] bg-[#C0F0FB]/10 text-white"
-                              : "border-white/10 bg-white/5 hover:border-[#C0F0FB]"
-                          )}
-                        >
-                          <span className="font-sans font-semibold text-white text-sm">{type}</span>
-                          <span className="font-mono text-[10px] bg-white/10 text-zinc-400 group-hover:bg-[#C0F0FB] group-hover:text-black px-2 py-1 rounded">
-                            [{idx + 1}]
-                          </span>
-                        </button>
-                      ))}
+                {/* ═══ SECTION 4: PROFESSIONAL LINKS ═══ */}
+                <div className="p-6 md:p-8 rounded-2xl bg-zinc-950/60 border border-zinc-900 space-y-6">
+                  <h3 className="text-xs font-mono font-bold text-primary tracking-widest uppercase flex items-center gap-2">// 04. Digital Footprints</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Resume / CV Link</label>
+                      <input
+                        type="url"
+                        name="resume"
+                        value={formData.resume}
+                        onChange={handleChange}
+                        placeholder="Google Drive, Dropbox, or custom PDF URL..."
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">LinkedIn Profile URL (Optional)</label>
+                      <input
+                        type="url"
+                        name="linkedin"
+                        value={formData.linkedin}
+                        onChange={handleChange}
+                        placeholder="https://linkedin.com/in/username"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">GitHub Profile URL (Optional)</label>
+                      <input
+                        type="url"
+                        name="github"
+                        value={formData.github}
+                        onChange={handleChange}
+                        placeholder="https://github.com/username"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Portfolio URL (Optional)</label>
+                      <input
+                        type="url"
+                        name="portfolio"
+                        value={formData.portfolio}
+                        onChange={handleChange}
+                        placeholder="https://mywork.com"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none px-4 py-3 rounded-xl text-sm text-white transition-all"
+                      />
                     </div>
                   </div>
-                )}
+                </div>
 
-                {/* ═══ STEP 16: NOTICE PERIOD (Select) ═══ */}
-                {step === 16 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight block mb-6">
-                      What is your notice period / availability to start?
-                    </label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                      {NOTICE_PERIODS.map((period, idx) => (
-                        <button
-                          key={period}
-                          onClick={() => selectNoticePeriod(period)}
-                          className={cn(
-                            "p-5 text-left border rounded-xl flex justify-between items-center transition-all cursor-pointer group",
-                            formData.noticePeriod === period
-                              ? "border-[#C0F0FB] bg-[#C0F0FB]/10 text-white"
-                              : "border-white/10 bg-white/5 hover:border-[#C0F0FB]"
-                          )}
-                        >
-                          <span className="font-sans font-semibold text-white">{period}</span>
-                          <span className="font-mono text-[10px] bg-white/10 text-zinc-400 group-hover:bg-[#C0F0FB] group-hover:text-black px-2 py-1 rounded">
-                            [{idx + 1}]
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* ═══ STEP 17: MOTIVATION (Textarea) ═══ */}
-                {step === 17 && (
-                  <div className="w-full space-y-6">
-                    <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      Why do you want to join GrowX Labs Tech?
-                    </label>
+                {/* ═══ SECTION 5: MOTIVATION ═══ */}
+                <div className="p-6 md:p-8 rounded-2xl bg-zinc-950/60 border border-zinc-900 space-y-6">
+                  <h3 className="text-xs font-mono font-bold text-primary tracking-widest uppercase flex items-center gap-2">// 05. Motivations</h3>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Why do you want to join the GrowX Labs Tech team? (Minimum 15 characters)</label>
                     <textarea
-                      ref={inputRef as any}
+                      name="motivation"
                       value={formData.motivation}
-                      onChange={e => setFormData({ ...formData, motivation: e.target.value })}
-                      placeholder="Tell us what drives you..."
-                      rows={4}
-                      className="border-b border-white/20 focus:border-white py-4 outline-none text-xl sm:text-2xl font-sans tracking-tight font-medium bg-transparent w-full text-white transition-colors resize-none placeholder-zinc-700"
+                      onChange={handleChange}
+                      placeholder="Share what drives you, why you are passionate about automation/AI systems, and how your skills can help scale the platform..."
+                      rows={5}
+                      className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-white focus:outline-none p-4 rounded-xl text-sm text-white leading-relaxed resize-none transition-all"
                     />
-                    <div className="flex items-center gap-4 pt-4">
-                      <button
-                        disabled={isSubmitting}
-                        onClick={handleNext}
-                        className="px-8 py-3.5 bg-white hover:bg-zinc-200 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-mono font-bold text-xs uppercase tracking-wider rounded-md transition-all cursor-pointer"
-                      >
-                        {isSubmitting ? "Submitting..." : "Submit Application"}
-                      </button>
-                      <span className="font-mono text-[10px] text-zinc-500">click to submit</span>
-                    </div>
                   </div>
-                )}
+                </div>
 
-                {/* ═══ STEP 18: SUCCESS VIEW ═══ */}
-                {step === 18 && (
-                  <div className="space-y-8 max-w-xl">
-                    <div className="w-16 h-16 rounded-full bg-emerald-950/30 text-emerald-400 flex items-center justify-center mb-6">
-                      <Check className="w-8 h-8" />
-                    </div>
-                    <h1 className="text-5xl md:text-6xl font-bold tracking-tighter text-white leading-tight">
-                      Application Submitted.
-                    </h1>
-                    <p className="text-lg text-zinc-400 font-sans tracking-tight leading-relaxed">
-                      Thank you for applying. We will review your systems experience and get back to you at the email address provided within 48 hours.
-                    </p>
-                    <div className="pt-6">
-                      <button
-                        onClick={() => router.push("/")}
-                        className="px-6 py-3 border border-zinc-750 hover:border-white text-white font-mono font-bold text-xs uppercase tracking-wider rounded transition-all cursor-pointer bg-transparent"
-                      >
-                        Go back Home
-                      </button>
-                    </div>
-                  </div>
-                )}
+                {/* Submit Panel */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6">
+                  <Link 
+                    href="/" 
+                    className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-white transition-all"
+                  >
+                    <ArrowLeft className="h-4 w-4" /> Return to Home
+                  </Link>
 
-                {/* Validation/Error alerts */}
-                {error && (
-                  <div className="mt-6 flex items-center gap-2 text-xs font-mono font-bold text-red-400 bg-red-950/20 border border-red-950/30 px-4 py-3 rounded-md animate-shake">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    <span>{error}</span>
-                  </div>
-                )}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 bg-white text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-neutral-200 active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-white/5 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="animate-spin h-4 w-4" />
+                        Submitting Dossier...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4" />
+                        Submit Application
+                      </>
+                    )}
+                  </button>
+                </div>
 
-                {/* Hint for progress for text-steps (Next) */}
-                {step > 0 && step <= 14 && step !== 5 && step !== 8 && (
-                  <div className="mt-8 flex items-center gap-4 text-[10px] font-mono text-zinc-500">
-                    <button
-                      onClick={handleNext}
-                      className="px-4 py-1.5 border border-white/10 hover:border-white rounded transition-all text-white hover:bg-white/5 font-bold uppercase tracking-wider cursor-pointer"
-                    >
-                      Next
-                    </button>
-                    <span>or press Enter</span>
-                  </div>
-                )}
+              </form>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="success-container"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="py-16 text-center max-w-xl mx-auto space-y-8"
+            >
+              <div className="w-20 h-20 bg-emerald-950/20 border border-emerald-900/30 text-emerald-400 flex items-center justify-center rounded-3xl mx-auto shadow-lg shadow-emerald-500/5">
+                <Check className="w-10 h-10 animate-bounce" />
+              </div>
+              <div className="space-y-3">
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Application Submitted Successfully</h2>
+                <p className="text-zinc-400 text-sm md:text-base leading-relaxed">
+                  Thank you, <span className="text-white font-bold">{formData.name}</span>. Your details have been securely logged in our hiring database. Our systems engineering team will review your application and contact you at <span className="text-white font-bold">{formData.email}</span> within 48 hours.
+                </p>
+              </div>
+              <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
+                <button
+                  onClick={() => router.push("/")}
+                  className="px-6 py-3.5 bg-white text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-neutral-200 transition-all cursor-pointer"
+                >
+                  Return Home
+                </button>
+                <button
+                  onClick={() => {
+                    setSuccess(false);
+                    setFormData({
+                      name: "",
+                      email: "",
+                      phone: "",
+                      location: "",
+                      role: "",
+                      experience: "",
+                      techStack: "",
+                      github: "",
+                      linkedin: "",
+                      portfolio: "",
+                      resume: "",
+                      jobTitle: "",
+                      company: "",
+                      expectedSalary: "",
+                      noticePeriod: "",
+                      employmentType: "",
+                      motivation: "",
+                    });
+                  }}
+                  className="px-6 py-3.5 bg-transparent border border-zinc-800 text-zinc-400 hover:border-white hover:text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                >
+                  Apply for another role
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-              </motion.div>
-            </AnimatePresence>
-
-          </main>
-
-          {/* ═══ BOTTOM STATUS FOOTER BAR ═══ */}
-          <footer className="flex justify-between items-center text-xs font-mono font-bold text-zinc-500">
-            <div className="flex items-center gap-2">
-              <span className={cn(
-                "w-2 h-2 rounded-full",
-                step === 18 ? "bg-emerald-500" : "bg-white animate-pulse"
-              )} />
-              <span>{step === 18 ? "COMPLETED" : "READY"}</span>
-            </div>
-            <div>{utcTime}</div>
-          </footer>
-        </motion.div>
-      )}
-    </AnimatePresence>
+      </div>
+    </div>
   );
 }
