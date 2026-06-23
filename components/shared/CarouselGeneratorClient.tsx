@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   Download, 
   ChevronLeft, 
@@ -207,6 +207,68 @@ export function CarouselGeneratorClient() {
   const [aspectRatio, setAspectRatio] = useState<"3:4" | "4:5" | "1:1" | "1.91:1">("1:1");
   const [visualMode, setVisualMode] = useState<"svg" | "image">("svg");
 
+  // Dynamic responsive scaling states & ref
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [responsiveScale, setResponsiveScale] = useState(1);
+
+  // Swipe gesture navigation states
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const minSwipeDistance = 50;
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    const updateScale = () => {
+      if (previewRef.current) {
+        const width = previewRef.current.offsetWidth;
+        if (width > 0) {
+          setResponsiveScale(width / 338);
+        }
+      }
+    };
+
+    updateScale();
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (previewRef.current && typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => {
+        updateScale();
+      });
+      resizeObserver.observe(previewRef.current);
+    }
+
+    window.addEventListener("resize", updateScale);
+    return () => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      window.removeEventListener("resize", updateScale);
+    };
+  }, []);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && activeIndex < slides.length - 1) {
+      setActiveIndex(activeIndex + 1);
+    } else if (isRightSwipe && activeIndex > 0) {
+      setActiveIndex(activeIndex - 1);
+    }
+  };
+
   const getDimensions = () => {
     switch (aspectRatio) {
       case "3:4": return { width: 1080, height: 1440 };
@@ -244,6 +306,7 @@ export function CarouselGeneratorClient() {
     }
   };
   const scaleMultiplier = getScaleMultiplier();
+  const liveScaleMultiplier = scaleMultiplier * responsiveScale;
 
 
   // Auto-scroll the live token terminal to the bottom
@@ -342,36 +405,17 @@ export function CarouselGeneratorClient() {
         throw new Error(errorData.error || `Failed to generate: ${response.statusText}`);
       }
 
-      if (!response.body) {
-        throw new Error("No response body received from stream.");
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-      let buffer = "";
-
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        if (value) {
-          const chunk = decoder.decode(value, { stream: !done });
-          buffer += chunk;
-          setStreamBuffer(buffer);
-          
-          const parsed = parsePartialSlides(buffer);
-          if (parsed.slides && parsed.slides.length > 0) {
-            setSlides(parsed.slides);
-            if (parsed.themeSuggestion && ["cyberpunk", "cream", "sunset", "terminal", "glass", "emerald", "minimal", "gold"].includes(parsed.themeSuggestion)) {
-              setTheme(parsed.themeSuggestion as any);
-            }
-          }
-        }
-      }
-
-      // Try final full parse
+      let reader = null;
       try {
-        const finalData = JSON.parse(buffer);
+        reader = response.body ? response.body.getReader() : null;
+      } catch (err) {
+        console.warn("Streaming reader not available, falling back to full text reading:", err);
+      }
+
+      if (!reader) {
+        const text = await response.text();
+        setStreamBuffer(text);
+        const finalData = JSON.parse(text);
         if (finalData.slides && finalData.slides.length > 0) {
           setSlides(finalData.slides);
           setActiveIndex(0);
@@ -379,8 +423,42 @@ export function CarouselGeneratorClient() {
             setTheme(finalData.themeSuggestion);
           }
         }
-      } catch (e) {
-        console.warn("Could not parse final buffer as JSON:", e);
+      } else {
+        const decoder = new TextDecoder();
+        let done = false;
+        let buffer = "";
+
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          if (value) {
+            const chunk = decoder.decode(value, { stream: !done });
+            buffer += chunk;
+            setStreamBuffer(buffer);
+            
+            const parsed = parsePartialSlides(buffer);
+            if (parsed.slides && parsed.slides.length > 0) {
+              setSlides(parsed.slides);
+              if (parsed.themeSuggestion && ["cyberpunk", "cream", "sunset", "terminal", "glass", "emerald", "minimal", "gold"].includes(parsed.themeSuggestion)) {
+                setTheme(parsed.themeSuggestion as any);
+              }
+            }
+          }
+        }
+
+        // Try final full parse
+        try {
+          const finalData = JSON.parse(buffer);
+          if (finalData.slides && finalData.slides.length > 0) {
+            setSlides(finalData.slides);
+            setActiveIndex(0);
+            if (finalData.themeSuggestion) {
+              setTheme(finalData.themeSuggestion);
+            }
+          }
+        } catch (e) {
+          console.warn("Could not parse final buffer as JSON:", e);
+        }
       }
 
       toast.success("Carousel generated successfully!", { id: apiToast });
@@ -419,36 +497,17 @@ export function CarouselGeneratorClient() {
         throw new Error(errorData.error || `Failed to refine: ${response.statusText}`);
       }
 
-      if (!response.body) {
-        throw new Error("No response body received from stream.");
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-      let buffer = "";
-
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        if (value) {
-          const chunk = decoder.decode(value, { stream: !done });
-          buffer += chunk;
-          setStreamBuffer(buffer);
-          
-          const parsed = parsePartialSlides(buffer);
-          if (parsed.slides && parsed.slides.length > 0) {
-            setSlides(parsed.slides);
-            if (parsed.themeSuggestion && ["cyberpunk", "cream", "sunset", "terminal", "glass", "emerald", "minimal", "gold"].includes(parsed.themeSuggestion)) {
-              setTheme(parsed.themeSuggestion as any);
-            }
-          }
-        }
-      }
-
-      // Try final full parse
+      let reader = null;
       try {
-        const finalData = JSON.parse(buffer);
+        reader = response.body ? response.body.getReader() : null;
+      } catch (err) {
+        console.warn("Streaming reader not available during refinement, falling back to full text reading:", err);
+      }
+
+      if (!reader) {
+        const text = await response.text();
+        setStreamBuffer(text);
+        const finalData = JSON.parse(text);
         if (finalData.slides && finalData.slides.length > 0) {
           setSlides(finalData.slides);
           setActiveIndex(0);
@@ -456,8 +515,42 @@ export function CarouselGeneratorClient() {
             setTheme(finalData.themeSuggestion);
           }
         }
-      } catch (e) {
-        console.warn("Could not parse final refinement buffer as JSON:", e);
+      } else {
+        const decoder = new TextDecoder();
+        let done = false;
+        let buffer = "";
+
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          if (value) {
+            const chunk = decoder.decode(value, { stream: !done });
+            buffer += chunk;
+            setStreamBuffer(buffer);
+            
+            const parsed = parsePartialSlides(buffer);
+            if (parsed.slides && parsed.slides.length > 0) {
+              setSlides(parsed.slides);
+              if (parsed.themeSuggestion && ["cyberpunk", "cream", "sunset", "terminal", "glass", "emerald", "minimal", "gold"].includes(parsed.themeSuggestion)) {
+                setTheme(parsed.themeSuggestion as any);
+              }
+            }
+          }
+        }
+
+        // Try final full parse
+        try {
+          const finalData = JSON.parse(buffer);
+          if (finalData.slides && finalData.slides.length > 0) {
+            setSlides(finalData.slides);
+            setActiveIndex(0);
+            if (finalData.themeSuggestion) {
+              setTheme(finalData.themeSuggestion);
+            }
+          }
+        } catch (e) {
+          console.warn("Could not parse final refinement buffer as JSON:", e);
+        }
       }
 
       setRefinementPrompt("");
@@ -838,7 +931,7 @@ export function CarouselGeneratorClient() {
     }
   };
 
-  const styles = getThemeStyles(activeSlide.layout, scaleMultiplier);
+  const styles = getThemeStyles(activeSlide.layout, liveScaleMultiplier);
 
   const getThemePreviewColors = (themeId: string) => {
     switch (themeId) {
@@ -995,7 +1088,7 @@ export function CarouselGeneratorClient() {
   };
 
   const renderImageElement = (className = "rounded-xl border border-white/10 w-full object-cover", height = 140) => {
-    const scaledHeight = `${Math.round(height * scaleMultiplier)}px`;
+    const scaledHeight = `${Math.round(height * liveScaleMultiplier)}px`;
     return renderImageOrSvgMarkup(activeSlide, className, { height: scaledHeight, objectFit: "cover" }, scaledHeight);
   };
 
@@ -1226,10 +1319,10 @@ export function CarouselGeneratorClient() {
         <div className="lg:col-span-7 flex flex-col space-y-6">
         
         {/* Navigation Tabs */}
-        <div className="flex border border-neutral-300 p-1 bg-neutral-100/80 rounded-xl w-fit">
+        <div className="flex border border-neutral-300 p-1 bg-neutral-100/80 rounded-xl w-full sm:w-fit flex-wrap sm:flex-nowrap">
           <button
             onClick={() => setActiveTab("ai")}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-2 sm:px-6 py-2 sm:py-2.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
               activeTab === "ai" ? "tab-btn-active" : "tab-btn-inactive"
             }`}
           >
@@ -1238,7 +1331,7 @@ export function CarouselGeneratorClient() {
           </button>
           <button
             onClick={() => setActiveTab("edit")}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-2 sm:px-6 py-2 sm:py-2.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
               activeTab === "edit" ? "tab-btn-active" : "tab-btn-inactive"
             }`}
           >
@@ -1247,7 +1340,7 @@ export function CarouselGeneratorClient() {
           </button>
           <button
             onClick={() => setActiveTab("design")}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-2 sm:px-6 py-2 sm:py-2.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
               activeTab === "design" ? "tab-btn-active" : "tab-btn-inactive"
             }`}
           >
@@ -1791,7 +1884,13 @@ export function CarouselGeneratorClient() {
           </div>
 
           {/* Phone Content Canvas Area */}
-          <div className={`bg-black border border-neutral-200 rounded-[28px] overflow-hidden flex flex-col relative ${getAspectClass()}`}>
+          <div 
+            ref={previewRef}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+            className={`bg-black border border-neutral-200 rounded-[28px] overflow-hidden flex flex-col relative ${getAspectClass()}`}
+          >
             
             {/* Live rendered slide inside preview */}
             <div 

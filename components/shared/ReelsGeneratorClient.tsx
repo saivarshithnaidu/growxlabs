@@ -197,33 +197,55 @@ export function ReelsGeneratorClient() {
       }
 
       toast.loading("Compiling Reels timeline...", { id: apiToast });
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      if (!reader) throw new Error("No readable stream response from server");
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        const textChunk = decoder.decode(value, { stream: true });
-        buffer += textChunk;
-        setStreamBuffer(buffer);
+      
+      let reader = null;
+      try {
+        reader = response.body ? response.body.getReader() : null;
+      } catch (err) {
+        console.warn("Streaming reader not available for Reels, falling back to full text reading:", err);
       }
 
-      // Final parse
-      const finalJson = JSON.parse(buffer);
-      if (finalJson.scenes && Array.isArray(finalJson.scenes)) {
-        setScenes(finalJson.scenes);
-        if (finalJson.themeSuggestion) {
-          setThemePreset(finalJson.themeSuggestion.toLowerCase() as any);
+      if (!reader) {
+        const text = await response.text();
+        setStreamBuffer(text);
+        const finalJson = JSON.parse(text);
+        if (finalJson.scenes && Array.isArray(finalJson.scenes)) {
+          setScenes(finalJson.scenes);
+          if (finalJson.themeSuggestion) {
+            setThemePreset(finalJson.themeSuggestion.toLowerCase() as any);
+          }
+          setCurrentTime(0);
+          setIsPlaying(false);
+          toast.success("Reels content generated successfully!", { id: apiToast });
+        } else {
+          throw new Error("Invalid format received from server");
         }
-        setCurrentTime(0);
-        setIsPlaying(false);
-        toast.success("Reels content generated successfully!", { id: apiToast });
       } else {
-        throw new Error("Invalid format received from server");
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          const textChunk = decoder.decode(value, { stream: true });
+          buffer += textChunk;
+          setStreamBuffer(buffer);
+        }
+
+        // Final parse
+        const finalJson = JSON.parse(buffer);
+        if (finalJson.scenes && Array.isArray(finalJson.scenes)) {
+          setScenes(finalJson.scenes);
+          if (finalJson.themeSuggestion) {
+            setThemePreset(finalJson.themeSuggestion.toLowerCase() as any);
+          }
+          setCurrentTime(0);
+          setIsPlaying(false);
+          toast.success("Reels content generated successfully!", { id: apiToast });
+        } else {
+          throw new Error("Invalid format received from server");
+        }
       }
     } catch (err: any) {
       console.error(err);
