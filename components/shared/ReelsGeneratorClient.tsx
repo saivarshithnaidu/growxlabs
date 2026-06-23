@@ -101,7 +101,7 @@ export function ReelsGeneratorClient() {
 
   // Styling state
   const [themePreset, setThemePreset] = useState<"cyberpunk" | "cream" | "sunset" | "terminal" | "glass" | "emerald" | "minimal" | "gold">("terminal");
-  const [visualMode, setVisualMode] = useState<"svg" | "image">("svg");
+  const [visualMode, setVisualMode] = useState<"svg" | "image">("image");
   const [brandName, setBrandName] = useState("GrowXLabs");
   const [instagramHandle, setInstagramHandle] = useState("@growxlabs.tech");
 

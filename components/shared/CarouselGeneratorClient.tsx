@@ -205,7 +205,7 @@ export function CarouselGeneratorClient() {
   const [isRefining, setIsRefining] = useState(false);
   const [streamBuffer, setStreamBuffer] = useState("");
   const [aspectRatio, setAspectRatio] = useState<"3:4" | "4:5" | "1:1" | "1.91:1">("1:1");
-  const [visualMode, setVisualMode] = useState<"svg" | "image">("svg");
+  const [visualMode, setVisualMode] = useState<"svg" | "image">("image");
 
   // Dynamic responsive scaling states & ref
   const previewRef = useRef<HTMLDivElement>(null);
