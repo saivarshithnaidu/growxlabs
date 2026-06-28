@@ -153,7 +153,8 @@ export default function ArchitecturePage() {
       { id: "line3", text: "OpenRouter called for agent task planning." },
       { id: "line4", text: "AWS Fargate Docker sandbox verified compilation checks." },
       { id: "line5", text: "HashiCorp Vault injected developer keys." },
-      { id: "line6", text: "BullMQ scheduled build task to compilers." },
+      { id: "line6a", text: "Sandbox verified and credentials prepared." },
+      { id: "line6b", text: "Coordinating task scheduling inside BullMQ queue." },
       { id: "line7", text: "macOS EC2 Xcode pipeline compiled signed iOS bundle." },
       { id: "line8", text: "Windows Server MSVC compiled native .msi installer." },
       { id: "line9", text: "Linux Gradle SDK compiled Google Play .aab bundle." },
@@ -167,7 +168,11 @@ export default function ArchitecturePage() {
     const interval = setInterval(() => {
       if (step < lines.length) {
         const line = lines[step];
-        setActivePaths(prev => [...prev, line.id]);
+        if (line.id === "line6a" || line.id === "line6b") {
+          setActivePaths(prev => [...prev, "line6a", "line6b"]);
+        } else {
+          setActivePaths(prev => [...prev, line.id]);
+        }
         writeLog(line.text);
         step++;
       } else {
@@ -225,41 +230,42 @@ export default function ArchitecturePage() {
         {/* Left Area: Interactive Architecture Grid */}
         <div className="flex-1 p-6 overflow-auto relative custom-scroll flex items-center justify-center min-h-[600px] bg-[#0c0c0e]">
           
-          {/* SVG Connection Lines */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
-            {/* Connection Paths */}
-            <path d="M 120 200 L 260 200" stroke={activePaths.includes("line1") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line1") ? "3" : "2"} className={activePaths.includes("line1") ? "flow-line" : ""} fill="none" />
-            <path d="M 380 200 L 480 200" stroke={activePaths.includes("line2") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line2") ? "3" : "2"} className={activePaths.includes("line2") ? "flow-line" : ""} fill="none" />
-            <path d="M 600 200 L 700 200" stroke={activePaths.includes("line3") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line3") ? "3" : "2"} className={activePaths.includes("line3") ? "flow-line" : ""} fill="none" />
+          {/* Absolute Layout of Nodes & Lines together in the EXACT same coordinate system */}
+          <div className="relative w-[1800px] h-[400px] shrink-0 z-10 mx-auto my-auto">
             
-            {/* Split to Sandbox & Vault */}
-            <path d="M 760 160 L 760 100 L 840 100" stroke={activePaths.includes("line4") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line4") ? "3" : "2"} className={activePaths.includes("line4") ? "flow-line" : ""} fill="none" />
-            <path d="M 760 240 L 760 300 L 840 300" stroke={activePaths.includes("line5") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line5") ? "3" : "2"} className={activePaths.includes("line5") ? "flow-line" : ""} fill="none" />
-            
-            {/* Queue line */}
-            <path d="M 960 100 L 1020 100 L 1020 200 L 1080 200" stroke={activePaths.includes("line6") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line6") ? "3" : "2"} className={activePaths.includes("line6") ? "flow-line" : ""} fill="none" />
-            
-            {/* Compiler workers split */}
-            <path d="M 1200 200 L 1240 200 L 1240 100 L 1280 100" stroke={activePaths.includes("line7") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line7") ? "3" : "2"} className={activePaths.includes("line7") ? "flow-line" : ""} fill="none" />
-            <path d="M 1240 200 L 1280 200" stroke={activePaths.includes("line8") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line8") ? "3" : "2"} className={activePaths.includes("line8") ? "flow-line" : ""} fill="none" />
-            <path d="M 1240 200 L 1240 300 L 1280 300" stroke={activePaths.includes("line9") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line9") ? "3" : "2"} className={activePaths.includes("line9") ? "flow-line" : ""} fill="none" />
-            
-            {/* Storage and output lines */}
-            <path d="M 1400 100 L 1460 100 L 1460 200 L 1480 200" stroke={activePaths.includes("line10") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line10") ? "3" : "2"} className={activePaths.includes("line10") ? "flow-line" : ""} fill="none" />
-            <path d="M 1400 200 L 1480 200" stroke={activePaths.includes("line11") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line11") ? "3" : "2"} className={activePaths.includes("line11") ? "flow-line" : ""} fill="none" />
-            <path d="M 1400 300 L 1460 300 L 1460 200 L 1480 200" stroke={activePaths.includes("line12") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line12") ? "3" : "2"} className={activePaths.includes("line12") ? "flow-line" : ""} fill="none" />
-            
-            {/* Final output */}
-            <path d="M 1600 200 L 1680 200" stroke={activePaths.includes("line13") ? "#5856d6" : "#3b3b3c"} strokeWidth={activePaths.includes("line13") ? "3" : "2"} className={activePaths.includes("line13") ? "flow-line" : ""} fill="none" />
-          </svg>
-
-          {/* Absolute Layout of Nodes */}
-          <div className="relative w-[1800px] h-[400px] shrink-0 z-10">
+            {/* SVG Connection Lines locked inside the relative container */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
+              {/* Connection Paths using absolute node coordinates */}
+              <path d="M 130 200 L 240 200" stroke={activePaths.includes("line1") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line1") ? "3" : "2"} className={activePaths.includes("line1") ? "flow-line" : ""} fill="none" />
+              <path d="M 380 200 L 460 200" stroke={activePaths.includes("line2") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line2") ? "3" : "2"} className={activePaths.includes("line2") ? "flow-line" : ""} fill="none" />
+              <path d="M 600 200 L 640 200" stroke={activePaths.includes("line3") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line3") ? "3" : "2"} className={activePaths.includes("line3") ? "flow-line" : ""} fill="none" />
+              
+              {/* Split to Sandbox & Vault */}
+              <path d="M 640 200 L 640 100 L 680 100" stroke={activePaths.includes("line4") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line4") ? "3" : "2"} className={activePaths.includes("line4") ? "flow-line" : ""} fill="none" />
+              <path d="M 640 200 L 640 300 L 680 300" stroke={activePaths.includes("line5") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line5") ? "3" : "2"} className={activePaths.includes("line5") ? "flow-line" : ""} fill="none" />
+              
+              {/* Sandbox & Vault outputs converging to Queue */}
+              <path d="M 820 100 L 880 100 L 880 200 L 940 200" stroke={activePaths.includes("line6a") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line6a") ? "3" : "2"} className={activePaths.includes("line6a") ? "flow-line" : ""} fill="none" />
+              <path d="M 820 300 L 880 300 L 880 200 L 940 200" stroke={activePaths.includes("line6b") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line6b") ? "3" : "2"} className={activePaths.includes("line6b") ? "flow-line" : ""} fill="none" />
+              
+              {/* Queue to Compiler workers split */}
+              <path d="M 1060 200 L 1100 200 L 1100 100 L 1160 100" stroke={activePaths.includes("line7") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line7") ? "3" : "2"} className={activePaths.includes("line7") ? "flow-line" : ""} fill="none" />
+              <path d="M 1060 200 L 1160 200" stroke={activePaths.includes("line8") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line8") ? "3" : "2"} className={activePaths.includes("line8") ? "flow-line" : ""} fill="none" />
+              <path d="M 1060 200 L 1100 200 L 1100 300 L 1160 300" stroke={activePaths.includes("line9") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line9") ? "3" : "2"} className={activePaths.includes("line9") ? "flow-line" : ""} fill="none" />
+              
+              {/* Compiler outputs converging to R2 Storage */}
+              <path d="M 1300 100 L 1340 100 L 1340 200 L 1380 200" stroke={activePaths.includes("line10") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line10") ? "3" : "2"} className={activePaths.includes("line10") ? "flow-line" : ""} fill="none" />
+              <path d="M 1300 200 L 1380 200" stroke={activePaths.includes("line11") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line11") ? "3" : "2"} className={activePaths.includes("line11") ? "flow-line" : ""} fill="none" />
+              <path d="M 1300 300 L 1340 300 L 1340 200 L 1380 200" stroke={activePaths.includes("line12") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line12") ? "3" : "2"} className={activePaths.includes("line12") ? "flow-line" : ""} fill="none" />
+              
+              {/* R2 Storage to Publish output */}
+              <path d="M 1520 200 L 1580 200" stroke={activePaths.includes("line13") ? "#5856d6" : "#262629"} strokeWidth={activePaths.includes("line13") ? "3" : "2"} className={activePaths.includes("line13") ? "flow-line" : ""} fill="none" />
+            </svg>
 
             {/* Node 1: User / Frontend */}
             <div 
               onClick={() => inspectNode("user")} 
-              className={`absolute left-[20px] top-[150px] w-[110px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[20px] top-[150px] w-[110px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "user" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
@@ -273,12 +279,12 @@ export default function ArchitecturePage() {
             {/* Node 2: Fastify + Redis */}
             <div 
               onClick={() => inspectNode("gateway")} 
-              className={`absolute left-[240px] top-[150px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[240px] top-[150px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "gateway" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
               <span className="text-[10px] font-bold text-[#2f80ed] uppercase tracking-wider mb-1">API Gateway</span>
-              <div className="w-8 h-8 rounded-lg bg-[#2f80ed]/15 flex items-center justify-center text-sm font-bold text-[#2f80ed] mb-1">
+              <div className="w-8 h-8 rounded-lg bg-[#2f80ed]/15 flex items-center justify-center text-base mb-1">
                 {nodesDb.gateway.icon}
               </div>
               <span className="text-[9px] text-zinc-500 font-mono">Fastify & Redis</span>
@@ -287,12 +293,12 @@ export default function ArchitecturePage() {
             {/* Node 3: Agent Orchestrator */}
             <div 
               onClick={() => inspectNode("agent")} 
-              className={`absolute left-[460px] top-[150px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[460px] top-[150px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "agent" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
               <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-1">Orchestrator</span>
-              <div className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center text-sm font-bold text-purple-400 mb-1">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center text-base mb-1">
                 {nodesDb.agent.icon}
               </div>
               <span className="text-[9px] text-zinc-500 font-mono">Blackboard Engine</span>
@@ -301,7 +307,7 @@ export default function ArchitecturePage() {
             {/* Node 4: AWS Fargate Sandbox */}
             <div 
               onClick={() => inspectNode("sandbox")} 
-              className={`absolute left-[680px] top-[50px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[680px] top-[50px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "sandbox" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
@@ -315,7 +321,7 @@ export default function ArchitecturePage() {
             {/* Node 5: Vault */}
             <div 
               onClick={() => inspectNode("vault")} 
-              className={`absolute left-[680px] top-[250px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[680px] top-[250px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "vault" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
@@ -329,12 +335,12 @@ export default function ArchitecturePage() {
             {/* Node 6: Queue */}
             <div 
               onClick={() => inspectNode("queue")} 
-              className={`absolute left-[940px] top-[150px] w-[120px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[940px] top-[150px] w-[120px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "queue" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
               <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Build Queue</span>
-              <div className="w-8 h-8 rounded-lg bg-zinc-850 flex items-center justify-center text-base mb-1">
+              <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-base mb-1">
                 {nodesDb.queue.icon}
               </div>
               <span className="text-[9px] text-zinc-500 font-mono">BullMQ Scheduler</span>
@@ -343,7 +349,7 @@ export default function ArchitecturePage() {
             {/* Node 7: macOS EC2 Compiler */}
             <div 
               onClick={() => inspectNode("mac")} 
-              className={`absolute left-[1160px] top-[50px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[1160px] top-[50px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "mac" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
@@ -357,7 +363,7 @@ export default function ArchitecturePage() {
             {/* Node 8: Windows VM Compiler */}
             <div 
               onClick={() => inspectNode("windows")} 
-              className={`absolute left-[1160px] top-[150px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[1160px] top-[150px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "windows" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
@@ -371,11 +377,11 @@ export default function ArchitecturePage() {
             {/* Node 9: Linux Android Compiler */}
             <div 
               onClick={() => inspectNode("linux")} 
-              className={`absolute left-[1160px] top-[250px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[1160px] top-[250px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "linux" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
-              <span className="text-[10px] font-bold text-amber-650 uppercase tracking-wider mb-1">Linux VM</span>
+              <span className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-1">Linux VM</span>
               <div className="w-8 h-8 rounded-lg bg-amber-600/15 flex items-center justify-center text-base mb-1">
                 {nodesDb.linux.icon}
               </div>
@@ -385,7 +391,7 @@ export default function ArchitecturePage() {
             {/* Node 10: Cloudflare R2 */}
             <div 
               onClick={() => inspectNode("storage")} 
-              className={`absolute left-[1380px] top-[150px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[1380px] top-[150px] w-[140px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "storage" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
@@ -399,7 +405,7 @@ export default function ArchitecturePage() {
             {/* Node 11: Download Binary */}
             <div 
               onClick={() => inspectNode("output")} 
-              className={`absolute left-[1580px] top-[150px] w-[120px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 ${
+              className={`absolute left-[1580px] top-[150px] w-[120px] h-[100px] bg-[#1c1c1e] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border transition-all duration-300 z-10 ${
                 activeNode === "output" ? "border-[#5856d6] bg-[rgba(88,86,214,0.05)] shadow-[0_0_15px_rgba(88,86,214,0.25)]" : "border-[#3b3b3c] hover:border-zinc-500"
               }`}
             >
