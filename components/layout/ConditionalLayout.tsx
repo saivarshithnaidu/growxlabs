@@ -50,9 +50,10 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const isCareersPage = normalizedPath.includes("/careers");
   const isCoursesPage = normalizedPath.includes("/courses");
   const isWishGame = normalizedPath.includes("/wish-game");
+  const isArchitecture = normalizedPath.includes("/architecture");
   
-  // Hide marketing UI for dashboard, auth, careers, courses and wish-game components to prevent visual conflicts
-  if (isDashboard || isDemo || isAuthPage || isCareersPage || isCoursesPage || isWishGame) {
+  // Hide marketing UI for dashboard, auth, careers, courses, wish-game, and architecture components to prevent visual conflicts
+  if (isDashboard || isDemo || isAuthPage || isCareersPage || isCoursesPage || isWishGame || isArchitecture) {
     return <>{children}</>;
   }
 
