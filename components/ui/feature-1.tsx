@@ -5,6 +5,7 @@ import { Link } from "@/navigation";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
+import { BookingScheduler } from "@/components/marketing/BookingScheduler";
 
 interface Feature1Props {
   title?: string;
@@ -152,24 +153,11 @@ export const Feature1 = ({
                 <X className="w-4 h-4" />
               </button>
 
-              {/* Loading Spinner */}
-              {showCalendly && !iframeLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                  <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-white/80 animate-spin" />
-                </div>
-              )}
-
-              {/* Calendly iframe embed */}
+              {/* Custom Booking Scheduler */}
               {showCalendly && (
-                <iframe
-                  src="https://calendly.com/saivarshith8284?background_color=0c0c0e&text_color=ffffff&primary_color=c0f0fb&hide_landing_page_details=1&hide_gdpr_banner=1"
-                  className={cn(
-                    "w-full h-full border-none relative z-20 transition-opacity duration-700 ease-in-out",
-                    iframeLoaded ? "opacity-100" : "opacity-0"
-                  )}
-                  onLoad={() => setIframeLoaded(true)}
-                  title="Schedule a meeting with GrowXLabs"
-                />
+                <div className="w-full h-full relative z-20">
+                  <BookingScheduler onClose={handleClose} />
+                </div>
               )}
             </div>
           </div>
