@@ -35,6 +35,18 @@ ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
 -- PART 2: DATABASE RELATION REPAIRS & SYNCHRONIZATION
 -- =====================================================================
 
+-- 0. Insert legacy client placeholder to prevent foreign key check failures
+-- on pre-existing invoice records that reference this client ID.
+INSERT INTO public.users (id, name, email, password, role)
+VALUES (
+  '0b18bd93-0371-4ff4-8389-9bbbfcd95dfc', 
+  'Legacy Client', 
+  'legacy.client@growxlabs.tech', 
+  '$2b$10$ieErAoR7OmFW2nMRVY74mezt/WH7.Hv3eBj/lV6990gA119SpwOp2', 
+  'CLIENT'
+)
+ON CONFLICT (id) DO NOTHING;
+
 -- 1. Fix invoices foreign key constraint to reference public.users instead of auth.users
 ALTER TABLE public.invoices 
 DROP CONSTRAINT IF EXISTS invoices_client_id_fkey;
