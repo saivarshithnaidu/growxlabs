@@ -2108,6 +2108,31 @@ ${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
                 value={inputValue}
                 onChange={(e) => { setInputValue(e.target.value); adjustHeight(); }}
                 onKeyDown={handleKeyDown}
+                onPaste={async (e) => {
+                  const items = e.clipboardData?.items;
+                  if (!items) return;
+                  for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    if (item.type.indexOf("image") !== -1) {
+                      const file = item.getAsFile();
+                      if (!file) continue;
+                      setIsUploading(true);
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        const base64String = reader.result as string;
+                        const pastedName = `pasted_image_${Date.now()}.png`;
+                        setAttachedFilesData(prev => [...prev, {
+                          name: pastedName,
+                          base64: base64String,
+                          type: file.type
+                        }]);
+                        setAttachedFiles(prev => [...prev, pastedName]);
+                        setIsUploading(false);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }
+                }}
                 placeholder={isLoading || isStreaming ? "Agents are working…" : "Message GXL Command Center…"}
                 disabled={isLoading || isStreaming}
                 rows={1}
