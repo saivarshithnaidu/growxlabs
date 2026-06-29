@@ -24,7 +24,13 @@ import {
   GitBranch,
   Terminal,
   Activity,
-  Briefcase
+  Briefcase,
+  TrendingUp,
+  FileText,
+  DollarSign,
+  Lock,
+  Zap,
+  Check
 } from "lucide-react";
 
 interface NodeData {
@@ -37,9 +43,19 @@ interface NodeData {
   icon?: string;
 }
 
+interface PainPoint {
+  id: string;
+  title: string;
+  problem: string;
+  solution: string;
+}
+
 export default function ArchitecturePage() {
-  const [currentTab, setCurrentTab] = useState<"pipeline" | "layers">("pipeline");
+  const [currentTab, setCurrentTab] = useState<"pipeline" | "layers" | "research">("pipeline");
   const [activeNode, setActiveNode] = useState<string>("user");
+  const [activeResearchCategory, setActiveResearchCategory] = useState<string>("design");
+  const [activeCompetitor, setActiveCompetitor] = useState<string>("bubble");
+  
   const [logFeed, setLogFeed] = useState<string[]>([
     `[${new Date().toLocaleTimeString()}] [System Ready] Click "Simulate Request Pipeline" to trigger visual compilation path animation.`
   ]);
@@ -151,7 +167,6 @@ export default function ArchitecturePage() {
 
   // Gryvo Layered Architecture specifications
   const layersDb: Record<string, NodeData> = {
-    // 1. Users
     users: {
       title: "1. Target Users",
       subtitle: "Gryvo App Creators",
@@ -160,7 +175,6 @@ export default function ArchitecturePage() {
       cost: "Subscription/Seats Model",
       security: "MFA + OAuth Protection"
     },
-    // 2. Experience Layer
     copilot: {
       title: "Experience: AI Copilot Chat",
       subtitle: "Conversational Interface",
@@ -209,7 +223,6 @@ export default function ArchitecturePage() {
       cost: "Dynamic Developer Revenue Split",
       security: "Plugin Sandboxing & Code Scanning"
     },
-    // 3. Orchestration Runtime
     intent_engine: {
       title: "Runtime: Intent Engine (3.1)",
       subtitle: "Command Interpreter",
@@ -250,7 +263,6 @@ export default function ArchitecturePage() {
       cost: "~$15.00 / month",
       security: "Encrypted data vectors"
     },
-    // Agents
     agent_ux: {
       title: "Agent: UI/UX Designer",
       subtitle: "Aesthetic Auditor",
@@ -267,7 +279,6 @@ export default function ArchitecturePage() {
       cost: "Per-build check",
       security: "Closed Sandbox Compilation"
     },
-    // 4. Builder Layer
     build_design: {
       title: "Builder: Design System (4.1)",
       subtitle: "Aesthetic Core",
@@ -292,7 +303,6 @@ export default function ArchitecturePage() {
       cost: "$0.00",
       security: "SQL injection scanner filters"
     },
-    // 5. Output
     out_web: {
       title: "Output: Web App Target",
       subtitle: "HTML5 Responsive Portal",
@@ -317,6 +327,120 @@ export default function ArchitecturePage() {
       cost: "Included in worker runs",
       security: "Windows Authenticode Signing"
     }
+  };
+
+  // Market research data metrics
+  const marketMetrics = [
+    { label: "Global Market (2025)", val: "$34.7 Billion", change: "CAGR 22.8%" },
+    { label: "Projected Size (2035)", val: "$261.4 Billion", change: "10x Growth" },
+    { label: "Rewrite/Abandon Rate", val: "25-30%", change: "Within 2 years" },
+    { label: "Typical Rewrite Cost", val: "$50K - $250K", change: "Per project" }
+  ];
+
+  // Gaps by platform database
+  const platformGaps: Record<string, { title: string; list: string[] }> = {
+    bubble: {
+      title: "Bubble Gaps",
+      list: [
+        "Workload-based pricing scales exponentially as database operations scale.",
+        "Performance degradation occurs with large or un-indexed datasets.",
+        "No direct code export: escaping Bubble forces a complete rewrite.",
+        "Assistive AI generates visual scaffolds, but requires heavy manual setup."
+      ]
+    },
+    webflow: {
+      title: "Webflow Gaps",
+      list: [
+        "No built-in multilingual localization (requires expensive external plugins).",
+        "Ecommerce lacks customization (no local currency configs, limited volume pricing).",
+        "Additional team editor seats cost up to $45/month per seat.",
+        "CMS counts are locked behind heavily gated pricing tiers."
+      ]
+    },
+    framer: {
+      title: "Framer Gaps",
+      list: [
+        "No native ecommerce integrations (requires Gumroad/Stripe checkout embeds).",
+        "Weak CMS schema matching for complex relational database types.",
+        "Redirect controls are locked behind a premium $40/month plan.",
+        "Strict per-editor pricing models block collaborative iterations."
+      ]
+    },
+    zapier: {
+      title: "Zapier Gaps",
+      list: [
+        "Task-based pricing forces cost explosions (charging per database row read/write).",
+        "Linear structure cannot execute branching, parallel logic loops.",
+        "Zero data sovereignty: all payload data passes through third-party servers.",
+        "Free tier triggers poll every 15 minutes instead of processing in real-time."
+      ]
+    }
+  };
+
+  // Pain points grouped database
+  const painPointsGroups: Record<string, PainPoint[]> = {
+    design: [
+      {
+        id: "p1",
+        title: "Template Lock-In",
+        problem: "Changing templates mid-build on Wix/Squarespace forces a full manual site rebuild.",
+        solution: "Gryvo stores visual layout schema in standard, format-agnostic JSON blocks (AST). You can swap style themes instantly by mapping component nodes to new CSS variable tokens."
+      },
+      {
+        id: "p2",
+        title: "The Customization Ceiling",
+        problem: "When users hit code complexity walls, they are forced to discard no-code systems.",
+        solution: "Gryvo features bidirectional AST synchronization. Developers can eject components, write native TypeScript code, and the engine syncs code back to visual cards instantly."
+      },
+      {
+        id: "p3",
+        title: "Design vs. Functionality Gap",
+        problem: "Framer has good design but bad data functions. Bubble has logic but rigid UI.",
+        solution: "Gryvo unifies high-fidelity Tailwind variables with a clean Prisma ORM backend data layer, delivering premium layouts alongside robust data tables."
+      }
+    ],
+    scaling: [
+      {
+        id: "p4",
+        title: "The Scaling Wall",
+        problem: "Apps crawl and crash as databases cross 10,000 records due to poor queries.",
+        solution: "Gryvo compiles to standard PostgreSQL and Node.js backend structures, utilizing query indexing and edge caching that handle millions of records."
+      },
+      {
+        id: "p5",
+        title: "Performance Degradation",
+        problem: "Heavy, bloated JS code generated by visual engines results in slow page load speeds.",
+        solution: "Gryvo outputs pre-rendered, optimized Next.js static builds, guaranteeing outstanding Core Web Vitals and SEO rankings."
+      }
+    ],
+    pricing: [
+      {
+        id: "p6",
+        title: "The Vendor Lock-In Trap",
+        problem: "Exporting data or logic from proprietary hosts is impossible, causing high rewrite costs.",
+        solution: "Gryvo outputs clean, standard React/Rust codebases. You own 100% of your source code and can run it anywhere."
+      },
+      {
+        id: "p7",
+        title: "The Workload Pricing Bomb",
+        problem: "Vendors charge per task, per user, or per database row, penalizing project growth.",
+        solution: "Flat-rate hosting aligned directly with actual cloud consumption (Fargate scale-to-zero compute and R2 egress-free storage)."
+      }
+    ],
+    ai: [
+      {
+        id: "p8",
+        title: "AI as a Bolt-On Wrapper",
+        problem: "AI features on legacy platforms are superficial templates that don't help developer workflows.",
+        solution: "Gryvo's architecture is AI-native. The Orchestrator Brain handles task planning, linter checks, and AST parsing."
+      },
+      {
+        id: "p9",
+        title: "The 20/80 AI Prototype Illusion",
+        problem: "AI tools build mockups in minutes, but fail on data relations, credentials, and deployment.",
+        solution: "Gryvo integrates VM sandboxing (AWS Fargate) and secret credential vaults (HashiCorp) to handle complete deployments."
+      }
+    ]
   };
 
   const writeLog = (text: string) => {
@@ -411,6 +535,14 @@ export default function ArchitecturePage() {
           >
             Gryvo Layer Map
           </button>
+          <button 
+            onClick={() => { setCurrentTab("research"); }}
+            className={`px-4 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              currentTab === "research" ? "bg-[#5856d6] text-white" : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            Market Research
+          </button>
         </div>
 
         <div className="flex items-center gap-3">
@@ -439,7 +571,7 @@ export default function ArchitecturePage() {
       <div className="flex-1 flex overflow-hidden">
         
         {/* Left Area: Viewport Canvas */}
-        <div className="flex-1 p-6 overflow-auto relative custom-scroll flex items-center justify-center bg-[#0c0c0e]">
+        <div className="flex-grow p-6 overflow-auto relative custom-scroll flex items-center justify-center bg-[#0c0c0e]">
           
           {/* TAB 1: System Compile Network Pipeline */}
           {currentTab === "pipeline" && (
@@ -549,7 +681,7 @@ export default function ArchitecturePage() {
                 <div className="flex-1 bg-[#121214] border border-[#222225] rounded-2xl p-4 flex flex-col gap-2">
                   <h3 className="text-zinc-500 font-bold uppercase tracking-wider text-[9px] mb-2 flex items-center gap-1"><Info className="w-3 h-3 text-[#5856d6]" /> Knowledge</h3>
                   {["Documentation", "Open Source", "Best Practices", "Community", "Blogs/Guides", "Uploads"].map((item, idx) => (
-                    <div key={idx} className="bg-[#1c1c1e] border border-zinc-800 p-2 rounded-lg text-zinc-300 font-medium hover:border-zinc-600 transition-colors">
+                    <div key={idx} className="bg-[#1c1c1e] border border-zinc-800 p-2 rounded-lg text-zinc-300 font-medium hover:border-zinc-650 transition-colors">
                       {item}
                     </div>
                   ))}
@@ -723,7 +855,7 @@ export default function ArchitecturePage() {
                 <div className="flex-1 bg-[#121214] border border-[#222225] rounded-2xl p-4 flex flex-col gap-2">
                   <h3 className="text-zinc-500 font-bold uppercase tracking-wider text-[9px] mb-2 flex items-center gap-1"><Network className="w-3 h-3 text-[#ff8000]" /> Integrations</h3>
                   {["GitHub API", "Stripe Checkout", "SendGrid Mail", "Firebase Sync", "Supabase DB", "Analytics"].map((item, idx) => (
-                    <div key={idx} className="bg-[#1c1c1e] border border-zinc-800 p-2 rounded-lg text-zinc-300 font-medium hover:border-zinc-600 transition-colors">
+                    <div key={idx} className="bg-[#1c1c1e] border border-zinc-800 p-2 rounded-lg text-zinc-300 font-medium hover:border-zinc-650 transition-colors">
                       {item}
                     </div>
                   ))}
@@ -733,10 +865,148 @@ export default function ArchitecturePage() {
                 <div className="flex-1 bg-[#121214] border border-[#222225] rounded-2xl p-4 flex flex-col gap-2">
                   <h3 className="text-zinc-500 font-bold uppercase tracking-wider text-[9px] mb-2 flex items-center gap-1"><Activity className="w-3 h-3 text-emerald-400" /> Execution</h3>
                   {["Code Gen", "Build Compile", "App Signed Deploy", "Health Monitor", "Performance"].map((item, idx) => (
-                    <div key={idx} className="bg-[#1c1c1e] border border-zinc-800 p-2 rounded-lg text-zinc-300 font-medium hover:border-zinc-600 transition-colors">
+                    <div key={idx} className="bg-[#1c1c1e] border border-zinc-800 p-2 rounded-lg text-zinc-300 font-medium hover:border-zinc-650 transition-colors">
                       {item}
                     </div>
                   ))}
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 3: No-Code Platform Gaps & Research Explorer */}
+          {currentTab === "research" && (
+            <div className="w-full max-w-[1250px] flex flex-col gap-6 z-10 py-2 text-xs font-sans">
+              
+              {/* Stats snapshot */}
+              <div className="grid grid-cols-4 gap-4">
+                {marketMetrics.map((metric, idx) => (
+                  <div key={idx} className="bg-[#121214] border border-[#222225] rounded-2xl p-4 flex flex-col justify-between">
+                    <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">{metric.label}</span>
+                    <h3 className="text-lg font-bold text-white mt-1">{metric.val}</h3>
+                    <span className="text-[10px] text-emerald-400 font-medium mt-1 flex items-center gap-1">
+                      <TrendingUp className="w-3.5 h-3.5" /> {metric.change}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Research Layout Split */}
+              <div className="flex gap-4 items-stretch min-h-[450px]">
+                
+                {/* Left Col: Platform Gaps Selector */}
+                <div className="w-[280px] bg-[#121214] border border-[#222225] rounded-2xl p-4 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-zinc-500 font-bold uppercase tracking-wider text-[9px] mb-4 flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 text-zinc-400" /> Platform Deficiencies
+                    </h3>
+                    <div className="flex flex-col gap-2">
+                      {[
+                        { id: "bubble", label: "Bubble.io" },
+                        { id: "webflow", label: "Webflow" },
+                        { id: "framer", label: "Framer" },
+                        { id: "zapier", label: "Zapier" }
+                      ].map((plat) => (
+                        <button
+                          key={plat.id}
+                          onClick={() => setActiveCompetitor(plat.id)}
+                          className={`w-full text-left p-2.5 rounded-lg border font-semibold text-xs transition-all ${
+                            activeCompetitor === plat.id 
+                              ? "border-[#5856d6] bg-[rgba(88,86,214,0.04)] text-white" 
+                              : "border-zinc-800 bg-[#1c1c1e] text-zinc-400 hover:text-zinc-200"
+                          }`}
+                        >
+                          {plat.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="mt-6 bg-[#0c0c0e] border border-zinc-850 p-3.5 rounded-xl">
+                      <h4 className="text-[10px] font-bold text-[#ff8000] uppercase tracking-wider mb-2">{platformGaps[activeCompetitor]?.title}</h4>
+                      <ul className="flex flex-col gap-2 list-disc pl-4 text-zinc-400 leading-relaxed text-[11px]">
+                        {platformGaps[activeCompetitor]?.list.map((gap, i) => (
+                          <li key={i}>{gap}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] text-zinc-650 font-mono mt-4">Sources: GrowX Labs 2026 Analysis</span>
+                </div>
+
+                {/* Center Col: The 26 Pain Points & Solutions */}
+                <div className="flex-1 bg-[#121214] border border-[#222225] rounded-2xl p-6 flex flex-col">
+                  
+                  {/* Category Selector Tabs */}
+                  <div className="flex border-b border-[#222225] pb-3 mb-4 gap-2">
+                    {[
+                      { id: "design", label: "A. Customization & Design" },
+                      { id: "scaling", label: "B. Scalability & Performance" },
+                      { id: "pricing", label: "C. Lock-In & Pricing" },
+                      { id: "ai", label: "E. AI Integration" }
+                    ].map((cat) => (
+                      <button
+                        key={cat.id}
+                        onClick={() => setActiveResearchCategory(cat.id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+                          activeResearchCategory === cat.id 
+                            ? "bg-[#1c1c1e] border border-zinc-800 text-white" 
+                            : "text-zinc-500 hover:text-zinc-300"
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Pain Points List */}
+                  <div className="flex-grow flex flex-col gap-4 overflow-y-auto max-h-[350px] pr-2 custom-scroll">
+                    {painPointsGroups[activeResearchCategory]?.map((point) => (
+                      <div key={point.id} className="bg-[#1c1c1e] border border-zinc-850 rounded-xl p-4">
+                        <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#ff8000]"></span> {point.title}
+                        </h4>
+                        <div className="grid grid-cols-2 gap-4 mt-2">
+                          <div className="border-r border-zinc-800 pr-4">
+                            <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider">The Market Pain</span>
+                            <p className="text-[11px] text-zinc-400 mt-1 leading-relaxed">{point.problem}</p>
+                          </div>
+                          <div>
+                            <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Gryvo Resolution
+                            </span>
+                            <p className="text-[11px] text-zinc-350 mt-1 leading-relaxed">{point.solution}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                </div>
+
+                {/* Right Col: Unsolved Opportunities */}
+                <div className="w-[300px] bg-[#121214] border border-[#222225] rounded-2xl p-4 flex flex-col max-h-[500px] overflow-y-auto custom-scroll">
+                  <h3 className="text-zinc-500 font-bold uppercase tracking-wider text-[9px] mb-3 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" /> Unsolved Gaps we fill
+                  </h3>
+                  <div className="flex flex-col gap-3">
+                    {[
+                      { title: "1. Code Ownership", desc: "No runtime limits. Export clean Next.js/Tauri code you own 100%." },
+                      { title: "2. Predictable Cost", desc: "Flat-rate billing tied to active cloud Fargate runs. No per-task taxes." },
+                      { title: "3. Git Version Control", desc: "Centralized branch-and-merge pipelines via GitHub for citizen builders." },
+                      { title: "4. Aesthetic Compiler", desc: "Visual theme linters verify padding & typographic layout balances automatically." },
+                      { title: "5. Real-Time Pipelines", desc: "Webhook pipelines built natively without polling delays." }
+                    ].map((opp, idx) => (
+                      <div key={idx} className="bg-[#1c1c1e] border border-zinc-850 p-3 rounded-xl">
+                        <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5 text-emerald-400" /> {opp.title}
+                        </h4>
+                        <p className="text-[10px] text-zinc-400 mt-1 leading-relaxed">{opp.desc}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
               </div>
