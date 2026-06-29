@@ -785,7 +785,7 @@ export async function POST(req: Request) {
     const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
     const baseUrl = `${protocol}://${host}`;
 
-    let { message, conversationId, history, systemMessageText } = await req.json();
+    let { message, conversationId, history, systemMessageText, attachments } = await req.json();
 
     if (!message) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -900,9 +900,25 @@ export async function POST(req: Request) {
                 });
               }
 
+              const userParts: any[] = [{ text: message }];
+
+              if (attachments && attachments.length > 0) {
+                attachments.forEach((file: any) => {
+                  if (file.base64 && file.base64.includes(",")) {
+                    const base64Data = file.base64.split(",")[1];
+                    userParts.push({
+                      inlineData: {
+                        mimeType: file.type || "image/png",
+                        data: base64Data
+                      }
+                    });
+                  }
+                });
+              }
+
               currentContents.push({
                 role: "user",
-                parts: [{ text: message }]
+                parts: userParts
               });
 
               let loopCount = 0;
@@ -1023,9 +1039,23 @@ export async function POST(req: Request) {
               });
             }
 
+            const userContent: any[] = [{ type: "text", text: message }];
+            if (attachments && attachments.length > 0) {
+              attachments.forEach((file: any) => {
+                if (file.base64) {
+                  userContent.push({
+                    type: "image_url",
+                    image_url: {
+                      url: file.base64
+                    }
+                  });
+                }
+              });
+            }
+
             openRouterMessages.push({
               role: "user",
-              content: message
+              content: userContent as any
             });
 
             let openRouterLoops = 0;

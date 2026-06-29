@@ -919,6 +919,7 @@ export default function InteractiveWorkspace() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentActiveAgents, setCurrentActiveAgents] = useState<string[]>([]);
   const [attachedFiles, setAttachedFiles] = useState<string[]>([]);
+  const [attachedFilesData, setAttachedFilesData] = useState<{ name: string; base64: string; type: string }[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
@@ -1399,7 +1400,12 @@ export default function InteractiveWorkspace() {
       const response = await fetch("/api/admin/command-center", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, conversationId: targetConvoId, history }),
+        body: JSON.stringify({ 
+          message: text, 
+          conversationId: targetConvoId, 
+          history,
+          attachments: attachedFilesData
+        }),
       });
 
       if (!response.ok) throw new Error("Sync failed");
@@ -1577,6 +1583,7 @@ export default function InteractiveWorkspace() {
       setIsLoading(false);
       setIsStreaming(false);
       setAttachedFiles([]);
+      setAttachedFilesData([]);
       setAgentSuite(prev => prev.map(a => ({ ...a, status: "Idle" })));
       setCurrentActiveAgents([]);
     }
@@ -1629,10 +1636,29 @@ ${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
     const files = e.target.files;
     if (!files?.length) return;
     setIsUploading(true);
-    setTimeout(() => {
-      setAttachedFiles(prev => [...prev, ...Array.from(files).map(f => f.name)]);
-      setIsUploading(false);
-    }, 800);
+    
+    const newFiles: { name: string; base64: string; type: string }[] = [];
+    let processed = 0;
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        newFiles.push({
+          name: file.name,
+          base64: base64String,
+          type: file.type
+        });
+        processed++;
+        if (processed === files.length) {
+          setAttachedFilesData(prev => [...prev, ...newFiles]);
+          setAttachedFiles(prev => [...prev, ...newFiles.map(f => f.name)]);
+          setIsUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // ═══════════════════════════════════════════════════════
@@ -2061,7 +2087,13 @@ ${msg.proposal.deliverables.map(d => `  - ${d}`).join("\n")}
                   <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#f6f5f4] border border-[#e6e6e6] text-[11px] font-mono text-neutral-700">
                     <FileText className="w-3 h-3 text-[#0075de]" />
                     <span className="text-neutral-700 max-w-[120px] truncate">{file}</span>
-                    <button onClick={() => setAttachedFiles(prev => prev.filter((_, j) => j !== i))} className="text-neutral-400 hover:text-red-600 transition-colors">
+                    <button 
+                      onClick={() => {
+                        setAttachedFiles(prev => prev.filter((_, j) => j !== i));
+                        setAttachedFilesData(prev => prev.filter((_, j) => j !== i));
+                      }} 
+                      className="text-neutral-400 hover:text-red-600 transition-colors"
+                    >
                       <X className="w-3 h-3" />
                     </button>
                   </div>
