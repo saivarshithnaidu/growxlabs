@@ -151,6 +151,85 @@ const TOOLS_DEFINITIONS = [
       },
       required: ["blogPostId"]
     }
+  },
+  {
+    name: "get_admin_users",
+    description: "Retrieve list of registered client users in the system, optionally filtered by a name or email search query.",
+    parameters: {
+      type: "object",
+      properties: {
+        searchQuery: { type: "string", description: "Search query for name or email" },
+        limit: { type: "number", description: "Maximum number of records to return (default 20)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "get_admin_agreements",
+    description: "Retrieve a list of client agreements (contracts) with their values, dates, and statuses.",
+    parameters: {
+      type: "object",
+      properties: {
+        clientId: { type: "string", description: "Optional UUID of the client user to filter by" },
+        limit: { type: "number", description: "Maximum number of records to return (default 20)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "get_admin_invoices",
+    description: "Retrieve a list of billing invoices showing amounts, statuses, and due dates.",
+    parameters: {
+      type: "object",
+      properties: {
+        clientId: { type: "string", description: "Optional UUID of the client user to filter by" },
+        status: { type: "string", description: "Optional status filter (e.g. 'pending', 'paid', 'failed')" },
+        limit: { type: "number", description: "Maximum number of records to return (default 20)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "create_admin_invoice",
+    description: "Create and persist a new billing invoice in the system for a specific client user.",
+    parameters: {
+      type: "object",
+      properties: {
+        clientId: { type: "string", description: "The UUID of the client user to invoice (required)" },
+        agreementId: { type: "string", description: "Optional UUID of the agreement this invoice relates to" },
+        amount: { type: "number", description: "Invoice amount in decimals (required)" },
+        balanceDue: { type: "number", description: "Balance due amount in decimals (required)" },
+        dueDate: { type: "string", description: "Due date in YYYY-MM-DD format (required)" },
+        advancePaid: { type: "boolean", description: "True if advance has been paid" }
+      },
+      required: ["clientId", "amount", "balanceDue", "dueDate"]
+    }
+  },
+  {
+    name: "get_admin_projects",
+    description: "Retrieve a list of client development projects and their current completion progress (0-100).",
+    parameters: {
+      type: "object",
+      properties: {
+        clientId: { type: "string", description: "Optional UUID of the client user to filter by" },
+        limit: { type: "number", description: "Maximum number of records to return (default 20)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "create_admin_project",
+    description: "Create and persist a new development project milestone for a specific client user.",
+    parameters: {
+      type: "object",
+      properties: {
+        clientId: { type: "string", description: "The UUID of the client user (required)" },
+        title: { type: "string", description: "The descriptive title of the project (required)" },
+        status: { type: "string", description: "Initial status of the project (default 'pending', e.g. 'pending', 'active', 'completed')" },
+        progress: { type: "number", description: "Initial progress percentage from 0 to 100 (default 0)" }
+      },
+      required: ["clientId", "title"]
+    }
   }
 ];
 
@@ -162,6 +241,131 @@ const OPENAI_TOOLS = TOOLS_DEFINITIONS.map(d => ({
     parameters: d.parameters
   }
 }));
+
+async function execute_get_admin_users(args: { searchQuery?: string; limit?: number }) {
+  let query = supabaseAdmin.from("users").select("id, name, email, role, created_at");
+  if (args.searchQuery) {
+    query = query.or(`name.ilike.%${args.searchQuery}%,email.ilike.%${args.searchQuery}%`);
+  }
+  const limit = args.limit || 20;
+  const { data, error } = await query.order("created_at", { ascending: false }).limit(limit);
+  if (error) throw error;
+  return data;
+}
+
+async function execute_get_admin_agreements(args: { clientId?: string; limit?: number }) {
+  let query = supabaseAdmin.from("agreements").select(`
+    id, 
+    client_id, 
+    service_type, 
+    project_description, 
+    total_amount, 
+    advance_amount, 
+    balance_amount, 
+    start_date, 
+    delivery_date, 
+    status,
+    pdf_url,
+    created_at,
+    users (id, name, email)
+  `);
+  if (args.clientId) {
+    query = query.eq("client_id", args.clientId);
+  }
+  const limit = args.limit || 20;
+  const { data, error } = await query.order("created_at", { ascending: false }).limit(limit);
+  if (error) throw error;
+  return data;
+}
+
+async function execute_get_admin_invoices(args: { clientId?: string; status?: string; limit?: number }) {
+  let query = supabaseAdmin.from("invoices").select(`
+    id,
+    client_id,
+    agreement_id,
+    amount,
+    advance_paid,
+    balance_due,
+    status,
+    due_date,
+    created_at,
+    users (id, name, email)
+  `);
+  if (args.clientId) {
+    query = query.eq("client_id", args.clientId);
+  }
+  if (args.status) {
+    query = query.eq("status", args.status);
+  }
+  const limit = args.limit || 20;
+  const { data, error } = await query.order("created_at", { ascending: false }).limit(limit);
+  if (error) throw error;
+  return data;
+}
+
+async function execute_create_admin_invoice(args: {
+  clientId: string;
+  agreementId?: string;
+  amount: number;
+  balanceDue: number;
+  dueDate: string;
+  advancePaid?: boolean;
+}) {
+  const { data, error } = await supabaseAdmin
+    .from("invoices")
+    .insert([{
+      client_id: args.clientId,
+      agreement_id: args.agreementId || null,
+      amount: args.amount,
+      balance_due: args.balanceDue,
+      due_date: args.dueDate,
+      advance_paid: args.advancePaid || false,
+      status: "pending"
+    }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function execute_get_admin_projects(args: { clientId?: string; limit?: number }) {
+  let query = supabaseAdmin.from("projects").select(`
+    id,
+    client_id,
+    title,
+    status,
+    progress,
+    created_at,
+    users (id, name, email)
+  `);
+  if (args.clientId) {
+    query = query.eq("client_id", args.clientId);
+  }
+  const limit = args.limit || 20;
+  const { data, error } = await query.order("created_at", { ascending: false }).limit(limit);
+  if (error) throw error;
+  return data;
+}
+
+async function execute_create_admin_project(args: {
+  clientId: string;
+  title: string;
+  status?: string;
+  progress?: number;
+}) {
+  const { data, error } = await supabaseAdmin
+    .from("projects")
+    .insert([{
+      client_id: args.clientId,
+      title: args.title,
+      status: args.status || "pending",
+      progress: args.progress !== undefined ? args.progress : 0
+    }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
 
 async function execute_get_company_stats() {
   const { data: allLeads, error } = await supabaseAdmin
@@ -488,6 +692,18 @@ async function handleToolCall(name: string, args: any, sendEvent?: (event: strin
       return await execute_query_wish_game_data(args);
     case "send_blog_to_subscribers":
       return await execute_send_blog_to_subscribers(args, baseUrl || "http://localhost:3000");
+    case "get_admin_users":
+      return await execute_get_admin_users(args);
+    case "get_admin_agreements":
+      return await execute_get_admin_agreements(args);
+    case "get_admin_invoices":
+      return await execute_get_admin_invoices(args);
+    case "create_admin_invoice":
+      return await execute_create_admin_invoice(args);
+    case "get_admin_projects":
+      return await execute_get_admin_projects(args);
+    case "create_admin_project":
+      return await execute_create_admin_project(args);
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
