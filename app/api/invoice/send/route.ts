@@ -10,13 +10,17 @@ export async function POST(req: Request) {
 
     const { data: invoice, error } = await supabaseAdmin
       .from("invoices")
-      .select("*, clients(*)")
+      .select("*, users(*)")
       .eq("id", invoiceId)
       .single();
 
-    if (error || !invoice) throw new Error("Invoice not found");
+    if (error || !invoice) {
+      console.error("Fetch invoice error:", error);
+      throw new Error("Invoice not found");
+    }
 
-    const targetEmail = email || invoice.clients.email;
+    const targetEmail = email || (invoice.users ? invoice.users.email : null);
+    if (!targetEmail) throw new Error("No destination email address found");
 
     await resend.emails.send({
       from: "GrowX Labs Billing <billing@growxlabs.tech>",
@@ -25,10 +29,10 @@ export async function POST(req: Request) {
       html: `
         <div style="font-family: sans-serif; padding: 20px;">
           <h2 style="color: #0D1B4B;">Invoice from GrowX Labs</h2>
-          <p>Hello ${invoice.clients.business_name || invoice.clients.name},</p>
+          <p>Hello ${invoice.users ? invoice.users.name : 'Client'},</p>
           <p>An invoice has been generated for your project: <strong>${invoice.description || 'Project Services'}</strong>.</p>
           <p><strong>Amount Due: $${Number(invoice.amount).toLocaleString()}</strong></p>
-          <p><strong>Due Date: ${new Date(invoice.due_date).toLocaleDateString()}</strong></p>
+          <p><strong>Due Date: ${invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'N/A'}</strong></p>
           <br />
           <a href="${invoice.pdf_url}" style="background: #0D1B4B; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin-right: 10px;">View Invoice PDF</a>
           <br />
