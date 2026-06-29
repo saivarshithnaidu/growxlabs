@@ -161,7 +161,7 @@ Make sure there are exactly ${slideCount} slides. The first slide MUST be 'title
       try {
         // Fallback model: gemini-1.5-flash
         const model = genAI.getGenerativeModel({
-          model: "gemini-1.5-flash",
+          model: "gemini-2.0-flash",
           generationConfig
         });
         resultStream = await model.generateContentStream(`${SYSTEM_PROMPT}\n\n${userPrompt}`);

@@ -430,7 +430,7 @@ function MarkdownBlock({ text, isDark }: { text: string; isDark?: boolean }) {
       if (!currentBlockquote) currentBlockquote = [];
       currentBlockquote.push(trimmed.slice(2));
     }
-    else if (trimmed.startsWith("| ")) {
+    else if (trimmed.startsWith("|")) {
       if (currentList || currentBlockquote || currentParagraph) flush(i);
       if (!currentTable) currentTable = [];
       currentTable.push(trimmed);

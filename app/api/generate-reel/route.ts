@@ -151,7 +151,7 @@ Make sure there are exactly ${sceneCount} scenes.
       console.warn("Primary Gemini 2.5 Flash model failed, attempting fallback to Gemini 1.5 Flash:", e);
       try {
         const model = genAI.getGenerativeModel({
-          model: "gemini-1.5-flash",
+          model: "gemini-2.0-flash",
           generationConfig
         });
         resultStream = await model.generateContentStream(`${SYSTEM_PROMPT}\n\n${userPrompt}`);

@@ -846,7 +846,7 @@ export async function POST(req: Request) {
           if (process.env.GEMINI_API_KEY) {
             try {
               const model = genAI.getGenerativeModel({
-                model: "gemini-1.5-flash",
+                model: "gemini-2.5-flash",
                 tools: [{ functionDeclarations: TOOLS_DEFINITIONS }] as any
               });
 
