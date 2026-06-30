@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       authors: ["GrowXLabsTech"],
       images: [
         {
-          url: "https://growxlabs.tech/logo.png",
+          url: "https://growxlabs.tech/images/blog-gpt56-preview.png",
           width: 1200,
           height: 630,
           alt: "ChatGPT GPT-5.6 Preview Deep Dive Architecture Blueprint"
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       card: "summary_large_image",
       title,
       description,
-      images: ["https://growxlabs.tech/logo.png"]
+      images: ["https://growxlabs.tech/images/blog-gpt56-preview.png"]
     }
   };
 }

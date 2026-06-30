@@ -38,13 +38,13 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   // Blog posts database
   const featuredPost = {
-    slug: "elon-musks-path-to-becoming-the-worlds-first-trillionaire",
-    title: "Elon Musk's Path to Becoming the World's First Trillionaire",
-    excerpt: "Analyze Elon Musk's path to becoming the world's first trillionaire. Explore valuation trends across Tesla, SpaceX, xAI, Starlink, and Neuralink, with data-driven projections, risks, and AGI trends.",
-    category: "Business / AI / Aerospace",
-    date: "June 16, 2026",
-    readTime: "12 min read",
-    image: "/images/blog-elon-trillionaire.png"
+    slug: "chatgpt-gpt-5-6-preview-everything-you-need-to-know",
+    title: "ChatGPT GPT-5.6 Preview: Everything You Need to Know",
+    excerpt: "Artificial Intelligence is evolving faster than ever, and OpenAI has once again pushed the boundaries with the announcement of GPT-5.6 Preview. Explore the new tiered family of models (Sol, Terra, Luna) and discover its advanced reasoning, coding capabilities, and safety stack.",
+    category: "AI Industry / OpenAI / GPT-5.6",
+    date: "June 30, 2026",
+    readTime: "8 min read",
+    image: "/images/blog-gpt56-preview.png"
   };
 
   const regularPosts = [

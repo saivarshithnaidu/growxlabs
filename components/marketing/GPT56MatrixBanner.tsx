@@ -22,41 +22,6 @@ export function GPT56MatrixBanner() {
     };
     window.addEventListener('resize', handleResize);
 
-    const chars = ['5', '6', '.', '5', '6', '5.6', 'SOL', 'TERRA', 'LUNA'];
-    const particles: Array<{
-      x: number;
-      y: number;
-      char: string;
-      size: number;
-      speed: number;
-      opacity: number;
-      color: string;
-    }> = [];
-
-    const numParticles = 140;
-    for (let i = 0; i < numParticles; i++) {
-      const isLeft = Math.random() < 0.6;
-      const x = isLeft 
-        ? Math.random() * (width * 0.35) 
-        : width * 0.65 + Math.random() * (width * 0.35);
-      
-      const y = Math.random() * height;
-      const char = chars[Math.floor(Math.random() * chars.length)];
-      const size = Math.floor(Math.random() * 10) + 11; // 11px to 21px
-      const speed = Math.random() * 0.15 + 0.05;
-      const opacity = Math.random() * 0.5 + 0.15;
-      
-      const colorOptions = [
-        'rgba(249, 115, 22, ',  // Orange
-        'rgba(234, 179, 8, ',   // Yellow
-        'rgba(244, 63, 94, ',   // Rose/Red
-        'rgba(156, 163, 175, '  // Grey
-      ];
-      const color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
-
-      particles.push({ x, y, char, size, speed, opacity, color });
-    }
-
     let mouseX = -1000;
     let mouseY = -1000;
 
@@ -75,36 +40,92 @@ export function GPT56MatrixBanner() {
     canvas.addEventListener('mouseleave', handleMouseLeave);
 
     const render = () => {
-      ctx.fillStyle = 'rgba(3, 3, 3, 0.15)'; // Deep pitch black background
+      // Clear canvas with full pitch black
+      ctx.fillStyle = '#030303';
       ctx.fillRect(0, 0, width, height);
 
-      particles.forEach((p) => {
-        p.y += p.speed;
-        if (p.y > height) {
-          p.y = -20;
-          p.x = Math.random() < 0.6
-            ? Math.random() * (width * 0.35)
-            : width * 0.65 + Math.random() * (width * 0.35);
+      const gridSpacingX = 11;
+      const gridSpacingY = 13;
+      const cols = Math.ceil(width / gridSpacingX);
+      const rows = Math.ceil(height / gridSpacingY);
+
+      ctx.font = '900 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      const time = Date.now();
+
+      for (let r = 0; r < rows; r++) {
+        const y = r * gridSpacingY;
+
+        // Curve wave center for left matrix
+        const waveX = 90 + Math.sin(y / 110 + time / 1800) * 45;
+        const waveWidth = 95;
+
+        // Circular shape coordinates for right matrix
+        const globeX = width - 180 + Math.cos(time / 2800) * 12;
+        const globeY = height * 0.42 + Math.sin(time / 2800) * 12;
+        const globeRadius = 140;
+
+        for (let c = 0; c < cols; c++) {
+          const x = c * gridSpacingX;
+
+          const insideLeftWave = x >= waveX - waveWidth && x <= waveX + waveWidth;
+          
+          const dx = x - globeX;
+          const dy = y - globeY;
+          const distToGlobe = Math.sqrt(dx * dx + dy * dy);
+          const insideRightGlobe = distToGlobe < globeRadius;
+
+          if (insideLeftWave || insideRightGlobe) {
+            let distRatio = 0;
+            let colorStr = '';
+
+            if (insideLeftWave) {
+              const distToCenter = Math.abs(x - waveX);
+              distRatio = 1 - distToCenter / waveWidth;
+              // Mix warm orange, gold, and grey colors
+              const cVal = Math.sin(x * y + time / 500);
+              if (cVal > 0.4) {
+                colorStr = '249, 115, 22, '; // Orange
+              } else if (cVal > 0.0) {
+                colorStr = '234, 179, 8, ';  // Yellow/Gold
+              } else {
+                colorStr = '156, 163, 175, '; // Grey
+              }
+            } else {
+              distRatio = 1 - distToGlobe / globeRadius;
+              // Mostly grey and soft gold colors on the right
+              const cVal = Math.sin(x * y + time / 600);
+              if (cVal > 0.5) {
+                colorStr = '234, 179, 8, ';  // Yellow/Gold
+              } else {
+                colorStr = '107, 114, 128, '; // Dark Grey
+              }
+            }
+
+            // Calculate mouse distance boost
+            const mdx = x - mouseX;
+            const mdy = y - mouseY;
+            const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+            let mouseBonus = 0;
+            if (mdist < 100) {
+              mouseBonus = (1 - mdist / 100) * 0.45;
+            }
+
+            const opacity = (distRatio * 0.65 + mouseBonus) * (Math.random() < 0.03 ? 0.45 : 1.0);
+
+            if (opacity > 0.05) {
+              // Flickering characters loop
+              const charSeed = Math.floor(y * 13 + x * 7 + time / 220);
+              const char = charSeed % 15 === 0 ? '.' : charSeed % 2 === 0 ? '5' : '6';
+
+              ctx.fillStyle = `rgba(${colorStr}${opacity})`;
+              ctx.fillText(char, x, y);
+            }
+          }
         }
-
-        const dx = p.x - mouseX;
-        const dy = p.y - mouseY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        let currentOpacity = p.opacity;
-        let scale = 1.0;
-
-        if (dist < 100) {
-          const factor = 1 - dist / 100;
-          currentOpacity = Math.min(1.0, p.opacity + factor * 0.65);
-          scale = 1.0 + factor * 0.35;
-        }
-
-        ctx.save();
-        ctx.fillStyle = p.color + currentOpacity + ')';
-        ctx.font = `${p.char.length > 2 ? 'bold' : 'normal'} ${Math.floor(p.size * scale)}px monospace`;
-        ctx.fillText(p.char, p.x, p.y);
-        ctx.restore();
-      });
+      }
 
       animationFrameId = requestAnimationFrame(render);
     };
@@ -123,7 +144,7 @@ export function GPT56MatrixBanner() {
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-[#030303] select-none pointer-events-auto">
-      <canvas ref={canvasRef} className="w-full h-full block opacity-55" />
+      <canvas ref={canvasRef} className="w-full h-full block opacity-70" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent pointer-events-none" />
     </div>
   );
