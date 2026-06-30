@@ -40,7 +40,7 @@ export function GPT56MatrixBanner() {
     canvas.addEventListener('mouseleave', handleMouseLeave);
 
     const render = () => {
-      // Clear canvas with full pitch black
+      // Clear canvas with deep space black
       ctx.fillStyle = '#030303';
       ctx.fillRect(0, 0, width, height);
 
@@ -58,65 +58,94 @@ export function GPT56MatrixBanner() {
       for (let r = 0; r < rows; r++) {
         const y = r * gridSpacingY;
 
-        // Curve wave center for left matrix
+        // 1. Curved wave on the left (representing Sol / solar surface)
         const waveX = 90 + Math.sin(y / 110 + time / 1800) * 45;
         const waveWidth = 95;
 
-        // Circular shape coordinates for right matrix
-        const globeX = width - 180 + Math.cos(time / 2800) * 12;
-        const globeY = height * 0.42 + Math.sin(time / 2800) * 12;
-        const globeRadius = 140;
+        // 2. 3D Spherical Globe on the right (representing Terra / Earth sphere)
+        const globeX = width - 180 + Math.cos(time / 4500) * 8;
+        const globeY = height * 0.45 + Math.sin(time / 4500) * 8;
+        const R = 140; // Globe radius
 
         for (let c = 0; c < cols; c++) {
           const x = c * gridSpacingX;
 
+          // Check left wave boundary
           const insideLeftWave = x >= waveX - waveWidth && x <= waveX + waveWidth;
           
+          // Check 3D sphere boundaries
           const dx = x - globeX;
           const dy = y - globeY;
-          const distToGlobe = Math.sqrt(dx * dx + dy * dy);
-          const insideRightGlobe = distToGlobe < globeRadius;
+          const distSq = dx * dx + dy * dy;
+          const insideRightGlobe = distSq <= R * R;
 
           if (insideLeftWave || insideRightGlobe) {
-            let distRatio = 0;
+            let opacity = 0;
             let colorStr = '';
 
-            if (insideLeftWave) {
+            if (insideRightGlobe) {
+              // 3D sphere projection coordinates
+              const z = Math.sqrt(R * R - distSq);
+              const lat = Math.asin(dy / R);
+              const lon = Math.atan2(dx, z) + (time / 3200); // Smooth 3D rotation over time
+
+              // Spherical grid lines for latitude and longitude (every 30 degrees)
+              const latGrid = Math.abs(Math.sin(lat * 6)) < 0.17;
+              const lonGrid = Math.abs(Math.sin(lon * 6)) < 0.17;
+              
+              // Outer silhouette rim
+              const isOutline = distSq >= (R - 3) * (R - 3);
+
+              if (latGrid || lonGrid || isOutline) {
+                // Sphere shading: brighter in center, faded near edges
+                const shading = z / R;
+                
+                const mdx = x - mouseX;
+                const mdy = y - mouseY;
+                const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+                let mouseBonus = 0;
+                if (mdist < 100) {
+                  mouseBonus = (1 - mdist / 100) * 0.45;
+                }
+
+                opacity = (shading * 0.65 + mouseBonus) * (Math.random() < 0.04 ? 0.4 : 1.0);
+                
+                // Color mapping: gold/yellow for the globe
+                const cVal = Math.sin(x * y + time / 500);
+                if (cVal > 0.4) {
+                  colorStr = '234, 179, 8, ';  // Glowing Yellow
+                } else if (cVal > 0.0) {
+                  colorStr = '249, 115, 22, '; // Soft Orange
+                } else {
+                  colorStr = '156, 163, 175, '; // Grey
+                }
+              }
+            } else if (insideLeftWave) {
               const distToCenter = Math.abs(x - waveX);
-              distRatio = 1 - distToCenter / waveWidth;
-              // Mix warm orange, gold, and grey colors
+              const distRatio = 1 - distToCenter / waveWidth;
+
+              const mdx = x - mouseX;
+              const mdy = y - mouseY;
+              const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+              let mouseBonus = 0;
+              if (mdist < 100) {
+                mouseBonus = (1 - mdist / 100) * 0.45;
+              }
+
+              opacity = (distRatio * 0.6 + mouseBonus) * (Math.random() < 0.03 ? 0.45 : 1.0);
+
+              // Orange/red tones for left wave
               const cVal = Math.sin(x * y + time / 500);
               if (cVal > 0.4) {
                 colorStr = '249, 115, 22, '; // Orange
               } else if (cVal > 0.0) {
-                colorStr = '234, 179, 8, ';  // Yellow/Gold
+                colorStr = '234, 179, 8, ';  // Gold/Yellow
               } else {
                 colorStr = '156, 163, 175, '; // Grey
               }
-            } else {
-              distRatio = 1 - distToGlobe / globeRadius;
-              // Mostly grey and soft gold colors on the right
-              const cVal = Math.sin(x * y + time / 600);
-              if (cVal > 0.5) {
-                colorStr = '234, 179, 8, ';  // Yellow/Gold
-              } else {
-                colorStr = '107, 114, 128, '; // Dark Grey
-              }
             }
-
-            // Calculate mouse distance boost
-            const mdx = x - mouseX;
-            const mdy = y - mouseY;
-            const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-            let mouseBonus = 0;
-            if (mdist < 100) {
-              mouseBonus = (1 - mdist / 100) * 0.45;
-            }
-
-            const opacity = (distRatio * 0.65 + mouseBonus) * (Math.random() < 0.03 ? 0.45 : 1.0);
 
             if (opacity > 0.05) {
-              // Flickering characters loop
               const charSeed = Math.floor(y * 13 + x * 7 + time / 220);
               const char = charSeed % 15 === 0 ? '.' : charSeed % 2 === 0 ? '5' : '6';
 
@@ -144,7 +173,7 @@ export function GPT56MatrixBanner() {
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-[#030303] select-none pointer-events-auto">
-      <canvas ref={canvasRef} className="w-full h-full block opacity-70" />
+      <canvas ref={canvasRef} className="w-full h-full block opacity-75" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent pointer-events-none" />
     </div>
   );
