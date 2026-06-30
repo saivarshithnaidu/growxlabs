@@ -43,6 +43,7 @@ const blogRoutes = [
   { path: '/blog/restaurant-customer-retention-automation', priority: 0.8, changefreq: 'weekly' as const },
   { path: '/blog/indian-restaurant-website-usa', priority: 0.8, changefreq: 'weekly' as const },
   { path: '/blog/ferraris-electric-future-why-the-luce-marks-a-historic-turning-point', priority: 0.8, changefreq: 'weekly' as const },
+  { path: '/blog/chatgpt-gpt-5-6-preview-everything-you-need-to-know', priority: 0.8, changefreq: 'weekly' as const },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
