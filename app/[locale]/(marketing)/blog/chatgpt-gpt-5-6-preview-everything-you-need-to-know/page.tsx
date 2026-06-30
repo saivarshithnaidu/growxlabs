@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { FlickerText } from "@/components/marketing/FlickerText";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
 import { InsightCallout, WhyThisMatters, EditorialDivider, RelatedArticlesGrid } from "@/components/marketing/BlogEditorial";
+import { GPT56MatrixBanner } from "@/components/marketing/GPT56MatrixBanner";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -224,8 +225,9 @@ export default async function Gpt56PreviewGuidePage({ params }: { params: Promis
 
       <ReadingProgressBar />
 
-      <header className="w-full border-b border-border pb-16 px-6 md:px-10 xl:px-16 2xl:px-24 text-center">
-        <div className="max-w-5xl mx-auto">
+      <header className="w-full border-b border-border py-24 px-6 md:px-10 xl:px-16 2xl:px-24 text-center relative overflow-hidden bg-[#030303]">
+        <GPT56MatrixBanner />
+        <div className="max-w-5xl mx-auto relative z-10">
           <div className="w-full overflow-hidden flex justify-center items-end select-none pointer-events-none mb-10">
             <h1 className="font-black select-none tracking-[-0.06em] text-foreground leading-[0.8] text-[clamp(2rem,9.2vw,130px)] uppercase whitespace-nowrap">
               <FlickerText text={titleName} />
