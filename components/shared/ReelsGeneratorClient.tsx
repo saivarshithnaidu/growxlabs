@@ -361,20 +361,59 @@ export function ReelsGeneratorClient() {
     const msPerWord = durationMs / totalWords;
     const activeWordIndex = Math.floor(sceneElapsedTime / msPerWord);
 
+    // Group words into phrases of 4 words
+    const chunkSize = 4;
+    const chunks: string[][] = [];
+    for (let i = 0; i < words.length; i += chunkSize) {
+      chunks.push(words.slice(i, i + chunkSize));
+    }
+
+    const activeChunkIndex = Math.floor(activeWordIndex / chunkSize);
+    const currentChunk = chunks[activeChunkIndex] || chunks[chunks.length - 1] || [];
+    const localActiveIndex = activeWordIndex % chunkSize;
+
+    const getActiveColor = () => {
+      switch (themePreset) {
+        case "cyberpunk": return "#00ffff"; // Neon Cyan
+        case "terminal": return "#39ff14"; // Neon Green
+        case "sunset": return "#ffff00"; // Neon Yellow
+        case "glass": return "#00ffff"; // Neon Cyan
+        case "emerald": return "#34d399"; // Emerald Glow
+        case "cream": return "#5c554c"; // Dark Cream Accent
+        case "minimal": return "#ffffff"; // Stark White
+        case "gold": return "#f59e0b"; // Golden Amber
+        default: return "#ffff00";
+      }
+    };
+
+    const getInactiveColor = () => {
+      return themePreset === "cream" ? "rgba(92, 85, 76, 0.5)" : "rgba(255, 255, 255, 0.4)";
+    };
+
+    const activeColor = getActiveColor();
+    const inactiveColor = getInactiveColor();
+
     return (
-      <div className="flex flex-wrap justify-center text-center px-4 leading-relaxed font-semibold">
-        {words.map((word, index) => {
-          const isActive = index === activeWordIndex;
+      <div 
+        key={activeChunkIndex} // Force re-mount on new phrase to trigger the slideInUp animation
+        className="flex flex-wrap justify-center text-center px-4 leading-none"
+        style={{
+          animation: "slideInUp 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards"
+        }}
+      >
+        {currentChunk.map((word, index) => {
+          const isLocalActive = index === localActiveIndex;
           return (
             <span
               key={index}
-              className="inline-block mx-1.5 transition-all duration-200 transform"
+              className="inline-block mx-1.5 text-xl font-black uppercase tracking-tight italic select-none"
               style={{
-                color: isActive ? themeColors.textHighlightColor : `${themeColors.textColor}99`,
-                fontSize: isActive ? "15px" : "13.5px",
-                fontWeight: isActive ? 900 : 500,
-                textShadow: isActive ? `0 0 10px ${themeColors.textHighlightColor}40` : "none",
-                scale: isActive ? "1.08" : "1.0"
+                color: isLocalActive ? activeColor : inactiveColor,
+                textShadow: isLocalActive 
+                  ? `0 0 12px ${activeColor}90, 0 2px 4px rgba(0,0,0,0.9)` 
+                  : "0 1px 3px rgba(0,0,0,0.8)",
+                transform: isLocalActive ? "scale(1.18) translateY(-2px)" : "scale(1.0) translateY(0)",
+                transition: "all 0.1s ease-out"
               }}
             >
               {word}
@@ -410,6 +449,41 @@ export function ReelsGeneratorClient() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes liquidFlow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes driftOrb1 {
+          0% { transform: translate(-20px, -20px) scale(1); }
+          50% { transform: translate(30px, 40px) scale(1.15); }
+          100% { transform: translate(-20px, -20px) scale(1); }
+        }
+        @keyframes driftOrb2 {
+          0% { transform: translate(20px, 30px) scale(1.1); }
+          50% { transform: translate(-20px, -20px) scale(0.9); }
+          100% { transform: translate(20px, 30px) scale(1.1); }
+        }
+        @keyframes scanline {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100%); }
+        }
+        @keyframes neonPulse {
+          0% { opacity: 0.25; transform: scale(1); }
+          50% { opacity: 0.45; transform: scale(1.05); }
+          100% { opacity: 0.25; transform: scale(1); }
+        }
+        @keyframes kenburns {
+          0% { transform: scale(1.0); }
+          50% { transform: scale(1.12) translate(0.5%, 0.5%); }
+          100% { transform: scale(1.0); }
+        }
+        @keyframes slideInUp {
+          0% { transform: translateY(12px); opacity: 0; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+      `}} />
       
       {/* Settings Panel (Left 7 Cols) */}
       <div className="lg:col-span-7 space-y-6">
@@ -617,15 +691,130 @@ export function ReelsGeneratorClient() {
         {/* 9:16 vertical video player mockup */}
         <div className="relative w-full max-w-[320px] aspect-[9/16] rounded-[36px] overflow-hidden border border-neutral-800 shadow-2xl bg-black flex flex-col justify-between p-6 select-none relative box-border">
           
-          {/* Background container */}
-          <div 
-            className="absolute inset-0 z-0" 
-            style={{ 
-              backgroundColor: themeColors.bg,
-              backgroundImage: themeColors.bgImage,
-              backgroundSize: "40px 40px"
-            }}
-          />
+          {/* Animated Background container */}
+          {(() => {
+            switch (themePreset) {
+              case "cyberpunk":
+                return (
+                  <div className="absolute inset-0 z-0 bg-[#05050a] overflow-hidden">
+                    <div 
+                      className="absolute -top-10 -left-10 w-[150px] h-[150px] rounded-full bg-cyan-500/20 blur-[50px] pointer-events-none"
+                      style={{ animation: "neonPulse 6s infinite ease-in-out" }}
+                    />
+                    <div 
+                      className="absolute -bottom-10 -right-10 w-[150px] h-[150px] rounded-full bg-purple-500/25 blur-[50px] pointer-events-none"
+                      style={{ animation: "neonPulse 8s infinite ease-in-out 1s" }}
+                    />
+                    <div 
+                      className="absolute inset-0 opacity-[0.12] pointer-events-none"
+                      style={{
+                        backgroundImage: "linear-gradient(rgba(6, 182, 212, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.4) 1px, transparent 1px)",
+                        backgroundSize: "20px 20px"
+                      }}
+                    />
+                  </div>
+                );
+              case "sunset":
+                return (
+                  <div 
+                    className="absolute inset-0 z-0" 
+                    style={{ 
+                      background: "linear-gradient(-45deg, #FF512F, #DD2476, #ff7e5f, #feb47b)",
+                      backgroundSize: "400% 400%",
+                      animation: "liquidFlow 15s infinite ease-in-out"
+                    }}
+                  />
+                );
+              case "glass":
+                return (
+                  <div className="absolute inset-0 z-0 bg-[#03001e] overflow-hidden">
+                    <div 
+                      className="absolute top-1/4 left-1/4 w-[160px] h-[160px] rounded-full bg-purple-600/30 blur-[45px] pointer-events-none"
+                      style={{ animation: "driftOrb1 10s infinite ease-in-out" }}
+                    />
+                    <div 
+                      className="absolute bottom-1/4 right-1/4 w-[180px] h-[180px] rounded-full bg-pink-600/20 blur-[50px] pointer-events-none"
+                      style={{ animation: "driftOrb2 12s infinite ease-in-out" }}
+                    />
+                    <div 
+                      className="absolute inset-0 opacity-[0.05] pointer-events-none"
+                      style={{
+                        backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)",
+                        backgroundSize: "25px 25px"
+                      }}
+                    />
+                  </div>
+                );
+              case "terminal":
+              default:
+                return (
+                  <div className="absolute inset-0 z-0 bg-[#06080b] overflow-hidden">
+                    <div 
+                      className="absolute inset-0 opacity-[0.15] pointer-events-none"
+                      style={{
+                        backgroundImage: "linear-gradient(rgba(57, 255, 20, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(57, 255, 20, 0.2) 1px, transparent 1px)",
+                        backgroundSize: "30px 30px"
+                      }}
+                    />
+                    <div 
+                      className="absolute inset-x-0 h-[2px] bg-[#39ff14]/10 pointer-events-none"
+                      style={{
+                        animation: "scanline 5s infinite linear"
+                      }}
+                    />
+                  </div>
+                );
+              case "cream":
+                return (
+                  <div className="absolute inset-0 z-0 bg-[#F9F6F0]">
+                    <div 
+                      className="absolute inset-0 opacity-[0.025] pointer-events-none"
+                      style={{
+                        backgroundImage: "radial-gradient(#000000 1.5px, transparent 1.5px)",
+                        backgroundSize: "20px 20px"
+                      }}
+                    />
+                  </div>
+                );
+              case "emerald":
+                return (
+                  <div className="absolute inset-0 z-0 bg-[#041611] overflow-hidden">
+                    <div 
+                      className="absolute top-1/3 right-1/4 w-[160px] h-[160px] rounded-full bg-[#10b981]/15 blur-[60px] pointer-events-none"
+                      style={{ animation: "neonPulse 7s infinite ease-in-out" }}
+                    />
+                    <div 
+                      className="absolute inset-0 opacity-[0.06] pointer-events-none"
+                      style={{
+                        backgroundImage: "linear-gradient(rgba(16, 185, 129, 0.3) 1px, transparent 1px)",
+                        backgroundSize: "100% 15px"
+                      }}
+                    />
+                  </div>
+                );
+              case "minimal":
+                return (
+                  <div className="absolute inset-0 z-0 bg-[#000000] overflow-hidden">
+                    <div 
+                      className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                      style={{
+                        backgroundImage: "linear-gradient(90deg, #ffffff 1px, transparent 1px)",
+                        backgroundSize: "40px 100%"
+                      }}
+                    />
+                  </div>
+                );
+              case "gold":
+                return (
+                  <div className="absolute inset-0 z-0 bg-[#090806] overflow-hidden">
+                    <div 
+                      className="absolute -bottom-20 left-1/4 w-[200px] h-[200px] rounded-full bg-amber-500/10 blur-[70px] pointer-events-none"
+                      style={{ animation: "neonPulse 9s infinite ease-in-out" }}
+                    />
+                  </div>
+                );
+            }
+          })()}
 
           {/* Top Story/Reels Indicators */}
           <div className="absolute top-4 left-6 right-6 flex gap-1 z-20">
@@ -677,6 +866,9 @@ export function ReelsGeneratorClient() {
                   src={`https://image.pollinations.ai/prompt/${encodeURIComponent(activeScene.imagePrompt)}?width=500&height=500&nologo=true&model=flux`}
                   alt="AI Scene visual fallback"
                   className="w-full h-full object-cover"
+                  style={{
+                    animation: isPlaying ? "kenburns 12s infinite ease-in-out" : "none"
+                  }}
                 />
               </div>
             )}

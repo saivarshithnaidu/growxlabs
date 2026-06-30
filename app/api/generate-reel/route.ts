@@ -21,8 +21,8 @@ Follow these content guidelines:
    - 'minimal' (for stark contrast, high-fidelity layouts, thought leadership)
    - 'gold' (for luxury branding, growth coaching, high-ticket sales)
 6. Graphics (SVG + Image Prompt): Every scene requires:
-   - 'imagePrompt': A detailed, highly descriptive prompt (no text, vector/illustrated style) suitable for text-to-image generation.
-   - 'svgCode': Valid, well-formed inline SVG code inside <svg viewBox="0 0 400 400" width="100%" height="100%">...</svg> representing the concept visually (diagrams, symbols, flowcharts, abstract layouts). Keep SVG backgrounds transparent.
+   - 'imagePrompt': A detailed, highly descriptive prompt suitable for FLUX.1 text-to-image generation. Do not request text on the image. Synthesize the scene title and captions into a clean 2D system architecture diagram, schematic flowchart sketch, or blueprint (e.g. document flow, vector lookup blocks for RAG).
+   - 'svgCode': Valid, well-formed inline SVG code inside <svg viewBox="0 0 400 400" width="100%" height="100%">...</svg> representing the concept visually (diagrams, symbols, flowcharts). To make the graphics feel alive, include inline CSS animations inside a <style> block in the SVG (e.g., path dash-arrays animating with @keyframes to show data flowing, or shapes pulsing in a loop). Keep classes scoped within the SVG. Keep SVG backgrounds transparent.
    - Match the recommended theme's style (e.g. neon shapes for cyberpunk, green grids/code paths for terminal).
 7. Duration: Suggest display time in seconds for each scene (usually 4 to 6 seconds per scene).
 `;
