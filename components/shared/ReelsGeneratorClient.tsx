@@ -113,6 +113,8 @@ export function ReelsGeneratorClient() {
 
   // Video recording states
   const [isRecording, setIsRecording] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState(0);
 
   // Auto-calculated timelines
   const getTimeline = () => {
@@ -429,6 +431,517 @@ export function ReelsGeneratorClient() {
     const updatedScenes = [...scenes];
     updatedScenes[activeIndex] = { ...activeScene, ...updatedFields };
     setScenes(updatedScenes);
+  };
+
+  const preloadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+      img.src = src;
+    });
+  };
+
+  const getProxyImageUrl = (src: string) => {
+    if (src.startsWith("data:")) return src;
+    return `/api/proxy-image?url=${encodeURIComponent(src)}`;
+  };
+
+  const loadSvgAsImage = (svgCode: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const svgBlob = new Blob([svgCode], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve(img);
+      };
+      img.onerror = (e) => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Failed to parse vector SVG as image layout."));
+      };
+      img.src = url;
+    });
+  };
+
+  const hexToRgb = (hex: string) => {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    const fullHex = hex.replace(shorthandRegex, (_, r, g, b) => r + r + g + g + b + b);
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : { r: 0, g: 0, b: 0 };
+  };
+
+  const getThemeTitleColor = () => {
+    switch (themePreset) {
+      case "cyberpunk": return "#06b6d4";
+      case "terminal": return "#39ff14";
+      case "sunset": return "#ffffff";
+      case "glass": return "#ffffff";
+      case "cream": return "#1c1a17";
+      case "emerald": return "#10b981";
+      case "minimal": return "#ffffff";
+      case "gold": return "#d4af37";
+      default: return "#ffffff";
+    }
+  };
+
+  const getActiveThemeColor = () => {
+    switch (themePreset) {
+      case "cyberpunk": return "#00ffff";
+      case "terminal": return "#39ff14";
+      case "sunset": return "#ffff00";
+      case "glass": return "#00ffff";
+      case "emerald": return "#34d399";
+      case "cream": return "#5c554c";
+      case "minimal": return "#ffffff";
+      case "gold": return "#f59e0b";
+      default: return "#ffff00";
+    }
+  };
+
+  const drawCanvasBackground = (ctx: CanvasRenderingContext2D, width: number, height: number, timeMs: number) => {
+    switch (themePreset) {
+      case "cyberpunk": {
+        const cycle = (timeMs / 4000) * Math.PI * 2;
+        ctx.fillStyle = "#05050a";
+        ctx.fillRect(0, 0, width, height);
+
+        const gradient1 = ctx.createRadialGradient(
+          0, 0, 0,
+          0, 0, 400 + Math.sin(cycle) * 30
+        );
+        gradient1.addColorStop(0, "rgba(6, 182, 212, 0.15)");
+        gradient1.addColorStop(1, "transparent");
+        ctx.fillStyle = gradient1;
+        ctx.fillRect(0, 0, width, height);
+
+        const gradient2 = ctx.createRadialGradient(
+          width, height, 0,
+          width, height, 500
+        );
+        gradient2.addColorStop(0, "rgba(147, 51, 234, 0.15)");
+        gradient2.addColorStop(1, "transparent");
+        ctx.fillStyle = gradient2;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.strokeStyle = "rgba(6, 182, 212, 0.05)";
+        ctx.lineWidth = 1.5;
+        const gridSize = 40;
+        for (let x = 0; x < width; x += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
+          ctx.stroke();
+        }
+        for (let y = 0; y < height; y += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+        break;
+      }
+      case "sunset": {
+        const grad = ctx.createLinearGradient(0, 0, width, height);
+        const color1 = hexToRgb("#FF512F");
+        const color2 = hexToRgb("#DD2476");
+        grad.addColorStop(0, `rgb(${color1.r}, ${color1.g}, ${color1.b})`);
+        grad.addColorStop(0.5, "rgb(255, 126, 95)");
+        grad.addColorStop(1, `rgb(${color2.r}, ${color2.g}, ${color2.b})`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+        break;
+      }
+      case "glass": {
+        ctx.fillStyle = "#03001e";
+        ctx.fillRect(0, 0, width, height);
+
+        const cycle = (timeMs / 8000) * Math.PI * 2;
+        const ox1 = width / 2 + Math.cos(cycle) * 100;
+        const oy1 = height / 3 + Math.sin(cycle) * 100;
+        const grad1 = ctx.createRadialGradient(ox1, oy1, 0, ox1, oy1, 350);
+        grad1.addColorStop(0, "rgba(74, 0, 114, 0.25)");
+        grad1.addColorStop(1, "transparent");
+        ctx.fillStyle = grad1;
+        ctx.fillRect(0, 0, width, height);
+
+        const ox2 = width / 2 + Math.sin(cycle + Math.PI) * 100;
+        const oy2 = height * 0.6 + Math.cos(cycle + Math.PI) * 100;
+        const grad2 = ctx.createRadialGradient(ox2, oy2, 0, ox2, oy2, 350);
+        grad2.addColorStop(0, "rgba(221, 36, 118, 0.15)");
+        grad2.addColorStop(1, "transparent");
+        ctx.fillStyle = grad2;
+        ctx.fillRect(0, 0, width, height);
+        break;
+      }
+      case "terminal":
+      default: {
+        ctx.fillStyle = "#06080b";
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.strokeStyle = "rgba(57, 255, 20, 0.04)";
+        ctx.lineWidth = 1;
+        const size = 50;
+        for (let x = 0; x < width; x += size) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
+          ctx.stroke();
+        }
+        for (let y = 0; y < height; y += size) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+
+        const scanY = (timeMs / 4000 * height) % height;
+        ctx.fillStyle = "rgba(57, 255, 20, 0.03)";
+        ctx.fillRect(0, scanY, width, 4);
+        break;
+      }
+      case "cream": {
+        ctx.fillStyle = "#F9F6F0";
+        ctx.fillRect(0, 0, width, height);
+        break;
+      }
+      case "emerald": {
+        ctx.fillStyle = "#041611";
+        ctx.fillRect(0, 0, width, height);
+        break;
+      }
+      case "minimal": {
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, width, height);
+        break;
+      }
+      case "gold": {
+        ctx.fillStyle = "#090806";
+        ctx.fillRect(0, 0, width, height);
+        break;
+      }
+    }
+  };
+
+  const drawCanvasHeader = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    const headerY = height * 0.08;
+    const avatarX = width * 0.12;
+
+    const avatarColor = getThemeTitleColor();
+    ctx.fillStyle = avatarColor;
+    ctx.beginPath();
+    ctx.arc(avatarX, headerY, 24, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = themePreset === "cream" ? "#ffffff" : "#000000";
+    ctx.font = "bold 20px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(brandName[0] || "G", avatarX, headerY);
+
+    ctx.fillStyle = getThemeTitleColor();
+    ctx.font = "bold 24px sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(brandName, avatarX + 36, headerY);
+
+    ctx.fillStyle = getThemeTitleColor();
+    ctx.font = "bold 18px sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText(instagramHandle, width * 0.88, headerY);
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(width * 0.1, headerY + 45);
+    ctx.lineTo(width * 0.9, headerY + 45);
+    ctx.stroke();
+  };
+
+  const drawCanvasFooter = (ctx: CanvasRenderingContext2D, width: number, height: number, activeIdx: number) => {
+    const footerY = height * 0.92;
+    const color = getThemeTitleColor();
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(width * 0.1, footerY - 25);
+    ctx.lineTo(width * 0.9, footerY - 25);
+    ctx.stroke();
+
+    ctx.fillStyle = color;
+    ctx.font = "bold 18px sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    const text = activeIdx === scenes.length - 1 ? "SAVE THIS POST" : "SWIPE LEFT ➔";
+    ctx.fillText(text, width * 0.12, footerY);
+
+    ctx.fillStyle = color;
+    ctx.font = "bold italic 22px sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    const pages = `${String(activeIdx + 1).padStart(2, "0")}/${String(scenes.length).padStart(2, "0")}`;
+    ctx.fillText(pages, width * 0.88, footerY);
+  };
+
+  const drawCanvasProgressBar = (ctx: CanvasRenderingContext2D, width: number, height: number, timeMs: number, timeline: any[]) => {
+    const barY = height * 0.03;
+    const barHeight = 6;
+    const paddingX = width * 0.08;
+    const totalBarsWidth = width * 0.84;
+    const gap = 6;
+    const numBars = timeline.length;
+    const barWidth = (totalBarsWidth - gap * (numBars - 1)) / numBars;
+
+    timeline.forEach((scene, index) => {
+      const startX = paddingX + index * (barWidth + gap);
+      
+      ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+      ctx.beginPath();
+      ctx.roundRect(startX, barY, barWidth, barHeight, 3);
+      ctx.fill();
+
+      let fillPercent = 0;
+      if (timeMs >= scene.end) {
+        fillPercent = 1.0;
+      } else if (timeMs > scene.start && timeMs < scene.end) {
+        fillPercent = (timeMs - scene.start) / (scene.end - scene.start);
+      }
+
+      if (fillPercent > 0) {
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.roundRect(startX, barY, barWidth * fillPercent, barHeight, 3);
+        ctx.fill();
+      }
+    });
+  };
+
+  const drawReelFrame = (
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    timeMs: number,
+    preloadedImages: Record<number, HTMLImageElement>
+  ) => {
+    ctx.clearRect(0, 0, width, height);
+
+    drawCanvasBackground(ctx, width, height, timeMs);
+
+    const timeline = getTimeline();
+    const activeIdx = timeline.findIndex((s) => timeMs >= s.start && timeMs < s.end);
+    const sceneIdx = activeIdx !== -1 ? activeIdx : timeline.length - 1;
+    const scene = scenes[sceneIdx];
+    if (!scene) return;
+
+    const sceneElapsedTime = timeMs - (timeline[sceneIdx]?.start || 0);
+    const sceneDurationMs = scene.duration * 1000;
+
+    drawCanvasHeader(ctx, width, height);
+
+    const imgWidth = 400;
+    const imgHeight = 400;
+    const imgX = (width - imgWidth) / 2;
+    const imgY = height * 0.28;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(imgX, imgY, imgWidth, imgHeight, 32);
+    ctx.clip();
+
+    if (visualMode === "svg") {
+      const svgImg = preloadedImages[sceneIdx];
+      if (svgImg) {
+        ctx.drawImage(svgImg, imgX, imgY, imgWidth, imgHeight);
+      } else {
+        ctx.fillStyle = "rgba(255,255,255,0.05)";
+        ctx.fillRect(imgX, imgY, imgWidth, imgHeight);
+      }
+    } else {
+      const img = preloadedImages[sceneIdx];
+      if (img) {
+        const scale = 1.0 + 0.08 * (sceneElapsedTime / sceneDurationMs);
+        const sw = img.width / scale;
+        const sh = img.height / scale;
+        const sx = (img.width - sw) / 2;
+        const sy = (img.height - sh) / 2;
+        ctx.drawImage(img, sx, sy, sw, sh, imgX, imgY, imgWidth, imgHeight);
+      } else {
+        ctx.fillStyle = "rgba(255,255,255,0.05)";
+        ctx.fillRect(imgX, imgY, imgWidth, imgHeight);
+      }
+    }
+    ctx.restore();
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(imgX, imgY, imgWidth, imgHeight, 32);
+    ctx.stroke();
+
+    ctx.fillStyle = getThemeTitleColor();
+    ctx.font = "bold italic uppercase 36px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText(scene.title, width / 2, height * 0.65);
+
+    if (scene.content) {
+      const words = scene.content.split(" ");
+      const totalWords = words.length;
+      const msPerWord = sceneDurationMs / totalWords;
+      const activeWordIndex = Math.floor(sceneElapsedTime / msPerWord);
+
+      const chunkSize = 4;
+      const chunks: string[][] = [];
+      for (let i = 0; i < words.length; i += chunkSize) {
+        chunks.push(words.slice(i, i + chunkSize));
+      }
+
+      const activeChunkIdx = Math.floor(activeWordIndex / chunkSize);
+      const currentChunk = chunks[activeChunkIdx] || chunks[chunks.length - 1] || [];
+      const localActiveIdx = activeWordIndex % chunkSize;
+
+      const activeColor = getActiveThemeColor();
+      const inactiveColor = "rgba(255,255,255,0.5)";
+
+      ctx.font = "black italic uppercase 42px sans-serif";
+      ctx.textAlign = "center";
+      
+      let totalChunkWidth = 0;
+      const wordSpacing = 16;
+      
+      const wordWidths = currentChunk.map(w => ctx.measureText(w).width);
+      totalChunkWidth = wordWidths.reduce((a, b) => a + b, 0) + wordSpacing * (currentChunk.length - 1);
+
+      let currentX = (width - totalChunkWidth) / 2;
+      const textY = height * 0.73;
+
+      currentChunk.forEach((word, wIdx) => {
+        const isWordActive = wIdx === localActiveIdx;
+        ctx.fillStyle = isWordActive ? activeColor : inactiveColor;
+        
+        ctx.save();
+        if (isWordActive) {
+          ctx.shadowColor = activeColor;
+          ctx.shadowBlur = 15;
+          ctx.font = "black italic uppercase 46px sans-serif";
+        }
+        ctx.fillText(word, currentX + wordWidths[wIdx]/2, textY);
+        ctx.restore();
+        
+        currentX += wordWidths[wIdx] + wordSpacing;
+      });
+    }
+
+    drawCanvasFooter(ctx, width, height, sceneIdx);
+
+    drawCanvasProgressBar(ctx, width, height, timeMs, timeline);
+  };
+
+  const handleExportVideo = async () => {
+    if (scenes.length === 0) return;
+    setIsExporting(true);
+    setExportProgress(0);
+
+    const timeline = getTimeline();
+    const durationMs = totalDurationMs;
+    const preloadedImages: Record<number, HTMLImageElement> = {};
+
+    const preloadToast = toast.loading("Preloading scene assets...");
+    try {
+      for (let i = 0; i < scenes.length; i++) {
+        const scene = scenes[i];
+        setExportProgress(Math.round((i / scenes.length) * 30));
+
+        if (visualMode === "svg") {
+          const svgImg = await loadSvgAsImage(scene.svgCode);
+          preloadedImages[i] = svgImg;
+        } else {
+          const src = `https://image.pollinations.ai/prompt/${encodeURIComponent(scene.imagePrompt)}?width=500&height=500&nologo=true&model=flux`;
+          const proxyUrl = getProxyImageUrl(src);
+          const img = await preloadImage(proxyUrl);
+          preloadedImages[i] = img;
+        }
+      }
+      toast.success("Scene assets preloaded successfully!", { id: preloadToast });
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to preload visual assets for video generation.", { id: preloadToast });
+      setIsExporting(false);
+      return;
+    }
+
+    const compileToast = toast.loading("Compiling high-resolution MP4 video frames...");
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 720;
+      canvas.height = 1280;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Could not construct 2D context");
+
+      const fps = 30;
+      const stream = canvas.captureStream(fps);
+      
+      let options = { mimeType: "video/webm;codecs=vp9" };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = { mimeType: "video/webm" };
+      }
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = { mimeType: "video/mp4" };
+      }
+
+      const recorder = new MediaRecorder(stream, options);
+      const chunks: Blob[] = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const fileBlob = new Blob(chunks, { type: chunks[0].type });
+        const downloadUrl = URL.createObjectURL(fileBlob);
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = `reels-${Date.now()}.mp4`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadUrl);
+        toast.success("Video compiled and downloaded successfully!", { id: compileToast });
+        setIsExporting(false);
+      };
+
+      recorder.start();
+
+      let timeElapsed = 0;
+      const frameDuration = 1000 / fps;
+
+      const recordFrame = () => {
+        if (timeElapsed >= durationMs) {
+          recorder.stop();
+          return;
+        }
+
+        drawReelFrame(ctx, canvas.width, canvas.height, timeElapsed, preloadedImages);
+
+        const progress = 30 + Math.round((timeElapsed / durationMs) * 70);
+        setExportProgress(progress);
+
+        timeElapsed += frameDuration;
+        setTimeout(recordFrame, 0);
+      };
+
+      recordFrame();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to compile video.", { id: compileToast });
+      setIsExporting(false);
+    }
   };
 
   // Export static high-res files (ZIP / SVGs)
@@ -902,30 +1415,50 @@ export function ReelsGeneratorClient() {
         </div>
 
         {/* Player Controls */}
-        <div className="flex items-center gap-3 w-full max-w-[320px]">
+        <div className="flex flex-col gap-3 w-full max-w-[320px]">
+          <div className="flex items-center gap-3 w-full">
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="flex-1 h-12 rounded-xl bg-neutral-900 border border-neutral-800 text-white font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 hover:bg-neutral-800"
+            >
+              {isPlaying ? (
+                <>
+                  <Pause size={14} fill="white" />
+                  Pause Playback
+                </>
+              ) : (
+                <>
+                  <Play size={14} fill="white" />
+                  Play Timeline
+                </>
+              )}
+            </button>
+            
+            <button
+              onClick={handleDownloadSVG}
+              title="Download Active Scene SVG"
+              className="w-12 h-12 rounded-xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center hover:bg-neutral-800 transition-all"
+            >
+              <Download size={16} />
+            </button>
+          </div>
+
           <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="flex-1 h-12 rounded-xl bg-neutral-900 border border-neutral-800 text-white font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 hover:bg-neutral-800"
+            onClick={handleExportVideo}
+            disabled={isExporting}
+            className="w-full h-12 rounded-xl bg-primary hover:bg-primary-hover disabled:bg-neutral-800 disabled:text-neutral-500 text-white font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg"
           >
-            {isPlaying ? (
+            {isExporting ? (
               <>
-                <Pause size={14} fill="white" />
-                Pause Playback
+                <RotateCw size={14} className="animate-spin" />
+                Compiling Video... {exportProgress}%
               </>
             ) : (
               <>
-                <Play size={14} fill="white" />
-                Play Timeline
+                <Video size={14} />
+                Export Reel Video (MP4)
               </>
             )}
-          </button>
-          
-          <button
-            onClick={handleDownloadSVG}
-            title="Download Active Scene SVG"
-            className="w-12 h-12 rounded-xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center hover:bg-neutral-800 transition-all"
-          >
-            <Download size={16} />
           </button>
         </div>
 
@@ -933,14 +1466,38 @@ export function ReelsGeneratorClient() {
         <div className="w-full max-w-[320px] bg-neutral-900/50 border border-neutral-800/80 p-4 rounded-2xl text-[10px] text-neutral-400 space-y-2 leading-relaxed">
           <div className="flex items-center gap-1.5 text-primary font-black uppercase tracking-wider">
             <Info size={14} />
-            <span>Internal Usage Note</span>
+            <span>Usage Info</span>
           </div>
           <p>
-            To compile this preview timeline into a Reels video, click **Play Timeline** and use your local screen capture software (OBS, Canva, or CapCut) to record the animated 9:16 mockup instantly.
+            Click **Export Reel Video (MP4)** to render and download a high-resolution video file automatically, or use screen capture as a backup.
           </p>
         </div>
 
       </div>
+
+      {isExporting && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-[32px] p-8 max-w-sm w-full text-center space-y-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="h-16 w-16 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-center text-primary mx-auto animate-bounce">
+              <Video size={32} />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-black text-white uppercase tracking-wider">Compiling Video</h3>
+              <p className="text-xs text-neutral-400 font-medium">Rendering visual layouts and encoding video frames. Please keep this tab open and active.</p>
+            </div>
+            
+            <div className="space-y-2 pt-2">
+              <div className="w-full h-2.5 bg-neutral-950 rounded-full overflow-hidden border border-neutral-800">
+                <div 
+                  className="h-full bg-primary transition-all duration-300 rounded-full shadow-[0_0_8px_#39ff14]"
+                  style={{ width: `${exportProgress}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-black text-primary uppercase tracking-widest">{exportProgress}% Completed</span>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
