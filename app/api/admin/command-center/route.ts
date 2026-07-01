@@ -1184,7 +1184,7 @@ export async function POST(req: Request) {
 
             while (openRouterLoops < maxLoops && !finalResponseGenerated) {
               const completion = await openrouter.chat.completions.create({
-                model: "google/gemini-2.5-flash:free",
+                model: "meta-llama/llama-3.3-70b-instruct:free",
                 messages: openRouterMessages,
                 tools: OPENAI_TOOLS,
                 tool_choice: "auto",
