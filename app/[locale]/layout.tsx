@@ -7,6 +7,7 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { CookieConsent } from "@/components/layout/CookieConsent";
+import { WhatsAppWidget } from "@/components/shared/WhatsAppWidget";
 import { Toaster } from "sonner";
 import { locales } from "@/navigation";
 import Script from "next/script";
@@ -287,6 +288,7 @@ export default async function LocaleLayout({
                 </ConditionalLayout>
 
                 <CookieConsent />
+                <WhatsAppWidget />
                 <Toaster position="top-right" expand={false} richColors />
               </ThemeProvider>
 
