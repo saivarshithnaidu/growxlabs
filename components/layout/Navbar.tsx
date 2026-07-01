@@ -34,11 +34,15 @@ export function Navbar() {
   // Dynamic Theme Colors
   const navBg = isScrolled
     ? (isLightThemePage
-        ? "bg-white/90 border-b border-[#E5E2DC] shadow-sm"
-        : "bg-[#111111]/90 border-b border-white/10 shadow-sm")
+        ? "bg-white md:bg-white/90 border-b border-[#E5E2DC] shadow-sm"
+        : (isBlog 
+            ? "bg-black md:bg-black/90 border-b border-white/10 shadow-sm" 
+            : "bg-[#111111] md:bg-[#111111]/90 border-b border-white/10 shadow-sm"))
     : (isLightThemePage
         ? "bg-[#F5F3EE]/80 border-b border-transparent"
-        : "bg-[#111111]/80 border-b border-transparent");
+        : (isBlog
+            ? "bg-black/80 border-b border-transparent"
+            : "bg-[#111111]/80 border-b border-transparent"));
 
   const logoColor1 = isLightThemePage ? "text-[#1A1A1A]" : "text-white";
   const logoColor2 = isBlog ? "text-white" : "text-primary";
