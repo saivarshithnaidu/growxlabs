@@ -1184,7 +1184,7 @@ export async function POST(req: Request) {
 
             while (openRouterLoops < maxLoops && !finalResponseGenerated) {
               const completion = await openrouter.chat.completions.create({
-                model: "openai/gpt-4o-mini",
+                model: "google/gemini-2.5-flash:free",
                 messages: openRouterMessages,
                 tools: OPENAI_TOOLS,
                 tool_choice: "auto",
