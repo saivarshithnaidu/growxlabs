@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 export function WhatsAppWidget() {
   const [isHovered, setIsHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   // International format for Indian number: 918185958336
   const phoneNumber = '918185958336';
@@ -12,9 +13,30 @@ export function WhatsAppWidget() {
   const encodedMessage = encodeURIComponent(rawMessage);
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show when scrolled down more than 100px
+      if (window.scrollY > 100) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check on mount
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div 
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-3 select-none pointer-events-auto"
+      className={cn(
+        "fixed bottom-6 right-6 z-50 flex items-center gap-3 select-none transition-all duration-500 transform",
+        isVisible 
+          ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" 
+          : "opacity-0 translate-y-8 scale-90 pointer-events-none"
+      )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
