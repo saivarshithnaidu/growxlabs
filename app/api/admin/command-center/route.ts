@@ -78,6 +78,33 @@ const TOOLS_DEFINITIONS = [
     }
   },
   {
+    name: "create_leads_batch",
+    description: "Insert multiple new lead records into the database at once. Use this to batch-save collected leads.",
+    parameters: {
+      type: "object",
+      properties: {
+        leads: {
+          type: "array",
+          description: "List of leads to insert",
+          items: {
+            type: "object",
+            properties: {
+              business_name: { type: "string", description: "Name of the business (required)" },
+              city: { type: "string", description: "City where business is located (required)" },
+              email: { type: "string", description: "Email address for contact" },
+              phone: { type: "string", description: "Phone number for contact" },
+              name: { type: "string", description: "Name of contact person" },
+              website_url: { type: "string", description: "Website URL of the business" },
+              notes: { type: "string", description: "Optional notes about the lead" }
+            },
+            required: ["business_name", "city"]
+          }
+        }
+      },
+      required: ["leads"]
+    }
+  },
+  {
     name: "generate_proposal",
     description: "Generate and persist a new Scope of Work (SOW) client proposal.",
     parameters: {
@@ -100,7 +127,8 @@ const TOOLS_DEFINITIONS = [
     parameters: {
       type: "object",
       properties: {
-        query: { type: "string", description: "The search query string" }
+        query: { type: "string", description: "The search query string" },
+        num: { type: "number", description: "Maximum number of search results to return (default 10, max 80)" }
       },
       required: ["query"]
     }
@@ -479,7 +507,87 @@ async function execute_create_lead(args: {
     .single();
 
   if (error) throw error;
+
+  // Sync to crm_leads for dashboard visibility
+  await supabaseAdmin
+    .from("crm_leads")
+    .insert([{
+      business_name: args.business_name,
+      contact_name: args.name || args.business_name,
+      email: args.email,
+      phone: args.phone,
+      city: args.city,
+      status: "new"
+    }]);
+
   return data;
+}
+
+async function execute_create_leads_batch(args: {
+  leads: Array<{
+    business_name: string;
+    city: string;
+    email?: string;
+    phone?: string;
+    name?: string;
+    website_url?: string;
+    notes?: string;
+  }>;
+}) {
+  if (!args.leads || !Array.isArray(args.leads) || args.leads.length === 0) {
+    return { success: false, message: "No leads provided" };
+  }
+
+  const processedLeads = args.leads.map(lead => {
+    const bName = lead.business_name || "Unknown Business";
+    const cName = lead.name || bName;
+    return {
+      business_name: bName,
+      name: cName,
+      contact_name: cName,
+      email: lead.email || null,
+      phone: lead.phone || null,
+      city: lead.city || null,
+      website_url: lead.website_url || null,
+      notes: lead.notes || null,
+      status: "new",
+      lead_score: 5,
+      created_at: new Date().toISOString()
+    };
+  });
+
+  // Insert into 'leads' table
+  const { error: e1 } = await supabaseAdmin.from("leads").insert(processedLeads.map(l => ({
+    business_name: l.business_name,
+    name: l.name,
+    email: l.email,
+    phone: l.phone,
+    city: l.city,
+    website_url: l.website_url,
+    notes: l.notes,
+    status: l.status,
+    lead_score: l.lead_score,
+    created_at: l.created_at
+  })));
+
+  // Insert into 'crm_leads' table
+  const { error: e2 } = await supabaseAdmin.from("crm_leads").insert(processedLeads.map(l => ({
+    business_name: l.business_name,
+    contact_name: l.contact_name,
+    email: l.email,
+    phone: l.phone,
+    city: l.city,
+    status: l.status,
+    created_at: l.created_at
+  })));
+
+  if (e1 || e2) {
+    const err = e2 || e1;
+    console.error("[DATABASE ERROR in create_leads_batch]:", { e1, e2 });
+    throw new Error(`Database Error: ${err?.message}`);
+  }
+
+  return { success: true, count: processedLeads.length };
 }
 
 async function execute_generate_proposal(args: {
@@ -533,7 +641,7 @@ async function execute_generate_proposal(args: {
   };
 }
 
-async function searchWeb(query: string) {
+async function searchWeb(query: string, num: number = 10) {
   try {
     const apiKey = process.env.SERPER_API_KEY;
     if (!apiKey) {
@@ -546,7 +654,7 @@ async function searchWeb(query: string) {
         "X-API-KEY": apiKey,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ q: query })
+      body: JSON.stringify({ q: query, num })
     });
 
     if (!res.ok) throw new Error(`Serper returned status ${res.status}`);
@@ -556,7 +664,7 @@ async function searchWeb(query: string) {
       return "No search results found. Try another query.";
     }
 
-    const snippets = data.organic.slice(0, 5).map((item: any, idx: number) => {
+    const snippets = data.organic.slice(0, num).map((item: any, idx: number) => {
       return `[${idx + 1}] ${item.title}\nSource: ${item.link}\nSnippet: ${item.snippet}`;
     });
 
@@ -596,7 +704,17 @@ async function execute_spawn_subagent(
     log: `Executing deep-dive search for query: "${args.focus}"`
   });
 
-  const searchResults = await searchWeb(args.focus);
+  // Calculate search limit dynamically based on requested counts
+  let searchLimit = 20;
+  const numMatches = args.focus.match(/\b([1-9][0-9]*)\b/);
+  if (numMatches) {
+    const requestedCount = parseInt(numMatches[1]);
+    if (requestedCount > 5) {
+      searchLimit = Math.min(80, requestedCount + 10);
+    }
+  }
+
+  const searchResults = await searchWeb(args.focus, searchLimit);
   await new Promise(r => setTimeout(r, 800));
 
   sendEvent("subagent_log", {
@@ -614,7 +732,7 @@ async function execute_spawn_subagent(
   const findings = `Intelligence Summary for subagent [${args.name}]:\n` +
     `Mission: ${args.mission}\n` +
     `Focus: ${args.focus}\n` +
-    `Findings: ${searchResults.substring(0, 1000)}...`;
+    `Findings:\n${searchResults}`;
 
   // 3. Complete
   sendEvent("subagent_complete", {
@@ -711,10 +829,12 @@ async function handleToolCall(name: string, args: any, sendEvent?: (event: strin
       return await execute_query_leads(args);
     case "create_lead":
       return await execute_create_lead(args);
+    case "create_leads_batch":
+      return await execute_create_leads_batch(args);
     case "generate_proposal":
       return await execute_generate_proposal(args);
     case "search_web":
-      return await searchWeb(args.query);
+      return await searchWeb(args.query, args.num);
     case "spawn_subagent":
       if (sendEvent) {
         return await execute_spawn_subagent(args, sendEvent);
@@ -922,7 +1042,7 @@ export async function POST(req: Request) {
               });
 
               let loopCount = 0;
-              const maxLoops = 5;
+              const maxLoops = 15;
               let finalResponseGenerated = false;
 
               while (loopCount < maxLoops && !finalResponseGenerated) {
@@ -1059,7 +1179,7 @@ export async function POST(req: Request) {
             });
 
             let openRouterLoops = 0;
-            const maxLoops = 5;
+            const maxLoops = 15;
             let finalResponseGenerated = false;
 
             while (openRouterLoops < maxLoops && !finalResponseGenerated) {
