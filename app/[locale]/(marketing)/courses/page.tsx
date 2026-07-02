@@ -27,6 +27,46 @@ import Script from "next/script";
 import { PageHero } from "@/components/marketing/PageHero";
 import { getAbsoluteUrl } from "@/lib/subdomains";
 
+function CourseBlueprint({ id }: { id: string }) {
+  if (id === "java-mastery") {
+    return (
+      <svg className="absolute inset-0 w-full h-full opacity-15 group-hover:opacity-30 transition-opacity duration-500 p-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="30" stroke="#C0F0FB" strokeWidth="0.5" strokeDasharray="3 3" />
+        <circle cx="50" cy="50" r="15" stroke="#C0F0FB" strokeWidth="1" />
+        <line x1="50" y1="10" x2="50" y2="90" stroke="#C0F0FB" strokeWidth="0.5" />
+        <line x1="10" y1="50" x2="90" y2="50" stroke="#C0F0FB" strokeWidth="0.5" />
+        <circle cx="50" cy="20" r="3" fill="#C0F0FB" className="animate-pulse" />
+        <circle cx="50" cy="80" r="3" fill="#C0F0FB" />
+        <circle cx="20" cy="50" r="3" fill="#C0F0FB" />
+        <circle cx="80" cy="50" r="3" fill="#C0F0FB" className="animate-pulse" />
+      </svg>
+    );
+  }
+  if (id === "nextjs-fullstack") {
+    return (
+      <svg className="absolute inset-0 w-full h-full opacity-15 group-hover:opacity-30 transition-opacity duration-500 p-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="60" height="60" rx="4" stroke="#C0F0FB" strokeWidth="0.5" />
+        <rect x="35" y="35" width="30" height="30" rx="2" stroke="#C0F0FB" strokeWidth="1" />
+        <path d="M50 10 L50 20 M10 50 L20 50 M50 80 L50 90 M80 50 L90 50" stroke="#C0F0FB" strokeWidth="0.75" strokeDasharray="2 2" />
+        <circle cx="50" cy="10" r="2.5" fill="#C0F0FB" />
+        <circle cx="90" cy="50" r="2.5" fill="#C0F0FB" />
+      </svg>
+    );
+  }
+  if (id === "python-mastery") {
+    return (
+      <svg className="absolute inset-0 w-full h-full opacity-15 group-hover:opacity-30 transition-opacity duration-500 p-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 50 Q 35 20, 50 50 T 85 50" stroke="#C0F0FB" strokeWidth="1" />
+        <path d="M15 50 Q 35 80, 50 50 T 85 50" stroke="#C0F0FB" strokeWidth="0.5" strokeDasharray="3 3" />
+        <circle cx="15" cy="50" r="3" fill="#C0F0FB" />
+        <circle cx="50" cy="50" r="3" fill="#C0F0FB" />
+        <circle cx="85" cy="50" r="3" fill="#C0F0FB" />
+      </svg>
+    );
+  }
+  return null;
+}
+
 
 
 const COURSE_PRICES: Record<string, { inr: number; id: string }> = {
@@ -331,13 +371,15 @@ export default function CoursesPage() {
             {courses.filter(course => course.id !== "ai-engineering").map((course) => (
               <div
                 key={course.id}
-                className="group relative bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden hover:bg-zinc-900/10 transition-colors flex flex-col md:flex-row"
+                className="group relative bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden hover:border-[#C0F0FB]/20 transition-all duration-300 hover:-translate-y-1 flex flex-col md:flex-row shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
               >
                 {/* Horizontal Image Section */}
-                <div className="relative w-full md:w-2/5 h-56 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-zinc-800 bg-zinc-900/40">
+                <div className="relative w-full md:w-2/5 h-56 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-zinc-800 bg-[#080808] flex items-center justify-center">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(192,240,251,0.03)_0%,transparent_70%)]" />
+                  <CourseBlueprint id={course.id} />
                   {/* Difficulty Badge */}
                   <div className="absolute top-4 left-4 z-20">
-                    <span className="px-3 py-1 bg-zinc-950 rounded-md text-xs font-semibold uppercase text-white/80 border border-zinc-850">
+                    <span className="px-3 py-1 bg-zinc-950 rounded-md text-[10px] font-semibold uppercase text-white/80 border border-zinc-850 tracking-wider">
                       {course.difficulty}
                     </span>
                   </div>
@@ -359,12 +401,12 @@ export default function CoursesPage() {
                     </p>
 
                     <div className="grid grid-cols-2 gap-y-3 gap-x-2 mb-8">
-                      <div className="flex items-center gap-2 text-white/40 text-xs font-medium">
-                        <BookOpen size={14} className="text-white/20" />
+                      <div className="flex items-center gap-2 text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">
+                        <BookOpen size={13} className="text-white/20" />
                         {course.modules.length} Modules
                       </div>
-                      <div className="flex items-center gap-2 text-white/40 text-xs font-medium">
-                        <Clock size={14} className="text-white/20" />
+                      <div className="flex items-center gap-2 text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">
+                        <Clock size={13} className="text-white/20" />
                         {course.duration}
                       </div>
                     </div>
@@ -376,11 +418,11 @@ export default function CoursesPage() {
                           e.preventDefault();
                           setOpenAEO(openAEO === course.id ? null : course.id);
                         }}
-                        className="flex items-center gap-2 text-white/60 font-semibold text-xs hover:text-white transition-colors"
+                        className="flex items-center gap-2 text-white/40 font-mono text-[10px] uppercase tracking-wider hover:text-white transition-colors"
                       >
-                        <HelpCircle size={14} /> 
+                        <HelpCircle size={13} className="text-[#C0F0FB]/40" /> 
                         {openAEO === course.id ? "Hide Summary" : "Show Direct Outcomes"}
-                        <ChevronDown className={cn("transition-transform", openAEO === course.id && "rotate-180")} size={14} />
+                        <ChevronDown className={cn("transition-transform text-[#C0F0FB]/60", openAEO === course.id && "rotate-180")} size={13} />
                       </button>
                       
                       <div className={openAEO === course.id ? "block mt-3 pt-4 border-t border-zinc-800 space-y-3" : "hidden"}>
@@ -408,7 +450,7 @@ export default function CoursesPage() {
                     <Button
                       onClick={() => handleEnroll(course.id)}
                       disabled={loading === course.id}
-                      className="w-full bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-850 hover:text-[#C0F0FB] rounded-xl h-12 font-bold text-xs uppercase tracking-widest transition-all duration-200"
+                      className="w-full bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-900 hover:border-[#C0F0FB]/30 hover:shadow-[0_0_15px_rgba(192,240,251,0.04)] hover:text-[#C0F0FB] rounded-xl h-12 font-bold text-xs uppercase tracking-widest transition-all duration-300"
                     >
                       {loading === course.id ? "Processing..." : "Enroll Now"}
                     </Button>
