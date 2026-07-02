@@ -135,7 +135,7 @@ export default function CoursesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             {/* Detailed Course Card */}
             <div
-              className="lg:col-span-8 group relative rounded-3xl border border-zinc-800 hover:border-[#C0F0FB]/20 bg-zinc-950 p-8 md:p-10 transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+              className="lg:col-span-8 group relative rounded-none border border-zinc-800 hover:border-[#C0F0FB]/20 bg-zinc-950 p-8 md:p-10 transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
             >
               <div className="relative z-10 mb-8">
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
@@ -152,7 +152,7 @@ export default function CoursesPage() {
               </div>
 
               {/* AI Engineering AEO Section */}
-              <div className="mb-10 p-6 rounded-2xl bg-transparent border border-zinc-800/80">
+              <div className="mb-10 p-6 rounded-none bg-transparent border border-zinc-800/80">
                 <h4 className="text-white font-semibold text-base mb-6">
                   Direct Track Outcome
                 </h4>
@@ -201,7 +201,7 @@ export default function CoursesPage() {
                     </ul>
                   </div>
 
-                  <div className="flex flex-col justify-end gap-6 bg-transparent rounded-2xl p-6 border border-zinc-800/80">
+                  <div className="flex flex-col justify-end gap-6 bg-transparent rounded-none p-6 border border-zinc-800/80">
                     <div className="space-y-4">
                       <div className="flex items-center gap-4 text-white/60 text-xs font-semibold uppercase tracking-wider">
                         <Clock size={16} className="text-white/40" />
@@ -229,7 +229,7 @@ export default function CoursesPage() {
                       <Button
                         onClick={() => handleEnroll("ai-engineering")}
                         disabled={loading === "ai-engineering"}
-                        className="w-full h-14 rounded-xl bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-850 hover:text-[#C0F0FB] font-bold uppercase text-xs tracking-widest transition-all duration-200"
+                        className="w-full h-14 rounded-none bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-850 hover:text-[#C0F0FB] font-bold uppercase text-xs tracking-widest transition-all duration-200"
                       >
                         {loading === "ai-engineering" ? "Processing..." : "Enroll Now"}
                       </Button>
@@ -244,7 +244,7 @@ export default function CoursesPage() {
                     <div className="h-px flex-grow bg-zinc-800" />
                   </div>
                   {MODULES.map((mod) => (
-                    <div key={mod.id} className="border border-zinc-800 rounded-2xl overflow-hidden bg-zinc-900/20">
+                    <div key={mod.id} className="border border-zinc-800 rounded-none overflow-hidden bg-zinc-900/20">
                       <button
                         onClick={() => setOpenModule(openModule === mod.id ? null : mod.id)}
                         className="w-full p-6 flex items-center justify-between hover:bg-zinc-900/40 transition-colors group"
@@ -272,7 +272,7 @@ export default function CoursesPage() {
             {/* Registration Sidebar */}
             <div className="lg:col-span-4 space-y-8">
               <div
-                className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 relative overflow-hidden flex flex-col items-center"
+                className="bg-zinc-950 border border-zinc-800 rounded-none p-8 relative overflow-hidden flex flex-col items-center"
               >
                 <div className="w-full">
                   <h4 className="text-white font-bold text-xl mb-8 flex items-center gap-3 tracking-tight self-start">
@@ -295,7 +295,7 @@ export default function CoursesPage() {
               </div>
 
               <div
-                className="bg-white rounded-3xl p-10 text-black border border-zinc-250 shadow-xl"
+                className="bg-white rounded-none p-10 text-black border border-zinc-250 shadow-xl"
               >
                 <div className="relative z-10">
                   <h4 className="text-3xl font-bold tracking-tight mb-4">Claim Early Access</h4>
@@ -309,11 +309,11 @@ export default function CoursesPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="bg-black/5 border-none rounded-xl h-14 px-6 text-base text-black font-medium placeholder:text-black/40 focus:bg-black/10 transition-all"
+                      className="bg-black/5 border-none rounded-none h-14 px-6 text-base text-black font-medium placeholder:text-black/40 focus:bg-black/10 transition-all"
                     />
                     <Button
                       type="submit"
-                      className="w-full h-14 rounded-xl bg-black text-white font-bold uppercase text-xs tracking-widest hover:bg-black/80 transition-all"
+                      className="w-full h-14 rounded-none bg-black text-white font-bold uppercase text-xs tracking-widest hover:bg-black/80 transition-all"
                     >
                       Join the Waitlist — Free
                     </Button>
@@ -334,7 +334,7 @@ export default function CoursesPage() {
             {courses.filter(course => course.id !== "ai-engineering").map((course) => (
               <div
                 key={course.id}
-                className="group relative bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden hover:border-[#C0F0FB]/20 transition-all duration-300 hover:-translate-y-1 flex flex-col md:flex-row shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+                className="group relative bg-zinc-950 border border-zinc-800 rounded-none overflow-hidden hover:border-[#C0F0FB]/20 transition-all duration-300 hover:-translate-y-1 flex flex-col md:flex-row shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
               >
                 {/* Horizontal Image Section */}
                 <div className="relative w-full md:w-2/5 h-56 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-zinc-800 bg-zinc-950">
@@ -347,7 +347,7 @@ export default function CoursesPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent md:bg-gradient-to-r md:from-transparent md:to-zinc-950 z-10" />
                   {/* Difficulty Badge */}
                   <div className="absolute top-4 left-4 z-20">
-                    <span className="px-3 py-1 bg-zinc-950/85 backdrop-blur-sm rounded-md text-[10px] font-semibold uppercase text-white border border-zinc-800 tracking-wider">
+                    <span className="px-3 py-1 bg-zinc-950/85 backdrop-blur-sm rounded-none text-[10px] font-semibold uppercase text-white border border-zinc-800 tracking-wider">
                       {course.difficulty}
                     </span>
                   </div>
@@ -418,7 +418,7 @@ export default function CoursesPage() {
                     <Button
                       onClick={() => handleEnroll(course.id)}
                       disabled={loading === course.id}
-                      className="w-full bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-900 hover:border-[#C0F0FB]/30 hover:shadow-[0_0_15px_rgba(192,240,251,0.04)] hover:text-[#C0F0FB] rounded-xl h-12 font-bold text-xs uppercase tracking-widest transition-all duration-300"
+                      className="w-full bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-900 hover:border-[#C0F0FB]/30 hover:shadow-[0_0_15px_rgba(192,240,251,0.04)] hover:text-[#C0F0FB] rounded-none h-12 font-bold text-xs uppercase tracking-widest transition-all duration-300"
                     >
                       {loading === course.id ? "Processing..." : "Enroll Now"}
                     </Button>
@@ -435,7 +435,7 @@ export default function CoursesPage() {
 
             {/* Special Bundle Card */}
             <div
-              className="group relative bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden hover:bg-zinc-900/10 transition-colors flex flex-col md:flex-row lg:col-span-2"
+              className="group relative bg-zinc-950 border border-zinc-800 rounded-none overflow-hidden hover:bg-zinc-900/10 transition-colors flex flex-col md:flex-row lg:col-span-2"
             >
               <div className="relative w-full md:w-1/3 h-56 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-zinc-800">
                 <div className="absolute inset-0 bg-zinc-900/40 flex items-center justify-center">
@@ -445,7 +445,7 @@ export default function CoursesPage() {
                   </div>
                 </div>
                 <div className="absolute top-4 left-4 z-20">
-                  <span className="px-3 py-1 bg-zinc-900 border border-zinc-800 text-white rounded-md text-xs font-semibold uppercase tracking-widest">
+                  <span className="px-3 py-1 bg-zinc-900 border border-zinc-800 text-white rounded-none text-xs font-semibold uppercase tracking-widest">
                     Value Bundle
                   </span>
                 </div>
@@ -469,14 +469,14 @@ export default function CoursesPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center md:items-end p-8 bg-zinc-900/40 border border-zinc-800 rounded-xl">
+                  <div className="flex flex-col justify-center items-center md:items-end p-8 bg-zinc-900/40 border border-zinc-800 rounded-none">
                     <p className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-1 line-through">₹1,298 Combined</p>
                     <p className="text-4xl font-bold text-white mb-6 tracking-tight">₹999</p>
 
                     <Button
                       onClick={() => handleEnroll("java-python-bundle")}
                       disabled={loading === "java-python-bundle"}
-                      className="w-full md:w-56 h-12 rounded-xl bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-850 hover:text-[#C0F0FB] font-bold uppercase text-xs tracking-widest transition-all duration-200"
+                      className="w-full md:w-56 h-12 rounded-none bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-850 hover:text-[#C0F0FB] font-bold uppercase text-xs tracking-widest transition-all duration-200"
                     >
                       {loading === "java-python-bundle" ? "Processing..." : "Get Bundle"}
                     </Button>
@@ -504,13 +504,13 @@ export default function CoursesPage() {
             {COMING_SOON.map((course, i) => (
               <div
                 key={i}
-                className="group relative bg-zinc-950 border border-zinc-800 rounded-2xl p-8 min-h-[240px] flex flex-col justify-end overflow-hidden hover:bg-zinc-900/10 transition-colors"
+                className="group relative bg-zinc-950 border border-zinc-800 rounded-none p-8 min-h-[240px] flex flex-col justify-end overflow-hidden hover:bg-zinc-900/10 transition-colors"
               >
                 <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center z-20">
                   <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4">
                     <Lock className="text-white/40" size={20} />
                   </div>
-                  <span className="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-md text-xs font-medium uppercase text-white/60 tracking-wider">
+                  <span className="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-none text-xs font-medium uppercase text-white/60 tracking-wider">
                     Enrollment Locked
                   </span>
                 </div>
