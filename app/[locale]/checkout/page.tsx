@@ -146,102 +146,104 @@ export default function CheckoutPage() {
   if (!productId) return <div className="min-h-screen bg-black flex items-center justify-center text-white/40">Invalid Checkout Request</div>;
 
   return (
-    <div className="min-h-screen bg-black pt-32 pb-24 px-6">
+    <div className="min-h-screen bg-black pt-32 pb-32 px-6">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-16">
           
           {/* Left: Billing Form */}
-          <div className="flex-1 space-y-12">
-            <div className="space-y-4">
+          <div className="flex-1 space-y-8">
+            <div className="space-y-2">
                <h1 className="text-5xl font-black text-white tracking-tighter italic">Checkout.</h1>
-               <p className="text-white/40 font-medium tracking-tight uppercase text-xs">Step 1: Secure Billing Configuration</p>
+               <p className="text-[#C0F0FB] font-mono tracking-wider uppercase text-[10px]">Step 1 // Secure Billing Configuration</p>
             </div>
 
-            <form onSubmit={handlePayment} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               <div className="md:col-span-2 space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Full Legal Name</label>
-                  <input 
-                    required
-                    value={billing.full_name}
-                    onChange={e => setBilling({...billing, full_name: e.target.value})}
-                    type="text" placeholder="John Doe" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
-               </div>
+            <div className="bg-[#0A0A0A] border border-white/10 rounded-[40px] p-10">
+              <form onSubmit={handlePayment} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="md:col-span-2 space-y-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Full Legal Name</label>
+                    <input 
+                      required
+                      value={billing.full_name}
+                      onChange={e => setBilling({...billing, full_name: e.target.value})}
+                      type="text" placeholder="John Doe" 
+                      className="w-full bg-[#111111] border border-white/10 rounded-xl py-3.5 px-5 text-white outline-none focus:border-[#C0F0FB] focus:ring-1 focus:ring-[#C0F0FB] transition-all" />
+                 </div>
 
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Email Address</label>
-                  <input 
-                    required readOnly
-                    value={billing.email}
-                    type="email" placeholder="john@example.com" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white/40 outline-none" />
-               </div>
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Email Address</label>
+                    <input 
+                      required readOnly
+                      value={billing.email}
+                      type="email" placeholder="john@example.com" 
+                      className="w-full bg-[#161616] border border-white/5 rounded-xl py-3.5 px-5 text-white/45 outline-none cursor-not-allowed" />
+                 </div>
 
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Phone Number</label>
-                  <input 
-                    required
-                    value={billing.phone}
-                    onChange={e => setBilling({...billing, phone: e.target.value})}
-                    type="tel" placeholder="+91 0000000000" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
-               </div>
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Phone Number</label>
+                    <input 
+                      required
+                      value={billing.phone}
+                      onChange={e => setBilling({...billing, phone: e.target.value})}
+                      type="tel" placeholder="+91 0000000000" 
+                      className="w-full bg-[#111111] border border-white/10 rounded-xl py-3.5 px-5 text-white outline-none focus:border-[#C0F0FB] focus:ring-1 focus:ring-[#C0F0FB] transition-all" />
+                 </div>
 
-               <div className="md:col-span-2 space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Full Address</label>
-                  <input 
-                    required
-                    value={billing.address}
-                    onChange={e => setBilling({...billing, address: e.target.value})}
-                    type="text" placeholder="Door No, Street Name" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
-               </div>
+                 <div className="md:col-span-2 space-y-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Full Address</label>
+                    <input 
+                      required
+                      value={billing.address}
+                      onChange={e => setBilling({...billing, address: e.target.value})}
+                      type="text" placeholder="Door No, Street Name" 
+                      className="w-full bg-[#111111] border border-white/10 rounded-xl py-3.5 px-5 text-white outline-none focus:border-[#C0F0FB] focus:ring-1 focus:ring-[#C0F0FB] transition-all" />
+                 </div>
 
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Village / Area</label>
-                  <input 
-                    required
-                    value={billing.area}
-                    onChange={e => setBilling({...billing, area: e.target.value})}
-                    type="text" placeholder="Gachibowli" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
-               </div>
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Village / Area</label>
+                    <input 
+                      required
+                      value={billing.area}
+                      onChange={e => setBilling({...billing, area: e.target.value})}
+                      type="text" placeholder="Gachibowli" 
+                      className="w-full bg-[#111111] border border-white/10 rounded-xl py-3.5 px-5 text-white outline-none focus:border-[#C0F0FB] focus:ring-1 focus:ring-[#C0F0FB] transition-all" />
+                 </div>
 
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">City</label>
-                  <input 
-                    required
-                    value={billing.city}
-                    onChange={e => setBilling({...billing, city: e.target.value})}
-                    type="text" placeholder="Hyderabad" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
-               </div>
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">City</label>
+                    <input 
+                      required
+                      value={billing.city}
+                      onChange={e => setBilling({...billing, city: e.target.value})}
+                      type="text" placeholder="Hyderabad" 
+                      className="w-full bg-[#111111] border border-white/10 rounded-xl py-3.5 px-5 text-white outline-none focus:border-[#C0F0FB] focus:ring-1 focus:ring-[#C0F0FB] transition-all" />
+                 </div>
 
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Pincode</label>
-                  <input 
-                    required
-                    value={billing.pincode}
-                    onChange={e => setBilling({...billing, pincode: e.target.value})}
-                    type="text" placeholder="500032" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
-               </div>
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">Pincode</label>
+                    <input 
+                      required
+                      value={billing.pincode}
+                      onChange={e => setBilling({...billing, pincode: e.target.value})}
+                      type="text" placeholder="500032" 
+                      className="w-full bg-[#111111] border border-white/10 rounded-xl py-3.5 px-5 text-white outline-none focus:border-[#C0F0FB] focus:ring-1 focus:ring-[#C0F0FB] transition-all" />
+                 </div>
 
-               <div className="md:col-span-2 pt-6">
-                 <Button disabled={isLoading} type="submit" size="lg" className="h-16 w-full rounded-2xl bg-white text-black font-black hover:bg-[#C0F0FB] hover:text-black transition-all shadow-2xl">
-                    {isLoading ? <Loader2 className="animate-spin mr-2" /> : <CreditCard className="mr-2" />}
-                    PROCEED TO PAYMENT
-                 </Button>
-               </div>
-            </form>
+                 <div className="md:col-span-2 pt-6">
+                   <Button disabled={isLoading} type="submit" size="lg" className="h-14 w-full rounded-xl bg-[#C0F0FB] text-black font-bold hover:bg-[#C0F0FB]/90 transition-all shadow-lg shadow-[#C0F0FB]/5">
+                      {isLoading ? <Loader2 className="animate-spin mr-2" /> : <CreditCard className="mr-2" />}
+                      PROCEED TO PAYMENT
+                   </Button>
+                 </div>
+              </form>
+            </div>
           </div>
 
           {/* Right: Order Summary */}
           <div className="w-full lg:w-[400px] space-y-8">
              <div className="bg-[#0A0A0A] border border-white/10 rounded-[40px] p-10 space-y-10 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-5">
+                <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none">
                    <ShoppingBag size={120} />
                 </div>
 
