@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import React, { useState } from 'react';
 import { 
   CheckCircle2, 
   ChevronDown, 
@@ -12,9 +12,14 @@ import {
   BookOpen,
   Award,
   HelpCircle,
-  Sparkles
+  Sparkles,
+  ArrowRight,
+  Code2,
+  Terminal,
+  Activity,
+  Layers,
+  HelpCircle as HelpIcon
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -26,8 +31,7 @@ import { CertificatePreview } from "@/components/marketing/CertificatePreview";
 import Script from "next/script";
 import { PageHero } from "@/components/marketing/PageHero";
 import { getAbsoluteUrl } from "@/lib/subdomains";
-
-
+import { Reveal } from "@/components/marketing/Reveal";
 
 const COURSE_PRICES: Record<string, { inr: number; id: string }> = {
   "ai-engineering": { inr: 1999, id: "ai-engineering" },
@@ -38,36 +42,36 @@ const COURSE_PRICES: Record<string, { inr: number; id: string }> = {
 };
 
 const flagshipAEO = {
-  become: "A world-class AI Engineer capable of architecting autonomous agent systems.",
-  problemSolved: "Solves the 'wrapper' problem by teaching you to build deep RAG and Agentic workflows, not just API calls.",
-  willBuild: "A multi-agent knowledge platform with live web-search and document intelligence.",
-  forWho: "Senior developers, tech leads, and founders who want to lead the AI wave."
+  become: "AI Agent Architect",
+  problemSolved: "Moving beyond basic LLM API wrappers to deep, stateful multi-agent system loops.",
+  willBuild: "Production RAG engine with autonomous tool use & web search capabilities.",
+  forWho: "Senior Developers, Tech Leads & Founders seeking agentic domain expertise."
 };
 
 const MODULES = [
   {
     id: 1,
-    title: "Module 1: The AI Mindset & Core LLM Mechanics",
+    title: "01 // Neural Foundations & Core LLM Mechanics",
     content: "Understanding how Transformer models think. From tokenization and temperature settings to the math behind embeddings. We don't just use APIs; we understand the weights."
   },
   {
     id: 2,
-    title: "Module 2: Advanced Prompt Engineering (Architect Level)",
+    title: "02 // Advanced Prompt Engineering (Architect Level)",
     content: "Moving beyond basic instructions. Learn Chain-of-Thought (CoT), Tree-of-Thought (ToT), and automated prompt optimization techniques used by top engineering teams."
   },
   {
     id: 3,
-    title: "Module 3: Deep RAG - Knowledge Retrieval Systems",
+    title: "03 // Deep RAG - Knowledge Retrieval Systems",
     content: "Building production-grade Retrieval Augmented Generation. Vector databases (Pinecone/Milvus), hybrid search, reranking strategies, and handling massive PDF/Doc sets."
   },
   {
     id: 4,
-    title: "Module 4: Autonomous Agents & Tool Use",
+    title: "04 // Autonomous Agents & Tool Use",
     content: "Giving AI the ability to act. Building agents that can search the web, execute Python code, and interact with your existing SQL databases independently."
   },
   {
     id: 5,
-    title: "Module 5: Multi-Agent Systems & Deployment",
+    title: "05 // Multi-Agent Systems & Deployment",
     content: "Architecting teams of AI agents using LangGraph or CrewAI. Final deployment to production with monitoring, latency optimization, and cost management."
   }
 ];
@@ -115,402 +119,389 @@ export default function CoursesPage() {
   };
 
   return (
-    <>
-
+    <div className="bg-[#020202] min-h-screen text-white select-none">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       
       <PageHero
-        title="Courses"
-        viewingText="COURSES"
+        title="AI Academy"
+        viewingText="ACADEMY"
         exploreText="CURRICULUM"
-        tagline="AI ACADEMY"
+        tagline="ENGINEERING EDUCATION"
       />
 
-      <div className="pb-32 px-6 md:px-10 xl:px-16 2xl:px-24 w-full bg-[#030303] font-sans overflow-x-hidden border-t border-zinc-800/40 pt-16">
-        <div className="max-w-[1600px] mx-auto">
+      <div className="pb-32 px-6 md:px-10 xl:px-16 2xl:px-24 w-full bg-[#020202] overflow-x-hidden border-t border-white/5 pt-16">
+        <div className="max-w-[1600px] mx-auto space-y-24">
 
-        {/* Featured Course Track — AI Engineering */}
-        <section className="mb-40">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-            {/* Detailed Course Card */}
-            <div
-              className="lg:col-span-8 group relative rounded-3xl border border-zinc-800 bg-zinc-950 p-10 md:p-14"
-            >
-              {/* AI Engineering AEO Section */}
-              <div className="mb-12 p-8 rounded-2xl bg-zinc-900/20 border border-zinc-800">
-                <h4 className="text-white font-semibold text-lg mb-6 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" /> Direct Track Outcome
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2">
-                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">What will you become?</p>
-                    <p className="text-white text-base leading-snug">{flagshipAEO.become}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">What problem does this solve?</p>
-                    <p className="text-white text-base leading-snug">{flagshipAEO.problemSolved}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">What will you build?</p>
-                    <p className="text-white text-base leading-snug">{flagshipAEO.willBuild}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">Who is this for?</p>
-                    <p className="text-white text-base leading-snug">{flagshipAEO.forWho}</p>
-                  </div>
-                </div>
+          {/* ================= SECTION 1: OUTCOMES BLUEPRINT GRID ================= */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Reveal delay={0.08}>
+              <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6 space-y-3 h-full backdrop-blur-md">
+                <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">01 // TARGET ROLE</span>
+                <h4 className="text-xl font-bold font-serif text-white">{flagshipAEO.become}</h4>
+                <p className="text-zinc-400 text-xs leading-relaxed">Scope and architect autonomous agent frameworks across production environments.</p>
               </div>
+            </Reveal>
 
-              <div className="relative z-10">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                  <h2 className="text-primary font-semibold uppercase tracking-wider text-sm flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                    Core AI Track — Enrollment Open
+            <Reveal delay={0.16}>
+              <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6 space-y-3 h-full backdrop-blur-md">
+                <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">02 // PROBLEM SOLVED</span>
+                <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{flagshipAEO.problemSolved}</p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.24}>
+              <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6 space-y-3 h-full backdrop-blur-md">
+                <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">03 // CAPSTONE PROJECT</span>
+                <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{flagshipAEO.willBuild}</p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.32}>
+              <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6 space-y-3 h-full backdrop-blur-md">
+                <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">04 // TARGET AUDIENCE</span>
+                <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{flagshipAEO.forWho}</p>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* ================= SECTION 2: FLAGSHIP SHOWCASE (AI ENGINEERING) ================= */}
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 pt-8">
+            {/* Left Column: Flagship Course Details */}
+            <div className="lg:col-span-8 space-y-12">
+              <Reveal>
+                <div className="space-y-6">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="font-mono text-xs text-[#C0F0FB] tracking-widest uppercase flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB] animate-pulse" />
+                      FLAGSHIP TRACK
+                    </span>
+                    <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full font-mono text-[9px] text-zinc-400 uppercase tracking-widest">
+                      ENROLLMENT OPEN
+                    </span>
+                  </div>
+
+                  <h2 className="text-5xl md:text-6xl lg:text-7xl font-serif font-black tracking-tight leading-none text-white">
+                    AI Engineering
                   </h2>
-                  <span className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold uppercase tracking-wider">
-                    Flagship Program
-                  </span>
+                  <p className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl font-light">
+                    A comprehensive, masterclass-level training path designed to take engineers from zero base to deploying stateful multi-agent pipelines in production.
+                  </p>
                 </div>
-                <h3 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight leading-tight">AI Engineering</h3>
-                <p className="text-xl md:text-2xl text-white/60 font-medium mb-12">From Scratch to Production</p>
+              </Reveal>
 
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 mb-16">
-                  <div className="space-y-6">
-                    <p className="text-white/40 font-semibold text-xs uppercase tracking-widest">Terminal Skills:</p>
-                    <ul className="space-y-4">
-                      {[
-                        "How LLMs and AI models actually work",
-                        "Prompt engineering from basics to advanced",
-                        "Claude, OpenAI, and Gemini APIs",
-                        "Embeddings and vector databases",
-                        "RAG systems — build your own from scratch",
-                        "AI agents and tool use",
-                        "Deploy AI applications to production",
-                      ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-4 group">
-                          <CheckCircle2
-                            className="text-primary mt-0.5 shrink-0"
-                            size={18}
+              {/* Skills checklist */}
+              <Reveal delay={0.08}>
+                <div className="space-y-6 bg-white/[0.01] border border-white/5 p-8 rounded-2xl">
+                  <h4 className="font-mono text-xs text-zinc-500 uppercase tracking-widest font-bold">CORE TERMINAL CAPABILITIES</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      "Neural networks & LLM mechanics from scratch",
+                      "Advanced prompt compiler techniques (CoT, ToT)",
+                      "Stateful RAG pipelines & vector space embeddings",
+                      "Autonomous tool utilization & API interface structures",
+                      "Deploying multi-agent orchestrator systems",
+                      "Low-latency serving & cost efficiency monitoring"
+                    ].map((skill, idx) => (
+                      <div key={idx} className="flex items-start gap-3">
+                        <CheckCircle2 className="w-4 h-4 text-[#C0F0FB] shrink-0 mt-0.5" />
+                        <span className="text-sm text-zinc-300 leading-snug">{skill}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+
+              {/* Interactive Curriculum tree */}
+              <Reveal delay={0.12}>
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <h4 className="font-serif text-2xl font-bold text-white tracking-tight">Detailed Curriculum</h4>
+                    <div className="h-px flex-1 bg-white/5" />
+                  </div>
+
+                  <div className="space-y-4">
+                    {MODULES.map((mod) => (
+                      <div 
+                        key={mod.id} 
+                        className="bg-[#080808] border border-white/5 rounded-xl overflow-hidden hover:border-white/10 transition-all duration-300"
+                      >
+                        <button
+                          onClick={() => setOpenModule(openModule === mod.id ? null : mod.id)}
+                          className="w-full p-5 flex items-center justify-between text-left hover:bg-white/[0.01] transition-colors group"
+                        >
+                          <span className="text-sm font-semibold tracking-tight text-zinc-300 group-hover:text-[#C0F0FB] transition-colors">
+                            {mod.title}
+                          </span>
+                          <ChevronDown
+                            className={cn(
+                              "text-zinc-500 transition-transform group-hover:text-white",
+                              openModule === mod.id && "rotate-180 text-white"
+                            )}
+                            size={16}
                           />
-                          <span className="text-white/80 font-medium text-base leading-snug">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="flex flex-col justify-end gap-6 bg-zinc-900/20 rounded-2xl p-8 border border-zinc-800">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4 text-white/60 text-xs font-semibold uppercase tracking-wider">
-                        <Clock size={16} className="text-white/40" />
-                        12 Weeks Self-paced
+                        </button>
+                        {openModule === mod.id && (
+                          <div className="p-6 bg-[#040404] border-t border-white/5 text-xs md:text-sm text-zinc-400 leading-relaxed font-sans font-light animate-fade-in">
+                            {mod.content}
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center gap-4 text-white/60 text-xs font-semibold uppercase tracking-wider">
-                        <GraduationCap size={16} className="text-white/40" />
-                        GrowX Labs Certified
-                      </div>
-                    </div>
-                    <div className="pt-6 border-t border-zinc-800">
-                      <div className="flex items-end justify-between mb-6">
-                        <div>
-                          <p className="text-white/40 text-xs font-medium uppercase tracking-widest mb-1">Tuition Fees</p>
-                          <p className="text-4xl font-bold text-white tracking-tight">₹1,999</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-white/40 text-xs font-medium uppercase tracking-widest mb-1 line-through">
-                            ₹4,999
-                          </p>
-                          <p className="text-green-500 text-sm font-bold uppercase">60% OFF</p>
-                        </div>
-                      </div>
-
-                      <Button
-                        onClick={() => handleEnroll("ai-engineering")}
-                        disabled={loading === "ai-engineering"}
-                        className="w-full h-14 rounded-xl bg-card text-black hover:bg-zinc-200 font-bold uppercase text-sm tracking-widest transition-colors duration-200"
-                      >
-                        {loading === "ai-engineering" ? "Processing..." : "Enroll Now"}
-                      </Button>
-                    </div>
+                    ))}
                   </div>
                 </div>
-
-                {/* Modules Accordion */}
-                <div className="space-y-4 mt-16">
-                  <div className="flex items-center gap-6 mb-8">
-                    <h4 className="text-white font-bold text-2xl tracking-tight shrink-0">Detailed Curriculum</h4>
-                    <div className="h-px flex-grow bg-zinc-800" />
-                  </div>
-                  {MODULES.map((mod) => (
-                    <div key={mod.id} className="border border-zinc-800 rounded-2xl overflow-hidden bg-zinc-900/20">
-                      <button
-                        onClick={() => setOpenModule(openModule === mod.id ? null : mod.id)}
-                        className="w-full p-6 flex items-center justify-between hover:bg-zinc-900/40 transition-colors group"
-                      >
-                        <span className="text-white font-medium text-lg text-left tracking-tight group-hover:text-primary transition-colors">
-                          {mod.title}
-                        </span>
-                        <ChevronDown
-                          className={cn(
-                            "text-white/40 transition-transform",
-                            openModule === mod.id && "rotate-180 text-white"
-                          )}
-                          size={20}
-                        />
-                      </button>
-                      <div className={openModule === mod.id ? "block bg-zinc-950 border-t border-zinc-800" : "hidden"}>
-                        <div className="p-6 text-[#A0A0A0] leading-relaxed font-medium text-base">{mod.content}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              </Reveal>
             </div>
 
-            {/* Registration Sidebar */}
+            {/* Right Column: Checkout, Certificate tilt, Waitlist card */}
             <div className="lg:col-span-4 space-y-8">
-              <div
-                className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 relative overflow-hidden flex flex-col items-center"
-              >
-                <div className="w-full">
-                  <h4 className="text-white font-bold text-xl mb-8 flex items-center gap-3 tracking-tight self-start">
-                    <ShieldCheck className="text-primary" size={22} />
-                    Global Credentials
-                  </h4>
-                </div>
-
-                <CertificatePreview />
-
-                <div className="text-center mt-6">
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-full py-1.5 px-4 inline-flex items-center gap-2 mb-4">
-                    <ShieldCheck size={14} className="text-white/60" />
-                    <span className="text-xs font-semibold text-white/60 uppercase tracking-widest">Institutional Verification</span>
+              {/* Quick Checkout Card */}
+              <Reveal delay={0.16}>
+                <div className="bg-[#080808] border border-white/5 rounded-3xl p-8 space-y-6">
+                  <div className="space-y-2">
+                    <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest font-bold">TUITION & ADMISSIONS</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold tracking-tight font-serif">₹1,999</span>
+                      <span className="text-xs text-zinc-500 line-through">₹4,999</span>
+                      <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">60% OFF</span>
+                    </div>
                   </div>
-                  <p className="text-white/40 text-sm font-medium max-w-[260px] mx-auto leading-relaxed">
-                    This certificate is cryptographically signed and globally verifiable via the GrowX Trust Protocol.
+
+                  <div className="space-y-3 text-xs text-zinc-400 border-t border-white/5 pt-4">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-[#C0F0FB]" />
+                      <span>12 Weeks · Self-paced syllabus</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <GraduationCap className="w-4 h-4 text-[#C0F0FB]" />
+                      <span>GrowX Certified AI Engineer credentials</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={() => handleEnroll("ai-engineering")}
+                    disabled={loading === "ai-engineering"}
+                    className="w-full py-4.5 bg-[#C0F0FB] text-black font-bold hover:bg-[#C0F0FB]/90 transition-all rounded-xl text-xs uppercase tracking-widest shadow-lg shadow-[#C0F0FB]/5"
+                  >
+                    {loading === "ai-engineering" ? "Processing..." : "Enroll in Track"}
+                  </Button>
+                </div>
+              </Reveal>
+
+              {/* 3D Certificate Preview Card */}
+              <Reveal delay={0.24}>
+                <div className="bg-[#080808] border border-white/5 rounded-3xl p-6 flex flex-col items-center text-center space-y-6">
+                  <div className="w-full flex items-center justify-between">
+                    <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest font-bold">CREDENTIAL ENGINE</span>
+                    <span className="text-[9px] text-[#C0F0FB] font-mono uppercase tracking-widest flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      VERIFIED
+                    </span>
+                  </div>
+
+                  <div className="w-full transform hover:scale-[1.03] transition-transform duration-300 cursor-pointer">
+                    <CertificatePreview />
+                  </div>
+
+                  <p className="text-[11px] text-zinc-500 leading-relaxed font-sans max-w-[260px]">
+                    Every graduate is issued a cryptographically verifiable certificate of mastership tied directly to the GrowX Trust Protocol.
                   </p>
                 </div>
-              </div>
+              </Reveal>
 
-              <div
-                className="bg-card rounded-3xl p-10 text-black border border-zinc-250 shadow-xl"
-              >
-                <div className="relative z-10">
-                  <h4 className="text-3xl font-bold tracking-tight mb-4">Claim Early Access</h4>
-                  <p className="text-black/60 font-medium mb-8 text-base leading-snug">
-                    The first 100 registrations receive a 100% scholarship for life. Secure your track.
-                  </p>
-                  <form onSubmit={handleWaitlist} className="space-y-4">
+              {/* Waitlist Form */}
+              <Reveal delay={0.32}>
+                <div className="bg-white text-black rounded-3xl p-8 space-y-6 border border-zinc-200">
+                  <div className="space-y-2">
+                    <h4 className="text-2xl font-serif font-black tracking-tight">Claim Early Access</h4>
+                    <p className="text-zinc-600 text-xs leading-relaxed font-normal">
+                      The first 100 registrations receive a 100% scholarship for life. Secure your place on the waitlist.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleWaitlist} className="space-y-3">
                     <Input
                       type="email"
                       placeholder="Your professional email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="bg-black/5 border-none rounded-xl h-14 px-6 text-base text-black font-medium placeholder:text-black/40 focus:bg-black/10 transition-all"
+                      className="bg-black/5 border-none rounded-xl h-12 px-4 text-sm text-black placeholder:text-black/40 focus:bg-black/10 transition-all font-semibold"
                     />
                     <Button
                       type="submit"
-                      className="w-full h-14 rounded-xl bg-black text-white font-bold uppercase text-xs tracking-widest hover:bg-black/80 transition-all"
+                      className="w-full h-12 rounded-xl bg-black text-white font-bold uppercase text-[10px] tracking-widest hover:bg-black/90 transition-all"
                     >
                       Join the Waitlist — Free
                     </Button>
                   </form>
                 </div>
-              </div>
+              </Reveal>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Other Courses Grid */}
-        <section className="mb-40">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {courses.map((course) => (
-              <div
-                key={course.id}
-                className="group relative bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden hover:bg-zinc-900/10 transition-colors flex flex-col md:flex-row"
-              >
-                {/* Horizontal Image Section */}
-                <div className="relative w-full md:w-2/5 h-56 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-zinc-800 bg-zinc-900/40">
-                  {/* Difficulty Badge */}
-                  <div className="absolute top-4 left-4 z-20">
-                    <span className="px-3 py-1 bg-zinc-950 rounded-md text-xs font-semibold uppercase text-white/80 border border-zinc-850">
-                      {course.difficulty}
-                    </span>
-                  </div>
-                </div>
+          {/* ================= SECTION 3: OTHER ACADEMY TRACKS ================= */}
+          <section className="space-y-12 border-t border-white/5 pt-20">
+            <div className="text-center max-w-2xl mx-auto space-y-4">
+              <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">Alternative Tracks</span>
+              <h3 className="text-3xl md:text-4xl font-serif font-bold text-white tracking-tight">Expand your engineering scope.</h3>
+            </div>
 
-                {/* Horizontal Content Section */}
-                <div className="flex-1 p-8 flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <h5 className="text-white font-bold text-xl group-hover:text-primary transition-colors leading-tight tracking-tight max-w-[75%]">
-                        {course.title}
-                      </h5>
-                      <div className="text-right">
-                        <span className="text-white font-bold text-lg block">₹{COURSE_PRICES[course.id]?.inr || "???"}</span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {courses.map((course) => (
+                <Reveal key={course.id}>
+                  <div className="bg-[#080808] border border-white/5 rounded-2xl p-8 flex flex-col justify-between h-full hover:border-[#C0F0FB]/20 transition-all duration-300 group">
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <span className="px-2.5 py-1 bg-white/5 border border-white/10 rounded font-mono text-[8px] text-zinc-400 uppercase tracking-widest">
+                          {course.difficulty}
+                        </span>
+                        <span className="font-serif font-bold text-white text-lg">₹{COURSE_PRICES[course.id]?.inr || "???"}</span>
+                      </div>
+
+                      <div className="space-y-2">
+                        <h4 className="text-xl font-bold font-serif text-white group-hover:text-[#C0F0FB] transition-colors duration-300">
+                          {course.title}
+                        </h4>
+                        <p className="text-zinc-400 text-xs leading-relaxed font-light">
+                          {course.description}
+                        </p>
+                      </div>
+
+                      <div className="flex gap-4 text-[10px] font-mono text-zinc-500">
+                        <span className="flex items-center gap-1">
+                          <BookOpen size={12} />
+                          {course.modules.length} Modules
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock size={12} />
+                          {course.duration}
+                        </span>
+                      </div>
+
+                      {/* Accordion outcome summary */}
+                      <div className="border-t border-white/5 pt-4">
+                        <button 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setOpenAEO(openAEO === course.id ? null : course.id);
+                          }}
+                          className="flex items-center gap-1.5 text-zinc-500 hover:text-white font-mono text-[9px] uppercase tracking-wider transition-colors"
+                        >
+                          <HelpCircle size={12} /> 
+                          {openAEO === course.id ? "Hide Blueprint" : "Show Blueprint"}
+                          <ChevronDown className={cn("transition-transform", openAEO === course.id && "rotate-180")} size={12} />
+                        </button>
+                        
+                        {openAEO === course.id && (
+                          <div className="mt-4 pt-4 border-t border-white/5 space-y-3.5 text-left text-xs animate-fade-in">
+                            <div className="space-y-1">
+                              <p className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold">Outcome</p>
+                              <p className="text-zinc-300 leading-snug">{course.become}</p>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold">Problem Solved</p>
+                              <p className="text-zinc-300 leading-snug">{course.problemSolved}</p>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold">Capstone Project</p>
+                              <p className="text-zinc-300 leading-snug">{course.willBuild}</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <p className="text-white/60 text-sm leading-relaxed mb-6 line-clamp-2 font-medium">
-                      {course.description}
-                    </p>
 
-                    <div className="grid grid-cols-2 gap-y-3 gap-x-2 mb-8">
-                      <div className="flex items-center gap-2 text-white/40 text-xs font-medium">
-                        <BookOpen size={14} className="text-white/20" />
-                        {course.modules.length} Modules
-                      </div>
-                      <div className="flex items-center gap-2 text-white/40 text-xs font-medium">
-                        <Clock size={14} className="text-white/20" />
-                        {course.duration}
-                      </div>
-                    </div>
-
-                    {/* COURSE AEO Section */}
-                    <div className="mb-6">
-                      <button 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setOpenAEO(openAEO === course.id ? null : course.id);
-                        }}
-                        className="flex items-center gap-2 text-white/60 font-semibold text-xs hover:text-white transition-colors"
+                    <div className="pt-8 mt-8 border-t border-white/5 flex flex-col gap-3">
+                      <Button
+                        onClick={() => handleEnroll(course.id)}
+                        disabled={loading === course.id}
+                        className="w-full py-4.5 bg-zinc-900 border border-white/10 text-white font-bold hover:bg-[#C0F0FB] hover:text-black hover:border-transparent transition-all duration-300 rounded-lg text-xs uppercase tracking-widest"
                       >
-                        <HelpCircle size={14} /> 
-                        {openAEO === course.id ? "Hide Summary" : "Show Direct Outcomes"}
-                        <ChevronDown className={cn("transition-transform", openAEO === course.id && "rotate-180")} size={14} />
-                      </button>
-                      
-                      <div className={openAEO === course.id ? "block mt-3 pt-4 border-t border-zinc-800 space-y-3" : "hidden"}>
-                        <div className="space-y-1">
-                          <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Outcome</p>
-                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.become}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Problem Solved</p>
-                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.problemSolved}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Project</p>
-                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.willBuild}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">For Who</p>
-                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.forWho}</p>
-                        </div>
-                      </div>
+                        {loading === course.id ? "Processing..." : "Enroll Now"}
+                      </Button>
+                      <Link
+                        href={`/courses/${course.slug}`}
+                        className="text-center text-zinc-500 hover:text-white text-[10px] font-mono uppercase tracking-widest transition-colors mt-2"
+                      >
+                        Explore Curriculum
+                      </Link>
                     </div>
                   </div>
+                </Reveal>
+              ))}
+            </div>
 
-                  <div className="flex flex-col gap-3">
-                    <Button
-                      onClick={() => handleEnroll(course.id)}
-                      disabled={loading === course.id}
-                      className="w-full bg-card text-black hover:bg-zinc-200 rounded-lg h-12 font-bold text-sm tracking-widest transition-colors duration-200"
-                    >
-                      {loading === course.id ? "Processing..." : "Enroll Now"}
-                    </Button>
-                    <Link
-                      href={`/courses/${course.slug}`}
-                      className="text-center text-white/40 hover:text-white text-xs font-semibold tracking-widest transition-colors mt-2"
-                    >
-                      Explore Curriculum
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {/* Special Bundle Card */}
-            <div
-              className="group relative bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden hover:bg-zinc-900/10 transition-colors flex flex-col md:flex-row lg:col-span-2"
-            >
-              <div className="relative w-full md:w-1/3 h-56 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-zinc-800">
-                <div className="absolute inset-0 bg-zinc-900/40 flex items-center justify-center">
-                  <div className="relative w-32 h-32 flex items-center justify-center">
-                    <Star size={100} className="text-white/5 absolute" />
-                    <Award className="text-white/60 relative z-10" size={48} />
-                  </div>
-                </div>
-                <div className="absolute top-4 left-4 z-20">
-                  <span className="px-3 py-1 bg-zinc-900 border border-zinc-800 text-white rounded-md text-xs font-semibold uppercase tracking-widest">
+            {/* Special Double Mastery Bundle Card */}
+            <Reveal>
+              <div className="bg-[#080808] border border-white/5 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 hover:border-[#C0F0FB]/20 transition-all duration-300 group">
+                <div className="space-y-4 max-w-xl">
+                  <span className="px-3 py-1 bg-[#C0F0FB]/10 border border-[#C0F0FB]/20 text-[#C0F0FB] rounded font-mono text-[9px] uppercase tracking-widest font-bold">
                     Value Bundle
                   </span>
-                </div>
-              </div>
-
-              <div className="flex-1 p-8 flex flex-col justify-between">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div>
-                    <h5 className="text-white font-bold text-2xl mb-3 tracking-tight">Double Mastery Bundle</h5>
-                    <p className="text-white/60 text-sm leading-relaxed mb-6 font-medium">
-                      Secure both Java and Python tracks at a significant discount. Perfect for engineers aiming for polyglot backend expertise.
-                    </p>
-                    <div className="flex flex-col gap-3">
-                      <div className="flex items-center gap-3 text-white/80 text-sm font-medium">
-                        <CheckCircle2 size={16} className="text-green-500" />
-                        Java Mastery
-                      </div>
-                      <div className="flex items-center gap-3 text-white/80 text-sm font-medium">
-                        <CheckCircle2 size={16} className="text-green-500" />
-                        Python Mastery
-                      </div>
+                  <h4 className="text-2xl md:text-3xl font-serif font-bold text-white tracking-tight">Double Mastery Bundle</h4>
+                  <p className="text-zinc-400 text-xs leading-relaxed font-light">
+                    Secure both Java Mastery and Python Mastery tracks at a massive combined discount. Designed for developers looking to build polyglot backend systems.
+                  </p>
+                  <div className="flex flex-wrap gap-4 pt-2">
+                    <div className="flex items-center gap-2 text-xs text-zinc-300">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <span>Java Mastery Track</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-zinc-300">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <span>Python Mastery Track</span>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center md:items-end p-8 bg-zinc-900/40 border border-zinc-800 rounded-xl">
-                    <p className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-1 line-through">₹1,298 Combined</p>
-                    <p className="text-4xl font-bold text-white mb-6 tracking-tight">₹999</p>
+                </div>
 
-                    <Button
-                      onClick={() => handleEnroll("java-python-bundle")}
-                      disabled={loading === "java-python-bundle"}
-                      className="w-full md:w-56 h-12 rounded-lg bg-card text-black hover:bg-zinc-200 font-bold uppercase text-sm tracking-widest transition-colors duration-200"
-                    >
-                      {loading === "java-python-bundle" ? "Processing..." : "Get Bundle"}
-                    </Button>
-                  </div>
+                <div className="bg-white/[0.02] border border-white/5 rounded-xl p-8 text-center flex flex-col justify-center items-center w-full md:w-64">
+                  <span className="text-[10px] font-mono text-zinc-500 line-through uppercase tracking-wider mb-1">₹1,298 combined</span>
+                  <span className="text-4xl font-bold font-serif mb-6">₹999</span>
+                  <Button
+                    onClick={() => handleEnroll("java-python-bundle")}
+                    disabled={loading === "java-python-bundle"}
+                    className="w-full py-4.5 bg-[#C0F0FB] text-black font-bold hover:bg-[#C0F0FB]/90 transition-all rounded-lg text-xs uppercase tracking-widest shadow-lg shadow-[#C0F0FB]/5"
+                  >
+                    {loading === "java-python-bundle" ? "Processing..." : "Get Bundle"}
+                  </Button>
                 </div>
               </div>
+            </Reveal>
+          </section>
+
+          {/* ================= SECTION 4: ROADMAP EXPANSION ROADMAP ================= */}
+          <section className="space-y-12 border-t border-white/5 pt-20">
+            <div className="text-center max-w-2xl mx-auto space-y-4">
+              <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">Academic Pipeline</span>
+              <h3 className="text-3xl md:text-4xl font-serif font-bold text-white tracking-tight">Growth Roadmap</h3>
             </div>
-          </div>
-        </section>
 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {COMING_SOON.map((course, i) => (
+                <Reveal key={i} delay={0.08 * (i + 1)}>
+                  <div className="bg-[#080808] border border-white/5 rounded-2xl p-8 min-h-[220px] flex flex-col justify-end relative overflow-hidden group">
+                    {/* Lock Screen overlay */}
+                    <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-20 opacity-100 group-hover:bg-black/75 transition-colors duration-300">
+                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-3">
+                        <Lock className="text-zinc-500" size={16} />
+                      </div>
+                      <span className="px-2.5 py-1 bg-white/5 border border-white/10 rounded font-mono text-[8px] text-zinc-400 uppercase tracking-widest">
+                        Enrollment Locked
+                      </span>
+                    </div>
 
-
-        {/* Expansion Roadmap Section */}
-        <section className="pb-20 mt-32">
-          <div className="text-center mb-16">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="h-px w-6 bg-card/10" />
-              <span className="text-white/40 text-xs font-semibold uppercase tracking-widest">Academic Pipeline</span>
-              <div className="h-px w-6 bg-card/10" />
-            </div>
-            <h3 className="text-white font-bold text-4xl md:text-5xl tracking-tight">Growth Roadmap</h3>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {COMING_SOON.map((course, i) => (
-              <div
-                key={i}
-                className="group relative bg-zinc-950 border border-zinc-800 rounded-2xl p-8 min-h-[240px] flex flex-col justify-end overflow-hidden hover:bg-zinc-900/10 transition-colors"
-              >
-                <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center z-20">
-                  <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4">
-                    <Lock className="text-white/40" size={20} />
+                    <div className="space-y-2 relative z-10 pointer-events-none">
+                      <h5 className="text-lg font-bold font-serif text-white">{course.title}</h5>
+                      <p className="text-zinc-400 text-xs leading-relaxed font-light">{course.description}</p>
+                    </div>
                   </div>
-                  <span className="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-md text-xs font-medium uppercase text-white/60 tracking-wider">
-                    Enrollment Locked
-                  </span>
-                </div>
-                <div className="relative pointer-events-none">
-                  <h5 className="text-white font-bold text-xl mb-2 tracking-tight leading-tight">{course.title}</h5>
-                  <p className="text-[#A0A0A0] text-sm leading-relaxed font-medium line-clamp-3">{course.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+
+        </div>
       </div>
     </div>
-  </>
-);
+  );
 }
-
