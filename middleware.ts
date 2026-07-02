@@ -218,7 +218,7 @@ export default async function middleware(req: NextRequest) {
     const mainSitePaths = [
       '/services', '/portfolio', '/blog', '/faq', '/contact', 
       '/privacy', '/terms', '/refund-policy', '/login', '/signup', 
-      '/register', '/admin', '/client', '/demos'
+      '/register', '/admin', '/client', '/demos', '/checkout'
     ];
 
     if (mainSitePaths.some(path => cleanPath.startsWith(path))) {

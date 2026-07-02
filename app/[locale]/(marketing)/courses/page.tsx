@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { CertificatePreview } from "@/components/marketing/CertificatePreview";
 import Script from "next/script";
 import { PageHero } from "@/components/marketing/PageHero";
+import { getAbsoluteUrl } from "@/lib/subdomains";
 
 
 
@@ -96,7 +97,7 @@ export default function CoursesPage() {
 
   const handleEnroll = (courseId: string) => {
     if (!session) {
-      router.push(`/login?callbackUrl=/courses`);
+      window.location.href = getAbsoluteUrl(`/login?callbackUrl=/courses`);
       return;
     }
 
@@ -104,7 +105,7 @@ export default function CoursesPage() {
     const course = courses.find(c => c.id === courseId);
     const title = course?.title || courseId.replace(/-/g, " ").toUpperCase();
     
-    router.push(`/checkout?productId=${courseId}&type=course&price=${price}&title=${encodeURIComponent(title)}`);
+    window.location.href = getAbsoluteUrl(`/checkout?productId=${courseId}&type=course&price=${price}&title=${encodeURIComponent(title)}`);
   };
 
   const handleWaitlist = (e: React.FormEvent) => {
