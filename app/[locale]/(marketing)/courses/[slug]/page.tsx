@@ -17,9 +17,14 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 import { enrollInCourse } from "@/lib/actions/enrollment";
-import { cn } from "@/lib/utils";
+import { ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import { CertificatePreview } from "@/components/marketing/CertificatePreview";
 import { getAbsoluteUrl } from "@/lib/subdomains";
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export default function CourseDetailsPage() {
   const params = useParams();
@@ -80,22 +85,22 @@ export default function CourseDetailsPage() {
 
         {/* ================= SECTION 2: DYNAMIC OUTCOMES BLUEPRINT GRID ================= */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
-          <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 space-y-3 h-full">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-none p-6 space-y-3 h-full">
             <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">01 // TARGET ROLE</span>
             <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{course.become || "Master Specialist"}</p>
           </div>
 
-          <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 space-y-3 h-full">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-none p-6 space-y-3 h-full">
             <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">02 // CORE RESOLUTION</span>
             <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{course.problemSolved || "Deep domain automation integration."}</p>
           </div>
 
-          <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 space-y-3 h-full">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-none p-6 space-y-3 h-full">
             <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">03 // CAPSTONE PROJECT</span>
             <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{course.willBuild || "Production level enterprise module build."}</p>
           </div>
 
-          <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 space-y-3 h-full">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-none p-6 space-y-3 h-full">
             <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">04 // TARGET AUDIENCE</span>
             <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{course.forWho || "Senior engineers & team leads."}</p>
           </div>
@@ -115,7 +120,7 @@ export default function CourseDetailsPage() {
                 {course.modules.map((module, mIdx) => (
                   <div 
                     key={module.id} 
-                    className="bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden hover:border-zinc-700/50 transition-all duration-300"
+                    className="bg-zinc-950 border border-zinc-800 rounded-none overflow-hidden hover:border-zinc-700/50 transition-all duration-300"
                   >
                     <button
                       onClick={() => setOpenModule(openModule === module.id ? null : module.id)}
@@ -147,7 +152,7 @@ export default function CourseDetailsPage() {
                           {module.lessons.map((lesson, lIdx) => (
                             <div 
                               key={lesson.id} 
-                              className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 group hover:border-white/10 transition-colors"
+                              className="flex items-center justify-between p-4 bg-black/40 rounded-none border border-white/5 group hover:border-white/10 transition-colors"
                             >
                               <div className="flex items-center gap-4">
                                 <span className="text-zinc-600 font-mono text-xs">0{lIdx + 1}</span>
@@ -165,9 +170,9 @@ export default function CourseDetailsPage() {
             </div>
 
             {/* Capstone Evaluation Card */}
-            <div className="bg-zinc-950 border border-zinc-800 rounded-[2rem] p-10 md:p-14 space-y-6">
+            <div className="bg-zinc-950 border border-zinc-800 rounded-none p-10 md:p-14 space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="w-12 h-12 rounded-2xl bg-[#C0F0FB] flex items-center justify-center">
+                   <div className="w-12 h-12 rounded-none bg-[#C0F0FB] flex items-center justify-center">
                       <Award className="text-black" size={24} />
                    </div>
                    <h2 className="text-white font-serif font-bold text-3xl tracking-tight">Capstone Evaluation</h2>
@@ -190,8 +195,8 @@ export default function CourseDetailsPage() {
           <div className="lg:col-span-4 space-y-8">
             <div className="sticky top-32 space-y-8">
               {/* Enrollment card */}
-              <div className="bg-zinc-950 border border-zinc-800 rounded-[2rem] p-8 space-y-6">
-                 <div className="relative aspect-video rounded-2xl overflow-hidden border border-zinc-900">
+              <div className="bg-zinc-950 border border-zinc-800 rounded-none p-8 space-y-6">
+                 <div className="relative aspect-video rounded-none overflow-hidden border border-zinc-900">
                     <Image src={course.image} alt={course.title} fill className="object-cover" />
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                        <PlayCircle size={48} className="text-white/80 hover:text-white cursor-pointer transition-all" />
@@ -218,14 +223,14 @@ export default function CourseDetailsPage() {
                  <Button 
                    onClick={handleEnroll}
                    isLoading={isLoading}
-                   className="w-full py-4 bg-zinc-900 border border-zinc-800 text-white font-bold hover:bg-zinc-800 hover:text-[#C0F0FB] transition-all rounded-xl text-xs uppercase tracking-widest"
+                   className="w-full py-4 bg-zinc-900 border border-zinc-800 text-white font-bold hover:bg-zinc-800 hover:text-[#C0F0FB] transition-all rounded-none text-xs uppercase tracking-widest"
                  >
                    Enroll In Course <ChevronRight size={14} className="ml-1.5" />
                  </Button>
               </div>
 
               {/* Certificate Preview Card */}
-              <div className="bg-zinc-950 border border-zinc-800 rounded-[2rem] p-6 text-center space-y-6">
+              <div className="bg-zinc-950 border border-zinc-800 rounded-none p-6 text-center space-y-6">
                 <div className="w-full flex items-center justify-between">
                   <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest font-bold">CREDENTIAL ENGINE</span>
                   <span className="text-[9px] text-[#C0F0FB] font-mono uppercase tracking-widest flex items-center gap-1.5">
