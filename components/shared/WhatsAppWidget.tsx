@@ -9,6 +9,11 @@ export function WhatsAppWidget() {
   const [isVisible, setIsVisible] = useState(false);
   const pathname = usePathname();
 
+  // Hide the widget completely on dashboard, admin, and client console views
+  const isDashboardRoute = pathname?.includes('/admin') || 
+                           pathname?.includes('/client') || 
+                           pathname?.includes('/dashboard');
+
   // International format for Indian number: 918185958336
   const phoneNumber = '918185958336';
   const rawMessage = "Hi, I'd like to discuss a project with GrowX Labs. When can we have an intro call?";
@@ -16,6 +21,8 @@ export function WhatsAppWidget() {
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
   useEffect(() => {
+    if (isDashboardRoute) return;
+
     const handleScroll = () => {
       // Show when scrolled down more than 100px
       if (window.scrollY > 100) {
@@ -35,7 +42,11 @@ export function WhatsAppWidget() {
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(timeoutId);
     };
-  }, [pathname]);
+  }, [pathname, isDashboardRoute]);
+
+  if (isDashboardRoute) {
+    return null;
+  }
 
   return (
     <div 
