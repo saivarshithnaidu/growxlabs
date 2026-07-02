@@ -131,53 +131,53 @@ export default function CoursesPage() {
         <div className="max-w-[1600px] mx-auto">
 
         {/* Featured Course Track — AI Engineering */}
-        <section className="mb-40">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <section className="mb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             {/* Detailed Course Card */}
             <div
-              className="lg:col-span-8 group relative rounded-3xl border border-zinc-800 bg-zinc-950 p-10 md:p-14"
+              className="lg:col-span-8 group relative rounded-3xl border border-zinc-800 hover:border-[#C0F0FB]/20 bg-zinc-950 p-8 md:p-10 transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
             >
-              <div className="relative z-10 mb-12">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                  <h2 className="text-[#C0F0FB] font-semibold uppercase tracking-wider text-sm flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-[#C0F0FB] animate-pulse" />
+              <div className="relative z-10 mb-8">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+                  <h2 className="text-[#C0F0FB] font-semibold uppercase tracking-wider text-xs flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#C0F0FB] animate-pulse" />
                     AI Academy // Core AI Track — Enrollment Open
                   </h2>
-                  <span className="px-4 py-1.5 rounded-full bg-[#C0F0FB]/5 border border-[#C0F0FB]/20 text-[#C0F0FB] text-xs font-semibold uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-full bg-[#C0F0FB]/5 border border-[#C0F0FB]/20 text-[#C0F0FB] text-[10px] font-semibold uppercase tracking-wider">
                     Flagship Program
                   </span>
                 </div>
-                <h3 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight leading-tight">AI Engineering</h3>
-                <p className="text-xl md:text-2xl text-white/60 font-medium">From Scratch to Production</p>
+                <h3 className="text-4xl md:text-5xl font-serif font-bold text-white mb-2 tracking-tight leading-tight">AI Engineering</h3>
+                <p className="text-lg md:text-xl text-white/60 font-medium">From Scratch to Production</p>
               </div>
 
               {/* AI Engineering AEO Section */}
-              <div className="mb-16 p-8 rounded-2xl bg-[#0b0b0b]/40 border border-zinc-800/80">
-                <h4 className="text-white font-semibold text-lg mb-8 flex items-center gap-2.5">
-                  <Sparkles className="w-5 h-5 text-[#C0F0FB]" /> Direct Track Outcome
+              <div className="mb-10 p-6 rounded-2xl bg-transparent border border-zinc-800/80">
+                <h4 className="text-white font-semibold text-base mb-6">
+                  Direct Track Outcome
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                  <div className="space-y-2">
-                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">01 // Target Role</p>
-                    <p className="text-white text-base leading-relaxed font-medium">{flagshipAEO.become}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+                  <div className="p-6 border-b md:border-r border-zinc-800/60 pb-6 md:pb-8 md:pr-8 md:pt-0 pl-0 pt-0">
+                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold mb-1">01 // Target Role</p>
+                    <p className="text-white text-sm leading-relaxed font-medium">{flagshipAEO.become}</p>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">02 // Problem Solved</p>
-                    <p className="text-white text-base leading-relaxed font-medium">{flagshipAEO.problemSolved}</p>
+                  <div className="p-6 border-b border-zinc-800/60 pb-6 md:pb-8 md:pl-8 md:pt-0 pl-0 pt-0">
+                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold mb-1">02 // Problem Solved</p>
+                    <p className="text-white text-sm leading-relaxed font-medium">{flagshipAEO.problemSolved}</p>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">03 // Capstone Project</p>
-                    <p className="text-white text-base leading-relaxed font-medium">{flagshipAEO.willBuild}</p>
+                  <div className="p-6 border-b md:border-b-0 md:border-r border-zinc-800/60 pt-6 md:pt-8 md:pr-8 pl-0">
+                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold mb-1">03 // Capstone Project</p>
+                    <p className="text-white text-sm leading-relaxed font-medium">{flagshipAEO.willBuild}</p>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">04 // Who is this for</p>
-                    <p className="text-white text-base leading-relaxed font-medium">{flagshipAEO.forWho}</p>
+                  <div className="p-6 pt-6 md:pt-8 md:pl-8 pl-0">
+                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold mb-1">04 // Who is this for</p>
+                    <p className="text-white text-sm leading-relaxed font-medium">{flagshipAEO.forWho}</p>
                   </div>
                 </div>
               </div>
 
               <div className="relative z-10">
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 mb-16">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
                   <div className="space-y-6">
                     <p className="text-white/40 font-semibold text-xs uppercase tracking-widest">Terminal Skills:</p>
                     <ul className="space-y-4">
@@ -201,7 +201,7 @@ export default function CoursesPage() {
                     </ul>
                   </div>
 
-                  <div className="flex flex-col justify-end gap-6 bg-zinc-900/20 rounded-2xl p-8 border border-zinc-800">
+                  <div className="flex flex-col justify-end gap-6 bg-transparent rounded-2xl p-6 border border-zinc-800/80">
                     <div className="space-y-4">
                       <div className="flex items-center gap-4 text-white/60 text-xs font-semibold uppercase tracking-wider">
                         <Clock size={16} className="text-white/40" />
