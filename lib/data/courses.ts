@@ -607,6 +607,127 @@ export const courses: Course[] = [
     problemSolved: "Moves you from 'scripting' to building robust production APIs.",
     willBuild: "Distributed task processors and robust FastAPI backend systems.",
     forWho: "Data enthusiasts and developers wanting to master production Python."
+  },
+  {
+    id: "ai-engineering",
+    title: "AI Engineering: From Scratch to Production",
+    slug: "ai-engineering",
+    description: "Scope, architect, and deploy autonomous multi-agent systems and deep RAG engines. Master LangGraph, CrewAI, vector databases, and model mechanics.",
+    image: "/courses/ai-engineering.jpg",
+    difficulty: "Advanced",
+    duration: "12 Weeks",
+    modules: [
+      {
+        id: "ai-m1",
+        title: "Neural Foundations & Core LLM Mechanics",
+        slug: "llm-mechanics",
+        description: "Understanding how Transformer models think. From tokenization to the math behind embeddings.",
+        lessons: [
+          {
+            id: "ai-l1-1",
+            title: "Transformer Architecture & Attention Blocks",
+            slug: "transformers-attention",
+            explanation: "Transformers rely on attention mechanisms to weigh context across text tokens.",
+            keyPoints: ["Self-attention calculates token relationships.", "Weights represent token relevance.", "Embeddings project words into vector spaces."],
+            codeExample: "import torch\n# Attention blocks implementation",
+            expectedOutput: "A tensor representing context-weighted token arrays.",
+            useCase: "Building deep models that process long documents.",
+            practiceTask: "Implement a dot-product attention function in Python."
+          }
+        ]
+      },
+      {
+        id: "ai-m2",
+        title: "Advanced Prompt Engineering",
+        slug: "prompt-engineering",
+        description: "Chain-of-Thought (CoT), Tree-of-Thought (ToT), and programmatic generation.",
+        lessons: [
+          {
+            id: "ai-l2-1",
+            title: "Programmatic Prompt Compilers",
+            slug: "prompt-compilers",
+            explanation: "Programmatic prompts optimize models automatically using feedback loops.",
+            keyPoints: ["Structured outputs (JSON) from LLMs.", "Few-shot dynamic selector templates.", "DSPy compiler patterns."],
+            codeExample: "# Programmatic dynamic prompts",
+            expectedOutput: "Deterministic JSON responses from LLM API interfaces.",
+            useCase: "Connecting LLMs to production API endpoints securely.",
+            practiceTask: "Create a system prompt that outputs valid client JSON structures."
+          }
+        ]
+      },
+      {
+        id: "ai-m3",
+        title: "Deep RAG & Retrieval Engine",
+        slug: "rag-systems",
+        description: "Hybrid search, Pinecone/Milvus, reranking, and chunking strategies.",
+        lessons: [
+          {
+            id: "ai-l3-1",
+            title: "Hybrid Vector Search & Reranking",
+            slug: "vector-search",
+            explanation: "Hybrid search merges BM25 keyword matching with dense vector searches.",
+            keyPoints: ["Pinecone for indexing dense embeddings.", "Reranking models filter top results.", "Semantic chunking strategies."],
+            codeExample: "# Hybrid search execution",
+            expectedOutput: "Top-K highly relevant search results.",
+            useCase: "Answering queries based on complex internal PDF document sets.",
+            practiceTask: "Setup a Pinecone index and perform a basic metadata search query."
+          }
+        ]
+      },
+      {
+        id: "ai-m4",
+        title: "Autonomous Tool Use",
+        slug: "tool-use",
+        description: "Building agents that can search the web and write SQL queries.",
+        lessons: [
+          {
+            id: "ai-l4-1",
+            title: "Function Calling & Tool Bindings",
+            slug: "function-calling",
+            explanation: "Function calling lets models decide when to execute local functions based on user queries.",
+            keyPoints: ["JSON schema schemas for tool declarations.", "Binding tools to chat models.", "Executing python code blocks in sandbox environments."],
+            codeExample: "# Binding tool functions",
+            expectedOutput: "A structured model call requesting tool execution.",
+            useCase: "Enabling models to pull live data from external APIs or databases.",
+            practiceTask: "Bind a custom calculator tool to a Gemini chat instance."
+          }
+        ]
+      },
+      {
+        id: "ai-m5",
+        title: "Multi-Agent Orchestration",
+        slug: "multi-agents",
+        description: "Orchestrating agent swarms using LangGraph and CrewAI.",
+        lessons: [
+          {
+            id: "ai-l5-1",
+            title: "Stateful Agent Graphs & Crews",
+            slug: "stateful-graphs",
+            explanation: "LangGraph manages agent networks as stateful cyclic graphs.",
+            keyPoints: ["Defining nodes, edges, and conditional routing.", "Persisting conversation state.", "Deploying agent workers to production."],
+            codeExample: "# LangGraph cyclic agent loops",
+            expectedOutput: "Autonomous multi-agent research swarm output.",
+            useCase: "Developing autonomous marketing outreach and customer support agents.",
+            practiceTask: "Build a two-agent system where one writes content and the other reviews it."
+          }
+        ]
+      }
+    ],
+    assessment: [],
+    finalProject: {
+      title: "Autonomous Agent Swarm Platform",
+      description: "Scope, code, and deploy a multi-agent system that searches the web, writes reports, and posts to databases independently.",
+      requirements: [
+        "LangGraph cyclic flow state",
+        "Pinecone hybrid search retrieval",
+        "Gemini Function calling tools",
+        "FastAPI deployment with token usage logs"
+      ]
+    },
+    become: "A world-class AI Engineer capable of architecting autonomous agent systems.",
+    problemSolved: "Solves the 'wrapper' problem by teaching you to build deep RAG and Agentic workflows, not just API calls.",
+    willBuild: "A multi-agent knowledge platform with live web-search and document intelligence.",
+    forWho: "Senior developers, tech leads, and founders who want to lead the AI wave."
   }
 ];
 

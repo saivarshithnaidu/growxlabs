@@ -80,22 +80,22 @@ export default function CourseDetailsPage() {
 
         {/* ================= SECTION 2: DYNAMIC OUTCOMES BLUEPRINT GRID ================= */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
-          <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6 space-y-3 h-full backdrop-blur-md">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 space-y-3 h-full">
             <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">01 // TARGET ROLE</span>
             <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{course.become || "Master Specialist"}</p>
           </div>
 
-          <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6 space-y-3 h-full backdrop-blur-md">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 space-y-3 h-full">
             <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">02 // CORE RESOLUTION</span>
             <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{course.problemSolved || "Deep domain automation integration."}</p>
           </div>
 
-          <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6 space-y-3 h-full backdrop-blur-md">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 space-y-3 h-full">
             <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">03 // CAPSTONE PROJECT</span>
             <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{course.willBuild || "Production level enterprise module build."}</p>
           </div>
 
-          <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6 space-y-3 h-full backdrop-blur-md">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 space-y-3 h-full">
             <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">04 // TARGET AUDIENCE</span>
             <p className="text-zinc-200 text-sm leading-relaxed font-semibold">{course.forWho || "Senior engineers & team leads."}</p>
           </div>
@@ -115,11 +115,11 @@ export default function CourseDetailsPage() {
                 {course.modules.map((module, mIdx) => (
                   <div 
                     key={module.id} 
-                    className="bg-[#080808] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all duration-300"
+                    className="bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden hover:border-zinc-700/50 transition-all duration-300"
                   >
                     <button
                       onClick={() => setOpenModule(openModule === module.id ? null : module.id)}
-                      className="w-full p-6 flex items-center justify-between text-left hover:bg-white/[0.01] transition-colors group"
+                      className="w-full p-6 flex items-center justify-between text-left hover:bg-zinc-900/10 transition-colors group"
                     >
                       <div className="space-y-1">
                         <span className="text-[9px] font-mono font-bold uppercase text-[#C0F0FB] tracking-widest block">MODULE 0{mIdx + 1}</span>
@@ -165,7 +165,7 @@ export default function CourseDetailsPage() {
             </div>
 
             {/* Capstone Evaluation Card */}
-            <div className="bg-[#C0F0FB]/5 border border-[#C0F0FB]/20 rounded-[40px] p-10 md:p-14 space-y-6">
+            <div className="bg-zinc-950 border border-zinc-800 rounded-[2rem] p-10 md:p-14 space-y-6">
                 <div className="flex items-center gap-4">
                    <div className="w-12 h-12 rounded-2xl bg-[#C0F0FB] flex items-center justify-center">
                       <Award className="text-black" size={24} />
@@ -190,26 +190,26 @@ export default function CourseDetailsPage() {
           <div className="lg:col-span-4 space-y-8">
             <div className="sticky top-32 space-y-8">
               {/* Enrollment card */}
-              <div className="bg-[#080808] border border-white/10 rounded-[40px] p-8 space-y-6 backdrop-blur-xl">
-                 <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/5">
+              <div className="bg-zinc-950 border border-zinc-800 rounded-[2rem] p-8 space-y-6">
+                 <div className="relative aspect-video rounded-2xl overflow-hidden border border-zinc-900">
                     <Image src={course.image} alt={course.title} fill className="object-cover" />
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                        <PlayCircle size={48} className="text-white/80 hover:text-white cursor-pointer transition-all" />
                     </div>
                  </div>
 
-                 <div className="space-y-4 border-t border-white/5 pt-4">
+                 <div className="space-y-4 border-t border-zinc-900 pt-4">
                     <div className="flex items-center justify-between text-xs py-1.5">
-                       <span className="text-zinc-500">Modules</span>
-                       <span className="text-white font-bold">{course.modules.length} Full Sections</span>
+                       <span className="text-zinc-500 font-mono text-[9px] uppercase tracking-wider">Modules</span>
+                       <span className="text-white font-bold text-xs">{course.modules.length} Full Sections</span>
                     </div>
                     <div className="flex items-center justify-between text-xs py-1.5">
-                       <span className="text-zinc-500">Assessment</span>
-                       <span className="text-white font-bold">Standardized Evaluation</span>
+                       <span className="text-zinc-500 font-mono text-[9px] uppercase tracking-wider">Assessment</span>
+                       <span className="text-white font-bold text-xs">Standardized Evaluation</span>
                     </div>
                     <div className="flex items-center justify-between text-xs py-1.5">
-                       <span className="text-zinc-500">Validation</span>
-                       <span className="text-white font-bold flex items-center gap-1.5">
+                       <span className="text-zinc-500 font-mono text-[9px] uppercase tracking-wider">Validation</span>
+                       <span className="text-white font-bold text-xs flex items-center gap-1.5">
                           Verifiable <ShieldCheck size={14} className="text-[#C0F0FB]" />
                        </span>
                     </div>
@@ -218,14 +218,14 @@ export default function CourseDetailsPage() {
                  <Button 
                    onClick={handleEnroll}
                    isLoading={isLoading}
-                   className="w-full bg-[#C0F0FB] hover:bg-[#C0F0FB]/90 text-black rounded-2xl h-14 font-black text-xs uppercase tracking-widest shadow-xl shadow-[#C0F0FB]/5"
+                   className="w-full py-4 bg-zinc-900 border border-zinc-800 text-white font-bold hover:bg-zinc-800 hover:text-[#C0F0FB] transition-all rounded-xl text-xs uppercase tracking-widest"
                  >
                    Enroll In Course <ChevronRight size={14} className="ml-1.5" />
                  </Button>
               </div>
 
               {/* Certificate Preview Card */}
-              <div className="bg-[#080808] border border-white/10 rounded-[40px] p-6 text-center space-y-6">
+              <div className="bg-zinc-950 border border-zinc-800 rounded-[2rem] p-6 text-center space-y-6">
                 <div className="w-full flex items-center justify-between">
                   <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest font-bold">CREDENTIAL ENGINE</span>
                   <span className="text-[9px] text-[#C0F0FB] font-mono uppercase tracking-widest flex items-center gap-1.5">
