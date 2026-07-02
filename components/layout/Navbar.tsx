@@ -45,7 +45,7 @@ export function Navbar() {
             : "bg-[#111111]/80 border-b border-transparent"));
 
   const logoColor1 = isLightThemePage ? "text-[#1A1A1A]" : "text-white";
-  const logoColor2 = isBlog ? "text-white" : "text-primary";
+  const logoColor2 = isBlog ? "text-white" : "text-[#C0F0FB]";
 
   const buttonOverrideClass = isLightThemePage
     ? "border-[#E5E2DC] text-[#1A1A1A] hover:bg-neutral-100"
@@ -152,7 +152,7 @@ export function Navbar() {
               {(() => {
                 const resolvedHref = getAbsoluteUrl("/contact");
                 const isExternal = resolvedHref.startsWith("http") && isMounted;
-                const contactBtnClass = "font-semibold px-3 sm:px-5 text-xs sm:text-sm rounded-md border border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm";
+                const contactBtnClass = "font-semibold px-3 sm:px-5 text-xs sm:text-sm rounded-md border border-[#C0F0FB] text-[#C0F0FB] bg-transparent hover:bg-[#C0F0FB] hover:text-black transition-all duration-300 shadow-sm";
                 if (isExternal) {
                   return (
                     <a href={resolvedHref}>

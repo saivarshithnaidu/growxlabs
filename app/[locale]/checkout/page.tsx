@@ -167,7 +167,7 @@ export default function CheckoutPage() {
                     value={billing.full_name}
                     onChange={e => setBilling({...billing, full_name: e.target.value})}
                     type="text" placeholder="John Doe" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-primary/40 focus:bg-primary/[0.02] transition-all" />
+                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
                </div>
 
                <div className="space-y-2">
@@ -186,7 +186,7 @@ export default function CheckoutPage() {
                     value={billing.phone}
                     onChange={e => setBilling({...billing, phone: e.target.value})}
                     type="tel" placeholder="+91 0000000000" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-primary/40 focus:bg-primary/[0.02] transition-all" />
+                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
                </div>
 
                <div className="md:col-span-2 space-y-2">
@@ -196,7 +196,7 @@ export default function CheckoutPage() {
                     value={billing.address}
                     onChange={e => setBilling({...billing, address: e.target.value})}
                     type="text" placeholder="Door No, Street Name" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-primary/40 focus:bg-primary/[0.02] transition-all" />
+                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
                </div>
 
                <div className="space-y-2">
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
                     value={billing.area}
                     onChange={e => setBilling({...billing, area: e.target.value})}
                     type="text" placeholder="Gachibowli" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-primary/40 focus:bg-primary/[0.02] transition-all" />
+                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
                </div>
 
                <div className="space-y-2">
@@ -216,7 +216,7 @@ export default function CheckoutPage() {
                     value={billing.city}
                     onChange={e => setBilling({...billing, city: e.target.value})}
                     type="text" placeholder="Hyderabad" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-primary/40 focus:bg-primary/[0.02] transition-all" />
+                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
                </div>
 
                <div className="space-y-2">
@@ -226,11 +226,11 @@ export default function CheckoutPage() {
                     value={billing.pincode}
                     onChange={e => setBilling({...billing, pincode: e.target.value})}
                     type="text" placeholder="500032" 
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-primary/40 focus:bg-primary/[0.02] transition-all" />
+                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-[#C0F0FB]/40 focus:bg-[#C0F0FB]/[0.02] transition-all" />
                </div>
 
                <div className="md:col-span-2 pt-6">
-                 <Button disabled={isLoading} type="submit" size="lg" className="h-16 w-full rounded-2xl bg-white text-black font-black hover:bg-primary hover:text-white transition-all shadow-2xl">
+                 <Button disabled={isLoading} type="submit" size="lg" className="h-16 w-full rounded-2xl bg-white text-black font-black hover:bg-[#C0F0FB] hover:text-black transition-all shadow-2xl">
                     {isLoading ? <Loader2 className="animate-spin mr-2" /> : <CreditCard className="mr-2" />}
                     PROCEED TO PAYMENT
                  </Button>
@@ -260,44 +260,44 @@ export default function CheckoutPage() {
                       <div className="h-[1px] bg-white/5 w-full" />
                       
                       <div className="space-y-4 pt-2">
-                         <div className="flex items-center gap-2">
-                            <Tag className="text-primary" size={14} />
-                            <input 
-                              value={couponCode}
-                              onChange={e => setCouponCode(e.target.value.toUpperCase())}
-                              type="text" placeholder="COUPON CODE" 
-                              className="bg-transparent border-b border-white/10 flex-1 text-[10px] font-black tracking-widest text-white outline-none focus:border-primary uppercase py-1" />
-                            <Button onClick={handleApplyCoupon} variant="ghost" className="h-8 text-[9px] font-black text-primary p-0 hover:bg-transparent">APPLY</Button>
-                         </div>
+                          <div className="flex items-center gap-2">
+                             <Tag className="text-[#C0F0FB]" size={14} />
+                             <input 
+                               value={couponCode}
+                               onChange={e => setCouponCode(e.target.value.toUpperCase())}
+                               type="text" placeholder="COUPON CODE" 
+                               className="bg-transparent border-b border-white/10 flex-1 text-[10px] font-black tracking-widest text-white outline-none focus:border-[#C0F0FB] uppercase py-1" />
+                             <Button onClick={handleApplyCoupon} variant="ghost" className="h-8 text-[9px] font-black text-[#C0F0FB] p-0 hover:bg-transparent">APPLY</Button>
+                          </div>
                       </div>
 
-                      <div className="space-y-3 pt-6">
-                         <div className="flex justify-between items-center text-xs font-bold text-white/40 uppercase tracking-widest">
-                            <span>Subtotal</span>
-                            <span>₹{initialPrice}</span>
-                         </div>
-                         {discountInfo && (
-                            <div className="flex justify-between items-center text-xs font-bold text-primary uppercase tracking-widest">
-                               <span>Discount Applied</span>
-                               <span>-₹{discountInfo.discount}</span>
-                            </div>
-                         )}
-                         <div className="flex justify-between items-center pt-4 border-t border-white/10">
-                            <span className="text-lg font-black text-white italic tracking-tighter">Total.</span>
-                            <span className="text-2xl font-black text-primary italic">₹{discountInfo ? discountInfo.finalAmount : initialPrice}</span>
-                         </div>
-                      </div>
+                       <div className="space-y-3 pt-6">
+                          <div className="flex justify-between items-center text-xs font-bold text-white/40 uppercase tracking-widest">
+                             <span>Subtotal</span>
+                             <span>₹{initialPrice}</span>
+                          </div>
+                          {discountInfo && (
+                             <div className="flex justify-between items-center text-xs font-bold text-[#C0F0FB] uppercase tracking-widest">
+                                <span>Discount Applied</span>
+                                <span>-₹{discountInfo.discount}</span>
+                             </div>
+                          )}
+                          <div className="flex justify-between items-center pt-4 border-t border-white/10">
+                             <span className="text-lg font-black text-white italic tracking-tighter">Total.</span>
+                             <span className="text-2xl font-black text-[#C0F0FB] italic">₹{discountInfo ? discountInfo.finalAmount : initialPrice}</span>
+                          </div>
+                       </div>
                    </div>
                 </div>
 
-                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 relative overflow-hidden">
-                   <div className="flex items-center gap-4">
-                      <ShieldCheck className="text-primary shrink-0" size={24} />
-                      <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest leading-relaxed">
-                         Verified secure transaction. Granting immediate activation of <span className="text-white">{title}</span>.
-                      </p>
-                   </div>
-                </div>
+                 <div className="bg-[#C0F0FB]/5 border-[#C0F0FB]/10 rounded-2xl p-6 relative overflow-hidden">
+                    <div className="flex items-center gap-4">
+                       <ShieldCheck className="text-[#C0F0FB] shrink-0" size={24} />
+                       <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest leading-relaxed">
+                          Verified secure transaction. Granting immediate activation of <span className="text-white">{title}</span>.
+                       </p>
+                    </div>
+                 </div>
              </div>
 
              <div className="px-8 space-y-4">
