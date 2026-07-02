@@ -137,44 +137,46 @@ export default function CoursesPage() {
             <div
               className="lg:col-span-8 group relative rounded-3xl border border-zinc-800 bg-zinc-950 p-10 md:p-14"
             >
+              <div className="relative z-10 mb-12">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                  <h2 className="text-[#C0F0FB] font-semibold uppercase tracking-wider text-sm flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-[#C0F0FB] animate-pulse" />
+                    AI Academy // Core AI Track — Enrollment Open
+                  </h2>
+                  <span className="px-4 py-1.5 rounded-full bg-[#C0F0FB]/5 border border-[#C0F0FB]/20 text-[#C0F0FB] text-xs font-semibold uppercase tracking-wider">
+                    Flagship Program
+                  </span>
+                </div>
+                <h3 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight leading-tight">AI Engineering</h3>
+                <p className="text-xl md:text-2xl text-white/60 font-medium">From Scratch to Production</p>
+              </div>
+
               {/* AI Engineering AEO Section */}
-              <div className="mb-12 p-8 rounded-2xl bg-zinc-900/20 border border-zinc-800">
-                <h4 className="text-white font-semibold text-lg mb-6 flex items-center gap-2">
+              <div className="mb-16 p-8 rounded-2xl bg-[#0b0b0b]/40 border border-zinc-800/80">
+                <h4 className="text-white font-semibold text-lg mb-8 flex items-center gap-2.5">
                   <Sparkles className="w-5 h-5 text-[#C0F0FB]" /> Direct Track Outcome
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                   <div className="space-y-2">
-                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">What will you become?</p>
-                    <p className="text-white text-base leading-snug">{flagshipAEO.become}</p>
+                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">01 // Target Role</p>
+                    <p className="text-white text-base leading-relaxed font-medium">{flagshipAEO.become}</p>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">What problem does this solve?</p>
-                    <p className="text-white text-base leading-snug">{flagshipAEO.problemSolved}</p>
+                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">02 // Problem Solved</p>
+                    <p className="text-white text-base leading-relaxed font-medium">{flagshipAEO.problemSolved}</p>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">What will you build?</p>
-                    <p className="text-white text-base leading-snug">{flagshipAEO.willBuild}</p>
+                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">03 // Capstone Project</p>
+                    <p className="text-white text-base leading-relaxed font-medium">{flagshipAEO.willBuild}</p>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-white/40 font-medium text-xs uppercase tracking-widest">Who is this for?</p>
-                    <p className="text-white text-base leading-snug">{flagshipAEO.forWho}</p>
+                    <p className="text-zinc-500 font-mono tracking-widest text-[9px] uppercase font-bold">04 // Who is this for</p>
+                    <p className="text-white text-base leading-relaxed font-medium">{flagshipAEO.forWho}</p>
                   </div>
                 </div>
               </div>
 
               <div className="relative z-10">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                  <h2 className="text-[#C0F0FB] font-semibold uppercase tracking-wider text-sm flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-[#C0F0FB]" />
-                    AI Academy // Core AI Track — Enrollment Open
-                  </h2>
-                  <span className="px-4 py-1.5 rounded-full bg-[#C0F0FB]/10 border border-[#C0F0FB]/20 text-[#C0F0FB] text-xs font-semibold uppercase tracking-wider">
-                    Flagship Program
-                  </span>
-                </div>
-                <h3 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight leading-tight">AI Engineering</h3>
-                <p className="text-xl md:text-2xl text-white/60 font-medium mb-12">From Scratch to Production</p>
-
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 mb-16">
                   <div className="space-y-6">
                     <p className="text-white/40 font-semibold text-xs uppercase tracking-widest">Terminal Skills:</p>
