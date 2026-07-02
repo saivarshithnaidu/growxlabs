@@ -28,39 +28,40 @@ import { PageHero } from "@/components/marketing/PageHero";
 import { getAbsoluteUrl } from "@/lib/subdomains";
 
 function CourseBlueprint({ id }: { id: string }) {
+  console.log("CourseBlueprint rendering for:", id);
   if (id === "java-mastery") {
     return (
-      <svg className="absolute inset-0 w-full h-full opacity-15 group-hover:opacity-30 transition-opacity duration-500 p-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="30" stroke="#C0F0FB" strokeWidth="0.5" strokeDasharray="3 3" />
-        <circle cx="50" cy="50" r="15" stroke="#C0F0FB" strokeWidth="1" />
-        <line x1="50" y1="10" x2="50" y2="90" stroke="#C0F0FB" strokeWidth="0.5" />
-        <line x1="10" y1="50" x2="90" y2="50" stroke="#C0F0FB" strokeWidth="0.5" />
-        <circle cx="50" cy="20" r="3" fill="#C0F0FB" className="animate-pulse" />
-        <circle cx="50" cy="80" r="3" fill="#C0F0FB" />
-        <circle cx="20" cy="50" r="3" fill="#C0F0FB" />
-        <circle cx="80" cy="50" r="3" fill="#C0F0FB" className="animate-pulse" />
+      <svg className="absolute inset-0 w-full h-full opacity-60 group-hover:opacity-100 transition-all duration-300 p-8 z-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="30" stroke="#C0F0FB" strokeWidth="1.5" strokeDasharray="3 3" />
+        <circle cx="50" cy="50" r="15" stroke="#C0F0FB" strokeWidth="2.5" />
+        <line x1="50" y1="10" x2="50" y2="90" stroke="#C0F0FB" strokeWidth="1" />
+        <line x1="10" y1="50" x2="90" y2="50" stroke="#C0F0FB" strokeWidth="1" />
+        <circle cx="50" cy="20" r="4" fill="#C0F0FB" className="animate-pulse" />
+        <circle cx="50" cy="80" r="4" fill="#C0F0FB" />
+        <circle cx="20" cy="50" r="4" fill="#C0F0FB" />
+        <circle cx="80" cy="50" r="4" fill="#C0F0FB" className="animate-pulse" />
       </svg>
     );
   }
   if (id === "nextjs-fullstack") {
     return (
-      <svg className="absolute inset-0 w-full h-full opacity-15 group-hover:opacity-30 transition-opacity duration-500 p-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="20" y="20" width="60" height="60" rx="4" stroke="#C0F0FB" strokeWidth="0.5" />
-        <rect x="35" y="35" width="30" height="30" rx="2" stroke="#C0F0FB" strokeWidth="1" />
-        <path d="M50 10 L50 20 M10 50 L20 50 M50 80 L50 90 M80 50 L90 50" stroke="#C0F0FB" strokeWidth="0.75" strokeDasharray="2 2" />
-        <circle cx="50" cy="10" r="2.5" fill="#C0F0FB" />
-        <circle cx="90" cy="50" r="2.5" fill="#C0F0FB" />
+      <svg className="absolute inset-0 w-full h-full opacity-60 group-hover:opacity-100 transition-all duration-300 p-8 z-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="60" height="60" rx="4" stroke="#C0F0FB" strokeWidth="1.5" />
+        <rect x="35" y="35" width="30" height="30" rx="2" stroke="#C0F0FB" strokeWidth="2.5" />
+        <path d="M50 10 L50 20 M10 50 L20 50 M50 80 L50 90 M80 50 L90 50" stroke="#C0F0FB" strokeWidth="1.5" strokeDasharray="2 2" />
+        <circle cx="50" cy="10" r="3.5" fill="#C0F0FB" />
+        <circle cx="90" cy="50" r="3.5" fill="#C0F0FB" />
       </svg>
     );
   }
   if (id === "python-mastery") {
     return (
-      <svg className="absolute inset-0 w-full h-full opacity-15 group-hover:opacity-30 transition-opacity duration-500 p-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M15 50 Q 35 20, 50 50 T 85 50" stroke="#C0F0FB" strokeWidth="1" />
-        <path d="M15 50 Q 35 80, 50 50 T 85 50" stroke="#C0F0FB" strokeWidth="0.5" strokeDasharray="3 3" />
-        <circle cx="15" cy="50" r="3" fill="#C0F0FB" />
-        <circle cx="50" cy="50" r="3" fill="#C0F0FB" />
-        <circle cx="85" cy="50" r="3" fill="#C0F0FB" />
+      <svg className="absolute inset-0 w-full h-full opacity-60 group-hover:opacity-100 transition-all duration-300 p-8 z-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 50 Q 35 20, 50 50 T 85 50" stroke="#C0F0FB" strokeWidth="2.5" />
+        <path d="M15 50 Q 35 80, 50 50 T 85 50" stroke="#C0F0FB" strokeWidth="1.5" strokeDasharray="3 3" />
+        <circle cx="15" cy="50" r="4.5" fill="#C0F0FB" />
+        <circle cx="50" cy="50" r="4.5" fill="#C0F0FB" />
+        <circle cx="85" cy="50" r="4.5" fill="#C0F0FB" />
       </svg>
     );
   }
@@ -375,7 +376,7 @@ export default function CoursesPage() {
               >
                 {/* Horizontal Image Section */}
                 <div className="relative w-full md:w-2/5 h-56 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-zinc-800 bg-[#080808] flex items-center justify-center">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(192,240,251,0.03)_0%,transparent_70%)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(192,240,251,0.08)_0%,transparent_70%)]" />
                   <CourseBlueprint id={course.id} />
                   {/* Difficulty Badge */}
                   <div className="absolute top-4 left-4 z-20">
