@@ -226,7 +226,7 @@ export default function CoursesPage() {
                       <Button
                         onClick={() => handleEnroll("ai-engineering")}
                         disabled={loading === "ai-engineering"}
-                        className="w-full h-14 rounded-xl bg-card text-black hover:bg-zinc-200 font-bold uppercase text-sm tracking-widest transition-colors duration-200"
+                        className="w-full h-14 rounded-xl bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-850 hover:text-[#C0F0FB] font-bold uppercase text-xs tracking-widest transition-all duration-200"
                       >
                         {loading === "ai-engineering" ? "Processing..." : "Enroll Now"}
                       </Button>
@@ -292,7 +292,7 @@ export default function CoursesPage() {
               </div>
 
               <div
-                className="bg-card rounded-3xl p-10 text-black border border-zinc-250 shadow-xl"
+                className="bg-white rounded-3xl p-10 text-black border border-zinc-250 shadow-xl"
               >
                 <div className="relative z-10">
                   <h4 className="text-3xl font-bold tracking-tight mb-4">Claim Early Access</h4>
@@ -323,8 +323,12 @@ export default function CoursesPage() {
 
         {/* Other Courses Grid */}
         <section className="mb-40">
+          <div className="text-center mb-16">
+            <span className="text-[10px] font-mono font-bold tracking-widest text-[#C0F0FB] uppercase">Alternative Tracks</span>
+            <h3 className="text-3xl md:text-4xl font-serif font-bold text-white tracking-tight mt-2">Expand your engineering scope.</h3>
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {courses.map((course) => (
+            {courses.filter(course => course.id !== "ai-engineering").map((course) => (
               <div
                 key={course.id}
                 className="group relative bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden hover:bg-zinc-900/10 transition-colors flex flex-col md:flex-row"
@@ -404,7 +408,7 @@ export default function CoursesPage() {
                     <Button
                       onClick={() => handleEnroll(course.id)}
                       disabled={loading === course.id}
-                      className="w-full bg-card text-black hover:bg-zinc-200 rounded-lg h-12 font-bold text-sm tracking-widest transition-colors duration-200"
+                      className="w-full bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-850 hover:text-[#C0F0FB] rounded-xl h-12 font-bold text-xs uppercase tracking-widest transition-all duration-200"
                     >
                       {loading === course.id ? "Processing..." : "Enroll Now"}
                     </Button>
@@ -462,7 +466,7 @@ export default function CoursesPage() {
                     <Button
                       onClick={() => handleEnroll("java-python-bundle")}
                       disabled={loading === "java-python-bundle"}
-                      className="w-full md:w-56 h-12 rounded-lg bg-card text-black hover:bg-zinc-200 font-bold uppercase text-sm tracking-widest transition-colors duration-200"
+                      className="w-full md:w-56 h-12 rounded-xl bg-[#161616] border border-zinc-800 text-white hover:bg-zinc-850 hover:text-[#C0F0FB] font-bold uppercase text-xs tracking-widest transition-all duration-200"
                     >
                       {loading === "java-python-bundle" ? "Processing..." : "Get Bundle"}
                     </Button>
