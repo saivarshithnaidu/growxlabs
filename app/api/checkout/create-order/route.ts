@@ -4,6 +4,14 @@ import { RazorpayService } from "@/lib/services/razorpay.service";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+const COURSE_PRICES: Record<string, number> = {
+  "ai-engineering": 1999,
+  "java-mastery": 799,
+  "python-mastery": 499,
+  "nextjs-fullstack": 899,
+  "java-python-bundle": 999,
+};
+
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -19,6 +27,16 @@ export async function POST(req: Request) {
 
     const supabase = supabaseAdmin;
 
+    // Validate price on the server side for courses
+    let validatedAmount = amount;
+    if (productType === "course") {
+      const coursePrice = COURSE_PRICES[productId];
+      if (!coursePrice) {
+        return NextResponse.json({ error: "Invalid course ID" }, { status: 400 });
+      }
+      validatedAmount = coursePrice;
+    }
+
     // 1. Save / Update Billing Details
     await supabase.from("billing_details").upsert({
       user_id: session.user.id,
@@ -27,7 +45,7 @@ export async function POST(req: Request) {
     }, { onConflict: 'user_id' });
 
     // 2. Handle Coupon (Double validation on server)
-    let finalAmount = amount;
+    let finalAmount = validatedAmount;
     let discountAmount = 0;
     let couponId = null;
 
@@ -42,11 +60,11 @@ export async function POST(req: Request) {
       if (coupon && (!coupon.expires_at || new Date(coupon.expires_at) > new Date())) {
         couponId = coupon.id;
         if (coupon.discount_type === "percentage") {
-          discountAmount = Math.floor((amount * coupon.discount_value) / 100);
+          discountAmount = Math.floor((validatedAmount * coupon.discount_value) / 100);
         } else {
           discountAmount = coupon.discount_value;
         }
-        finalAmount = Math.max(0, amount - discountAmount);
+        finalAmount = Math.max(0, validatedAmount - discountAmount);
       }
     }
 
@@ -68,7 +86,7 @@ export async function POST(req: Request) {
       user_id: session.user.id,
       product_id: productId,
       product_type: productType,
-      original_price: amount,
+      original_price: validatedAmount,
       discount_amount: discountAmount,
       final_amount: finalAmount,
       coupon_id: couponId,

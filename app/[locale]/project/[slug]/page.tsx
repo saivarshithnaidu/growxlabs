@@ -1,30 +1,113 @@
 "use client";
 
-import { useParams, notFound } from "next/navigation";
+import { useParams, notFound, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { courses } from "@/lib/data/courses";
-import { CheckCircle2, ChevronLeft, Code2, Globe, Send, Lightbulb, ShieldAlert } from "lucide-react";
+import { CheckCircle2, ChevronLeft, Code2, Globe, Send, Lightbulb, ShieldAlert, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface CourseData {
+  title: string;
+  slug: string;
+  isEnrolled: boolean;
+  final_project_title: string;
+  final_project_description: string;
+  final_project_requirements: string[];
+}
 
 export default function ProjectPage() {
   const params = useParams();
+  const router = useRouter();
+  
+  const [course, setCourse] = useState<CourseData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [githubUrl, setGithubUrl] = useState("");
   const [demoUrl, setDemoUrl] = useState("");
 
-  const course = courses.find((c) => c.slug === params.slug);
-  if (!course) return notFound();
+  useEffect(() => {
+    async function loadProject() {
+      try {
+        const res = await fetch(`/api/courses/${params.slug}`);
+        if (res.status === 401) {
+          router.push(`/${params.locale}/login`);
+          return;
+        }
+        if (res.status === 404) {
+          setError("not_found");
+          return;
+        }
+        if (!res.ok) {
+          setError("Failed to load project details");
+          return;
+        }
+        const data = await res.json();
+        if (!data.isEnrolled) {
+          router.push(`/${params.locale}/courses/${params.slug}`);
+          return;
+        }
+        setCourse({
+          title: data.title,
+          slug: data.slug,
+          isEnrolled: data.isEnrolled,
+          final_project_title: data.final_project_title,
+          final_project_description: data.final_project_description,
+          final_project_requirements: data.final_project_requirements || []
+        });
+      } catch (e) {
+        setError("Failed to load project details");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProject();
+  }, [params.slug, params.locale, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate submission
-    setTimeout(() => {
+    try {
+      const res = await fetch(`/api/courses/${params.slug}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ githubUrl, demoUrl }),
+      });
+      if (res.ok) {
+        alert("Project submitted successfully for evaluation!");
+      } else {
+        alert("Failed to submit project. Please try again.");
+      }
+    } catch (e) {
+      alert("An error occurred during submission.");
+    } finally {
       setIsSubmitting(false);
-      alert("Project submitted successfully for evaluation!");
-    }, 2000);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+          <p className="text-white/40 text-sm font-medium uppercase tracking-widest">Loading project...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error === "not_found" || !course) {
+    return notFound();
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <p className="text-red-400">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white pt-32 pb-20 px-6 md:px-10 lg:px-20">
@@ -52,14 +135,14 @@ export default function ProjectPage() {
               <div className="flex items-center gap-3 mb-6">
                  <span className="px-3 py-1 bg-[#00A86B]/10 rounded-full text-[10px] font-black uppercase text-[#00A86B] border border-[#00A86B]/20 tracking-widest">
                     Final Capstone
-                 </span>
+                  </span>
                  <span className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">Phase 10: Submission</span>
               </div>
               <h1 className="text-5xl lg:text-7xl font-black tracking-tighter leading-none mb-8 italic">
-                {course.finalProject.title}.
+                {course.final_project_title}.
               </h1>
               <p className="text-[#A0A0A0] text-xl font-light leading-relaxed">
-                {course.finalProject.description}
+                {course.final_project_description}
               </p>
             </motion.div>
 
@@ -69,7 +152,7 @@ export default function ProjectPage() {
                   <Lightbulb className="text-[#00A86B]" size={24} /> Technical Requirements
                </h2>
                <div className="grid grid-cols-1 gap-4">
-                  {course.finalProject.requirements.map((req, i) => (
+                  {course.final_project_requirements.map((req, i) => (
                     <div key={i} className="flex items-center gap-4 p-5 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-white/10 transition-all">
                        <CheckCircle2 size={18} className="text-[#00A86B]" />
                        <span className="text-[#A0A0A0] group-hover:text-white transition-colors text-sm font-medium">{req}</span>
@@ -136,9 +219,9 @@ export default function ProjectPage() {
 
                    <div className="pt-4">
                       <Button 
-                        type="submit"
-                        isLoading={isSubmitting}
-                        className="w-full bg-[#00A86B] hover:bg-[#00A86B]/90 text-white rounded-2xl h-16 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-xl shadow-[#00A86B]/10"
+                         type="submit"
+                         isLoading={isSubmitting}
+                         className="w-full bg-[#00A86B] hover:bg-[#00A86B]/90 text-white rounded-2xl h-16 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-xl shadow-[#00A86B]/10"
                       >
                          Deliver Final Project <Send size={16} />
                       </Button>

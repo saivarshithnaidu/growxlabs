@@ -1,21 +1,69 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { CheckCircle2, XCircle, Award, ShieldCheck, Download, ExternalLink, RefreshCcw } from "lucide-react";
+import { CheckCircle2, XCircle, Award, ShieldCheck, Download, ExternalLink, RefreshCcw, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { courses } from "@/lib/data/courses";
+import { useEffect, useState } from "react";
 
 export default function ResultPage() {
   const params = useParams();
+  const router = useRouter();
   const searchParams = useSearchParams();
   
   const score = parseInt(searchParams.get("score") || "0");
   const grade = searchParams.get("grade") || "F";
-  const course = courses.find(c => c.slug === params.course);
+  
+  const [courseTitle, setCourseTitle] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadCourse() {
+      try {
+        const res = await fetch(`/api/courses/${params.course}`);
+        if (res.status === 401) {
+          router.push(`/${params.locale}/login`);
+          return;
+        }
+        if (res.status === 404) {
+          setError("not_found");
+          return;
+        }
+        if (!res.ok) {
+          setError("Failed to load result details");
+          return;
+        }
+        const data = await res.json();
+        setCourseTitle(data.title);
+      } catch (e) {
+        setError("Failed to load result details");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCourse();
+  }, [params.course, params.locale, router]);
 
   const isPassed = grade !== "F";
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || !courseTitle) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
+         <h1 className="text-2xl font-bold mb-4">No Assessment Result Found</h1>
+         <p className="text-[#A0A0A0]">We couldn't verify the completion status for this course.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black pt-32 pb-24 px-6 flex items-center justify-center">
@@ -39,7 +87,7 @@ export default function ResultPage() {
                    <h1 className="text-5xl lg:text-7xl font-black text-white italic tracking-tighter mb-4">Credentials Verified.</h1>
                    <p className="text-white/40 text-xl font-light uppercase tracking-widest leading-relaxed">
                      You have successfully qualified for the GrowX Labs <br /> 
-                     <span className="text-white font-bold">{course?.title} Certification</span>
+                     <span className="text-white font-bold">{courseTitle} Certification</span>
                    </p>
                 </div>
 

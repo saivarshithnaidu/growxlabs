@@ -2,32 +2,69 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { courses } from "@/lib/data/courses";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2, XCircle, Award, RefreshCcw, ShieldCheck } from "lucide-react";
+import { CheckCircle2, XCircle, Award, RefreshCcw, ShieldCheck, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+
+interface CourseData {
+  title: string;
+  slug: string;
+}
 
 export default function AssessmentResultPage() {
   const params = useParams();
   const router = useRouter();
   
-  const course = courses.find(c => c.slug === params.slug);
-  
-  const [mounted, setMounted] = useState(false);
+  const [course, setCourse] = useState<CourseData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ score: number, grade: string } | null>(null);
 
   useEffect(() => {
-    setMounted(true);
-    const savedResult = localStorage.getItem(`result_${course?.slug}`);
-    if (savedResult) {
-      setResult(JSON.parse(savedResult));
+    async function loadCourse() {
+      try {
+        const res = await fetch(`/api/courses/${params.slug}`);
+        if (res.status === 401) {
+          router.push(`/${params.locale}/login`);
+          return;
+        }
+        if (res.status === 404) {
+          setError("not_found");
+          return;
+        }
+        if (!res.ok) {
+          setError("Failed to load result");
+          return;
+        }
+        const data = await res.json();
+        setCourse({
+          title: data.title,
+          slug: data.slug,
+        });
+
+        const savedResult = localStorage.getItem(`result_${data.slug}`);
+        if (savedResult) {
+          setResult(JSON.parse(savedResult));
+        }
+      } catch (e) {
+        setError("Failed to load result");
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [course?.slug]);
+    loadCourse();
+  }, [params.slug, params.locale, router]);
 
-  if (!mounted) return <div className="min-h-screen bg-black" />;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+      </div>
+    );
+  }
 
-  if (!course || !result) {
+  if (error === "not_found" || !course || !result) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
          <h1 className="text-2xl font-bold mb-4">No Assessment Found</h1>

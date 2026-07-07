@@ -1,31 +1,108 @@
 "use client";
 
-import { useParams, notFound } from "next/navigation";
-import { courses } from "@/lib/data/courses";
-import { CheckCircle2, ChevronLeft, ChevronRight, Menu, X, FileText } from "lucide-react";
-import { useState } from "react";
+import { useParams, notFound, useRouter } from "next/navigation";
+import { CheckCircle2, ChevronLeft, ChevronRight, Menu, X, FileText, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 
+interface LessonData {
+  id: string;
+  title: string;
+  slug: string;
+  explanation: string;
+  keyPoints: string[];
+  codeExample: string;
+  expectedOutput: string;
+  useCase: string;
+  practiceTask: string;
+}
+
+interface SidebarModule {
+  id: string;
+  title: string;
+  slug: string;
+  lessons: { id: string; title: string; slug: string }[];
+}
+
+interface LessonResponse {
+  lesson: LessonData;
+  course: { title: string; slug: string };
+  modules: SidebarModule[];
+  currentIndex: number;
+  totalLessons: number;
+  prevLesson: { slug: string; moduleSlug: string } | null;
+  nextLesson: { slug: string; moduleSlug: string } | null;
+}
+
 export default function LearningPage() {
   const params = useParams();
+  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [data, setData] = useState<LessonResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const course = courses.find((c) => c.slug === params.course);
-  if (!course) return notFound();
+  useEffect(() => {
+    async function fetchLesson() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`/api/courses/${params.course}/lessons/${params.lesson}`);
+        if (res.status === 401) {
+          router.push(`/${params.locale}/login`);
+          return;
+        }
+        if (res.status === 403) {
+          router.push(`/${params.locale}/courses/${params.course}`);
+          return;
+        }
+        if (res.status === 404) {
+          setError("not_found");
+          return;
+        }
+        if (!res.ok) {
+          setError("Failed to load lesson");
+          return;
+        }
+        const json = await res.json();
+        setData(json);
+      } catch (e) {
+        setError("Failed to load lesson");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchLesson();
+  }, [params.course, params.lesson, params.locale, router]);
 
-  // Navigation Logic
-  const allLessons = course.modules.flatMap(m => m.lessons.map(l => ({ ...l, moduleSlug: m.slug, moduleTitle: m.title })));
-  const currentIndex = allLessons.findIndex(l => l.slug === params.lesson);
-  const currentLesson = allLessons[currentIndex];
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+          <p className="text-white/40 text-sm font-medium uppercase tracking-widest">Loading lesson...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!currentLesson) return notFound();
+  if (error === "not_found" || !data) {
+    return notFound();
+  }
 
-  const prevLesson = allLessons[currentIndex - 1];
-  const nextLesson = allLessons[currentIndex + 1];
-  const progress = Math.round(((currentIndex + 1) / allLessons.length) * 100);
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <p className="text-red-400">{error}</p>
+      </div>
+    );
+  }
+
+  const { lesson: currentLesson, course, modules, currentIndex, totalLessons, prevLesson, nextLesson } = data;
+  const progress = Math.round(((currentIndex + 1) / totalLessons) * 100);
 
   return (
     <div className="min-h-screen bg-black text-[#A0A0A0] flex pt-20">
@@ -55,7 +132,7 @@ export default function LearningPage() {
           </div>
 
           <nav className="flex-1 overflow-y-auto px-4 pb-10 space-y-6 custom-scrollbar">
-            {course.modules.map((module) => (
+            {modules.map((module) => (
               <div key={module.id} className="space-y-1">
                 <h4 className="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/40 mb-3">{module.title}</h4>
                 {module.lessons.map((lesson) => {
@@ -131,7 +208,7 @@ export default function LearningPage() {
                   <h2 className="text-white font-bold text-2xl tracking-tight">Code implementation</h2>
                   <div className="bg-[#0A0A0A] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
                      <div className="px-6 py-3 bg-white/[0.03] border-b border-white/5 flex items-center justify-between">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white/20">java source</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white/20">source</span>
                      </div>
                      <pre className="p-8 text-sm sm:text-base leading-relaxed overflow-x-auto font-mono text-[#D4D4D4]">
                         <code>{currentLesson.codeExample}</code>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   CheckCircle2, 
   ChevronDown, 
@@ -19,13 +19,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
-import { courses } from "@/lib/data/courses";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { CertificatePreview } from "@/components/marketing/CertificatePreview";
 import Script from "next/script";
 import { PageHero } from "@/components/marketing/PageHero";
 import { getAbsoluteUrl } from "@/lib/subdomains";
+import { Loader2 } from "lucide-react";
 
 
 
@@ -95,6 +95,26 @@ export default function CoursesPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
   const [openAEO, setOpenAEO] = useState<string | null>(null);
+  
+  const [coursesList, setCoursesList] = useState<any[]>([]);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadCatalog() {
+      try {
+        const res = await fetch("/api/courses");
+        if (res.ok) {
+          const data = await res.json();
+          setCoursesList(data);
+        }
+      } catch (e) {
+        console.error("Failed to load catalog", e);
+      } finally {
+        setCatalogLoading(false);
+      }
+    }
+    loadCatalog();
+  }, []);
 
   const handleEnroll = (courseId: string) => {
     if (!session) {
@@ -103,7 +123,7 @@ export default function CoursesPage() {
     }
 
     const price = COURSE_PRICES[courseId]?.inr || 1999;
-    const course = courses.find(c => c.id === courseId);
+    const course = coursesList.find(c => c.id === courseId);
     const title = course?.title || courseId.replace(/-/g, " ").toUpperCase();
     
     window.location.href = getAbsoluteUrl(`/checkout?productId=${courseId}&type=course&price=${price}&title=${encodeURIComponent(title)}`);
@@ -127,8 +147,14 @@ export default function CoursesPage() {
         tagline="ENGINEERING EDUCATION"
       />
 
-      <div className="pb-32 px-6 md:px-10 xl:px-16 2xl:px-24 w-full bg-[#030303] font-sans overflow-x-hidden border-t border-zinc-800/40 pt-16">
-        <div className="max-w-[1600px] mx-auto">
+      {catalogLoading ? (
+        <div className="min-h-[50vh] bg-[#030303] flex flex-col items-center justify-center pt-20">
+          <Loader2 className="w-8 h-8 text-[#C0F0FB] animate-spin mb-4" />
+          <p className="text-zinc-500 font-mono tracking-widest text-[10px] uppercase">Retrieving catalog...</p>
+        </div>
+      ) : (
+        <div className="pb-32 px-6 md:px-10 xl:px-16 2xl:px-24 w-full bg-[#030303] font-sans overflow-x-hidden border-t border-zinc-800/40 pt-16">
+          <div className="max-w-[1600px] mx-auto">
 
         {/* Featured Course Track — AI Engineering */}
         <section className="mb-24">
@@ -331,7 +357,7 @@ export default function CoursesPage() {
             <h3 className="text-3xl md:text-4xl font-serif font-bold text-white tracking-tight mt-2">Expand your engineering scope.</h3>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {courses.filter(course => course.id !== "ai-engineering").map((course) => (
+            {coursesList.filter((course: any) => course.id !== "ai-engineering").map((course: any) => (
               <div
                 key={course.id}
                 className="group relative bg-zinc-950 border border-zinc-800 rounded-none overflow-hidden hover:border-[#C0F0FB]/20 transition-all duration-300 hover:-translate-y-1 flex flex-col md:flex-row shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
@@ -400,15 +426,15 @@ export default function CoursesPage() {
                         </div>
                         <div className="space-y-1">
                           <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Problem Solved</p>
-                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.problemSolved}</p>
+                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.problem_solved}</p>
                         </div>
                         <div className="space-y-1">
                           <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Project</p>
-                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.willBuild}</p>
+                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.will_build}</p>
                         </div>
                         <div className="space-y-1">
                           <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">For Who</p>
-                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.forWho}</p>
+                          <p className="text-[#A0A0A0] text-sm leading-snug">{course.for_who}</p>
                         </div>
                       </div>
                     </div>
@@ -522,8 +548,9 @@ export default function CoursesPage() {
             ))}
           </div>
         </section>
+        </div>
       </div>
-    </div>
+    )}
   </>
 );
 }

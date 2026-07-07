@@ -42,7 +42,7 @@ export function ContactContent() {
           
           {/* Row 1: Email */}
           <a
-            href="mailto:hello@growxlabs.tech"
+            href="mailto:sai@growxlabs.tech"
             className="group grid grid-cols-12 items-center py-11 border-b border-neutral-800 hover:bg-white/[0.02] transition-colors duration-300 px-2"
           >
             {/* Index label */}
@@ -54,7 +54,7 @@ export function ContactContent() {
             <div className="col-span-11 md:col-span-8 flex items-center gap-5">
               <Mail className="h-5 w-5 text-neutral-500 group-hover:text-primary transition-colors duration-300" />
               <span className="text-xl md:text-3xl font-sans font-normal tracking-tight text-neutral-300 group-hover:text-white group-hover:translate-x-1 transition-all duration-300">
-                hello@growxlabs.tech
+                sai@growxlabs.tech
               </span>
             </div>
             

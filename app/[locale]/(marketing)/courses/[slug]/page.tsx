@@ -1,8 +1,7 @@
 "use client";
 
-import { useParams, notFound } from "next/navigation";
+import { useParams, notFound, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { courses } from "@/lib/data/courses";
 import { 
   CheckCircle2, 
   Clock, 
@@ -11,11 +10,12 @@ import {
   ChevronRight, 
   PlayCircle,
   ChevronDown,
-  BookOpen
+  BookOpen,
+  Loader2
 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { enrollInCourse } from "@/lib/actions/enrollment";
 import { ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -28,16 +28,44 @@ function cn(...inputs: ClassValue[]) {
 
 export default function CourseDetailsPage() {
   const params = useParams();
-  const course = courses.find((c) => c.slug === params.slug);
+  const router = useRouter();
 
-  if (!course) {
-    notFound();
-  }
-
+  const [course, setCourse] = useState<any>(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [openModule, setOpenModule] = useState<string | null>(course.modules[0]?.id || null);
+  const [openModule, setOpenModule] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadCourse() {
+      try {
+        const res = await fetch(`/api/courses/${params.slug}`);
+        if (res.status === 404) {
+          setError("not_found");
+          return;
+        }
+        if (!res.ok) {
+          setError("Failed to load course details");
+          return;
+        }
+        const data = await res.json();
+        setCourse(data);
+        setIsEnrolled(data.isEnrolled);
+        if (data.modules && data.modules.length > 0) {
+          setOpenModule(data.modules[0].id);
+        }
+      } catch (e) {
+        setError("Failed to load course details");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCourse();
+  }, [params.slug]);
 
   const handleEnroll = async () => {
+    if (!course) return;
     setIsLoading(true);
     try {
       const locale = params.locale as string;
@@ -49,6 +77,26 @@ export default function CourseDetailsPage() {
       setIsLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#020202] flex items-center justify-center pt-20">
+        <Loader2 className="w-8 h-8 text-[#C0F0FB] animate-spin" />
+      </div>
+    );
+  }
+
+  if (error === "not_found" || !course) {
+    notFound();
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#020202] flex items-center justify-center pt-20">
+        <p className="text-red-400">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#020202] min-h-screen text-white pt-32 pb-32 px-6 md:px-10 xl:px-16 2xl:px-24">
@@ -117,7 +165,7 @@ export default function CourseDetailsPage() {
               </h2>
 
               <div className="space-y-4">
-                {course.modules.map((module, mIdx) => (
+                {course.modules.map((module: any, mIdx: number) => (
                   <div 
                     key={module.id} 
                     className="bg-transparent border border-zinc-800/80 rounded-none overflow-hidden hover:border-zinc-700/50 transition-all duration-300"
@@ -149,7 +197,7 @@ export default function CourseDetailsPage() {
                         
                         <div className="space-y-2 border-t border-white/5 pt-4">
                           <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest font-bold block mb-3">CURRICULUM LESSONS</span>
-                          {module.lessons.map((lesson, lIdx) => (
+                          {module.lessons.map((lesson: any, lIdx: number) => (
                             <div 
                               key={lesson.id} 
                               className="flex items-center justify-between p-4 bg-transparent rounded-none border border-zinc-800/80 group hover:border-zinc-700/50 transition-colors"
@@ -177,12 +225,12 @@ export default function CourseDetailsPage() {
                    </div>
                    <h2 className="text-white font-serif font-bold text-3xl tracking-tight">Capstone Evaluation</h2>
                 </div>
-                <h3 className="text-white font-serif font-bold text-xl italic">"{course.finalProject.title}"</h3>
+                <h3 className="text-white font-serif font-bold text-xl italic">"{course.final_project_title}"</h3>
                 <p className="text-zinc-400 leading-relaxed font-light text-sm md:text-base">
-                  {course.finalProject.description}
+                  {course.final_project_description}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-                  {course.finalProject.requirements.map((req, i) => (
+                  {course.final_project_requirements?.map((req: string, i: number) => (
                     <div key={i} className="flex items-center gap-3 text-zinc-300 text-sm">
                        <CheckCircle2 size={16} className="text-[#C0F0FB] shrink-0" /> {req}
                     </div>
@@ -225,7 +273,7 @@ export default function CourseDetailsPage() {
                    isLoading={isLoading}
                    className="w-full py-4 bg-[#161616] border border-zinc-800/80 text-white font-bold hover:bg-zinc-850 hover:text-[#C0F0FB] transition-all rounded-none text-xs uppercase tracking-widest"
                  >
-                   Enroll In Course <ChevronRight size={14} className="ml-1.5" />
+                   {isEnrolled ? "Start Learning" : "Enroll In Course"} <ChevronRight size={14} className="ml-1.5" />
                  </Button>
               </div>
 

@@ -6,6 +6,13 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
+import { getAbsoluteUrl } from "@/lib/subdomains";
+const COURSE_PRICES: Record<string, number> = {
+  "ai-engineering": 1999,
+  "java-mastery": 799,
+  "python-mastery": 499,
+  "nextjs-fullstack": 899,
+};
 
 export async function enrollInCourse(courseId: string, firstLessonUrl: string) {
   const session = await getServerSession(authOptions);
@@ -27,18 +34,19 @@ export async function enrollInCourse(courseId: string, firstLessonUrl: string) {
     .single();
 
   if (!existing) {
-    const { error } = await supabaseAdmin
-      .from("enrollments")
-      .insert({
-        user_id: userId,
-        course_id: courseId,
-        status: "active"
-      });
-
-    if (error) {
-      console.error("Enrollment error:", error);
-      return { error: "Failed to enroll in course." };
-    }
+    // Redirect to checkout since user hasn't paid/enrolled yet
+    const price = COURSE_PRICES[courseId] || 1999;
+    
+    // Fetch course details from DB
+    const { data: course } = await supabaseAdmin
+      .from("courses")
+      .select("title")
+      .eq("id", courseId)
+      .single();
+      
+    const title = course?.title || courseId.replace(/-/g, " ").toUpperCase();
+    const checkoutUrl = getAbsoluteUrl(`/checkout?productId=${courseId}&type=course&price=${price}&title=${encodeURIComponent(title)}`);
+    redirect(checkoutUrl);
   }
 
   revalidatePath("/dashboard");

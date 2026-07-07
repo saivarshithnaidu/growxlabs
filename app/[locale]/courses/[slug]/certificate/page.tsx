@@ -1,18 +1,24 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { courses } from "@/lib/data/courses";
 import { Button } from "@/components/ui/Button";
-import { Download, ShieldCheck, CheckCircle2, QrCode } from "lucide-react";
+import { Download, ShieldCheck, CheckCircle2, QrCode, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+
+interface CourseData {
+  title: string;
+  slug: string;
+}
 
 export default function CertificatePage() {
   const params = useParams();
-  const course = courses.find(c => c.slug === params.slug);
+  const router = useRouter();
   const printRef = useRef<HTMLDivElement>(null);
   
-  const [mounted, setMounted] = useState(false);
+  const [course, setCourse] = useState<CourseData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ score: number, grade: string } | null>(null);
   const [issueDate] = useState(() => {
     const today = new Date();
@@ -23,20 +29,52 @@ export default function CertificatePage() {
   const certId = `GXL-${Math.random().toString(36).substring(2, 10).toUpperCase()}-${new Date().getFullYear()}`;
 
   useEffect(() => {
-    setMounted(true);
-    const savedResult = localStorage.getItem(`result_${course?.slug}`);
-    if (savedResult) {
-      setResult(JSON.parse(savedResult));
+    async function loadCourse() {
+      try {
+        const res = await fetch(`/api/courses/${params.slug}`);
+        if (res.status === 401) {
+          router.push(`/${params.locale}/login`);
+          return;
+        }
+        if (res.status === 404) {
+          setError("not_found");
+          return;
+        }
+        if (!res.ok) {
+          setError("Failed to load certificate");
+          return;
+        }
+        const data = await res.json();
+        setCourse({
+          title: data.title,
+          slug: data.slug,
+        });
+
+        const savedResult = localStorage.getItem(`result_${data.slug}`);
+        if (savedResult) {
+          setResult(JSON.parse(savedResult));
+        }
+      } catch (e) {
+        setError("Failed to load certificate");
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [course?.slug]);
+    loadCourse();
+  }, [params.slug, params.locale, router]);
 
-  if (!mounted) return <div className="min-h-screen bg-black" />;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+          <p className="text-white/40 text-sm font-medium uppercase tracking-widest">Loading certificate...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const handlePrint = () => {
-    window.print();
-  };
-
-  if (!course || !result || result.grade === 'F') {
+  if (error === "not_found" || !course || !result || result.grade === 'F') {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
          <h1 className="text-2xl font-bold mb-4">Certificate Not Available</h1>
@@ -44,6 +82,10 @@ export default function CertificatePage() {
       </div>
     );
   }
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   return (
     <div className="min-h-screen bg-[#050505] text-white py-24 px-4 overflow-hidden relative selection:bg-[#00A86B]/30">

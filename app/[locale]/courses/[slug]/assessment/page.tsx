@@ -1,10 +1,9 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { courses } from "@/lib/data/courses";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2, AlertTriangle, Clock, ChevronRight, ChevronLeft, CheckSquare, Square, Code2 } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Clock, ChevronRight, ChevronLeft, CheckSquare, Square, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Question } from "@/types/courses";
 
@@ -29,77 +28,105 @@ export default function AssessmentPage() {
   const params = useParams();
   const router = useRouter();
   
-  const course = courses.find(c => c.slug === params.slug);
-  const baseQuestions = course?.assessment || [];
-
-  const [mounted, setMounted] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, any>>({});
-  const [timeLeft, setTimeLeft] = useState(60 * 60); // 60 minutes
+  const [courseTitle, setCourseTitle] = useState<string>("");
   const [activeQuestions, setActiveQuestions] = useState<Question[]>([]);
+  const [answers, setAnswers] = useState<Record<number, any>>({});
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60 * 60); // 60 minutes
+  
+  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
-    if (!course) return;
-    
-    // Load from localStorage to prevent refresh exploit
-    const savedStateStr = localStorage.getItem(`assessment_${course.slug}`);
-    if (savedStateStr) {
+    async function loadAssessment() {
       try {
-        const parsed: AssessmentState = JSON.parse(savedStateStr);
-        // Ensure the saved state contains the active questions (new format support)
-        if (parsed.questions && parsed.questions.length > 0) {
-          setActiveQuestions(parsed.questions);
-          setAnswers(parsed.answers || {});
-          setCurrentIdx(parsed.currentIdx || 0);
-          if (parsed.timeLeft) setTimeLeft(parsed.timeLeft);
-          setMounted(true);
+        const res = await fetch(`/api/courses/${params.slug}/assessment`);
+        if (res.status === 401) {
+          router.push(`/${params.locale}/login`);
           return;
         }
+        if (res.status === 403) {
+          router.push(`/${params.locale}/courses/${params.slug}`);
+          return;
+        }
+        if (res.status === 404) {
+          setError("not_found");
+          return;
+        }
+        if (!res.ok) {
+          setError("Failed to load assessment");
+          return;
+        }
+        const data = await res.json();
+        setCourseTitle(data.courseTitle);
+        
+        // Load from localStorage to prevent refresh exploit
+        const savedStateStr = localStorage.getItem(`assessment_${params.slug}`);
+        if (savedStateStr) {
+          try {
+            const parsed: AssessmentState = JSON.parse(savedStateStr);
+            if (parsed.questions && parsed.questions.length > 0) {
+              setActiveQuestions(parsed.questions);
+              setAnswers(parsed.answers || {});
+              setCurrentIdx(parsed.currentIdx || 0);
+              if (parsed.timeLeft) setTimeLeft(parsed.timeLeft);
+              setMounted(true);
+              setLoading(false);
+              return;
+            }
+          } catch (e) {
+            console.error("Failed to parse state", e);
+          }
+        }
+        
+        // Initialize Anti-Cheat: Shuffle Questions and Options
+        let rawQs = [...data.questions];
+        rawQs = shuffleArray(rawQs);
+        
+        const shuffledQs = rawQs.map(q => {
+          const newOptions = shuffleArray(q.options);
+          let newCorrectIndex, newCorrectIndices;
+          
+          if (q.type === 'multi_select' && q.correctOptionIndices) {
+            const correctTexts = q.correctOptionIndices.map((i: number) => q.options[i]);
+            newCorrectIndices = correctTexts.map((t: string) => newOptions.indexOf(t));
+          } else if (q.correctOptionIndex !== undefined) {
+            const correctText = q.options[q.correctOptionIndex];
+            newCorrectIndex = newOptions.indexOf(correctText);
+          }
+          
+          return {
+            ...q,
+            options: newOptions,
+            correctOptionIndex: newCorrectIndex,
+            correctOptionIndices: newCorrectIndices
+          };
+        });
+
+        setActiveQuestions(shuffledQs);
+        setMounted(true);
       } catch (e) {
-        console.error("Failed to parse state", e);
+        setError("Failed to load assessment");
+      } finally {
+        setLoading(false);
       }
     }
-    
-    // Initialize Anti-Cheat: Shuffle Questions and Options
-    let rawQs = [...baseQuestions];
-    rawQs = shuffleArray(rawQs);
-    
-    const shuffledQs = rawQs.map(q => {
-      const newOptions = shuffleArray(q.options);
-      let newCorrectIndex, newCorrectIndices;
-      
-      if (q.type === 'multi_select' && q.correctOptionIndices) {
-        const correctTexts = q.correctOptionIndices.map(i => q.options[i]);
-        newCorrectIndices = correctTexts.map(t => newOptions.indexOf(t));
-      } else if (q.correctOptionIndex !== undefined) {
-        const correctText = q.options[q.correctOptionIndex];
-        newCorrectIndex = newOptions.indexOf(correctText);
-      }
-      
-      return {
-        ...q,
-        options: newOptions,
-        correctOptionIndex: newCorrectIndex,
-        correctOptionIndices: newCorrectIndices
-      };
-    });
-
-    setActiveQuestions(shuffledQs);
-    setMounted(true);
-  }, [course, baseQuestions]);
+    loadAssessment();
+  }, [params.slug, params.locale, router]);
 
   // Save state
   useEffect(() => {
-    if (mounted && course && !isSubmitted && activeQuestions.length > 0) {
-      localStorage.setItem(`assessment_${course.slug}`, JSON.stringify({
+    if (mounted && params.slug && !isSubmitted && activeQuestions.length > 0) {
+      localStorage.setItem(`assessment_${params.slug}`, JSON.stringify({
         questions: activeQuestions,
         answers, 
         currentIdx, 
         timeLeft
       }));
     }
-  }, [answers, currentIdx, timeLeft, course, mounted, isSubmitted, activeQuestions]);
+  }, [answers, currentIdx, timeLeft, params.slug, mounted, isSubmitted, activeQuestions]);
 
   // Timer
   useEffect(() => {
@@ -157,20 +184,37 @@ export default function AssessmentPage() {
     else if (scorePct >= 60) grade = 'C';
     else if (scorePct >= 50) grade = 'D';
 
-    localStorage.setItem(`result_${course?.slug}`, JSON.stringify({
+    localStorage.setItem(`result_${params.slug}`, JSON.stringify({
       score: scorePct,
       grade
     }));
 
-    localStorage.removeItem(`assessment_${course?.slug}`);
-    router.push(`/${params.locale}/courses/${course?.slug}/result`);
-  }, [answers, activeQuestions, course?.slug, params.locale, router]);
+    localStorage.removeItem(`assessment_${params.slug}`);
+    router.push(`/${params.locale}/courses/${params.slug}/result`);
+  }, [answers, activeQuestions, params.slug, params.locale, router]);
 
-  if (!course || baseQuestions.length === 0) {
-    return <div className="min-h-screen bg-black text-white p-20">Assessment is missing or currently being updated.</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+          <p className="text-white/40 text-sm font-medium uppercase tracking-widest">Loading assessment...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (!mounted || activeQuestions.length === 0) return <div className="min-h-screen bg-black" />;
+  if (error === "not_found" || activeQuestions.length === 0) {
+    return <div className="min-h-screen bg-black text-white p-20 flex items-center justify-center">Assessment is missing or currently being updated.</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <p className="text-red-400">{error}</p>
+      </div>
+    );
+  }
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -180,7 +224,7 @@ export default function AssessmentPage() {
 
   const currentQ = activeQuestions[currentIdx];
 
-  const difficultyColors = {
+  const difficultyColors: Record<string, string> = {
     easy: "text-blue-400 border-blue-400/20 bg-blue-400/10",
     medium: "text-yellow-400 border-yellow-400/20 bg-yellow-400/10",
     hard: "text-red-400 border-red-400/20 bg-red-400/10"
@@ -194,7 +238,7 @@ export default function AssessmentPage() {
         <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-6">
            <div>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#00A86B]">Final Evaluation [PRO]</span>
-              <h1 className="text-xl font-bold mt-1 text-white">{course.title}</h1>
+              <h1 className="text-xl font-bold mt-1 text-white">{courseTitle}</h1>
            </div>
            <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2">
               <Clock size={16} className={timeLeft < 600 ? "text-red-500 animate-pulse" : "text-[#A0A0A0]"} />
@@ -291,7 +335,7 @@ export default function AssessmentPage() {
                              ) : (
                                <div className={`w-full h-full rounded-full border flex items-center justify-center ${isSelected ? "border-[#00A86B] bg-[#00A86B]" : "border-white/20"}`}>
                                   {isSelected && <CheckCircle2 size={12} className="text-black" />}
-                               </div>
+                                </div>
                              )}
                           </div>
                        </button>

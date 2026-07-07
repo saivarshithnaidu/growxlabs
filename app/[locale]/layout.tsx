@@ -117,7 +117,7 @@ export default async function LocaleLayout({
                   },
                   "contactPoint": {
                     "@type": "ContactPoint",
-                    "email": "hello@growxlabs.tech",
+                    "email": "sai@growxlabs.tech",
                     "contactType": "customer support",
                     "availableLanguage": ["English", "Telugu", "Hindi", "Arabic"]
                   },
@@ -257,7 +257,7 @@ export default async function LocaleLayout({
               "logo": "https://growxlabs.tech/logo.png",
               "description": "Global AI native digital agency building AI powered websites, n8n automation, and business growth tools worldwide.",
               "foundingDate": "2026",
-              "email": "hello@growxlabs.tech",
+              "email": "sai@growxlabs.tech",
               "areaServed": "Worldwide",
               "sameAs": [
                 "https://linkedin.com/company/growxlabstech",
