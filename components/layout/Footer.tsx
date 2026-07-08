@@ -151,9 +151,6 @@ export function Footer() {
           <p className={`text-[13px] ${textColor}`}>
             Copyright 2026 GrowXLabsTech. All rights reserved.
           </p>
-          <p className={`text-[13px] ${textColor}`}>
-            Serving Clients Worldwide
-          </p>
         </div>
       </div>
     </footer>
