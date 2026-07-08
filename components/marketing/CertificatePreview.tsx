@@ -2,15 +2,14 @@
 
 import { motion } from "framer-motion";
 import { QrCode } from "lucide-react";
-import { Cinzel, Cormorant_Garamond } from "next/font/google";
+import { Cinzel } from "next/font/google";
 import Image from "next/image";
 
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
-const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["300", "400", "600"], style: ["normal", "italic"] });
 
 export function CertificatePreview() {
   return (
-    <div className={`relative group perspective-2000 w-full mb-12 ${cormorant.className}`}>
+    <div className="relative group perspective-2000 w-full mb-12 font-serif">
       <motion.div
         whileHover={{ rotateY: -2, rotateX: 1, scale: 1.02 }}
         className="aspect-[1.414/1] bg-[#faf6ee] text-[#1a1a1a] p-8 rounded-[4px] relative overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/10"

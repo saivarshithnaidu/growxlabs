@@ -11,7 +11,7 @@ import { Toaster } from "sonner";
 import { locales } from "@/navigation";
 import Script from "next/script";
 import { PHProvider } from "@/components/providers/PostHogProvider";
-import "../globals.css";
+import "./globals.css";
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
