@@ -56,10 +56,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     metadataBase: new URL('https://growxlabs.tech'),
     title: {
-      default: "GrowXLabsTech — AI Native Digital Agency",
+      default: "GrowXLabsTech — AI-native Software Company, Product Studio & AI Engineering Lab",
       template: "%s | GrowXLabsTech"
     },
-    description: "GrowXLabsTech is a global AI native digital agency building AI powered websites, n8n automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide stop losing customers through automated follow ups and intelligent lead capture. 7 day delivery. Serving clients worldwide.",
+    description: "GrowXLabsTech is an AI-native software company, product studio, and AI engineering lab. We build high-performance digital systems, agentic automations, and custom enterprise AI platforms.",
     alternates: {
       canonical: `https://growxlabs.tech/${locale}`,
       languages
@@ -104,7 +104,7 @@ export default async function LocaleLayout({
                   "name": "GrowXLabsTech",
                   "url": "https://growxlabs.tech",
                   "logo": "https://growxlabs.tech/logo.png",
-                  "description": "AI native digital agency building AI powered websites, automation systems, and full stack AI products.",
+                  "description": "AI-native software company, product studio, and AI engineering lab building enterprise AI products and secure systems.",
                   "founder": [
                     { "@id": "https://growxlabs.tech/#varshith" },
                     { "@id": "https://growxlabs.tech/#akhilesh" }
@@ -255,7 +255,7 @@ export default async function LocaleLayout({
               "name": "GrowXLabsTech",
               "url": "https://growxlabs.tech",
               "logo": "https://growxlabs.tech/logo.png",
-              "description": "Global AI native digital agency building AI powered websites, n8n automation, and business growth tools worldwide.",
+              "description": "Global AI-native software company, product studio, and AI engineering lab building enterprise digital systems and AI solutions.",
               "foundingDate": "2026",
               "email": "sai@growxlabs.tech",
               "areaServed": "Worldwide",

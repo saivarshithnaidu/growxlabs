@@ -16,8 +16,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 
   return {
-    title: "What is an AI Native Digital Agency — And Why Your Business Needs One | GrowXLabsTech",
-    description: "Discover why traditional digital agencies are failing and why your business needs an AI-native approach to survive and thrive in 2026.",
+    title: "What is an AI-Native Product Studio & Engineering Lab | GrowXLabsTech",
+    description: "Discover why traditional software consulting is failing and why your business needs an AI-native software company, product studio, and engineering lab approach to thrive.",
     alternates: {
       canonical: `https://growxlabs.tech/${locale}/${path}`,
       languages

@@ -30,9 +30,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 
   return {
-    title: "GrowXLabsTech — AI Native Product Studio | Websites & Automation for Businesses Worldwide",
-    description: "GrowXLabsTech is a global AI native product studio building AI powered websites, automation systems, and business growth tools. We help restaurants, real estate agencies, and growing businesses worldwide generate leads and scale with intelligent digital systems. Serving clients worldwide.",
-    keywords: "AI agency, AI native digital agency, web agency, n8n automation agency, restaurant automation, real estate CRM, WhatsApp automation business, business automation agency, AI web agency, lead capture automation, automated follow up system, GrowXLabsTech",
+    title: "GrowXLabsTech — AI-native Software Company, Product Studio & AI Engineering Lab | Custom Enterprise Applications",
+    description: "GrowXLabsTech is an AI-native software company, product studio, and AI engineering lab. We build high-performance enterprise AI applications, secure legacy system integrations, and agentic workflows.",
+    keywords: "custom enterprise AI software company, AI-native enterprise application development, legacy system modernization company, enterprise software development studio, AI applications for manufacturing legacy systems, custom AI software for manufacturing ERP, manufacturing workflow automation software, secure enterprise RAG systems, custom agentic workflows for legacy databases, enterprise AI systems integrator, private LLM deployment, AI-native software company, product studio, AI engineering lab, GrowXLabsTech",
     alternates: {
       canonical: "https://growxlabs.tech/en-IN",
       languages
