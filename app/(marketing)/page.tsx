@@ -14,7 +14,6 @@ import { ValuePropositions } from "@/components/marketing/ValuePropositions";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
 import { AnimatedSection, AnimatedStagger, AnimatedItem } from "@/components/marketing/AnimatedSection";
 import { Feature1 } from "@/components/ui/feature-1";
-import { PipelineSection } from "@/components/marketing/PipelineSection";
 import { locales } from "@/navigation";
 import Script from "next/script";
 import { ArrowUpRight } from "lucide-react";
@@ -246,9 +245,6 @@ export default function Home() {
           </AnimatedStagger>
         </div>
       </section>
-
-      <PipelineSection />
-
       <AnimatedSection>
         <Feature1 />
       </AnimatedSection>
