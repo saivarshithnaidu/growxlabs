@@ -1,7 +1,4 @@
 import type { NextConfig } from "next";
-import createNextIntlPlugin from 'next-intl/plugin';
-
-const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const nextConfig: NextConfig = {
   /** Hides the bottom-left Next.js dev “issues” badge in development (not your app UI). */
@@ -21,6 +18,30 @@ const nextConfig: NextConfig = {
   // @ts-expect-error NextConfig types omit legacy optimizeFonts; supported at runtime
   optimizeFonts: false,
   compress: true,
+  async redirects() {
+    return [
+      {
+        source: '/en',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/en-IN',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/en/:path*',
+        destination: '/:path*',
+        permanent: true,
+      },
+      {
+        source: '/en-IN/:path*',
+        destination: '/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -66,7 +87,7 @@ const nextConfig: NextConfig = {
 
 import { withSentryConfig } from "@sentry/nextjs";
 
-export default withSentryConfig(withNextIntl(nextConfig), {
+export default withSentryConfig(nextConfig, {
   silent: true,
   org: "grow-x",
   project: "grow-x",

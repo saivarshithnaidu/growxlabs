@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { usePathname } from "@/navigation";
 import { Link } from "@/navigation";
-import { useTranslations } from "next-intl";
 import { useSession, signOut } from "next-auth/react";
 import { getAbsoluteUrl } from "@/lib/subdomains";
 
@@ -23,7 +22,6 @@ export function Navbar() {
     : "/client/dashboard";
 
   const pathname = usePathname();
-  const t = useTranslations("Nav");
   const isDemoRoute = Boolean(pathname?.includes("/demos"));
   const isBlog = Boolean(pathname?.includes("/blog"));
   const isContact = Boolean(pathname?.includes("/contact"));
@@ -53,12 +51,12 @@ export function Navbar() {
 
   const topLinks = [
     { name: "Home", href: "/" },
-    { name: t("services"), href: "/services" },
-    { name: t("portfolio"), href: "/portfolio" },
-    { name: t("products"), href: "/products" },
-    { name: t("blog"), href: "/blog" },
-    { name: t("faq"), href: "/faq" },
-    { name: t("contact"), href: "/contact" },
+    { name: "Services", href: "/services" },
+    { name: "Portfolio", href: "/portfolio" },
+    { name: "Labs", href: "/products" },
+    { name: "Blog", href: "/blog" },
+    { name: "FAQ'S", href: "/faq" },
+    { name: "Contact", href: "/contact" },
   ];
 
   useEffect(() => {
@@ -157,7 +155,7 @@ export function Navbar() {
                   return (
                     <a href={resolvedHref}>
                       <Button size="sm" className={contactBtnClass} variant="ghost">
-                        {t("contact")}
+                        Contact
                       </Button>
                     </a>
                   );
@@ -165,7 +163,7 @@ export function Navbar() {
                 return (
                   <Link href="/contact">
                     <Button size="sm" className={contactBtnClass} variant="ghost">
-                      {t("contact")}
+                      Contact
                     </Button>
                   </Link>
                 );
@@ -249,7 +247,7 @@ export function Navbar() {
                           className="text-sm font-semibold text-neutral-300 hover:text-white transition-colors text-left block w-full px-6 py-3.5 border-b border-neutral-800 hover:bg-white/[0.02]"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
-                          {t("dashboard")}
+                          Dashboard
                         </a>
                       );
                     }
@@ -259,7 +257,7 @@ export function Navbar() {
                         className="text-sm font-semibold text-neutral-300 hover:text-white transition-colors text-left block w-full px-6 py-3.5 border-b border-neutral-800 hover:bg-white/[0.02]"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        {t("dashboard")}
+                        Dashboard
                       </Link>
                     );
                   })()}

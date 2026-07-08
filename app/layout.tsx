@@ -1,6 +1,5 @@
 import React from "react";
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+
 import { Plus_Jakarta_Sans, Playfair_Display, Lora, Outfit } from "next/font/google";
 import { GlobalBackground } from "@/components/layout/GlobalBackground";
 import { AuthProvider } from "@/components/providers/AuthProvider";
@@ -39,57 +38,34 @@ const outfit = Outfit({
   display: "swap",
 });
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
+export const metadata = {
+  metadataBase: new URL('https://growxlabs.tech'),
+  title: {
+    default: "GrowXLabsTech — AI-native Software Company, Product Studio & AI Engineering Lab",
+    template: "%s | GrowXLabsTech"
+  },
+  description: "GrowXLabsTech is an AI-native software company, product studio, and AI engineering lab. We build high-performance digital systems, agentic automations, and custom enterprise AI platforms.",
+  alternates: {
+    canonical: "https://growxlabs.tech/",
+  },
+  openGraph: {
+    url: "https://growxlabs.tech/",
+    siteName: 'GrowXLabsTech',
+    type: 'website',
+    images: [{ url: 'https://growxlabs.tech/og-image.png', width: 1200, height: 630 }],
+  },
+  icons: {
+    icon: "/logo-symbol.svg",
+  },
+};
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-
-  const languages: Record<string, string> = {
-    'x-default': 'https://growxlabs.tech/en-IN',
-  };
-  locales.forEach((l) => {
-    languages[l] = `https://growxlabs.tech/${l}`;
-  });
-
-  return {
-    metadataBase: new URL('https://growxlabs.tech'),
-    title: {
-      default: "GrowXLabsTech — AI-native Software Company, Product Studio & AI Engineering Lab",
-      template: "%s | GrowXLabsTech"
-    },
-    description: "GrowXLabsTech is an AI-native software company, product studio, and AI engineering lab. We build high-performance digital systems, agentic automations, and custom enterprise AI platforms.",
-    alternates: {
-      canonical: `https://growxlabs.tech/${locale}`,
-      languages
-    },
-    openGraph: {
-      url: `https://growxlabs.tech/${locale}/`,
-      siteName: 'GrowXLabsTech',
-      type: 'website',
-      images: [{ url: 'https://growxlabs.tech/og-image.png', width: 1200, height: 630 }],
-    },
-    icons: {
-      icon: "/logo-symbol.svg",
-    },
-  };
-}
-
-export default async function LocaleLayout({
+export default async function RootLayout({
   children,
-  params
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
-  const messages = await getMessages();
-  if (!messages) return null;
-  const direction = locale.startsWith('ar') ? 'rtl' : 'ltr';
-
   return (
-    <html lang={locale} dir={direction} className={`${sans.variable} ${serif.variable} ${lora.variable} ${outfit.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${serif.variable} ${lora.variable} ${outfit.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         {/* 🧠 MASTER AEO KNOWLEDGE GRAPH (Verified Architecture) */}
         <script
@@ -119,7 +95,7 @@ export default async function LocaleLayout({
                     "@type": "ContactPoint",
                     "email": "sai@growxlabs.tech",
                     "contactType": "customer support",
-                    "availableLanguage": ["English", "Telugu", "Hindi", "Arabic"]
+                    "availableLanguage": ["English"]
                   },
                   "areaServed": "Worldwide",
                   "serviceArea": {
@@ -278,22 +254,20 @@ export default async function LocaleLayout({
           }}
         />
         <PHProvider>
-          <NextIntlClientProvider messages={messages} locale={locale}>
-            <AuthProvider>
-              <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
-                <GlobalBackground />
+          <AuthProvider>
+            <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
+              <GlobalBackground />
 
-                <ConditionalLayout>
-                  {children}
-                </ConditionalLayout>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
 
-                <CookieConsent />
-                <WhatsAppWidget />
-                <Toaster position="top-right" expand={false} richColors />
-              </ThemeProvider>
+              <CookieConsent />
+              <WhatsAppWidget />
+              <Toaster position="top-right" expand={false} richColors />
+            </ThemeProvider>
 
-            </AuthProvider>
-          </NextIntlClientProvider>
+          </AuthProvider>
         </PHProvider>
       </body>
     </html>

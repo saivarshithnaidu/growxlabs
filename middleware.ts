@@ -1,5 +1,3 @@
-import createMiddleware from 'next-intl/middleware';
-import { locales, localePrefix } from './navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { Ratelimit } from '@upstash/ratelimit';
@@ -21,12 +19,6 @@ const apiLimiter = redis
       analytics: true,
     })
   : null;
-
-const intlMiddleware = createMiddleware({
-  locales,
-  defaultLocale: 'en-IN',
-  localePrefix
-});
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -65,11 +57,7 @@ export default async function middleware(req: NextRequest) {
 
     if (!isSecretValid && !isAdmin) {
       const url = req.nextUrl.clone();
-      const segments = pathname.split('/').filter(Boolean);
-      const firstSegment = segments[0];
-      const localesList = ['en', 'en-IN', 'en-US', 'ar'];
-      const locale = firstSegment && localesList.includes(firstSegment) ? firstSegment : 'en-IN';
-      url.pathname = `/${locale}/wish-game`;
+      url.pathname = `/wish-game`;
       url.search = "";
       return NextResponse.redirect(url, 302);
     }
@@ -81,10 +69,6 @@ export default async function middleware(req: NextRequest) {
 
   if (pathname.includes('wish_game')) {
     rewrittenPath = rewrittenPath.replace('wish_game', 'wish-game');
-    shouldRedirect = true;
-  }
-  if (pathname.includes('en_IN')) {
-    rewrittenPath = rewrittenPath.replace('en_IN', 'en-IN');
     shouldRedirect = true;
   }
 
@@ -104,8 +88,6 @@ export default async function middleware(req: NextRequest) {
   }
 
   // 2. ENTERPRISE RATE LIMITING (Optimized)
-  // Only rate limit sensitive POST actions to protect against brute force/spam
-  // Skip for GET requests (like session checks) to maintain UI snappiness
   if (req.method === 'POST') {
     const sensitiveRoutes = ['/api/contact', '/api/auth', '/api/login', '/api/signup'];
     if (sensitiveRoutes.some(route => pathname.startsWith(route))) {
@@ -124,7 +106,6 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-
   // 2. Identify Subdomain Target
   const isVercel = hostname.includes('.vercel.app');
   let subdomain = '';
@@ -140,18 +121,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   // 2.5. Redirect main domain /careers and /courses to their subdomains
-  let cleanPathForCheck = pathname;
-  const sortedLocales = [...locales].sort((a, b) => b.length - a.length);
-  for (const l of sortedLocales) {
-    if (cleanPathForCheck.startsWith(`/${l}/`)) {
-      cleanPathForCheck = '/' + cleanPathForCheck.substring(l.length + 2);
-      break;
-    } else if (cleanPathForCheck === `/${l}`) {
-      cleanPathForCheck = '/';
-      break;
-    }
-  }
-
+  const cleanPathForCheck = pathname;
   const cleanLowerPath = cleanPathForCheck.toLowerCase();
   const hasCourses = cleanLowerPath.startsWith('/courses');
   const hasCareers = cleanLowerPath.startsWith('/careers');
@@ -162,17 +132,7 @@ export default async function middleware(req: NextRequest) {
 
     if ((hasCourses && !isCoursesSub) || (hasCareers && !isCareersSub)) {
       const targetSub = hasCourses ? 'courses' : 'careers';
-      
       let cleanPath = pathname;
-      for (const l of sortedLocales) {
-        if (cleanPath.startsWith(`/${l}/`)) {
-          cleanPath = '/' + cleanPath.substring(l.length + 2);
-          break;
-        } else if (cleanPath === `/${l}`) {
-          cleanPath = '/';
-          break;
-        }
-      }
 
       if (cleanPath === `/courses` || cleanPath === `/careers`) {
         cleanPath = '/';
@@ -191,17 +151,7 @@ export default async function middleware(req: NextRequest) {
 
   // 2.8. Redirect subdomain requests for main site paths back to main domain
   if (subdomain === 'courses' || subdomain === 'careers') {
-    let cleanPath = pathname;
-    const sortedLocales = [...locales].sort((a, b) => b.length - a.length);
-    for (const l of sortedLocales) {
-      if (cleanPath.startsWith(`/${l}/`)) {
-        cleanPath = '/' + cleanPath.substring(l.length + 2);
-        break;
-      } else if (cleanPath === `/${l}`) {
-        cleanPath = '/';
-        break;
-      }
-    }
+    const cleanPath = pathname;
     
     // Redirect if they repeat the subdomain path in URL
     const targetSubRoute = `/${subdomain}`;
@@ -243,35 +193,8 @@ export default async function middleware(req: NextRequest) {
     }
   }
 
-  // 3. Locale Detection & Redirect Logic
-  const segments = pathname.split('/').filter(Boolean);
-  const firstSegment = segments[0];
-
-  // Case-insensitive check for locales
-  const matchedLocale = locales.find(
-    l => l.toLowerCase() === firstSegment?.toLowerCase()
-  );
-
-  // If no valid locale found in path, redirect to default /en-IN
-  if (!matchedLocale && !subdomain) {
-    const url = req.nextUrl.clone();
-    // Handle legacy /en or other malformed starts
-    const cleanPath = pathname.replace(/^\/en(\/|$)/, '/');
-    url.pathname = `/en-IN${cleanPath === '/' ? '' : cleanPath}`;
-    return NextResponse.redirect(url, 302);
-  }
-
-  // If casing mismatch (e.g., /en-in/ instead of /en-IN/), redirect to canonical
-  if (firstSegment && matchedLocale && firstSegment !== matchedLocale && !subdomain) {
-    const url = req.nextUrl.clone();
-    segments[0] = matchedLocale;
-    url.pathname = '/' + segments.join('/');
-    return NextResponse.redirect(url, 302);
-  }
-
   // 4. Handle Subdomain Mapping
   if (subdomain) {
-    const targetLocale = 'en-IN'; // Subdomains use primary locale
     const mapping: Record<string, string> = {
       admin: '/admin',
       client: '/client',
@@ -283,7 +206,7 @@ export default async function middleware(req: NextRequest) {
     };
     const internalPath = mapping[subdomain];
     const url = req.nextUrl.clone();
-    url.pathname = `/${targetLocale}${internalPath}${pathname === '/' ? '' : pathname}`;
+    url.pathname = `${internalPath}${pathname === '/' ? '' : pathname}`;
     return NextResponse.rewrite(url);
   }
 
@@ -301,7 +224,7 @@ export default async function middleware(req: NextRequest) {
     const isLoginPage = pathname.includes('/login');
     
     if (!token && !isLoginPage) {
-      const loginUrl = new URL(`/${matchedLocale || 'en-IN'}/login`, req.url);
+      const loginUrl = new URL(`/login`, req.url);
       return NextResponse.redirect(loginUrl);
     }
 
@@ -313,25 +236,23 @@ export default async function middleware(req: NextRequest) {
         token.email === 'coadmin@growxlabs.tech' ||
         token.email === 'coadmin-suspended@growxlabs.tech'
       ) {
-        const loginUrl = new URL(`/${matchedLocale || 'en-IN'}/login`, req.url);
+        const loginUrl = new URL(`/login`, req.url);
         return NextResponse.redirect(loginUrl);
       }
 
       if (isAdminPath && token.role !== 'ADMIN' && token.role !== 'CO_ADMIN' && token.role !== 'crm_agent') {
-        const homeUrl = new URL(`/${matchedLocale || 'en-IN'}`, req.url);
+        const homeUrl = new URL(`/`, req.url);
         return NextResponse.redirect(homeUrl);
       }
 
       if (isClientPath && token.role !== 'CLIENT' && token.role !== 'ADMIN' && token.role !== 'CO_ADMIN') {
-        const homeUrl = new URL(`/${matchedLocale || 'en-IN'}`, req.url);
+        const homeUrl = new URL(`/`, req.url);
         return NextResponse.redirect(homeUrl);
       }
     }
   }
 
-
-
-  return intlMiddleware(req);
+  return NextResponse.next();
 }
 
 export const config = {

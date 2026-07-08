@@ -1,44 +1,55 @@
 "use client";
 
 import React from 'react';
-import { Home, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+import { Home, ArrowLeft } from 'lucide-react';
 
-export default function GlobalNotFound() {
+export default function NotFound() {
   return (
-    <html lang="en">
-      <body style={{ backgroundColor: '#F9F8F6', fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-md mx-auto">
-            <h1 style={{ fontSize: '120px', fontWeight: 900, color: '#E8E6E1', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: '-8px' }}>
-              404
-            </h1>
-            <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1A1A1A', marginBottom: '12px' }}>
-              Page not found
-            </h2>
-            <p style={{ fontSize: '16px', color: '#6B7280', lineHeight: 1.6, marginBottom: '32px' }}>
-              The page you&apos;re looking for doesn&apos;t exist or has been moved.
-            </p>
-            <a
-              href="/"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: '#355CFF',
-                color: '#FFFFFF',
-                padding: '12px 32px',
-                borderRadius: '999px',
-                fontSize: '15px',
-                fontWeight: 600,
-                textDecoration: 'none',
-                transition: 'background-color 0.2s',
-              }}
+    <div className="min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center p-6 text-center overflow-hidden relative">
+      <div className="relative z-10 max-w-lg mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          {/* Large 404 */}
+          <h1 className="text-[140px] md:text-[180px] font-black text-[#E8E6E1] tracking-tighter leading-none select-none mb-0">
+            404
+          </h1>
+
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] tracking-tight mb-4 -mt-6">
+            Page not found
+          </h2>
+
+          <p className="text-[16px] text-[#6B7280] leading-relaxed mb-10 max-w-sm mx-auto">
+            The page you&apos;re looking for doesn&apos;t exist or has been moved.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/">
+              <Button
+                size="lg"
+                className="h-12 px-8 rounded-full bg-[#355CFF] text-white hover:bg-[#2A4AD4] font-semibold text-[15px] transition-all shadow-none"
+              >
+                <Home className="mr-2 w-4 h-4" />
+                Back to Home
+              </Button>
+            </Link>
+            <Button
+              onClick={() => window.history.back()}
+              variant="outline"
+              size="lg"
+              className="h-12 px-8 rounded-full border-[#E8E6E1] text-[#1A1A1A] hover:border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white font-semibold text-[15px] transition-all"
             >
-              Back to Home
-            </a>
+              <ArrowLeft className="mr-2 w-4 h-4" />
+              Go Back
+            </Button>
           </div>
-        </div>
-      </body>
-    </html>
+        </motion.div>
+      </div>
+    </div>
   );
 }
