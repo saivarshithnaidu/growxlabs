@@ -1,6 +1,110 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { Resend } from "resend";
+import crypto from "crypto";
+
+// Helper to sign JWT using Node's crypto module
+function signGoogleJWT(payload: any, privateKey: string): string {
+  const header = { alg: "RS256", typ: "JWT" };
+  const base64Header = Buffer.from(JSON.stringify(header)).toString("base64url");
+  const base64Payload = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const sign = crypto.createSign("RSA-SHA256");
+  sign.write(`${base64Header}.${base64Payload}`);
+  sign.end();
+  const signature = sign.sign(privateKey, "base64url");
+  return `${base64Header}.${base64Payload}.${signature}`;
+}
+
+// Helper to get Google OAuth2 Token
+async function getGoogleAccessToken(email: string, privateKey: string): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    iss: email,
+    scope: "https://www.googleapis.com/auth/calendar",
+    aud: "https://oauth2.googleapis.com/token",
+    exp: now + 3600,
+    iat: now
+  };
+  const jwt = signGoogleJWT(payload, privateKey.replace(/\\n/g, "\n"));
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion: jwt
+    })
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(JSON.stringify(data));
+  return data.access_token;
+}
+
+// Convert "11:30 AM" or "02:15 PM" to "11:30" or "14:15"
+function convertTo24Hour(timeStr: string): string {
+  const [time, modifier] = timeStr.split(" ");
+  let [hours, minutes] = time.split(":");
+  if (hours === "12") {
+    hours = "00";
+  }
+  if (modifier === "PM") {
+    hours = (parseInt(hours, 10) + 12).toString();
+  }
+  return `${hours.padStart(2, "0")}:${minutes}`;
+}
+
+// Main Google Calendar Event Creator
+async function createCalendarEvent(name: string, email: string, date: string, timeSlot: string, notes: string): Promise<string> {
+  const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+  const calendarId = "saivarshith8284@gmail.com"; // Shared personal calendar
+  const meetUrl = process.env.GOOGLE_MEET_LINK || "https://meet.google.com/sai-strategy-call";
+
+  if (!serviceAccountEmail || !privateKey) {
+    console.warn("Google Calendar environment variables not configured.");
+    return meetUrl;
+  }
+
+  try {
+    const token = await getGoogleAccessToken(serviceAccountEmail, privateKey);
+    const startDateTime = new Date(`${date}T${convertTo24Hour(timeSlot)}:00`);
+    const endDateTime = new Date(startDateTime.getTime() + 30 * 60 * 1000);
+
+    const response = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          summary: `Strategy Call | GrowX Labs & ${name}`,
+          description: `30-Min AI Product Consultation & Technical Discovery call.\n\nClient Name: ${name}\nClient Email: ${email}\nClient Notes: ${notes || "None"}\n\nGoogle Meet Link: ${meetUrl}`,
+          location: meetUrl,
+          start: {
+            dateTime: startDateTime.toISOString(),
+            timeZone: "Asia/Kolkata"
+          },
+          end: {
+            dateTime: endDateTime.toISOString(),
+            timeZone: "Asia/Kolkata"
+          }
+        })
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error("Google Calendar event creation failed:", data);
+    } else {
+      console.log("Successfully created Google Calendar event:", data.htmlLink);
+    }
+  } catch (error) {
+    console.error("Error creating Google Calendar event:", error);
+  }
+
+  return meetUrl;
+}
 
 // Helper to validate YYYY-MM-DD date format
 const isValidDate = (dateStr: string) => {
@@ -119,12 +223,15 @@ export async function POST(req: Request) {
       );
     }
 
+    // Generate Calendar Event and get Google Meet Link
+    const meetLink = await createCalendarEvent(name, email, date, timeSlot, notes);
+
     // Insert booking as a high-intent CRM Lead in leads table
     const leadPayload = {
       name,
       email,
       business_name: name,
-      message: `### 🗓️ Strategy Call Booked\n- **Date:** ${date}\n- **Time:** ${timeSlot}\n\n**Notes/Project Brief:**\n${notes || "No notes provided."}`,
+      message: `### 🗓️ Strategy Call Booked\n- **Date:** ${date}\n- **Time:** ${timeSlot}\n- **Google Meet Link:** ${meetLink}\n\n**Notes/Project Brief:**\n${notes || "No notes provided."}`,
       status: "new",
       lead_score: 8, // High rating due to calendar commitment
       source: "Booking Scheduler"
@@ -152,7 +259,7 @@ export async function POST(req: Request) {
         });
 
         await resend.emails.send({
-          from: "GrowX Labs <onboarding@resend.dev>", // Sandbox sender default
+          from: "GrowX Labs <sai@growxlabs.tech>", 
           to: [email],
           subject: "Strategy Call Confirmed | GrowX Labs",
           html: `
@@ -165,7 +272,7 @@ export async function POST(req: Request) {
                 <h4 style="margin: 0 0 10px 0; font-size: 16px; font-weight: 700;">Meeting Details:</h4>
                 <p style="margin: 0; font-size: 14px;">📅 <strong>Date:</strong> ${formattedDate}</p>
                 <p style="margin: 5px 0 0 0; font-size: 14px;">⏰ <strong>Time:</strong> ${timeSlot} (IST)</p>
-                <p style="margin: 5px 0 0 0; font-size: 14px;">📍 <strong>Platform:</strong> Google Meet (Invitation link will follow)</p>
+                <p style="margin: 5px 0 0 0; font-size: 14px;">📍 <strong>Platform:</strong> <a href="${meetLink}" style="color: #3b82f6; text-decoration: underline; font-weight: bold;">Join Google Meet</a></p>
               </div>
               
               ${notes ? `<p style="font-size: 14px;"><strong>Your Notes:</strong><br><span style="color: #71717a; font-style: italic;">"${notes}"</span></p>` : ""}
