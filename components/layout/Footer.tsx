@@ -116,7 +116,7 @@ export function Footer() {
           </div>
 
           {/* Right side: Legal links horizontal */}
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
             {links.legal.map((link) => {
               const resolvedHref = getAbsoluteUrl(link.href);
               const isExternal = resolvedHref.startsWith("http");
@@ -147,8 +147,8 @@ export function Footer() {
 
         </div>
 
-        <div className={`border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 ${isBlog ? "border-neutral-900" : "border-[#2B2D31]"}`}>
-          <p className={`text-[13px] ${textColor}`}>
+        <div className={`border-t pt-8 flex items-center justify-center ${isBlog ? "border-neutral-900" : "border-[#2B2D31]"}`}>
+          <p className={`text-[13px] text-center ${textColor}`}>
             Copyright 2026 GrowXLabsTech. All rights reserved.
           </p>
         </div>
