@@ -173,9 +173,12 @@ export async function POST(request: Request) {
           const resend = new Resend(apiKey);
           const { subject, html } = getEmailContent(data.name || "Candidate", data.role || "Specialist", status);
           
+          const bccList = token?.email ? [token.email] : [];
+
           const { error: emailError } = await resend.emails.send({
             from: "GrowX Labs <onboarding@resend.dev>",
             to: [data.email],
+            ...(bccList.length > 0 ? { bcc: bccList } : {}),
             subject: subject,
             html: html,
           });
