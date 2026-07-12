@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
     // Professional outreach template
     const { error: emailError } = await resend.emails.send({
-      from: 'GrowX Labs <onboarding@resend.dev>', // Update with verified domain in production
+      from: 'GrowX Labs <contact@growxlabs.tech>',
       to: [email],
       subject: `Accelerating ${lead.business_name || lead.name}'s Digital Strategy`,
       html: `

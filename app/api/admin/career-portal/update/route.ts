@@ -176,7 +176,7 @@ export async function POST(request: Request) {
           const bccList = token?.email ? [token.email] : [];
 
           const { error: emailError } = await resend.emails.send({
-            from: "GrowX Labs <onboarding@resend.dev>",
+            from: "GrowX Labs Careers <careers@growxlabs.tech>",
             to: [data.email],
             ...(bccList.length > 0 ? { bcc: bccList } : {}),
             subject: subject,
