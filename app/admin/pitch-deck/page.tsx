@@ -4,24 +4,24 @@ import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { 
-  Presentation, Sparkles, Plus, Download, ChevronLeft, ChevronRight, 
-  Play, FileText, Mail, Phone, Globe, Trash2, ArrowRight, Loader2, Lightbulb, 
-  Settings, Key, Trophy, PieChart, ShieldAlert, CheckCircle2
+  Presentation, Sparkles, Download, ChevronLeft, ChevronRight, 
+  Play, Mail, Phone, Globe, Loader2, Lightbulb, 
+  Settings, Key, Trophy, PieChart, ShieldAlert, CheckCircle2,
+  XCircle, Edit3, Eye, FileText
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal } from "@/components/marketing/Reveal";
 
 export default function PitchDeckGenPage() {
   const [outlineText, setOutlineText] = useState("");
-  const [companyName, setCompanyName] = useState("GrowX Labs");
+  const [companyName, setCompanyName] = useState("Thynk Unlimited");
   const [presenterName, setPresenterName] = useState("Alfredo Torres");
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [presentationMode, setPresentationMode] = useState(false);
-
-  // Default pitch deck data structure mapped from reference PDF
   const [deckData, setDeckData] = useState<any | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleGenerateDeck = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,47 +78,52 @@ export default function PitchDeckGenPage() {
     }));
   };
 
+  const updateArrayField = (slideKey: string, field: string, index: number, value: string) => {
+    if (!deckData) return;
+    const currentArray = [...deckData[slideKey][field]];
+    currentArray[index] = value;
+    updateSlideData(slideKey, field, currentArray);
+  };
+
   // Renders a specific slide card based on index
-  const renderSlideContent = (index: number, isPrint = false) => {
+  const renderSlideContent = (index: number) => {
     if (!deckData) return null;
 
-    const themeBg = "bg-gradient-to-br from-[#02050A] via-[#051124] to-[#02050A] text-white";
-    const glassCard = "backdrop-blur-md bg-white/[0.02] border border-white/10 shadow-2xl rounded-2xl p-6 relative overflow-hidden";
-    const headerTitle = "text-5xl font-black tracking-tight text-white uppercase";
+    const themeBg = "bg-black text-white font-sans relative select-none overflow-hidden border border-neutral-900 rounded-2xl";
+    const borderCard = "bg-neutral-950/40 border border-neutral-900 rounded-lg p-6 relative overflow-hidden transition-all duration-300";
+    const headerTitle = "text-3xl font-light tracking-tight text-white uppercase";
+    const monoLabel = "text-[9px] font-mono tracking-widest text-neutral-500 uppercase";
 
     switch (index) {
       case 0: // Cover
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg} relative`}>
-            {/* Background elements */}
-            <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-blue-600/10 to-transparent blur-3xl rounded-full" />
-            
-            <div className="flex justify-between items-center z-10">
-              <span className="text-sm font-black tracking-widest text-white/40">{deckData.slide1.companyName}</span>
-              <span className="text-xs text-white/40 font-semibold">{deckData.slide1.date}</span>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg} relative`}>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-mono tracking-[0.25em] text-neutral-400 uppercase">{deckData.slide1.companyName}</span>
+              <span className="text-[10px] font-mono text-neutral-500 tracking-wider">{deckData.slide1.date}</span>
             </div>
 
-            <div className="space-y-6 text-center my-auto z-10">
-              <h1 className="text-7xl font-black tracking-tighter uppercase leading-none text-white">
+            <div className="space-y-6 text-left my-auto max-w-3xl">
+              <h1 className="text-5xl font-extralight tracking-tight uppercase leading-[1.1] text-white">
                 {deckData.slide1.title}
               </h1>
-              <div className="flex justify-center gap-3">
+              <div className="h-[1px] w-20 bg-neutral-800" />
+              <div className="flex flex-wrap gap-2">
                 {deckData.slide1.badges.map((b: string, i: number) => (
-                  <span key={i} className="px-5 py-2 bg-white text-black text-xs font-black uppercase rounded-full tracking-wider shadow-lg">
+                  <span key={i} className="px-3 py-1 border border-neutral-800 text-neutral-400 text-[9px] font-mono uppercase rounded">
                     {b}
                   </span>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-between items-end z-10">
-              <div className="h-10 w-32 opacity-25 flex items-center justify-start">
-                <div className="h-6 w-6 rounded-full bg-white mr-2" />
-                <span className="text-xs font-bold text-white">THYNK UNLIMITED</span>
+            <div className="flex justify-between items-end pt-4 border-t border-neutral-950">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase">{deckData.slide1.companyName}</span>
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Presented By</p>
-                <p className="text-sm font-black text-white">{deckData.slide1.presenter}</p>
+                <span className={monoLabel}>Presented By</span>
+                <p className="text-xs font-semibold text-neutral-300 mt-1">{deckData.slide1.presenter}</p>
               </div>
             </div>
           </div>
@@ -126,28 +131,25 @@ export default function PitchDeckGenPage() {
 
       case 1: // Company Overview
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg}`}>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg}`}>
             <div className="flex justify-between items-start">
               <h2 className={headerTitle}>{deckData.slide2.title}</h2>
-              <div className="p-3 bg-white/5 border border-white/10 rounded-xl text-right">
-                <p className="text-[9px] font-bold text-white/40 uppercase">SINCE</p>
-                <p className="text-sm font-black text-white">2025</p>
-              </div>
+              <span className="text-[10px] font-mono text-neutral-500">EST. 2025</span>
             </div>
 
             <div className="grid grid-cols-2 gap-8 my-auto">
-              <div className={glassCard}>
-                <h3 className="text-lg font-bold text-white mb-3">About Us</h3>
-                <p className="text-xs text-white/60 leading-relaxed font-medium">
+              <div className={borderCard}>
+                <p className={monoLabel}>About Us</p>
+                <p className="text-xs text-neutral-400 leading-relaxed font-normal mt-3">
                   {deckData.slide2.aboutUs}
                 </p>
               </div>
-              <div className={glassCard}>
-                <h3 className="text-lg font-bold text-white mb-4">Key Strengths</h3>
-                <div className="space-y-2">
+              <div className={borderCard}>
+                <p className={monoLabel}>Key Strengths</p>
+                <div className="space-y-2.5 mt-4">
                   {deckData.slide2.keyStrengths.map((str: string, idx: number) => (
-                    <div key={idx} className="p-3 bg-white/5 border border-white/5 rounded-xl text-xs font-bold text-white flex items-center">
-                      <span className="h-1.5 w-1.5 rounded-full bg-blue-500 mr-2" />
+                    <div key={idx} className="text-xs font-normal text-neutral-300 flex items-center gap-2">
+                      <span className="font-mono text-neutral-600 text-[10px]">0{idx+1}.</span>
                       {str}
                     </div>
                   ))}
@@ -155,7 +157,7 @@ export default function PitchDeckGenPage() {
               </div>
             </div>
 
-            <div className="flex justify-between text-xs text-white/30 font-bold">
+            <div className="flex justify-between text-[9px] font-mono text-neutral-600 uppercase tracking-widest">
               <span>{deckData.slide1.companyName} Overview</span>
               <span>Slide 02</span>
             </div>
@@ -164,68 +166,59 @@ export default function PitchDeckGenPage() {
 
       case 2: // The Problem
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg}`}>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg}`}>
             <div className="flex justify-between items-start">
               <h2 className={headerTitle}>{deckData.slide3.title}</h2>
-              <div className="p-3 bg-white/5 border border-white/10 rounded-xl text-right">
-                <p className="text-[9px] font-bold text-white/40 uppercase">SINCE</p>
-                <p className="text-sm font-black text-white">2025</p>
-              </div>
+              <span className="text-[10px] font-mono text-neutral-500">EST. 2025</span>
             </div>
 
             <div className="grid grid-cols-2 gap-8 my-auto">
-              <div className={glassCard}>
-                <h3 className="text-lg font-bold text-white mb-4">Market Challenges</h3>
-                <div className="space-y-2.5">
+              <div className={borderCard}>
+                <p className={monoLabel}>Market Challenges</p>
+                <div className="space-y-3 mt-4">
                   {deckData.slide3.challenges.map((c: string, idx: number) => (
-                    <div key={idx} className="flex items-center gap-3 p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
-                      <div className="h-5 w-5 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 text-[10px] font-black">↓</div>
-                      <span className="text-xs font-bold text-white/80">{c}</span>
+                    <div key={idx} className="flex items-center gap-3 text-xs font-normal text-neutral-300">
+                      <span className="h-2 w-2 rounded-full bg-neutral-800 border border-neutral-700" />
+                      <span>{c}</span>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className={glassCard}>
-                <div className="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4">
-                  <Lightbulb size={24} />
-                </div>
-                <p className="text-xs text-white/60 leading-relaxed font-medium">
+              <div className={borderCard}>
+                <p className={monoLabel}>Context & Impact</p>
+                <p className="text-xs text-neutral-400 leading-relaxed font-normal mt-3">
                   {deckData.slide3.problemDescription}
                 </p>
               </div>
             </div>
 
-            <div className="flex justify-between text-xs text-white/30 font-bold">
+            <div className="flex justify-between text-[9px] font-mono text-neutral-600 uppercase tracking-widest">
               <span>Identifying Market Friction</span>
               <span>Slide 03</span>
             </div>
           </div>
         );
 
-      case 3: // Our Solution
+      case 4: // Our Solution
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg}`}>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg}`}>
             <div className="flex justify-between items-start">
               <h2 className={headerTitle}>{deckData.slide4.title}</h2>
-              <div className="p-3 bg-white/5 border border-white/10 rounded-xl text-right">
-                <p className="text-[9px] font-bold text-white/40 uppercase">SINCE</p>
-                <p className="text-sm font-black text-white">2025</p>
-              </div>
+              <span className="text-[10px] font-mono text-neutral-500">EST. 2025</span>
             </div>
 
             <div className="grid grid-cols-5 gap-8 my-auto items-center">
-              <div className={`${glassCard} col-span-2 flex flex-col items-center justify-center p-8 text-center`}>
-                <div className="h-20 w-20 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 mb-4">
-                  <Settings size={40} className="animate-spin-slow" />
-                </div>
-                <p className="text-xs text-white/60 font-bold">Data-Driven Platform</p>
+              <div className={`${borderCard} col-span-2 flex flex-col items-start p-8`}>
+                <span className="font-mono text-xs text-neutral-600 mb-2">04.</span>
+                <p className="text-xs text-neutral-300 font-bold uppercase tracking-wider">Automated Architecture</p>
+                <p className="text-[10px] text-neutral-500 mt-2">Engineered for robust and rapid scaling.</p>
               </div>
-              <div className={`${glassCard} col-span-3 space-y-4`}>
-                <p className="text-sm font-bold text-white/80 italic">{deckData.slide4.subtitle}</p>
-                <div className="grid grid-cols-2 gap-3">
+              <div className={`${borderCard} col-span-3 space-y-4`}>
+                <p className="text-xs font-normal text-neutral-400 italic">"{deckData.slide4.subtitle}"</p>
+                <div className="grid grid-cols-2 gap-3 mt-2">
                   {deckData.slide4.solutions.map((s: string, idx: number) => (
-                    <div key={idx} className="p-3 bg-green-500/5 border border-green-500/10 rounded-xl text-xs font-bold text-white flex items-center">
-                      <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-2" />
+                    <div key={idx} className="p-3 border border-neutral-900 bg-neutral-950/20 rounded text-xs font-bold text-neutral-300 flex items-center">
+                      <span className="h-1 w-1 bg-neutral-500 mr-2" />
                       {s}
                     </div>
                   ))}
@@ -233,216 +226,214 @@ export default function PitchDeckGenPage() {
               </div>
             </div>
 
-            <div className="flex justify-between text-xs text-white/30 font-bold">
+            <div className="flex justify-between text-[9px] font-mono text-neutral-600 uppercase tracking-widest">
               <span>Resolving Market Challenges</span>
               <span>Slide 04</span>
             </div>
           </div>
         );
 
-      case 4: // Market Opportunity
+      case 5: // Market Opportunity
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg}`}>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg}`}>
             <div className="flex justify-between items-start">
               <h2 className={headerTitle}>{deckData.slide5.title}</h2>
-              <div className="p-3 bg-white/5 border border-white/10 rounded-xl text-right">
-                <p className="text-[9px] font-bold text-white/40 uppercase">SINCE</p>
-                <p className="text-sm font-black text-white">2025</p>
-              </div>
+              <span className="text-[10px] font-mono text-neutral-500">EST. 2025</span>
             </div>
 
             <div className="grid grid-cols-2 gap-8 my-auto">
-              <div className={glassCard}>
-                <h3 className="text-lg font-bold text-white mb-3">Market Context</h3>
-                <p className="text-xs text-white/60 leading-relaxed font-medium">
+              <div className={borderCard}>
+                <p className={monoLabel}>Market Context</p>
+                <p className="text-xs text-neutral-400 leading-relaxed font-normal mt-3">
                   {deckData.slide5.marketDescription}
                 </p>
               </div>
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3.5 bg-white/5 border border-white/5 rounded-xl">
-                    <p className="text-[9px] font-bold text-white/40 uppercase">TAM</p>
-                    <p className="text-xs font-bold text-white">{deckData.slide5.tam}</p>
+                  <div className="p-3 border border-neutral-900 bg-neutral-950/20 rounded">
+                    <p className={monoLabel}>TAM</p>
+                    <p className="text-xs font-bold text-neutral-300 mt-1">{deckData.slide5.tam}</p>
                   </div>
-                  <div className="p-3.5 bg-white/5 border border-white/5 rounded-xl">
-                    <p className="text-[9px] font-bold text-white/40 uppercase">SAM</p>
-                    <p className="text-xs font-bold text-white">{deckData.slide5.sam}</p>
+                  <div className="p-3 border border-neutral-900 bg-neutral-950/20 rounded">
+                    <p className={monoLabel}>SAM</p>
+                    <p className="text-xs font-bold text-neutral-300 mt-1">{deckData.slide5.sam}</p>
                   </div>
                 </div>
-                <div className="p-3.5 bg-white/5 border border-white/5 rounded-xl">
-                  <p className="text-[9px] font-bold text-white/40 uppercase">MARKET DRIVERS</p>
-                  <p className="text-xs font-bold text-white">{deckData.slide5.drivers}</p>
+                <div className="p-3 border border-neutral-900 bg-neutral-950/20 rounded">
+                  <p className={monoLabel}>MARKET DRIVERS</p>
+                  <p className="text-xs font-bold text-neutral-300 mt-1">{deckData.slide5.drivers}</p>
                 </div>
-                <div className="p-3.5 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                  <p className="text-[9px] font-bold text-blue-400 uppercase">KEY INSIGHT</p>
-                  <p className="text-xs font-bold text-white">{deckData.slide5.insight}</p>
+                <div className="p-3 border border-neutral-800 bg-neutral-900/30 rounded">
+                  <p className="text-[8px] font-mono tracking-widest text-neutral-300 uppercase">KEY INSIGHT</p>
+                  <p className="text-xs font-bold text-white mt-1">{deckData.slide5.insight}</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-between text-xs text-white/30 font-bold">
+            <div className="flex justify-between text-[9px] font-mono text-neutral-600 uppercase tracking-widest">
               <span>TAM / SAM & Drivers</span>
               <span>Slide 05</span>
             </div>
           </div>
         );
 
-      case 5: // Business Model
+      case 6: // Business Model
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg}`}>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg}`}>
             <h2 className={headerTitle}>{deckData.slide6.title}</h2>
             
             <div className="space-y-6 my-auto">
-              <p className="text-sm font-bold text-white/50 text-center">{deckData.slide6.subtitle}</p>
+              <p className="text-xs font-mono text-neutral-500 text-center uppercase tracking-widest">{deckData.slide6.subtitle}</p>
               <div className="grid grid-cols-3 gap-6">
                 {deckData.slide6.models.map((m: any, idx: number) => (
-                  <div key={idx} className={`${glassCard} flex flex-col justify-between h-44`}>
-                    <div className="text-5xl font-black text-blue-500/20">{m.id}</div>
-                    <p className="text-sm font-bold text-white/80">{m.text}</p>
+                  <div 
+                    key={idx} 
+                    className={`${borderCard} flex flex-col justify-between h-36`}
+                  >
+                    <div className="text-3xl font-light text-neutral-800 font-mono">{m.id}.</div>
+                    <p className="text-xs font-normal text-neutral-400 leading-relaxed">{m.text}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-between text-xs text-white/30 font-bold">
+            <div className="flex justify-between text-[9px] font-mono text-neutral-600 uppercase tracking-widest">
               <span>Monetization & Pricing Strategy</span>
               <span>Slide 06</span>
             </div>
           </div>
         );
 
-      case 6: // Key Product Features
+      case 7: // Key Product Features
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg}`}>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg}`}>
             <h2 className={headerTitle}>{deckData.slide7.title}</h2>
 
             <div className="grid grid-cols-2 gap-8 my-auto">
               <div className="space-y-2">
                 {deckData.slide7.features.map((f: string, idx: number) => (
-                  <div key={idx} className="p-3 bg-white/5 border border-white/5 rounded-xl text-xs font-bold text-white flex items-center gap-3">
-                    <span className="h-6 w-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] text-white/40 font-mono">0{idx+1}</span>
+                  <div key={idx} className="p-3 border border-neutral-900 bg-neutral-950/20 rounded text-xs font-normal text-neutral-300 flex items-center gap-3">
+                    <span className="font-mono text-neutral-600 text-[10px]">0{idx+1}.</span>
                     {f}
                   </div>
                 ))}
               </div>
-              <div className={glassCard}>
-                <div className="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4">
-                  <Key size={24} />
-                </div>
-                <p className="text-xs text-white/60 leading-relaxed font-medium">
+              <div className={borderCard}>
+                <p className={monoLabel}>Capability Outline</p>
+                <p className="text-xs text-neutral-400 leading-relaxed font-normal mt-3">
                   {deckData.slide7.description}
                 </p>
               </div>
             </div>
 
-            <div className="flex justify-between text-xs text-white/30 font-bold">
+            <div className="flex justify-between text-[9px] font-mono text-neutral-600 uppercase tracking-widest">
               <span>Platform Capability Matrix</span>
               <span>Slide 07</span>
             </div>
           </div>
         );
 
-      case 7: // Competitive Advantage
+      case 8: // Competitive Advantage
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg}`}>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg}`}>
             <h2 className={headerTitle}>{deckData.slide8.title}</h2>
 
             <div className="grid grid-cols-2 gap-8 my-auto">
-              <div className={glassCard}>
-                <h3 className="text-lg font-bold text-white mb-4">We outperform competitors through:</h3>
+              <div className={borderCard}>
+                <h3 className="text-xs font-mono text-neutral-500 uppercase tracking-wider mb-4">{deckData.slide8.subtitle}</h3>
                 <div className="grid grid-cols-2 gap-3">
                   {deckData.slide8.advantages.map((adv: string, idx: number) => (
-                    <div key={idx} className="p-3 bg-blue-500/5 border border-blue-500/10 rounded-xl text-xs font-bold text-white flex items-center">
-                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400 mr-2" />
+                    <div key={idx} className="p-3 border border-neutral-900 bg-neutral-950/20 rounded text-[11px] font-normal text-neutral-300 flex items-center">
+                      <span className="h-1 w-1 bg-neutral-600 mr-2" />
                       {adv}
                     </div>
                   ))}
                 </div>
               </div>
-              <div className={glassCard}>
-                <h3 className="text-lg font-bold text-white mb-3">Our Competitive Moat</h3>
-                <p className="text-xs text-white/60 leading-relaxed font-medium">
+              <div className={borderCard}>
+                <h3 className="text-xs font-mono text-neutral-500 uppercase tracking-wider mb-3">Our Competitive Moat</h3>
+                <p className="text-xs text-neutral-400 leading-relaxed font-normal">
                   {deckData.slide8.description}
                 </p>
               </div>
             </div>
 
-            <div className="flex justify-between text-xs text-white/30 font-bold">
+            <div className="flex justify-between text-[9px] font-mono text-neutral-600 uppercase tracking-widest">
               <span>Market Defensibility Moat</span>
               <span>Slide 08</span>
             </div>
           </div>
         );
 
-      case 8: // Traction & Growth
+      case 9: // Traction & Growth
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg}`}>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg}`}>
             <h2 className={headerTitle}>{deckData.slide9.title}</h2>
 
             <div className="space-y-6 my-auto">
-              <p className="text-sm font-bold text-white/50 text-center">{deckData.slide9.subtitle}</p>
+              <p className="text-xs font-mono text-neutral-500 text-center uppercase tracking-widest">{deckData.slide9.subtitle}</p>
               <div className="grid grid-cols-5 gap-4">
                 {deckData.slide9.indicators.map((ind: any, idx: number) => (
-                  <div key={idx} className={`${glassCard} flex flex-col justify-between h-40 p-4`}>
-                    <div className="text-4xl font-black text-blue-500/20">{ind.id}</div>
-                    <p className="text-xs font-bold text-white/80 leading-snug">{ind.text}</p>
+                  <div key={idx} className={`${borderCard} flex flex-col justify-between h-36 p-4`}>
+                    <div className="text-3xl font-light text-neutral-800 font-mono">{ind.id}.</div>
+                    <p className="text-[11px] font-normal text-neutral-400 leading-snug">{ind.text}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-between text-xs text-white/30 font-bold">
+            <div className="flex justify-between text-[9px] font-mono text-neutral-600 uppercase tracking-widest">
               <span>Growth Metrics & Key Milestones</span>
               <span>Slide 09</span>
             </div>
           </div>
         );
 
-      case 9: // Use of Funds & Contact
+      case 10: // Use of Funds & Contact
         return (
-          <div className={`w-full h-full flex flex-col justify-between p-12 ${themeBg}`}>
+          <div className={`w-full h-full flex flex-col justify-between p-16 ${themeBg}`}>
             <h2 className={headerTitle}>{deckData.slide10.title}</h2>
 
             <div className="grid grid-cols-3 gap-6 my-auto">
-              <div className={glassCard}>
-                <h3 className="text-sm font-bold text-white/60 mb-4 uppercase tracking-wider flex items-center gap-1.5"><PieChart size={14} /> Allocation</h3>
-                <div className="space-y-3">
+              <div className={borderCard}>
+                <h3 className="text-[9px] font-mono text-neutral-500 mb-4 uppercase tracking-wider">Allocation</h3>
+                <div className="space-y-3.5">
                   {deckData.slide10.funds.map((f: any, idx: number) => (
                     <div key={idx} className="space-y-1">
-                      <div className="flex justify-between text-[11px] font-bold text-white/80">
+                      <div className="flex justify-between text-[10px] font-normal text-neutral-300">
                         <span>{f.item}</span>
                         <span>{f.percentage}%</span>
                       </div>
-                      <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500" style={{ width: `${f.percentage}%` }} />
+                      <div className="h-1 w-full bg-neutral-900 rounded-full overflow-hidden">
+                        <div className="h-full bg-white" style={{ width: `${f.percentage}%` }} />
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className={glassCard}>
-                <h3 className="text-sm font-bold text-white/60 mb-4 uppercase tracking-wider">Use of Funds Detail</h3>
-                <p className="text-xs text-white/50 leading-relaxed font-medium">
+              <div className={borderCard}>
+                <h3 className="text-[9px] font-mono text-neutral-500 mb-4 uppercase tracking-wider">Use of Funds Detail</h3>
+                <p className="text-xs text-neutral-400 leading-relaxed font-normal">
                   Capital will be structured to accelerate advanced engineering, scale outbound sales channels, and support research and operations.
                 </p>
               </div>
-              <div className={`${glassCard} space-y-4`}>
-                <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">Contact Info</h3>
+              <div className={`${borderCard} space-y-4`}>
+                <h3 className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider">Contact Info</h3>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-bold text-white/80">
-                    <Phone size={14} className="text-blue-400" /> {deckData.slide10.contact.phone}
+                  <div className="flex items-center gap-2 text-xs font-normal text-neutral-300">
+                    <Phone size={12} className="text-neutral-500" /> {deckData.slide10.contact.phone}
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-white/80">
-                    <Mail size={14} className="text-blue-400" /> {deckData.slide10.contact.email}
+                  <div className="flex items-center gap-2 text-xs font-normal text-neutral-300">
+                    <Mail size={12} className="text-neutral-500" /> {deckData.slide10.contact.email}
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-white/80">
-                    <Globe size={14} className="text-blue-400" /> {deckData.slide10.contact.website}
+                  <div className="flex items-center gap-2 text-xs font-normal text-neutral-300">
+                    <Globe size={12} className="text-neutral-500" /> {deckData.slide10.contact.website}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-between text-xs text-white/30 font-bold">
+            <div className="flex justify-between text-[9px] font-mono text-neutral-600 uppercase tracking-widest">
               <span>Financial Allocation Plan</span>
               <span>Slide 10</span>
             </div>
@@ -574,6 +565,12 @@ export default function PitchDeckGenPage() {
               </div>
               <div className="flex items-center gap-3">
                 <Button 
+                  onClick={() => setIsEditing(!isEditing)}
+                  className={`text-xs font-bold ${isEditing ? "bg-green-600 hover:bg-green-500 text-white" : "bg-neutral-800 text-white/70 hover:bg-neutral-700"}`}
+                >
+                  {isEditing ? <><Eye size={12} className="mr-1.5" /> Preview Mode</> : <><Edit3 size={12} className="mr-1.5" /> Quick Edit</>}
+                </Button>
+                <Button 
                   onClick={() => setPresentationMode(true)}
                   className="bg-neutral-800 text-white hover:bg-neutral-700 text-xs font-bold"
                 >
@@ -592,7 +589,7 @@ export default function PitchDeckGenPage() {
             <div className="grid lg:grid-cols-4 gap-8">
               {/* Giant aspect ratio slide view */}
               <div className="lg:col-span-3 space-y-4">
-                <div className="aspect-[16/9] w-full border border-white/10 rounded-2xl overflow-hidden shadow-2xl relative">
+                <div className="aspect-[16/9] w-full border border-neutral-900 rounded-2xl overflow-hidden shadow-2xl relative bg-black">
                   {renderSlideContent(currentSlideIndex)}
                 </div>
 
@@ -626,11 +623,11 @@ export default function PitchDeckGenPage() {
                 </div>
               </div>
 
-              {/* Sidebar Quick Slide Selector */}
+              {/* Sidebar Quick Slide Editor / Selector */}
               <div className="space-y-4">
                 <Card className="p-4 border-white/5 bg-white/[0.02] rounded-xl space-y-3">
                   <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Deck Navigation</h3>
-                  <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto custom-scrollbar">
+                  <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto custom-scrollbar">
                     {Array.from({ length: 10 }).map((_, idx) => (
                       <button
                         key={idx}
@@ -646,6 +643,143 @@ export default function PitchDeckGenPage() {
                     ))}
                   </div>
                 </Card>
+
+                {/* Quick Editor Fields panel */}
+                {isEditing && (
+                  <Card className="p-5 border-white/5 bg-white/[0.02] rounded-xl space-y-4 max-h-80 overflow-y-auto custom-scrollbar text-left">
+                    <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Edit Slide Content</h3>
+                    
+                    {currentSlideIndex === 0 && (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-[9px] font-bold text-white/30 uppercase">Title</label>
+                          <input 
+                            type="text"
+                            value={deckData.slide1.title}
+                            onChange={(e) => updateSlideData("slide1", "title", e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[9px] font-bold text-white/30 uppercase">Presenter</label>
+                          <input 
+                            type="text"
+                            value={deckData.slide1.presenter}
+                            onChange={(e) => updateSlideData("slide1", "presenter", e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {currentSlideIndex === 1 && (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-[9px] font-bold text-white/30 uppercase">About Us Text</label>
+                          <textarea 
+                            value={deckData.slide2.aboutUs}
+                            onChange={(e) => updateSlideData("slide2", "aboutUs", e.target.value)}
+                            rows={3}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white resize-none"
+                          />
+                        </div>
+                        {deckData.slide2.keyStrengths.map((str: string, idx: number) => (
+                          <div key={idx}>
+                            <label className="text-[9px] font-bold text-white/30 uppercase">Strength {idx + 1}</label>
+                            <input 
+                              type="text"
+                              value={str}
+                              onChange={(e) => updateArrayField("slide2", "keyStrengths", idx, e.target.value)}
+                              className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {currentSlideIndex === 2 && (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-[9px] font-bold text-white/30 uppercase">Problem Description</label>
+                          <textarea 
+                            value={deckData.slide3.problemDescription}
+                            onChange={(e) => updateSlideData("slide3", "problemDescription", e.target.value)}
+                            rows={3}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white resize-none"
+                          />
+                        </div>
+                        {deckData.slide3.challenges.map((c: string, idx: number) => (
+                          <div key={idx}>
+                            <label className="text-[9px] font-bold text-white/30 uppercase">Challenge {idx + 1}</label>
+                            <input 
+                              type="text"
+                              value={c}
+                              onChange={(e) => updateArrayField("slide3", "challenges", idx, e.target.value)}
+                              className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {currentSlideIndex === 3 && (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-[9px] font-bold text-white/30 uppercase">Solution Subtitle</label>
+                          <input 
+                            type="text"
+                            value={deckData.slide4.subtitle}
+                            onChange={(e) => updateSlideData("slide4", "subtitle", e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white"
+                          />
+                        </div>
+                        {deckData.slide4.solutions.map((s: string, idx: number) => (
+                          <div key={idx}>
+                            <label className="text-[9px] font-bold text-white/30 uppercase">Solution Pillar {idx + 1}</label>
+                            <input 
+                              type="text"
+                              value={s}
+                              onChange={(e) => updateArrayField("slide4", "solutions", idx, e.target.value)}
+                              className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {currentSlideIndex === 4 && (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-[9px] font-bold text-white/30 uppercase">Market Context</label>
+                          <textarea 
+                            value={deckData.slide5.marketDescription}
+                            onChange={(e) => updateSlideData("slide5", "marketDescription", e.target.value)}
+                            rows={3}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white resize-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[9px] font-bold text-white/30 uppercase">TAM</label>
+                          <input 
+                            type="text"
+                            value={deckData.slide5.tam}
+                            onChange={(e) => updateSlideData("slide5", "tam", e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[9px] font-bold text-white/30 uppercase">SAM</label>
+                          <input 
+                            type="text"
+                            value={deckData.slide5.sam}
+                            onChange={(e) => updateSlideData("slide5", "sam", e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                )}
               </div>
             </div>
           </motion.div>
@@ -657,20 +791,20 @@ export default function PitchDeckGenPage() {
         {presentationMode && deckData && (
           <div className="fixed inset-0 z-50 bg-black flex flex-col justify-between p-8 print:hidden">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-bold text-white/40">{deckData.slide1.companyName}</span>
+              <span className="text-xs font-black tracking-widest text-neutral-400 uppercase">{deckData.slide1.companyName}</span>
               <button 
                 onClick={() => setPresentationMode(false)}
-                className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-bold rounded-lg transition-colors"
+                className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold rounded-lg transition-colors"
               >
                 Exit Presentation
               </button>
             </div>
 
-            <div className="aspect-[16/9] w-full max-w-6xl mx-auto border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="aspect-[16/9] w-full max-w-5xl mx-auto border border-neutral-900 rounded-2xl overflow-hidden shadow-2xl bg-black">
               {renderSlideContent(currentSlideIndex)}
             </div>
 
-            <div className="flex justify-between items-center max-w-6xl w-full mx-auto">
+            <div className="flex justify-between items-center max-w-5xl w-full mx-auto">
               <Button 
                 onClick={() => setCurrentSlideIndex(prev => Math.max(0, prev - 1))}
                 disabled={currentSlideIndex === 0}
@@ -702,7 +836,7 @@ export default function PitchDeckGenPage() {
               className="w-[100vw] h-[100vh] overflow-hidden page-break"
               style={{ pageBreakAfter: "always" }}
             >
-              {renderSlideContent(idx, true)}
+              {renderSlideContent(idx)}
             </div>
           ))}
         </div>
@@ -712,7 +846,7 @@ export default function PitchDeckGenPage() {
       <style jsx global>{`
         @media print {
           body, html, main, #__next {
-            background-color: black !important;
+            background-color: #000000 !important;
             color: white !important;
             margin: 0 !important;
             padding: 0 !important;
@@ -736,7 +870,7 @@ export default function PitchDeckGenPage() {
           }
         }
         .animate-spin-slow {
-          animation: spin 15s linear infinite;
+          animation: spin 20s linear infinite;
         }
         @keyframes spin {
           from { transform: rotate(0deg); }
