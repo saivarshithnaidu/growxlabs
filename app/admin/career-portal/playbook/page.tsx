@@ -89,12 +89,70 @@ export default function PlaybookPage() {
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
+  const downloadPlaybook = () => {
+    const text = `# GrowX Labs SDR Hiring Playbook
+
+## 01 // SCREENING CALL
+Description: ${PLAYBOOK.screening.description}
+
+Opening Script:
+"${PLAYBOOK.screening.opening}"
+
+Questions:
+${PLAYBOOK.screening.questions.map((q, i) => `Q${i+1}: ${q.q}\nWhat to listen for: ${q.listen}`).join('\n\n')}
+
+--------------------------------------------------
+
+## 02 // SALES TASK (STAGE 2)
+Description: ${PLAYBOOK.assessment.description}
+
+Subject: ${PLAYBOOK.assessment.emailSubject}
+Body:
+${PLAYBOOK.assessment.emailBody}
+
+--------------------------------------------------
+
+## 03 // LIVE ROLEPLAY OBJECTIONS (STAGE 3)
+Description: ${PLAYBOOK.roleplay.description}
+
+Objections:
+${PLAYBOOK.roleplay.objections.map((o, i) => `Objection ${i+1}: "${o.obj}"\nHandler: "${o.ans}"`).join('\n\n')}
+
+--------------------------------------------------
+
+## 04 // EVALUATION SCORECARD
+Description: ${PLAYBOOK.scorecard.description}
+
+Scorecard Template:
+${PLAYBOOK.scorecard.template}
+`;
+
+    const blob = new Blob([text], { type: "text/markdown;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "growxlabs_sdr_hiring_playbook.md");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-8 relative">
       <Reveal y={-20}>
-        <div className="space-y-1.5">
-          <h1 className="text-3xl font-bold text-neutral-900 tracking-tight font-sans">Interviewer Playbook</h1>
-          <p className="text-neutral-500 text-sm font-medium">Outbound Sales Development Representative (SDR) Hiring Guide</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-1.5">
+            <h1 className="text-3xl font-bold text-neutral-900 tracking-tight font-sans">Interviewer Playbook</h1>
+            <p className="text-neutral-500 text-sm font-medium">Outbound Sales Development Representative (SDR) Hiring Guide</p>
+          </div>
+          <button
+            onClick={downloadPlaybook}
+            className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-black uppercase tracking-wider rounded-lg flex items-center gap-2 transition-all duration-300 cursor-pointer shadow-sm"
+          >
+            <FileText size={13} className="text-primary" />
+            Download Playbook (.md)
+          </button>
         </div>
       </Reveal>
 
