@@ -27,16 +27,13 @@ export async function POST(req: Request) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // Send the dynamic email using Resend
+    // Send the dynamic email using Resend (using clean, minimal layout to land in Primary inbox)
     const { data, error: sendError } = await resend.emails.send({
       from: `${fromName} <${fromEmail}>`,
       to: [toEmail],
       subject: subject,
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px;">
-          ${body.replace(/\n/g, "<br />")}
-        </div>
-      `
+      text: body, // Plain text is highly favored by Gmail's Primary tab algorithm
+      html: body.replace(/\n/g, "<br />") // Very lightweight HTML with no wrapper divs or inline styles
     });
 
     if (sendError) {
