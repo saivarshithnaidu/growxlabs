@@ -8,14 +8,20 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const CITIES = ["Bengaluru", "Hyderabad", "Chennai", "Mumbai", "Pune", "Delhi"];
 const CATEGORIES = [
-  "tiffin center", "mess", "small restaurant", "local cafe", 
-  "dhaba", "budget hotel", "lodge", "guest house", 
-  "salon", "gym", "tuition center"
+  "Logistics & Warehousing",
+  "Manufacturing Plant",
+  "Chemical & Industrial Distributor",
+  "Real Estate Agency",
+  "Private Hospital & Lab",
+  "Financial & Accounting Firm",
+  "Law Firm & Legal Services",
+  "Consulting Agency",
+  "Wholesale & Retail Distributor"
 ];
 
 export default function ScrapeLeadsPage() {
   const [city, setCity] = useState("Bengaluru");
-  const [category, setCategory] = useState("tiffin center");
+  const [category, setCategory] = useState("Logistics & Warehousing");
   const [radius, setRadius] = useState(100);
   const [maxResults, setMaxResults] = useState(100);
   const [loading, setLoading] = useState(false);

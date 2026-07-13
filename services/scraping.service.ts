@@ -136,22 +136,28 @@ export class ScrapingService {
     
     // Map UI category to OSM tags
     const catLower = category.toLowerCase();
-    let queryTags = 'node["amenity"="restaurant"]';
+    let queryTags = 'node["office"="company"](area.searchArea);\n  way["office"="company"](area.searchArea);';
     
-    if (catLower.includes("restaurant") || catLower.includes("tiffin") || catLower.includes("mess") || catLower.includes("dhaba")) {
-      queryTags = 'node["amenity"="restaurant"](area.searchArea);\n  node["amenity"="fast_food"](area.searchArea);';
-    } else if (catLower.includes("cafe")) {
-      queryTags = 'node["amenity"="cafe"](area.searchArea);';
-    } else if (catLower.includes("hotel") || catLower.includes("lodge") || catLower.includes("guest house")) {
-      queryTags = 'node["tourism"="hotel"](area.searchArea);\n  node["tourism"="guest_house"](area.searchArea);';
-    } else if (catLower.includes("salon")) {
-      queryTags = 'node["shop"="hairdresser"](area.searchArea);\n  node["shop"="beauty"](area.searchArea);';
-    } else if (catLower.includes("gym")) {
-      queryTags = 'node["leisure"="fitness_centre"](area.searchArea);';
-    } else if (catLower.includes("tuition") || catLower.includes("school")) {
-      queryTags = 'node["amenity"="school"](area.searchArea);';
+    if (catLower.includes("logistics") || catLower.includes("warehous")) {
+      queryTags = 'node["office"="logistics"](area.searchArea);\n  way["office"="logistics"](area.searchArea);\n  node["industrial"="warehouse"](area.searchArea);\n  way["industrial"="warehouse"](area.searchArea);';
+    } else if (catLower.includes("manufacturing") || catLower.includes("factory") || catLower.includes("plant")) {
+      queryTags = 'node["industrial"="factory"](area.searchArea);\n  way["industrial"="factory"](area.searchArea);';
+    } else if (catLower.includes("chemical") || catLower.includes("industrial distributor")) {
+      queryTags = 'node["office"="distributor"](area.searchArea);\n  way["office"="distributor"](area.searchArea);\n  node["shop"="wholesale"](area.searchArea);\n  way["shop"="wholesale"](area.searchArea);';
+    } else if (catLower.includes("real estate") || catLower.includes("estate agent")) {
+      queryTags = 'node["office"="estate_agent"](area.searchArea);\n  way["office"="estate_agent"](area.searchArea);';
+    } else if (catLower.includes("hospital") || catLower.includes("clinic") || catLower.includes("lab")) {
+      queryTags = 'node["amenity"="hospital"](area.searchArea);\n  way["amenity"="hospital"](area.searchArea);\n  node["amenity"="clinic"](area.searchArea);\n  way["amenity"="clinic"](area.searchArea);';
+    } else if (catLower.includes("financial") || catLower.includes("accounting") || catLower.includes("accountant")) {
+      queryTags = 'node["office"="financial"](area.searchArea);\n  way["office"="financial"](area.searchArea);\n  node["office"="accountant"](area.searchArea);\n  way["office"="accountant"](area.searchArea);';
+    } else if (catLower.includes("law") || catLower.includes("legal") || catLower.includes("lawyer")) {
+      queryTags = 'node["office"="lawyer"](area.searchArea);\n  way["office"="lawyer"](area.searchArea);';
+    } else if (catLower.includes("consulting") || catLower.includes("company")) {
+      queryTags = 'node["office"="company"](area.searchArea);\n  way["office"="company"](area.searchArea);\n  node["office"="consulting"](area.searchArea);\n  way["office"="consulting"](area.searchArea);';
+    } else if (catLower.includes("wholesale") || catLower.includes("retail distributor")) {
+      queryTags = 'node["shop"="wholesale"](area.searchArea);\n  way["shop"="wholesale"](area.searchArea);\n  node["office"="distributor"](area.searchArea);\n  way["office"="distributor"](area.searchArea);';
     } else {
-      queryTags = `node["amenity"="${catLower}"](area.searchArea);`;
+      queryTags = `node["office"="${catLower}"](area.searchArea);\n  way["office"="${catLower}"](area.searchArea);`;
     }
 
     const overpassQuery = `[out:json][timeout:30];
