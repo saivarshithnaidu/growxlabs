@@ -26,6 +26,10 @@ export default function GrowXEmailPage() {
   const [recipientName, setRecipientName] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
+
+  // AI Assistant states
+  const [roughPrompt, setRoughPrompt] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
   
   // App state
   const [leads, setLeads] = useState<any[]>([]);
@@ -229,6 +233,37 @@ GrowX Labs Team`
     }
   };
 
+  const handleAiImprove = async () => {
+    if (!roughPrompt.trim()) return;
+    setAiLoading(true);
+    try {
+      const res = await fetch("/api/growx-email/ai-improve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roughDraft: roughPrompt,
+          recipientName: recipientName,
+          businessName: recipientName, // match recipient name
+          senderName: senderName
+        })
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to generate outreach");
+      }
+      
+      setSubject(data.subject || "");
+      setBody(data.body || "");
+      showToast("Email polished in Corporate style! ✨", "success");
+      setRoughPrompt(""); // Clear helper input
+    } catch (e: any) {
+      console.error(e);
+      showToast(e.message || "AI improvement failed.", "error");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
@@ -404,6 +439,37 @@ GrowX Labs Team`
                       {t.label}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* AI Composition Box */}
+              <div className="p-5 bg-blue-600/[0.02] border border-blue-500/10 rounded-xl space-y-3 pt-4 mt-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest flex items-center gap-1.5">
+                    <Sparkles size={12} className="text-yellow-500 animate-pulse" /> AI Assistant (Gemini Corporate Polish)
+                  </label>
+                  {aiLoading && <span className="text-[10px] font-medium text-blue-400 animate-pulse flex items-center gap-1"><Loader2 size={10} className="animate-spin" /> Rewriting draft...</span>}
+                </div>
+                <div className="flex flex-col md:flex-row gap-3">
+                  <textarea 
+                    value={roughPrompt}
+                    onChange={(e) => setRoughPrompt(e.target.value)}
+                    placeholder="Write a rough outline, bullet points, or instructions here (e.g. 'checked their website, we can build custom CRM and WhatsApp automations, offer 20% discount on setup fee')"
+                    rows={2}
+                    className="flex-1 bg-white/[0.02] border border-white/5 rounded-xl p-3 text-xs text-white placeholder-white/20 focus:outline-none focus:border-blue-500/20 transition-all resize-none leading-relaxed"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAiImprove}
+                    disabled={aiLoading || !roughPrompt.trim()}
+                    className="h-auto md:w-36 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/35 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 p-3 transition-colors shrink-0"
+                  >
+                    {aiLoading ? (
+                      <Loader2 className="animate-spin h-3.5 w-3.5" />
+                    ) : (
+                      <>✨ Magic Write</>
+                    )}
+                  </button>
                 </div>
               </div>
 

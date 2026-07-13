@@ -66,7 +66,7 @@ Key Insight: ${insight}`;
 
     // 3. Call AI
     const completion = await openai.chat.completions.create({
-      model: "google/gemini-2.0-flash-lite-preview-02-05:free", // Use a reliable model
+      model: "google/gemini-2.5-flash", // Use a reliable model
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userMessage }
