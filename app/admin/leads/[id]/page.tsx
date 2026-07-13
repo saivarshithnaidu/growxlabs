@@ -10,7 +10,7 @@ import {
   User, Star, MessageSquare, Save,
   CheckCircle2, XCircle, Clock, RefreshCw
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Lead } from "@/types";
 
@@ -24,6 +24,14 @@ export default function LeadDetailsPage() {
   const [saving, setSaving] = useState(false);
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  // Dynamic Email Outreach States
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [senderName, setSenderName] = useState("GrowX Labs");
+  const [senderEmail, setSenderEmail] = useState("hello@growxlabs.tech");
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailBody, setEmailBody] = useState("");
+  const [emailSending, setEmailSending] = useState(false);
 
   useEffect(() => {
     if (id) fetchLead();
@@ -66,6 +74,37 @@ export default function LeadDetailsPage() {
       console.error(e);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSendDynamicEmail = async () => {
+    if (!lead?.email) return;
+    setEmailSending(true);
+    try {
+      const res = await fetch("/api/send-email/dynamic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leadId: lead.id,
+          toEmail: lead.email,
+          fromName: senderName,
+          fromEmail: senderEmail,
+          subject: emailSubject,
+          body: emailBody
+        })
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to send email");
+      }
+      alert("Outreach email dispatched successfully!");
+      setShowEmailModal(false);
+      await fetchLead(); // Refresh the lead details and timeline
+    } catch (e: any) {
+      console.error(e);
+      alert(e.message);
+    } finally {
+      setEmailSending(false);
     }
   };
 
@@ -304,13 +343,27 @@ export default function LeadDetailsPage() {
                     </Button>
                   )}
                   {lead.email && (
-                    <Button 
-                      onClick={() => window.open(`mailto:${lead.email}?subject=Partnership Strategy for ${lead.business_name}&body=${encodeURIComponent(lead.outreach_content?.email || "")}`)}
-                      variant="outline"
-                      className="border-white/10 hover:bg-white/5 text-white/60 text-xs font-bold"
-                    >
-                      Send Email draft
-                    </Button>
+                    <>
+                      <Button 
+                        onClick={() => window.open(`mailto:${lead.email}?subject=Partnership Strategy for ${lead.business_name || lead.name}&body=${encodeURIComponent(lead.outreach_content?.email || "")}`)}
+                        variant="outline"
+                        className="border-white/10 hover:bg-white/5 text-white/60 text-xs font-bold"
+                      >
+                        Send Email draft (Local)
+                      </Button>
+                      <Button 
+                        onClick={() => {
+                          setSenderName("GrowX Labs");
+                          setSenderEmail("hello@growxlabs.tech");
+                          setEmailSubject(`Partnership Strategy for ${lead.business_name || lead.name}`);
+                          setEmailBody(lead.outreach_content?.email || "");
+                          setShowEmailModal(true);
+                        }}
+                        className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold"
+                      >
+                        <Mail size={12} className="mr-2" /> Send via GrowX Server
+                      </Button>
+                    </>
                   )}
                 </div>
               </div>
@@ -361,8 +414,104 @@ export default function LeadDetailsPage() {
                  )}
               </div>
            </Card>
-        </div>
+         </div>
       </div>
+
+      {/* Dynamic Email Modal */}
+      <AnimatePresence>
+        {showEmailModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-2xl bg-neutral-900 border border-white/10 rounded-2xl p-6 shadow-2xl space-y-6"
+            >
+              <div className="flex justify-between items-center border-b border-white/5 pb-4">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Mail className="text-blue-500" size={18} /> Send Outreach via GrowX Server
+                </h3>
+                <button 
+                  onClick={() => setShowEmailModal(false)}
+                  className="text-white/40 hover:text-white transition-colors"
+                >
+                  <XCircle size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Sender Name</label>
+                    <input 
+                      type="text"
+                      value={senderName}
+                      onChange={(e) => setSenderName(e.target.value)}
+                      className="w-full h-11 bg-white/[0.03] border border-white/5 rounded-lg px-4 text-white text-sm focus:outline-none focus:border-white/20 transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Sender Email</label>
+                    <input 
+                      type="text"
+                      value={senderEmail}
+                      onChange={(e) => setSenderEmail(e.target.value)}
+                      className="w-full h-11 bg-white/[0.03] border border-white/5 rounded-lg px-4 text-white text-sm focus:outline-none focus:border-white/20 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Recipient Email</label>
+                  <input 
+                    type="text"
+                    value={lead?.email || ""}
+                    disabled
+                    className="w-full h-11 bg-white/[0.01] border border-white/5 rounded-lg px-4 text-white/40 text-sm focus:outline-none cursor-not-allowed"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Subject</label>
+                  <input 
+                    type="text"
+                    value={emailSubject}
+                    onChange={(e) => setEmailSubject(e.target.value)}
+                    className="w-full h-11 bg-white/[0.03] border border-white/5 rounded-lg px-4 text-white text-sm focus:outline-none focus:border-white/20 transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Email Body (HTML / Plain Text)</label>
+                  <textarea 
+                    value={emailBody}
+                    onChange={(e) => setEmailBody(e.target.value)}
+                    rows={8}
+                    className="w-full bg-white/[0.03] border border-white/5 rounded-lg p-4 text-white text-sm font-medium focus:outline-none focus:border-white/20 transition-colors resize-none leading-relaxed"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 border-t border-white/5 pt-4">
+                <Button 
+                  onClick={() => setShowEmailModal(false)}
+                  variant="outline"
+                  className="border-white/10 text-white/60 hover:bg-white/5"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleSendDynamicEmail}
+                  disabled={emailSending}
+                  className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6"
+                >
+                  {emailSending ? "Sending..." : "Send Email"}
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
