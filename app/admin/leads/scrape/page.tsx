@@ -388,24 +388,30 @@ export default function ScrapeLeadsPage() {
                        </span>
                      )}
                    </div>
-                   <p className="text-white/20 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 mt-0.5">
-                     <MapPin size={10} /> {lead.city} 
-                     {activeTab === "instagram" ? (
-                       <>
-                         <span>•</span>
-                         <span className={lead.has_website ? "text-white/30" : "text-green-500 font-bold"}>
-                           {lead.has_website ? "Website Detected" : "No Website Detected (LDP)"}
-                         </span>
-                       </>
-                     ) : (
-                       <span>• NO WEBSITE DETECTED</span>
-                     )}
-                   </p>
-                   {lead.notes && (
-                     <p className="text-white/45 text-xs font-normal mt-2 leading-relaxed max-w-xl">
-                       {lead.notes.replace(/^Instagram:\s*@[a-zA-Z0-9_\.]+\s*\|\s*Email:\s*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*\|\s*Bio:\s*/i, "")}
-                     </p>
-                   )}
+                    <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 mt-0.5">
+                      <MapPin size={10} /> {lead.city} 
+                      {activeTab === "instagram" ? (
+                        <>
+                          <span>•</span>
+                          <span className={lead.has_website ? "text-white/60" : "text-green-400 font-bold"}>
+                            {lead.has_website ? "Website Detected" : "No Website Detected (LDP)"}
+                          </span>
+                        </>
+                      ) : (
+                        <span>• NO WEBSITE DETECTED</span>
+                      )}
+                    </p>
+                    {lead.notes && (
+                      <p className="text-white/70 text-xs font-normal mt-2 leading-relaxed max-w-xl">
+                        {lead.notes
+                          .replace(/^Instagram:\s*@[a-zA-Z0-9_\.]+\s*\|\s*Email:\s*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*\|\s*Bio:\s*/i, "")
+                          .replace(/&quot;/g, '"')
+                          .replace(/&amp;/g, '&')
+                          .replace(/&lt;/g, '<')
+                          .replace(/&gt;/g, '>')
+                        }
+                      </p>
+                    )}
                  </div>
               </div>
 

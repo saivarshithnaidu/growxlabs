@@ -68,11 +68,13 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3. TRY YAHOO SEARCH FALLBACK
+    // 3. TRY YAHOO SEARCH FALLBACK (Fetches both page 1 and page 2 for double results!)
     if (leads.length === 0) {
       try {
-        console.log(`Instagram X-Ray Search via Yahoo Fallback: ${searchQuery}`);
-        leads = await scrapeViaYahoo(searchQuery, city);
+        console.log(`Instagram X-Ray Search via Yahoo Fallback (Pages 1 & 2): ${searchQuery}`);
+        const page1Leads = await scrapeViaYahoo(searchQuery, city, 1);
+        const page2Leads = await scrapeViaYahoo(searchQuery, city, 11);
+        leads = [...page1Leads, ...page2Leads];
         methodUsed = "Yahoo Search";
       } catch (err: any) {
         console.error("Yahoo search failed, falling back:", err.message);
@@ -336,8 +338,8 @@ async function scrapeViaDuckDuckGoLite(query: string, city: string): Promise<any
 }
 
 // 3. Yahoo Search Scraper implementation
-async function scrapeViaYahoo(query: string, city: string): Promise<any[]> {
-  const yahooUrl = `https://search.yahoo.com/search?q=${encodeURIComponent(query)}`;
+async function scrapeViaYahoo(query: string, city: string, offset: number = 1): Promise<any[]> {
+  const yahooUrl = `https://search.yahoo.com/search?q=${encodeURIComponent(query)}&b=${offset}`;
   const res = await fetch(yahooUrl, {
     headers: {
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
