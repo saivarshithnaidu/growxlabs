@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,6 +8,19 @@ export async function POST(request: NextRequest) {
     if (!roughDraft) {
       return NextResponse.json({ error: "Rough draft or prompt is required" }, { status: 400 });
     }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey || apiKey === "your_api_key_here") {
+      return NextResponse.json({ error: "GEMINI_API_KEY is not configured on the server." }, { status: 500 });
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+      }
+    });
 
     const systemPrompt = `You are an elite corporate copywriter and sales executive at a premium digital agency (GrowX Labs).
 Your task is to take a rough email draft or set of bullet points, and polish it into a highly professional, premium corporate-style email.
@@ -31,25 +39,16 @@ Return ONLY a JSON object with this exact structure:
   "body": "The polished email body paragraphs (do not include the subject line here, start with the salutation like 'Hi [Name],')"
 }`;
 
-    const userMessage = `Rough input / points:
-"${roughDraft}"`;
+    const prompt = `${systemPrompt}\n\nRough input / points:\n"${roughDraft}"`;
 
-    // Call OpenRouter with the Gemini model
-    const completion = await openai.chat.completions.create({
-      model: "google/gemini-2.5-flash",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userMessage }
-      ],
-      response_format: { type: "json_object" }
-    });
-
-    const content = completion.choices[0].message.content;
-    if (!content) {
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    
+    if (!responseText) {
       throw new Error("AI failed to generate copy");
     }
 
-    const aiOutreach = JSON.parse(content);
+    const aiOutreach = JSON.parse(responseText);
     return NextResponse.json(aiOutreach);
 
   } catch (error: any) {
