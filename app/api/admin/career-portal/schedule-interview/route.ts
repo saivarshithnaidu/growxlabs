@@ -40,15 +40,22 @@ async function getGoogleAccessToken(email: string, privateKey: string): Promise<
   return data.access_token;
 }
 
-// Create Google Calendar event on hr@growxlabs.tech calendar
-async function createHRCalendarEvent(name: string, email: string, dateTimeStr: string, meetUrl: string, role: string): Promise<boolean> {
+// Create Google Calendar event on hr@growxlabs.tech calendar and return the Google Meet URL
+async function createHRCalendarEvent(
+  name: string, 
+  email: string, 
+  dateTimeStr: string, 
+  customMeetLink: string | null, 
+  role: string
+): Promise<string> {
   const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const privateKey = process.env.GOOGLE_PRIVATE_KEY;
   const calendarId = "hr@growxlabs.tech"; // HR specific calendar
+  const defaultMeetLink = customMeetLink || process.env.GOOGLE_MEET_LINK || "https://meet.google.com/fau-nfbw-kfu";
 
   if (!serviceAccountEmail || !privateKey) {
     console.warn("Google Calendar service account variables not configured.");
-    return false;
+    return defaultMeetLink;
   }
 
   try {
@@ -56,8 +63,10 @@ async function createHRCalendarEvent(name: string, email: string, dateTimeStr: s
     const startDateTime = new Date(dateTimeStr);
     const endDateTime = new Date(startDateTime.getTime() + 30 * 60 * 1000); // 30-min slot
 
+    const requestId = crypto.randomBytes(16).toString("hex");
+
     const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`,
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?conferenceDataVersion=1`,
       {
         method: "POST",
         headers: {
@@ -66,8 +75,7 @@ async function createHRCalendarEvent(name: string, email: string, dateTimeStr: s
         },
         body: JSON.stringify({
           summary: `SDR Interview | GrowX Labs & ${name}`,
-          description: `GrowX Labs Interview Invitation.\n\nCandidate Name: ${name}\nCandidate Email: ${email}\nRole: ${role}\n\nGoogle Meet Link: ${meetUrl}`,
-          location: meetUrl,
+          description: `GrowX Labs Interview Invitation.\n\nCandidate Name: ${name}\nCandidate Email: ${email}\nRole: ${role}`,
           start: {
             dateTime: startDateTime.toISOString(),
             timeZone: "Asia/Kolkata"
@@ -79,7 +87,15 @@ async function createHRCalendarEvent(name: string, email: string, dateTimeStr: s
           attendees: [
             { email: email },
             { email: "sai@growxlabs.tech" }
-          ]
+          ],
+          conferenceData: customMeetLink ? undefined : {
+            createRequest: {
+              requestId: requestId,
+              conferenceSolutionKey: {
+                type: "hangoutsMeet"
+              }
+            }
+          }
         })
       }
     );
@@ -87,13 +103,21 @@ async function createHRCalendarEvent(name: string, email: string, dateTimeStr: s
     const data = await response.json();
     if (!response.ok) {
       console.error("Google Calendar event creation failed for HR:", data);
-      return false;
+      return defaultMeetLink;
     }
+
+    // Try to extract Google Meet link from conferenceData
+    const meetEntryPoint = data.conferenceData?.entryPoints?.find((ep: any) => ep.entryPointType === "video");
+    if (meetEntryPoint?.uri) {
+      console.log("Successfully created Google Calendar event with auto-generated Meet link:", meetEntryPoint.uri);
+      return meetEntryPoint.uri;
+    }
+
     console.log("Successfully created Google Calendar event on HR calendar:", data.htmlLink);
-    return true;
+    return defaultMeetLink;
   } catch (error) {
     console.error("Google Calendar API connection error:", error);
-    return false;
+    return defaultMeetLink;
   }
 }
 
@@ -136,11 +160,8 @@ export async function POST(request: Request) {
     const candidateName = candidate.name || "Candidate";
     const targetRole = candidate.role || "Sales Development Representative (SDR)";
 
-    // Default Meet URL
-    const meetUrl = customMeetLink || process.env.GOOGLE_MEET_LINK || "https://meet.google.com/fau-nfbw-kfu";
-
-    // 2. Write event to the hr@growxlabs.tech Calendar (fails silently if permissions not shared yet)
-    await createHRCalendarEvent(candidateName, candidateEmail, dateTime, meetUrl, targetRole);
+    // 2. Write event to the hr@growxlabs.tech Calendar and obtain the Meet URL
+    const meetUrl = await createHRCalendarEvent(candidateName, candidateEmail, dateTime, customMeetLink, targetRole);
 
     // 3. Prepare Resend email payload
     const apiKey = process.env.RESEND_API_KEY;
