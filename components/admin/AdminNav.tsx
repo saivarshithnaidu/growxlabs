@@ -40,6 +40,7 @@ const navItems = [
   { name: "Outreach", href: "/admin/outreach", icon: Inbox },
   { name: "Onboarding", href: "/admin/onboarding", icon: Rocket },
   { name: "Career Portal", href: "/admin/career-portal", icon: ClipboardList },
+  { name: "Interviewer Playbook", href: "/admin/career-portal/playbook", icon: BookOpen },
   { name: "Carousel Creator", href: "/admin/instagram-carousel", icon: InstagramNavIcon },
   { name: "Reels Creator", href: "/admin/reels-creator", icon: Video },
   { name: "Wish Game", href: "/admin/wish-game", icon: Gamepad2 },
