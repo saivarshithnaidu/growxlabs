@@ -7,7 +7,7 @@ import {
   BarChart3, Users, Target, Inbox, Terminal,
   FileText, Zap, ShieldCheck, Rocket, FileCheck, LogOut, PanelLeftClose, PanelLeft,
   GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
-  TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2, Video, Mail
+  TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2, Video, Mail, Presentation
 } from "lucide-react";
 
 const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -39,6 +39,7 @@ const navItems = [
   { name: "Clients", href: "/admin/clients", icon: Users },
   { name: "Outreach", href: "/admin/outreach", icon: Inbox },
   { name: "GrowX Email", href: "/admin/growx-email", icon: Mail },
+  { name: "Pitch Deck Gen", href: "/admin/pitch-deck", icon: Presentation },
   { name: "Onboarding", href: "/admin/onboarding", icon: Rocket },
   { name: "Career Portal", href: "/admin/career-portal", icon: ClipboardList },
   { name: "Interviewer Playbook", href: "/admin/career-portal/playbook", icon: BookOpen },
