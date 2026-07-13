@@ -1,83 +1,198 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { Lead } from "@/types";
+import crypto from "crypto";
 
 const APIFY_TOKEN = process.env.APIFY_API_TOKEN;
 
 export class ScrapingService {
   static async scrapeLeads(city: string, category: string, options: { radius?: number, maxResults?: number } = {}) {
-    if (!APIFY_TOKEN) throw new Error("APIFY_API_TOKEN is not configured");
+    if (APIFY_TOKEN && APIFY_TOKEN !== "your_apify_token_here") {
+      // 1. Run Apify logic...
+      // Target Small/Local businesses for better conversion
+      const enhancedCategory = category.toLowerCase().includes('small') || category.toLowerCase().includes('local') 
+        ? category 
+        : `small ${category}`;
+        
+      console.log(`Pivoting to High-Conversion Leads (Apify): ${enhancedCategory} in ${city}...`);
 
-    // Target Small/Local businesses for better conversion
-    const enhancedCategory = category.toLowerCase().includes('small') || category.toLowerCase().includes('local') 
-      ? category 
-      : `small ${category}`;
-      
-    console.log(`Pivoting to High-Conversion Leads: ${enhancedCategory} in ${city}...`);
+      try {
+        // Trigger Apify Run
+        const runResponse = await fetch(`https://api.apify.com/v2/acts/compass~crawler-google-places/runs?token=${APIFY_TOKEN}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            searchStringsArray: [
+              `${category} in ${city}`,
+              `${category} near me ${city}`,
+              `local ${category} ${city}`,
+              `small ${category} ${city}`
+            ],
+            maxCrawledPlacesPerSearch: options.maxResults || 100,
+            language: "en",
+            includeReviews: false
+          })
+        });
+
+        if (!runResponse.ok) {
+          throw new Error(`Apify start error: ${await runResponse.text()}`);
+        }
+
+        const runData = await runResponse.json();
+        const runId = runData.data.id;
+        const datasetId = runData.data.defaultDatasetId;
+
+        // Poll for completion
+        let isFinished = false;
+        let attempts = 0;
+        while (!isFinished && attempts < 20) {
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          const statusRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${APIFY_TOKEN}`);
+          const statusData = await statusRes.json();
+          if (statusData.data.status === 'SUCCEEDED') isFinished = true;
+          else if (['FAILED', 'ABORTED'].includes(statusData.data.status)) throw new Error("Scraping failed");
+          attempts++;
+        }
+
+        // Fetch & Process
+        const itemsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${APIFY_TOKEN}`);
+        const rawItems = await itemsRes.json();
+        
+        const processedLeads: Lead[] = [];
+
+        for (const item of rawItems) {
+          // FILTER: Skip if they already have a website (Low conversion potential)
+          if (item.website) continue;
+
+          const businessName = item.title || item.name;
+          if (!businessName) continue;
+
+          const phone = item.phone || "";
+          const googleRating = item.totalScore || 0;
+          const reviewsCount = item.reviewsCount || 0;
+          
+          // SCORING SYSTEM (Target: No Website / Low Digital Presence)
+          let score = 0;
+          if (!item.website) score += 4;
+          if (!phone) score += 2;
+          if (reviewsCount < 50) score += 2;
+          if (googleRating < 4.2) score += 1;
+
+          // FILTER: Only high-potential leads (Score >= 6)
+          if (score < 6) continue;
+
+          const lead = {
+            name: businessName,
+            business_name: businessName,
+            phone: phone ? phone.replace(/\s+/g, '') : "",
+            website_url: null,
+            has_website: false,
+            google_rating: googleRating,
+            reviews_count: reviewsCount,
+            city,
+            lead_score: score,
+            status: "new",
+            message: "", // Safe fallback for DB
+            requirement: "", // Safe fallback for DB
+            notes: `LDP Lead: ${item.address || ''}`,
+            created_at: new Date().toISOString()
+          };
+
+          const { data: existing } = await supabaseAdmin
+            .from("leads")
+            .select("id")
+            .eq("business_name", lead.business_name)
+            .maybeSingle();
+
+          if (!existing) {
+            const { data, error } = await supabaseAdmin
+              .from("leads")
+              .insert([lead])
+              .select()
+              .single();
+
+            if (!error && data) {
+              processedLeads.push(data);
+            } else if (error) {
+              console.error("LEAD SAVE FAILURE:", error.message);
+            }
+          }
+        }
+
+        console.log(`SUCCESS (Apify): Captured ${processedLeads.length} High-Potential Leads.`);
+        return processedLeads;
+      } catch (error: any) {
+        console.error("ScrapingService Error:", error.message);
+        throw new Error("Scraping failed. Check API or actor configuration.");
+      }
+    } else {
+      // 2. Run Free Overpass API Logic
+      console.log(`Running free Overpass API local lead scrape for ${category} in ${city}...`);
+      return await this.scrapeOverpassLeads(city, category, options);
+    }
+  }
+
+  private static async scrapeOverpassLeads(city: string, category: string, options: { radius?: number, maxResults?: number } = {}) {
+    const limit = options.maxResults || 50;
+    
+    // Map UI category to OSM tags
+    const catLower = category.toLowerCase();
+    let queryTags = 'node["amenity"="restaurant"]';
+    
+    if (catLower.includes("restaurant") || catLower.includes("tiffin") || catLower.includes("mess") || catLower.includes("dhaba")) {
+      queryTags = 'node["amenity"="restaurant"](area.searchArea);\n  node["amenity"="fast_food"](area.searchArea);';
+    } else if (catLower.includes("cafe")) {
+      queryTags = 'node["amenity"="cafe"](area.searchArea);';
+    } else if (catLower.includes("hotel") || catLower.includes("lodge") || catLower.includes("guest house")) {
+      queryTags = 'node["tourism"="hotel"](area.searchArea);\n  node["tourism"="guest_house"](area.searchArea);';
+    } else if (catLower.includes("salon")) {
+      queryTags = 'node["shop"="hairdresser"](area.searchArea);\n  node["shop"="beauty"](area.searchArea);';
+    } else if (catLower.includes("gym")) {
+      queryTags = 'node["leisure"="fitness_centre"](area.searchArea);';
+    } else if (catLower.includes("tuition") || catLower.includes("school")) {
+      queryTags = 'node["amenity"="school"](area.searchArea);';
+    } else {
+      queryTags = `node["amenity"="${catLower}"](area.searchArea);`;
+    }
+
+    const overpassQuery = `[out:json][timeout:30];
+area[name="${city}"]->.searchArea;
+(
+  ${queryTags}
+);
+out body ${limit};`;
 
     try {
-      // 1. Trigger Apify Run
-      const runResponse = await fetch(`https://api.apify.com/v2/acts/compass~crawler-google-places/runs?token=${APIFY_TOKEN}`, {
+      const response = await fetch("https://overpass-api.de/api/interpreter", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          searchStringsArray: [
-            `${category} in ${city}`,
-            `${category} near me ${city}`,
-            `local ${category} ${city}`,
-            `small ${category} ${city}`
-          ],
-          maxCrawledPlacesPerSearch: options.maxResults || 100,
-          language: "en",
-          includeReviews: false
-        })
+        body: `data=${encodeURIComponent(overpassQuery)}`,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
       });
 
-      if (!runResponse.ok) {
-        throw new Error(`Apify start error: ${await runResponse.text()}`);
+      if (!response.ok) {
+        throw new Error(`Overpass API responded with status ${response.status}`);
       }
 
-      const runData = await runResponse.json();
-      const runId = runData.data.id;
-      const datasetId = runData.data.defaultDatasetId;
-
-      // 2. Poll for completion
-      let isFinished = false;
-      let attempts = 0;
-      while (!isFinished && attempts < 20) {
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        const statusRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${APIFY_TOKEN}`);
-        const statusData = await statusRes.json();
-        if (statusData.data.status === 'SUCCEEDED') isFinished = true;
-        else if (['FAILED', 'ABORTED'].includes(statusData.data.status)) throw new Error("Scraping failed");
-        attempts++;
-      }
-
-      // 3. Fetch & Process
-      const itemsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${APIFY_TOKEN}`);
-      const rawItems = await itemsRes.json();
-      
+      const result = await response.json();
+      const elements = result.elements || [];
       const processedLeads: Lead[] = [];
 
-      for (const item of rawItems) {
-        // FILTER: Skip if they already have a website (Low conversion potential)
-        if (item.website) continue;
-
-        const businessName = item.title || item.name;
+      for (const element of elements) {
+        const tags = element.tags || {};
+        const businessName = tags.name;
         if (!businessName) continue;
 
-        const phone = item.phone || "";
-        const googleRating = item.totalScore || 0;
-        const reviewsCount = item.reviewsCount || 0;
-        
-        // SCORING SYSTEM (Target: No Website / Low Digital Presence)
-        let score = 0;
-        if (!item.website) score += 4;
-        if (!phone) score += 2;
-        if (reviewsCount < 50) score += 2;
-        if (googleRating < 4.2) score += 1;
+        // Skip if website is present (we want low digital presence, high potential)
+        const website = tags.website || tags["contact:website"] || null;
+        if (website) continue;
 
-        // FILTER: Only high-potential leads (Score >= 6)
-        if (score < 6) continue;
+        const phone = tags.phone || tags["contact:phone"] || "";
+        const addrStreet = tags["addr:street"] || "";
+        const addrHousenumber = tags["addr:housenumber"] || "";
+        const address = `${addrHousenumber} ${addrStreet}`.trim() || `${city}, India`;
+
+        // SCORING SYSTEM (Target: No Website / Low Digital Presence)
+        let score = 6; // Base score since it has no website
+        if (!phone) score += 2;
 
         const lead = {
           name: businessName,
@@ -85,17 +200,18 @@ export class ScrapingService {
           phone: phone ? phone.replace(/\s+/g, '') : "",
           website_url: null,
           has_website: false,
-          google_rating: googleRating,
-          reviews_count: reviewsCount,
+          google_rating: 0,
+          reviews_count: 0,
           city,
           lead_score: score,
           status: "new",
-          message: "", // Safe fallback for DB
-          requirement: "", // Safe fallback for DB
-          notes: `LDP Lead: ${item.address || ''}`,
+          message: "",
+          requirement: "",
+          notes: `OSM Lead: ${address}`,
           created_at: new Date().toISOString()
         };
 
+        // Check if lead already exists in DB
         const { data: existing } = await supabaseAdmin
           .from("leads")
           .select("id")
@@ -117,11 +233,11 @@ export class ScrapingService {
         }
       }
 
-      console.log(`SUCCESS: Captured ${processedLeads.length} High-Potential Leads.`);
+      console.log(`Overpass scrape finished. Found ${elements.length} raw, saved ${processedLeads.length} high-potential leads.`);
       return processedLeads;
     } catch (error: any) {
-      console.error("ScrapingService Error:", error.message);
-      throw new Error("Scraping failed. Check API or actor configuration.");
+      console.error("Overpass Scraping Error:", error.message);
+      return [];
     }
   }
 
