@@ -17,6 +17,80 @@ const STATUSES = [
   { value: "rejected", label: "Rejected", color: "bg-rose-500/10 text-rose-400 border-rose-900/30" }
 ];
 
+const PLAYBOOK = {
+  screening: {
+    title: "01 // Screening Call",
+    description: "15-minute introductory Zoom/Google Meet to assess voice energy, articulation, and background fit.",
+    opening: `Hi [Candidate Name], thanks for jumping on. The goal of this call is simple: I want to hear a bit about your background, understand what drives you, and share what we are building at GrowX Labs. If it sounds like a fit, we’ll move to a quick sales assessment. Let’s start with you—walk me through your story.`,
+    questions: [
+      {
+        q: "What specifically drew you to outbound B2B sales instead of other business or marketing roles?",
+        listen: "Confidence, fluency, clarity of speech. Outbound SDRs cannot be hesitant to speak on calls."
+      },
+      {
+        q: "If you had to pitch GrowX Labs Tech to a legacy business owner in a traditional industry like manufacturing, how would you explain what we do in 30 seconds?",
+        listen: "Checks if they researched growxlabs.tech. Look for focus on problem-solving (saving time, reducing errors) rather than generic AI slop."
+      },
+      {
+        q: "This is a founding role with performance incentives rather than a fixed salary. Traditional B2B sales cycles take time and require persistent follow-ups. Why does this commission-based model excite you, and how do you handle rejection?",
+        listen: "Filters for self-motivated hunger, resilience, and alignment with the startup model."
+      }
+    ]
+  },
+  assessment: {
+    title: "02 // Sales Task",
+    description: "Copy-paste email to send candidates who pass the introductory screening call.",
+    emailSubject: "Next Steps: Sales Assessment Task | GrowX Labs Careers",
+    emailBody: `Hi [Candidate Name],
+
+Great speaking with you today. As discussed, the next step in our process is a brief sales assessment task. This helps us evaluate your copywriting, research skills, and overall sales logic.
+
+Please complete the following task within 48 hours:
+
+1. Identify 2 traditional, non-tech companies in India or globally (e.g., manufacturing plants, logistics firms, packaging suppliers, warehousing, or chemical distribution).
+2. For each company, find a key decision-maker on LinkedIn (e.g., VP of Operations, Founder, Managing Director, or Supply Chain Head).
+3. Write a personalized 3-sentence outreach message (LinkedIn InMail style) pitching GrowX Labs' automation services to them. 
+
+Avoid generic pitches. Focus on a specific business problem (e.g., automated invoice processing, inventory tracking, or CRM syncing) and make a clear call-to-action to book a brief discovery call.
+
+Reply directly to this email with your choices and scripts.
+
+Best regards,
+GrowX Labs HR`
+  },
+  roleplay: {
+    title: "03 // Live Roleplay",
+    description: "15-minute mock outreach call. You play a busy traditional business owner (e.g., Mr. Sharma, MD of Sharma Packaging); candidate plays GrowX Labs SDR calling you to book a slot.",
+    objections: [
+      {
+        obj: "I am busy right now, send me an email.",
+        ans: "I completely understand you're busy, Mr. Sharma. I can certainly send an email, but it's usually easier to determine if this is even relevant in a quick 2-minute chat. Do you have 2 minutes now, or should we schedule a time tomorrow morning?"
+      },
+      {
+        obj: "We don't need AI or custom systems. Our Excel spreadsheets work fine.",
+        ans: "Excel is great, and many of our clients start there. The reason they switch is because manual entry costs their team 10 hours a week and leads to inventory errors. If we could automate that entry and save your team 40 hours a month, would it be worth a 10-minute look?"
+      },
+      {
+        obj: "How much does this cost?",
+        ans: "Because we build custom systems tailored to your exact operations, there is no flat fee. However, our typical solution yields a return on investment within the first 60 days. Our founder can walk you through exact pricing once we understand your bottlenecks. Are you open to a 10-minute chat with him this Thursday?"
+      }
+    ]
+  },
+  scorecard: {
+    title: "04 // Scorecard",
+    description: "Copy-paste this template directly into the 'Internal Hiring Notes' box in the candidate detail drawer above.",
+    template: `// Candidate Evaluation
+- Written Communication (Assessment Task): /5
+- Verbal Clarity & Energy (Screening Call): /5
+- Objection Handling (Mock Call): /5
+- Research & Preparation: /5
+- Incentives & Grit Alignment: /5
+
+Hiring Decision: [Shortlist / Reject]
+Next Action: [Send Stage 2 Task / Send Rejection]`
+  }
+};
+
 export default function AdminCareersPage() {
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,6 +103,10 @@ export default function AdminCareersPage() {
   const [candidateNotes, setCandidateNotes] = useState("");
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
+  const [activeTab, setActiveTab] = useState<"candidates" | "playbook">("candidates");
+  const [playbookSubTab, setPlaybookSubTab] = useState<"screening" | "assessment" | "roleplay" | "scorecard">("screening");
+  const [sendingAssessment, setSendingAssessment] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   useEffect(() => {
     fetchApplications();
@@ -101,6 +179,36 @@ export default function AdminCareersPage() {
     }
   };
 
+  const handleSendAssessment = async (id: string) => {
+    try {
+      setSendingAssessment(true);
+      const res = await fetch("/api/admin/career-portal/send-assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setApplications(prev => prev.map(app => app.id === id ? { ...app, status: "contacted" } : app));
+        setActiveCandidate((prev: any) => prev && prev.id === id ? { ...prev, status: "contacted" } : prev);
+        alert("Stage 2 assessment email successfully sent to candidate, and status updated to Contacted!");
+      } else {
+        alert(data.error || "Failed to send assessment");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("An error occurred while sending assessment email");
+    } finally {
+      setSendingAssessment(false);
+    }
+  };
+
+  const handleCopy = (text: string, key: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 2000);
+  };
+
   // Filter candidates
   const filteredApplications = applications.filter(app => {
     const matchesSearch = 
@@ -147,6 +255,37 @@ export default function AdminCareersPage() {
           </div>
         </div>
       </Reveal>
+
+      {/* ═══ TABS ═══ */}
+      <Reveal y={-10}>
+        <div className="flex border-b border-[var(--border-subtle)] gap-6">
+          <button
+            onClick={() => setActiveTab("candidates")}
+            className={cn(
+              "pb-3.5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all duration-350 cursor-pointer",
+              activeTab === "candidates"
+                ? "border-white text-white"
+                : "border-transparent text-[var(--text-muted)] hover:text-white"
+            )}
+          >
+            Candidates ({filteredApplications.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("playbook")}
+            className={cn(
+              "pb-3.5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all duration-350 cursor-pointer",
+              activeTab === "playbook"
+                ? "border-white text-white"
+                : "border-transparent text-[var(--text-muted)] hover:text-white"
+            )}
+          >
+            Interviewer Playbook
+          </button>
+        </div>
+      </Reveal>
+
+      {activeTab === "candidates" ? (
+        <>
 
       {/* ═══ FILTER BAR ═══ */}
       <Reveal y={10}>
@@ -252,6 +391,167 @@ export default function AdminCareersPage() {
           </Reveal>
         )}
       </div>
+      </>
+      ) : (
+        <Reveal y={10}>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Playbook Sidebar Nav */}
+            <div className="lg:col-span-1 space-y-2">
+              {[
+                { key: "screening", label: "01 // Intro Screen", icon: Phone },
+                { key: "assessment", label: "02 // Sales Task", icon: Mail },
+                { key: "roleplay", label: "03 // Live Roleplay", icon: Briefcase },
+                { key: "scorecard", label: "04 // Scorecard", icon: FileText }
+              ].map(sub => {
+                const Icon = sub.icon;
+                return (
+                  <button
+                    key={sub.key}
+                    onClick={() => setPlaybookSubTab(sub.key as any)}
+                    className={cn(
+                      "w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center gap-3 cursor-pointer",
+                      playbookSubTab === sub.key
+                        ? "bg-white border-white text-black font-bold"
+                        : "bg-[var(--surface-1)] border-[var(--border-subtle)] hover:border-[var(--border-hover)] text-[var(--text-secondary)]"
+                    )}
+                  >
+                    <Icon size={14} className={playbookSubTab === sub.key ? "text-black" : "text-[var(--text-muted)]"} />
+                    <span className="text-xs uppercase tracking-wider font-mono">{sub.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Playbook Content Area */}
+            <div className="lg:col-span-3 p-8 border border-[var(--border-subtle)] bg-[var(--surface-1)] rounded-2xl min-h-[500px] flex flex-col justify-between">
+              <div>
+                {/* Screening Call Tab */}
+                {playbookSubTab === "screening" && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-white uppercase tracking-wider font-mono">// 01 // Introduction Screening Call</h3>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">{PLAYBOOK.screening.description}</p>
+                    </div>
+
+                    <div className="p-5 border border-dashed border-[var(--border-subtle)] bg-[var(--surface-2)] rounded-xl relative group">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-[10px] font-mono font-bold text-primary uppercase tracking-wider">// Call Opening Hook</span>
+                        <button
+                          onClick={() => handleCopy(PLAYBOOK.screening.opening, "screening_opening")}
+                          className="px-2.5 py-1 border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 rounded text-[9px] font-mono font-bold tracking-wider text-zinc-300 hover:text-white transition-all cursor-pointer"
+                        >
+                          {copiedKey === "screening_opening" ? "COPIED!" : "COPY SCRIPT"}
+                        </button>
+                      </div>
+                      <p className="text-xs text-[var(--text-secondary)] italic leading-relaxed">"{PLAYBOOK.screening.opening}"</p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">// Core Qualifying Questions</span>
+                      {PLAYBOOK.screening.questions.map((item, idx) => (
+                        <div key={idx} className="p-5 border border-[var(--border-subtle)] bg-[var(--surface-2)] rounded-xl space-y-3">
+                          <p className="text-xs font-bold text-white leading-relaxed"><span className="text-primary font-mono mr-2">Q{idx+1}.</span> {item.q}</p>
+                          <div className="pt-2 border-t border-[var(--border-subtle)]/50">
+                            <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider block">What to listen for:</span>
+                            <p className="text-xs text-[var(--text-secondary)] mt-1 leading-relaxed font-medium">{item.listen}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Sales Task Tab */}
+                {playbookSubTab === "assessment" && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-white uppercase tracking-wider font-mono">// 02 // Out-of-Office Sales Assessment</h3>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">{PLAYBOOK.assessment.description}</p>
+                    </div>
+
+                    <div className="border border-[var(--border-subtle)] bg-[var(--surface-2)] rounded-xl overflow-hidden">
+                      <div className="bg-[var(--surface-3)] px-5 py-3 border-b border-[var(--border-subtle)] flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold text-[var(--text-secondary)] uppercase tracking-wider">Email Template</span>
+                        <button
+                          onClick={() => handleCopy(`Subject: ${PLAYBOOK.assessment.emailSubject}\n\n${PLAYBOOK.assessment.emailBody}`, "assessment_email")}
+                          className="px-2.5 py-1 border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 rounded text-[9px] font-mono font-bold tracking-wider text-zinc-300 hover:text-white transition-all cursor-pointer"
+                        >
+                          {copiedKey === "assessment_email" ? "COPIED!" : "COPY EMAIL"}
+                        </button>
+                      </div>
+                      <div className="p-6 space-y-4 font-sans text-xs text-[var(--text-secondary)] select-text leading-relaxed">
+                        <p><strong className="text-white">Subject:</strong> {PLAYBOOK.assessment.emailSubject}</p>
+                        <hr className="border-[var(--border-subtle)]" />
+                        <pre className="whitespace-pre-wrap font-sans leading-relaxed text-[var(--text-secondary)]">{PLAYBOOK.assessment.emailBody}</pre>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Live Roleplay Tab */}
+                {playbookSubTab === "roleplay" && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-white uppercase tracking-wider font-mono">// 03 // Live Mock Call Objection Handling</h3>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">{PLAYBOOK.roleplay.description}</p>
+                    </div>
+
+                    <div className="space-y-4">
+                      {PLAYBOOK.roleplay.objections.map((item, idx) => (
+                        <div key={idx} className="p-5 border border-[var(--border-subtle)] bg-[var(--surface-2)] rounded-xl space-y-3">
+                          <p className="text-xs font-bold text-rose-400 leading-relaxed"><span className="font-mono mr-2">OBJECTION:</span> "{item.obj}"</p>
+                          <div className="pt-3 border-t border-[var(--border-subtle)]/50 relative group">
+                            <div className="flex justify-between items-center mb-1.5">
+                              <span className="text-[9px] font-mono text-emerald-450 uppercase tracking-wider block">Recommended Objection Handler</span>
+                              <button
+                                onClick={() => handleCopy(item.ans, `objection_${idx}`)}
+                                className="px-2 py-0.5 border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 rounded text-[8px] font-mono font-bold tracking-wider text-zinc-300 hover:text-white transition-all cursor-pointer"
+                              >
+                                {copiedKey === `objection_${idx}` ? "COPIED" : "COPY SCRIPT"}
+                              </button>
+                            </div>
+                            <p className="text-xs text-[var(--text-secondary)] leading-relaxed italic">"{item.ans}"</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Scorecard Tab */}
+                {playbookSubTab === "scorecard" && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-white uppercase tracking-wider font-mono">// 04 // Candidate Review Scorecard</h3>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">{PLAYBOOK.scorecard.description}</p>
+                    </div>
+
+                    <div className="border border-[var(--border-subtle)] bg-[var(--surface-2)] rounded-xl overflow-hidden">
+                      <div className="bg-[var(--surface-3)] px-5 py-3 border-b border-[var(--border-subtle)] flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold text-[var(--text-secondary)] uppercase tracking-wider">Scorecard Template</span>
+                        <button
+                          onClick={() => handleCopy(PLAYBOOK.scorecard.template, "scorecard_template")}
+                          className="px-2.5 py-1 border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 rounded text-[9px] font-mono font-bold tracking-wider text-zinc-300 hover:text-white transition-all cursor-pointer"
+                        >
+                          {copiedKey === "scorecard_template" ? "COPIED!" : "COPY SCORECARD"}
+                        </button>
+                      </div>
+                      <div className="p-6 font-mono text-xs text-[var(--text-secondary)] select-text leading-relaxed">
+                        <pre className="whitespace-pre-wrap leading-relaxed">{PLAYBOOK.scorecard.template}</pre>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-8 pt-4 border-t border-[var(--border-subtle)] flex items-center gap-3">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-widest">GrowX Labs HR Playbook v1.0.0</span>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      )}
 
       {/* ═══ CANDIDATE DETAILS SIDE DRAWER ═══ */}
       <AnimatePresence>
@@ -473,7 +773,22 @@ export default function AdminCareersPage() {
               </div>
 
               {/* Footer Actions (Status Updates) */}
-              <div className="p-6 border-t border-neutral-200 bg-neutral-50 flex flex-col gap-3">
+              <div className="p-6 border-t border-neutral-200 bg-neutral-50 flex flex-col gap-4">
+                <div className="flex items-center justify-between border-b border-neutral-250 pb-3">
+                  <p className="text-[9px] font-bold text-neutral-550 uppercase tracking-widest">// Operations & Actions</p>
+                  <button
+                    onClick={() => handleSendAssessment(activeCandidate.id)}
+                    disabled={sendingAssessment}
+                    className="px-3.5 py-2 bg-neutral-900 hover:bg-neutral-800 disabled:opacity-50 text-white text-[9.5px] font-black uppercase tracking-wider rounded-lg flex items-center gap-1.5 transition-all duration-300 cursor-pointer"
+                  >
+                    {sendingAssessment ? (
+                      <Loader2 className="animate-spin h-3 w-3" />
+                    ) : (
+                      <Mail size={11} className="text-primary" />
+                    )}
+                    Send Stage 2 Task
+                  </button>
+                </div>
                 <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">// Update Candidate Stage</p>
                 <div className="flex flex-wrap gap-2.5">
                   <button
