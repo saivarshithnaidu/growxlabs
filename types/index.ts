@@ -16,6 +16,11 @@ export interface Lead {
   follow_up_date?: string;
   notes?: string;
   assigned_to?: string;
+  assigned_to_member?: {
+    name: string;
+    email?: string;
+    role?: string;
+  };
   city?: string;
   created_at?: string;
   source?: string;

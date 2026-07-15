@@ -123,3 +123,20 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
+
+    const { error: e1 } = await supabaseAdmin.from("crm_leads").delete().eq("id", id);
+    const { error: e2 } = await supabaseAdmin.from("leads").delete().eq("id", id);
+
+    if (e1 || e2) throw e1 || e2;
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

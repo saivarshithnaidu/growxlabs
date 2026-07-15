@@ -15,19 +15,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Forbidden: Admins only" }, { status: 403 });
     }
 
-    console.log("[API] Clearing all leads");
-    // Delete all rows in the leads table
-    const { error } = await supabaseAdmin
-      .from("leads")
-      .delete()
-      .neq("id", "00000000-0000-0000-0000-000000000000"); // Standard way in Supabase to match all rows
-
-    if (error) {
-      console.error("[DATABASE DELETE ALL ERROR]:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ error: "Method Not Allowed: Lead clearing is permanently disabled for safety." }, { status: 405 });
   } catch (error: any) {
     console.error("[API DELETE ALL ERROR]:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

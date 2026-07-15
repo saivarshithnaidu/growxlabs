@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/Card";
 import {
-  MessageSquare, Zap, Target,
-  MapPin, Star, X, Copy, Loader2,
-  CheckCircle, AlertCircle, Phone, Mail, Users,
-  RefreshCw, Send, PhoneCall, Info, Plus, Upload, Download, Trash2
+  MessageSquare, Zap, Target, MapPin, Star, X, Copy, Loader2,
+  CheckCircle, AlertCircle, Phone, Mail, Users, RefreshCw, Send,
+  Info, Plus, Upload, Download, Trash2, Search, MoreHorizontal,
+  Globe, Building2, ExternalLink, Sparkles, Check, ChevronDown
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Textarea";
@@ -17,22 +16,124 @@ import Link from "next/link";
 import { Lead } from "@/types";
 import { useSession } from "next-auth/react";
 
-// --- COMPONENTS ---
+// --- LEAD SCORE BARS (Linear style) ---
+const LeadScoreBar = ({ score }: { score: number }) => {
+  const filledBars = score >= 8 ? 3 : score >= 5 ? 2 : score >= 2 ? 1 : 0;
+  const barColors = score >= 8 ? "bg-[#DC2626]" : score >= 5 ? "bg-[#F59E0B]" : "bg-[#6B7280]";
+  
+  return (
+    <div className="flex items-center gap-1.5" title={`Score: ${score}/10`}>
+      <span className="text-xs font-semibold text-[#111827] w-6">{score.toFixed(1)}</span>
+      <div className="flex gap-0.5">
+        {[1, 2, 3].map((bar) => (
+          <div
+            key={bar}
+            className={cn(
+              "w-1 h-3 rounded-full",
+              bar <= filledBars ? barColors : "bg-[#E5E7EB]"
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
-const StatusBadge = ({ status }: { status: Lead['status'] }) => {
+// --- STATUS PILL CHIPS ---
+const StatusChip = ({ status }: { status: Lead['status'] }) => {
   const configs: Record<string, { label: string, color: string }> = {
-    new: { label: "NEW", color: "text-neutral-500 bg-neutral-100 border-neutral-200" },
-    qualified: { label: "QUALIFIED", color: "text-amber-700 bg-amber-50 border-amber-200" },
-    outreach: { label: "OUTREACH", color: "text-[#0075de] bg-[#0075de]/5 border-[#0075de]/10" },
-    contacted: { label: "CONTACTED", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+    new: { label: "New", color: "bg-[#F1F5F9] text-[#475569] border-[#E2E8F0]" },
+    qualified: { label: "Qualified", color: "bg-[#EFF6FF] text-[#1D4ED8] border-[#DBEAFE]" },
+    outreach: { label: "Outreach", color: "bg-[#FFFBEB] text-[#B45309] border-[#FEF3C7]" },
+    contacted: { label: "Contacted", color: "bg-[#F0FDF4] text-[#16A34A] border-[#DCFCE7]" },
+    warm: { label: "Warm", color: "bg-[#FFFBEB] text-[#D97706] border-[#FEF3C7]" },
+    cold: { label: "Cold", color: "bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0]" },
+    client: { label: "Client", color: "bg-[#F0FDF4] text-[#15803D] border-[#DCFCE7]" },
   };
 
   const config = configs[status] || configs.new;
 
   return (
-    <span className={cn("px-2.5 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider", config.color)}>
+    <span className={cn("inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold border uppercase tracking-wider leading-none shadow-sm", config.color)}>
       {config.label}
     </span>
+  );
+};
+
+// --- CUSTOM SUBTLE DROPDOWN FILTER ---
+interface DropdownOption {
+  label: string;
+  value: string;
+}
+
+interface DropdownFilterProps {
+  label: string;
+  value: string | null;
+  options: DropdownOption[];
+  onChange: (value: string | null) => void;
+}
+
+const DropdownFilter = ({ label, value, options, onChange }: DropdownFilterProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const activeOption = options.find(o => o.value === value);
+
+  return (
+    <div className="relative inline-block text-left" ref={containerRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "inline-flex items-center gap-1.5 px-3 py-1.5 border border-slate-200/60 bg-slate-50/50 hover:bg-slate-100/50 text-slate-700 hover:text-slate-900 text-xs font-semibold rounded-lg transition-all",
+          isOpen && "border-[#2563EB]/40 bg-white text-[#2563EB] ring-1 ring-[#2563EB]/10 shadow-sm"
+        )}
+      >
+        <span className="text-slate-400 font-normal">{label}:</span>
+        <span className="text-[#111827]">{activeOption ? activeOption.label : "All"}</span>
+        <ChevronDown size={12} className={cn("text-slate-400 transition-transform duration-200", isOpen && "rotate-180")} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 mt-1 w-44 bg-[#ffffff] border border-slate-200/80 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.06)] py-1 z-[120] animate-in fade-in-50 slide-in-from-top-1 duration-150">
+          <button
+            type="button"
+            onClick={() => { onChange(null); setIsOpen(false); }}
+            className={cn(
+              "w-full text-left px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 font-medium flex items-center justify-between transition-colors",
+              !value && "bg-[#EFF6FF]/65 text-[#2563EB] font-bold"
+            )}
+          >
+            <span>All</span>
+            {!value && <Check size={12} />}
+          </button>
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => { onChange(opt.value); setIsOpen(false); }}
+              className={cn(
+                "w-full text-left px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 font-medium flex items-center justify-between transition-colors",
+                value === opt.value && "bg-[#EFF6FF]/65 text-[#2563EB] font-bold"
+              )}
+            >
+              <span>{opt.label}</span>
+              {value === opt.value && <Check size={12} />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -46,8 +147,15 @@ export default function LeadsAdminPage() {
   const [activeLeadId, setActiveLeadId] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // AI Outreach Panel State
-  const [outreachLead, setOutreachLead] = useState<Lead | null>(null);
+  // Search & Filter State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [locationFilter, setLocationFilter] = useState<string | null>(null);
+  const [industryFilter, setIndustryFilter] = useState<string | null>(null);
+  const [selectedLeadIds, setSelectedLeadIds] = useState<string[]>([]);
+  const [activeActionMenuId, setActiveActionMenuId] = useState<string | null>(null);
+
+  // AI Outreach Drawer state inside details drawer
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState<'whatsapp' | 'email' | 'call'>('whatsapp');
   const [generatedContent, setGeneratedContent] = useState<{ whatsapp: string, email: string, call: string } | null>(null);
@@ -55,7 +163,7 @@ export default function LeadsAdminPage() {
   // Toast State
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
 
-  // New Lead Modal State
+  // New Lead / Import Modals State
   const [showAddLead, setShowAddLead] = useState(false);
   const [showImportLead, setShowImportLead] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,8 +175,8 @@ export default function LeadsAdminPage() {
     status: "new" as Lead['status']
   });
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const actionMenuRef = useRef<HTMLDivElement>(null);
 
   const fetchLeads = useCallback(async () => {
     try {
@@ -97,6 +205,17 @@ export default function LeadsAdminPage() {
       return () => clearTimeout(timer);
     }
   }, [toast]);
+
+  // Click outside listener for Action Menu Dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target as Node)) {
+        setActiveActionMenuId(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
@@ -132,8 +251,7 @@ export default function LeadsAdminPage() {
     }
   };
 
-  const handleDeleteLead = async (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
+  const handleDeleteLead = async (id: string) => {
     if (!confirm("Are you sure you want to delete this lead?")) return;
 
     try {
@@ -147,31 +265,48 @@ export default function LeadsAdminPage() {
       }
 
       showToast("Lead deleted successfully");
+      if (activeLeadId === id) setActiveLeadId(null);
       fetchLeads();
     } catch (e: any) {
       showToast(e.message, "error");
     }
   };
+  const handleDeleteSelectedLeads = async () => {
+    if (selectedLeadIds.length === 0) return;
+    if (!confirm(`Are you sure you want to delete the ${selectedLeadIds.length} selected leads?`)) return;
 
-  const handleClearAllLeads = async () => {
-    if (!confirm("WARNING: Are you sure you want to clear ALL leads? This action cannot be undone.")) return;
+    setIsSubmitting(true);
+    let successCount = 0;
+    let failCount = 0;
 
     try {
-      const res = await fetch("/api/leads/delete-all", {
-        method: "DELETE"
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to clear leads");
+      for (const id of selectedLeadIds) {
+        const res = await fetch(`/api/leads/${id}`, {
+          method: "DELETE"
+        });
+        if (res.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
       }
 
-      showToast("All leads cleared successfully");
+      if (failCount === 0) {
+        showToast(`Successfully deleted ${successCount} leads`);
+      } else {
+        showToast(`Deleted ${successCount} leads (${failCount} failed)`, "error");
+      }
+
+      setSelectedLeadIds([]);
+      setActiveLeadId(null);
       fetchLeads();
     } catch (e: any) {
-      showToast(e.message, "error");
+      showToast(e.message || "Bulk delete failed", "error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
 
   const generateAIOutreach = async (lead: Lead, force = false) => {
     if (!lead.id) return;
@@ -304,544 +439,704 @@ export default function LeadsAdminPage() {
   };
 
   const handleOpenOutreach = (lead: Lead) => {
-    setOutreachLead(lead);
-    setGeneratedContent(lead.outreach_content || null);
-    if (!lead.outreach_generated) {
-      generateAIOutreach(lead);
-    }
+    setActiveLeadId(lead.id || null);
+    generateAIOutreach(lead);
   };
 
-  const handleMarkContacted = async () => {
-    if (!outreachLead?.id) return;
-    await updateStatus(outreachLead.id, 'contacted', { outreach_sent: true });
-    setOutreachLead(null);
+  // --- MOCK INDUSTRY DERIVATION ---
+  const getMockIndustry = (businessName: string) => {
+    const name = businessName.toLowerCase();
+    if (name.includes("jewel") || name.includes("jwl") || name.includes("gold")) return "Retail";
+    if (name.includes("studio") || name.includes("design") || name.includes("creative")) return "Creative";
+    if (name.includes("tech") || name.includes("software") || name.includes("ai")) return "Technology";
+    if (name.includes("clinic") || name.includes("dental") || name.includes("health")) return "Healthcare";
+    if (name.includes("hotel") || name.includes("rest") || name.includes("cafe") || name.includes("cater")) return "Hospitality";
+    return "Services";
   };
 
-  const getPriority = (score: number) => {
-    if (score >= 7) return { label: "HOT", color: "text-red-700 bg-red-50 border-red-200/60" };
-    if (score >= 4) return { label: "WARM", color: "text-amber-700 bg-amber-50 border-amber-200/60" };
-    return { label: "COLD", color: "text-neutral-500 bg-neutral-100 border-neutral-200/60" };
-  };
-
+  // KPI Calculations
   const hotLeadsCount = leads.filter(l => (l.lead_score || 0) >= 7).length;
   const totalLeads = leads.length;
+  const qualifiedCount = leads.filter(l => l.status === "qualified").length;
+  const newCount = leads.filter(l => l.status === "new").length;
+  const clientCount = leads.filter(l => l.status === "client").length;
+  const conversionRate = totalLeads ? Math.round(((qualifiedCount + clientCount) / totalLeads) * 100) : 0;
+  const revenueValue = clientCount * 25000 + qualifiedCount * 5000;
+
+  // Filter implementation
+  const filteredLeads = leads.filter(lead => {
+    const matchesSearch = searchQuery ? (
+      lead.business_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.phone?.toLowerCase().includes(searchQuery.toLowerCase())
+    ) : true;
+
+    const matchesStatus = statusFilter ? lead.status === statusFilter : true;
+    const matchesLocation = locationFilter ? lead.city === locationFilter : true;
+    const matchesIndustry = industryFilter ? getMockIndustry(lead.business_name) === industryFilter : true;
+
+    return matchesSearch && matchesStatus && matchesLocation && matchesIndustry;
+  });
+
+  const selectedLead = leads.find(l => l.id === activeLeadId) || null;
 
   return (
-    <div className="relative min-h-screen">
-      <div className="space-y-6 sm:space-y-10 lg:space-y-12">
-        <AnimatePresence>
-          {toast && (
-            <motion.div
-              initial={{ opacity: 0, y: -20, x: "-50%" }}
-              animate={{ opacity: 1, y: 0, x: "-50%" }}
-              exit={{ opacity: 0, y: -20, x: "-50%" }}
-              className={cn(
-                "fixed top-6 left-1/2 z-[100] px-6 py-3 rounded-md shadow-lg border flex items-center gap-3 min-w-[300px]",
-                toast.type === 'success' ? "bg-green-50 border-green-200 text-green-700" : "bg-red-50 border-red-200 text-red-700"
-              )}
-            >
-              {toast.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
-              <span className="text-xs font-bold uppercase tracking-wider">{toast.message}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+    <div className="relative min-h-screen bg-[#F8FAFC] text-[#111827] font-sans antialiased -m-6 p-6">
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className={cn(
+              "fixed top-6 left-1/2 z-[150] px-4 py-2.5 rounded-lg shadow-md border flex items-center gap-2 min-w-[280px]",
+              toast.type === 'success' ? "bg-white border-[#E5E7EB] text-[#111827]" : "bg-red-50 border-red-200 text-[#DC2626]"
+            )}
+          >
+            {toast.type === 'success' ? <CheckCircle size={15} className="text-emerald-500" /> : <AlertCircle size={15} />}
+            <span className="text-xs font-semibold">{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="space-y-6">
+        {/* --- PAGE HEADER TOOLBAR --- */}
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-5 shadow-sm space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-bold text-[#111827] tracking-tight leading-none">Leads</h1>
+                <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse mt-0.5" />
+              </div>
+              <p className="text-[#6B7280] text-xs mt-1">Sales Pipeline & CRM Hub</p>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
+              {/* Search */}
+              <div className="relative w-full sm:w-60">
+                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[#6B7280]" />
+                <input
+                  type="text"
+                  placeholder="Search leads..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 border border-[#E5E7EB] rounded-lg text-xs bg-white text-[#111827] placeholder-[#6B7280] focus:outline-none focus:ring-1 focus:ring-[#2563EB] focus:border-[#2563EB] transition-all"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <Button onClick={() => setShowImportLead(true)} variant="outline" className="h-8 px-3.5 bg-[#ffffff] border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-semibold rounded-lg shadow-sm">
+                  <Upload size={12} className="mr-1.5" /> Import CSV
+                </Button>
+                <Link href="/admin/leads/scrape">
+                  <Button className="h-8 px-3.5 bg-[#ffffff] border border-[#E5E7EB] hover:bg-slate-50 text-neutral-700 text-xs font-semibold rounded-lg shadow-sm flex items-center gap-1.5">
+                    <Zap size={12} className="text-[#2563EB] fill-[#2563EB]" /> Hunt Leads
+                  </Button>
+                </Link>
+                <Button onClick={() => setShowAddLead(true)} className="h-8 px-3.5 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm">
+                  + Add Lead
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Filters Row */}
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#E5E7EB]">
+            <span className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mr-1">Filters:</span>
+            
+            {/* Status Dropdown */}
+            <DropdownFilter
+              label="Status"
+              value={statusFilter}
+              options={[
+                { label: "New", value: "new" },
+                { label: "Qualified", value: "qualified" },
+                { label: "Outreach", value: "outreach" },
+                { label: "Contacted", value: "contacted" },
+                { label: "Client", value: "client" }
+              ]}
+              onChange={setStatusFilter}
+            />
+
+            {/* Location Dropdown */}
+            <DropdownFilter
+              label="Location"
+              value={locationFilter}
+              options={Array.from(new Set(leads.map(l => l.city).filter(Boolean))).map(city => ({
+                label: city!,
+                value: city!
+              }))}
+              onChange={setLocationFilter}
+            />
+
+            {/* Industry Dropdown */}
+            <DropdownFilter
+              label="Industry"
+              value={industryFilter}
+              options={[
+                { label: "Retail", value: "Retail" },
+                { label: "Creative", value: "Creative" },
+                { label: "Technology", value: "Technology" },
+                { label: "Healthcare", value: "Healthcare" },
+                { label: "Hospitality", value: "Hospitality" },
+                { label: "Services", value: "Services" }
+              ]}
+              onChange={setIndustryFilter}
+            />
+
+            {/* Clear Filters Button */}
+            {(statusFilter || locationFilter || industryFilter) && (
+              <button
+                onClick={() => {
+                  setStatusFilter(null);
+                  setLocationFilter(null);
+                  setIndustryFilter(null);
+                }}
+                className="text-xs font-semibold text-[#2563EB] hover:text-blue-700 ml-2"
+              >
+                Clear Filters
+              </button>
+            )}
+
+            {/* Bulk actions */}
+            {selectedLeadIds.length > 0 && (
+              <div className="flex items-center gap-2 ml-auto">
+                <span className="text-xs font-semibold text-[#6B7280]">{selectedLeadIds.length} selected</span>
+                {isAdminOrCoAdmin && (
+                  <Button
+                    onClick={handleDeleteSelectedLeads}
+                    variant="outline"
+                    className="h-7 px-2.5 bg-red-50 border border-red-200 text-[#DC2626] hover:bg-red-100/50 text-[10px] font-bold rounded-lg"
+                  >
+                    Delete Selected
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* --- SUMMARY METRICS --- */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
-            { label: "Total Leads", value: totalLeads.toString() },
-            { label: "Hot Leads Today", value: hotLeadsCount.toString() },
-            { label: "Active Clients", value: "—" },
-            { label: "Revenue This Month", value: "—" },
-          ].map((stat, i) => (
-            <div key={i} className="bg-white border border-[#e6e6e6] p-6 rounded-md hover:shadow-sm transition-all duration-200">
-              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">{stat.label}</p>
-              <p className="text-3xl font-bold text-[#0075de] tracking-tight leading-none">{stat.value}</p>
+            { label: "Total Leads", value: totalLeads },
+            { label: "Qualified", value: qualifiedCount },
+            { label: "New", value: newCount },
+            { label: "Hot", value: hotLeadsCount },
+            { label: "Conversion", value: `${conversionRate}%` },
+            { label: "Revenue", value: `₹${(revenueValue / 100000).toFixed(1)}L` },
+          ].map((widget, i) => (
+            <div key={i} className="bg-white border border-[#E5E7EB] p-4 rounded-xl shadow-sm flex flex-col justify-between h-20 hover:border-slate-300 transition-colors">
+              <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider leading-none">{widget.label}</p>
+              <p className="text-xl font-bold text-[#111827] leading-none">{widget.value}</p>
             </div>
           ))}
         </div>
 
-        {/* Title and Controls */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">Sales Pipeline</h1>
-            <p className="text-neutral-500 text-sm">Real-time Business Intelligence</p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {isAdminOrCoAdmin && leads.length > 0 && (
-              <Button onClick={handleClearAllLeads} className="bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 h-10 px-5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all">
-                <Trash2 size={13} className="mr-2" /> Clear All
-              </Button>
-            )}
-            <Button onClick={() => setShowImportLead(true)} className="bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-600 h-10 px-5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all">
-              <Upload size={13} className="mr-2" /> Import CSV
-            </Button>
-            {isAdminOrCoAdmin && (
-              <Button onClick={handleExportCSV} className="bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-600 h-10 px-5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all">
-                <Download size={13} className="mr-2" /> Export
-              </Button>
-            )}
-            <Button onClick={() => setShowAddLead(true)} className="bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-600 h-10 px-5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all">
-              <Plus size={13} className="mr-2" /> Add Lead
-            </Button>
-            <Link href="/admin/leads/scrape">
-              <Button className="bg-[#0075de] text-white hover:bg-[#005bab] px-6 h-10 rounded-md text-[10px] font-bold uppercase tracking-widest shadow-sm">
-                <Zap size={13} className="mr-2 fill-current" /> Hunt Leads
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Lead List Cards */}
-        <div className="grid gap-4">
-          <AnimatePresence mode="popLayout">
-            {loading ? (
-              <div className="h-64 flex items-center justify-center border border-[#e6e6e6] border-dashed rounded-md bg-white">
-                <Loader2 className="h-6 w-6 text-neutral-300 animate-spin" />
-              </div>
-            ) : leads.length > 0 ? (
-              leads.map((lead, i) => {
-                const priority = getPriority(lead.lead_score || 0);
-                const isExpanded = activeLeadId === lead.id;
-
-                // Fallback parsing for source/creator from notes
-                let displaySource = lead.source;
-                let displayCreator = lead.created_by_name;
-                
-                if (!displaySource && lead.notes?.includes("[Source:")) {
-                  displaySource = lead.notes.match(/\[Source:\s*(.*?)\]/)?.[1];
-                }
-                if (!displayCreator && lead.notes?.includes("[Created By:")) {
-                  displayCreator = lead.notes.match(/\[Created By:\s*(.*?)\]/)?.[1];
-                }
-
-                return (
-                  <motion.div
-                    key={lead.id}
-                    layout
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.01 }}
-                  >
-                    <Card className={cn(
-                      "p-0 border-[#e6e6e6] rounded-md bg-white hover:shadow-sm transition-all overflow-hidden relative group",
-                      isExpanded && "border-[#0075de]/30 shadow-md"
-                    )}>
-                      {/* Priority left indicator */}
-                      <div className={cn("absolute left-0 top-0 bottom-0 w-1 transition-all", isExpanded ? "w-1.5" : "w-1", 
-                        (lead.lead_score || 0) >= 7 ? "bg-red-500" : (lead.lead_score || 0) >= 4 ? "bg-amber-500" : "bg-neutral-300"
-                      )} />
-
-                      <div className="p-5 flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between pl-6">
-                        <div className="space-y-3 flex-1">
-                          <div className="flex flex-wrap items-center gap-3">
-                            <h3 className="text-base font-bold text-neutral-800 tracking-tight">
-                              {lead.business_name}
-                            </h3>
-                            <StatusBadge status={lead.status} />
-                            <span className={cn("px-2.5 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider", priority.color)}>
-                              {priority.label}
-                            </span>
-                            <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-1.5 bg-[#f6f5f4] px-2.5 py-0.5 rounded border border-[#e6e6e6]">
-                              <MapPin size={9} /> {lead.city || "Unknown Location"}
-                            </span>
-                            {lead.outreach_sent && (
-                              <span className="bg-emerald-50 text-emerald-700 text-[9px] font-bold px-2 py-0.5 rounded border border-emerald-200 uppercase tracking-wider">CONTACTED</span>
-                            )}
-                            {displaySource === "Admin Manual" && (
-                              <span className="bg-[#0075de]/5 text-[#0075de] text-[9px] font-bold px-2 py-0.5 rounded border border-[#0075de]/10 uppercase tracking-wider">Admin Saved</span>
-                            )}
-                            {displayCreator && (
-                              <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-1.5 bg-[#f6f5f4] px-2.5 py-0.5 rounded border border-[#e6e6e6]">
-                                <Users size={9} /> Uploaded By: {displayCreator}
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="flex flex-wrap gap-2">
-                            {!lead.has_website && (
-                              <div className="flex items-center text-amber-700 text-[9px] font-bold uppercase tracking-wider bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                                NO WEBSITE ❌
-                              </div>
-                            )}
-                            {(lead.google_rating || 0) > 0 && (
-                              <div className="flex items-center text-neutral-500 text-[9px] font-bold uppercase tracking-wider bg-[#f6f5f4] px-2 py-0.5 rounded border border-[#e6e6e6]">
-                                <Star size={9} className="mr-1 text-amber-500 fill-amber-500" /> {lead.google_rating} RATING
-                              </div>
-                            )}
-                          </div>
+        {/* --- MAIN DATA TABLE --- */}
+        <div className="bg-white border border-[#E5E7EB] rounded-xl shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs whitespace-nowrap table-fixed">
+              <thead className="bg-slate-50 border-b border-[#E5E7EB] text-[#6B7280] font-semibold sticky top-0 z-10">
+                <tr>
+                  <th className="px-4 py-3 w-10 text-center">
+                    <input
+                      type="checkbox"
+                      checked={leads.length > 0 && selectedLeadIds.length === leads.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedLeadIds(leads.map(l => l.id).filter(Boolean) as string[]);
+                        } else {
+                          setSelectedLeadIds([]);
+                        }
+                      }}
+                      className="rounded border-[#E5E7EB] text-[#2563EB] focus:ring-[#2563EB] h-3.5 w-3.5"
+                    />
+                  </th>
+                  <th className="px-5 py-3 w-48 font-bold uppercase tracking-wider text-[10px]">Company</th>
+                  <th className="px-4 py-3 w-28 font-bold uppercase tracking-wider text-[10px]">Status</th>
+                  <th className="px-4 py-3 w-32 font-bold uppercase tracking-wider text-[10px]">Location</th>
+                  <th className="px-4 py-3 w-28 font-bold uppercase tracking-wider text-[10px]">Industry</th>
+                  <th className="px-4 py-3 w-36 font-bold uppercase tracking-wider text-[10px]">Website</th>
+                  <th className="px-4 py-3 w-40 font-bold uppercase tracking-wider text-[10px]">Email</th>
+                  <th className="px-4 py-3 w-32 font-bold uppercase tracking-wider text-[10px]">Phone</th>
+                  <th className="px-4 py-3 w-32 font-bold uppercase tracking-wider text-[10px]">Lead Score</th>
+                  <th className="px-4 py-3 w-32 font-bold uppercase tracking-wider text-[10px]">Assigned</th>
+                  <th className="px-4 py-3 w-32 font-bold uppercase tracking-wider text-[10px]">Date Added</th>
+                  <th className="px-4 py-3 w-16 text-center font-bold uppercase tracking-wider text-[10px]"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E5E7EB]">
+                {loading ? (
+                  <tr>
+                    <td colSpan={12} className="px-6 py-20 text-center text-slate-400">
+                      <div className="flex items-center justify-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin text-[#2563EB]" />
+                        Loading lead intelligence...
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredLeads.length === 0 ? (
+                  <tr>
+                    <td colSpan={12} className="px-6 py-20 text-center bg-slate-50/50">
+                      <div className="flex flex-col items-center justify-center space-y-4 max-w-sm mx-auto">
+                        <div className="w-12 h-12 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center text-[#2563EB]">
+                          <Building2 size={20} />
                         </div>
-
-                        <div className="flex items-center justify-end gap-2.5 flex-wrap lg:flex-nowrap w-full lg:w-auto">
-                          {lead.phone && lead.phone.length >= 10 && (
-                            <Button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                window.open(`https://wa.me/${lead.phone?.replace(/\D/g, '')}`, '_blank');
-                              }}
-                              className="h-9 px-4 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-widest rounded-md"
-                            >
-                              WhatsApp
-                            </Button>
-                          )}
-                          <Button
-                            onClick={() => setActiveLeadId(isExpanded ? null : lead.id!)}
-                            className={cn(
-                              "h-9 px-5 transition-all text-[10px] font-bold uppercase tracking-widest rounded-md border",
-                              isExpanded ? "bg-[#f6f5f4] text-neutral-800 border-[#e6e6e6]" : "bg-white border-[#e6e6e6] text-neutral-600 hover:bg-[#f6f5f4]"
-                            )}
-                          >
-                            {isExpanded ? "Close Info" : "View Details"}
-                          </Button>
-                          {isAdminOrCoAdmin && (
-                            <Button
-                              onClick={(e) => handleDeleteLead(e, lead.id!)}
-                              className="h-9 w-9 bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 rounded-md flex items-center justify-center p-0"
-                              title="Delete Lead"
-                            >
-                              <Trash2 size={14} />
-                            </Button>
-                          )}
+                        <div>
+                          <h4 className="text-sm font-bold text-[#111827]">No leads matching criteria</h4>
+                          <p className="text-xs text-[#6B7280] mt-1">Try adjusting your filters or search terms to locate leads.</p>
                         </div>
                       </div>
+                    </td>
+                  </tr>
+                ) : filteredLeads.map((lead) => {
+                  const isChecked = selectedLeadIds.includes(lead.id || "");
+                  const isCurrentActive = activeLeadId === lead.id;
+                  const industry = getMockIndustry(lead.business_name);
 
-                      <AnimatePresence>
-                        {isExpanded && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden border-t border-[#e6e6e6]"
+                  return (
+                    <tr 
+                      key={lead.id} 
+                      className={cn(
+                        "h-14 hover:bg-slate-50/70 transition-all cursor-pointer", 
+                        isCurrentActive && "bg-blue-50/40 hover:bg-blue-50/50"
+                      )}
+                      onClick={() => setActiveLeadId(lead.id || null)}
+                    >
+                      <td className="px-4 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedLeadIds(curr => [...curr, lead.id || ""]);
+                            } else {
+                              setSelectedLeadIds(curr => curr.filter(id => id !== lead.id));
+                            }
+                          }}
+                          className="rounded border-[#E5E7EB] text-[#2563EB] focus:ring-[#2563EB] h-3.5 w-3.5"
+                        />
+                      </td>
+                      <td className="px-5 py-3 font-semibold text-[#111827]">
+                        <div className="truncate" title={lead.business_name}>
+                          {lead.business_name}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusChip status={lead.status} />
+                      </td>
+                      <td className="px-4 py-3 text-[#6B7280]">
+                        <div className="truncate" title={lead.city}>
+                          {lead.city || "—"}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-[#6B7280] font-medium">
+                        {industry}
+                      </td>
+                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                        {lead.website_url ? (
+                          <a 
+                            href={lead.website_url.startsWith("http") ? lead.website_url : `https://${lead.website_url}`}
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="inline-flex items-center gap-1 text-[#2563EB] hover:underline font-medium"
                           >
-                            <div className="p-6 bg-[#f6f5f4]/30 grid md:grid-cols-3 gap-6">
-                              <div className="space-y-4">
-                                <div className="space-y-1">
-                                  <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Contact Information</p>
-                                  <div className="text-xs font-medium text-neutral-600 space-y-1">
-                                    <p className="flex items-center gap-2.5"><Phone size={12} className="text-neutral-400" /> {lead.phone || "No phone listed"}</p>
-                                    <p className="flex items-center gap-2.5"><Mail size={12} className="text-neutral-400" /> {lead.email || "No email detected"}</p>
-                                  </div>
-                                </div>
-                                <div className="space-y-1">
-                                  <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Digital Status</p>
-                                  <div className="flex items-center gap-2">
-                                    <span className={cn("px-2.5 py-0.5 rounded text-[9px] font-bold border", lead.has_website ? "text-emerald-700 border-emerald-200 bg-emerald-50" : "text-red-700 border-red-200 bg-red-50")}>
-                                      {lead.has_website ? "Website ✅" : "No Website ❌"}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="space-y-3">
-                                <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Opportunity Insights</p>
-                                <div className="space-y-2">
-                                  {!lead.has_website && (
-                                    <div className="p-3 rounded bg-amber-50 border border-amber-200 text-[10px] text-amber-800 font-medium">
-                                      Critically underserved digital presence. No operational website detected.
-                                    </div>
-                                  )}
-                                  <div className="p-3 rounded bg-white border border-[#e6e6e6] shadow-sm">
-                                    <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mb-1">Calculated Quality</p>
-                                    <div className="flex items-end gap-2 leading-none">
-                                      <span className="text-2xl font-bold text-neutral-800">{lead.lead_score}</span>
-                                      <span className="text-[10px] font-semibold text-neutral-400 mb-0.5">/ 10 Score</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="space-y-4">
-                                <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Suggested Action</p>
-                                <div className="space-y-2.5">
-                                  <div className="flex gap-2">
-                                    <Button
-                                      onClick={() => updateStatus(lead.id, 'qualified')}
-                                      isLoading={updatingId === lead.id}
-                                      className="flex-1 h-9 bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-600 text-[9px] font-bold uppercase tracking-wider rounded-md"
-                                    >
-                                      Mark Qualified
-                                    </Button>
-                                    <Button
-                                      onClick={() => handleOpenOutreach(lead)}
-                                      className="flex-1 h-9 bg-[#0075de] hover:bg-[#005bab] text-white text-[9px] font-bold uppercase tracking-wider rounded-md shadow-sm"
-                                    >
-                                      Start Outreach
-                                    </Button>
-                                  </div>
-                                  <Link href={`/admin/leads/${lead.id}`} className="block">
-                                    <Button className="w-full h-9 bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-500 hover:text-neutral-700 font-bold uppercase tracking-wider text-[9px] rounded-md">
-                                      Full Intelligence Profile
-                                    </Button>
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </motion.div>
+                            <Globe size={11} className="shrink-0" />
+                            <span className="truncate max-w-[120px]">{lead.website_url.replace(/(https?:\/\/)?(www\.)?/, "")}</span>
+                            <ExternalLink size={10} className="shrink-0 text-slate-400" />
+                          </a>
+                        ) : (
+                          <span className="text-slate-400 font-normal italic">No website</span>
                         )}
-                      </AnimatePresence>
-                    </Card>
-                  </motion.div>
-                );
-              })
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="h-80 flex flex-col items-center justify-center border border-[#e6e6e6] border-dashed rounded-md bg-white space-y-4"
-              >
-                <div className="h-12 w-12 rounded-full bg-[#f6f5f4] border border-[#e6e6e6] flex items-center justify-center text-neutral-400">
-                  <Target size={24} />
-                </div>
-                <div className="text-center space-y-1">
-                  <h3 className="text-base font-bold text-neutral-800">Pipeline Empty</h3>
-                  <p className="text-neutral-400 text-xs max-w-xs mx-auto">Start by hunting for new high-conversion leads in target regions.</p>
-                </div>
-                <Link href="/admin/leads/scrape">
-                  <Button className="bg-[#0075de] text-white hover:bg-[#005bab] h-10 px-6 font-bold rounded-md shadow-sm">
-                    Hunt Leads
-                  </Button>
-                </Link>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                      </td>
+                      <td className="px-4 py-3 text-[#6B7280] font-medium truncate" title={lead.email}>
+                        {lead.email || "—"}
+                      </td>
+                      <td className="px-4 py-3 text-[#6B7280] font-medium">
+                        {lead.phone || "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <LeadScoreBar score={lead.lead_score || 0} />
+                      </td>
+                      <td className="px-4 py-3 text-[#6B7280] font-semibold uppercase tracking-wider text-[9px]">
+                        {lead.assigned_to_member?.name || "Unassigned"}
+                      </td>
+                      <td className="px-4 py-3 text-[#6B7280]">
+                        {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                        <div className="relative inline-block text-left">
+                          <button
+                            onClick={() => setActiveActionMenuId(activeActionMenuId === lead.id ? null : (lead.id || null))}
+                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-colors"
+                          >
+                            <MoreHorizontal size={14} />
+                          </button>
+                          
+                          {/* Dropdown Options */}
+                          {activeActionMenuId === lead.id && (
+                            <div 
+                              ref={actionMenuRef}
+                              className="absolute right-0 mt-1 w-36 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-1 z-[120] text-left"
+                            >
+                              <button 
+                                onClick={() => { setActiveLeadId(lead.id || null); setActiveActionMenuId(null); }}
+                                className="w-full text-left px-3 py-1.5 text-xs text-[#111827] hover:bg-slate-50 font-medium"
+                              >
+                                View Details
+                              </button>
+                              <button 
+                                onClick={() => { handleOpenOutreach(lead); setActiveActionMenuId(null); }}
+                                className="w-full text-left px-3 py-1.5 text-xs text-[#2563EB] hover:bg-slate-50 font-medium"
+                              >
+                                Start Outreach
+                              </button>
+                              <button 
+                                onClick={() => { updateStatus(lead.id, 'qualified'); setActiveActionMenuId(null); }}
+                                className="w-full text-left px-3 py-1.5 text-xs text-[#111827] hover:bg-slate-50 font-medium"
+                              >
+                                Mark Qualified
+                              </button>
+                              {isAdminOrCoAdmin && (
+                                <button 
+                                  onClick={() => { handleDeleteLead(lead.id!); setActiveActionMenuId(null); }}
+                                  className="w-full text-left px-3 py-1.5 text-xs text-[#DC2626] hover:bg-red-50 font-semibold border-t border-[#E5E7EB]"
+                                >
+                                  Delete
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
 
-        {/* AI OUTREACH PANEL (SIDE DRAWER) */}
-        <AnimatePresence>
-          {outreachLead && (
-            <div className="fixed inset-0 z-[110] flex justify-end">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setOutreachLead(null)}
-                className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
-              />
-              <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="relative w-full max-w-xl bg-white border-l border-[#e6e6e6] shadow-2xl flex flex-col h-full"
-              >
-                {/* Header */}
-                <div className="p-6 border-b border-[#e6e6e6] flex items-center justify-between bg-[#f6f5f4]/40">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-md bg-[#0075de]/5 flex items-center justify-center text-[#0075de] border border-[#0075de]/10">
-                      <Zap size={16} />
+      {/* --- HUBSPOT-STYLE SLIDE-OUT DRAWER --- */}
+      <AnimatePresence>
+        {selectedLead && (
+          <div className="fixed inset-0 z-[110] flex justify-end">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveLeadId(null)}
+              className="absolute inset-0 bg-black/10 backdrop-blur-[1px]"
+            />
+            {/* Drawer Panel */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 220 }}
+              className="relative w-full max-w-[420px] bg-white border-l border-[#E5E7EB] shadow-2xl flex flex-col h-full z-10"
+            >
+              {/* Header */}
+              <div className="p-5 border-b border-[#E5E7EB] flex items-center justify-between bg-slate-50/60">
+                <div className="flex items-center gap-2">
+                  <Building2 size={16} className="text-[#6B7280]" />
+                  <div>
+                    <h2 className="text-sm font-bold text-[#111827] leading-none truncate max-w-[280px]" title={selectedLead.business_name}>
+                      {selectedLead.business_name}
+                    </h2>
+                    <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider mt-1">Lead Intelligence Profile</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setActiveLeadId(null)}
+                  className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-colors"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+
+              {/* Content Panel Scrollable */}
+              <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar bg-[#F8FAFC]/40">
+                
+                {/* Section 1: Lead Score Widget */}
+                <div className="bg-white border border-[#E5E7EB] p-4 rounded-xl shadow-sm">
+                  <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Opportunity Score</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-extrabold text-[#111827] leading-none">{(selectedLead.lead_score || 0).toFixed(1)}</span>
+                    <span className="text-xs font-semibold text-[#6B7280]">/ 10.0 Calculated Quality</span>
+                  </div>
+                  <div className="w-full bg-[#E5E7EB] h-1.5 rounded-full mt-3 overflow-hidden">
+                    <div 
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500",
+                        (selectedLead.lead_score || 0) >= 7 ? "bg-[#DC2626]" : (selectedLead.lead_score || 0) >= 4 ? "bg-[#F59E0B]" : "bg-[#6B7280]"
+                      )}
+                      style={{ width: `${(selectedLead.lead_score || 0) * 10}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Section 2: Contact Details */}
+                <div className="bg-white border border-[#E5E7EB] rounded-xl shadow-sm overflow-hidden">
+                  <div className="px-4 py-2.5 bg-slate-50 border-b border-[#E5E7EB]">
+                    <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">Contact Details</p>
+                  </div>
+                  <div className="p-4 space-y-3.5 text-xs text-[#111827] font-medium">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#6B7280] font-normal">Contact Person</span>
+                      <span>{selectedLead.name || "—"}</span>
                     </div>
-                    <div>
-                      <h2 className="text-base font-bold text-neutral-800 tracking-tight leading-none">{outreachLead.business_name}</h2>
-                      <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">AI Outreach Engine</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#6B7280] font-normal">Phone</span>
+                      <a href={`tel:${selectedLead.phone}`} className="text-[#2563EB] hover:underline flex items-center gap-1">
+                        <Phone size={11} /> {selectedLead.phone || "—"}
+                      </a>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#6B7280] font-normal">Email</span>
+                      <a href={`mailto:${selectedLead.email}`} className="text-[#2563EB] hover:underline flex items-center gap-1">
+                        <Mail size={11} /> {selectedLead.email || "—"}
+                      </a>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#6B7280] font-normal">Website</span>
+                      {selectedLead.website_url ? (
+                        <a 
+                          href={selectedLead.website_url.startsWith("http") ? selectedLead.website_url : `https://${selectedLead.website_url}`}
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="text-[#2563EB] hover:underline flex items-center gap-1"
+                        >
+                          <Globe size={11} /> {selectedLead.website_url}
+                        </a>
+                      ) : "—"}
                     </div>
                   </div>
-                  <button onClick={() => setOutreachLead(null)} className="p-2 hover:bg-[#f6f5f4] rounded-md transition-colors text-neutral-400 hover:text-neutral-700">
-                    <X size={18} />
-                  </button>
                 </div>
 
-                {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-                  {/* Section 1: Lead Summary */}
-                  <div className="space-y-3">
-                    <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-1.5">
-                      <Info size={10} /> Lead Intelligence
+                {/* Section 3: AI Analysis Card (HubSpot style) */}
+                <div className="bg-white border border-[#E5E7EB] rounded-xl shadow-sm overflow-hidden">
+                  <div className="px-4 py-2.5 bg-slate-50 border-b border-[#E5E7EB] flex items-center justify-between">
+                    <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles size={12} className="text-[#2563EB]" /> AI Analysis
                     </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3.5 rounded-md bg-[#f6f5f4]/50 border border-[#e6e6e6]">
-                        <p className="text-[9px] font-bold text-neutral-400 uppercase mb-1">Status</p>
-                        <p className="text-xs font-bold text-neutral-700">{outreachLead.has_website ? "Website ✅" : "No Website ❌"}</p>
-                      </div>
-                      <div className="p-3.5 rounded-md bg-[#f6f5f4]/50 border border-[#e6e6e6]">
-                        <p className="text-[9px] font-bold text-neutral-400 uppercase mb-1">Rating</p>
-                        <p className="text-xs font-bold text-neutral-700 flex items-center gap-1">
-                          <Star size={11} className="text-amber-500 fill-amber-500" /> {outreachLead.google_rating || "N/A"}
+                    <span className="inline-flex px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[9px] font-bold uppercase tracking-wider">
+                      Verified
+                    </span>
+                  </div>
+                  <div className="p-4 space-y-4 text-xs text-[#111827]">
+                    {/* Critical Issues */}
+                    <div>
+                      <h4 className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider mb-2">Critical issues</h4>
+                      <ul className="space-y-1.5 text-neutral-600 pl-1 list-none">
+                        {!selectedLead.has_website ? (
+                          <li className="flex items-start gap-2">
+                            <span className="text-[#DC2626] shrink-0 mt-0.5">⚠️</span>
+                            <span>No operational website detected.</span>
+                          </li>
+                        ) : null}
+                        {!(selectedLead.google_rating) ? (
+                          <li className="flex items-start gap-2">
+                            <span className="text-[#DC2626] shrink-0 mt-0.5">⚠️</span>
+                            <span>No Google Business profile rating listed.</span>
+                          </li>
+                        ) : null}
+                        {selectedLead.instagram_followers && selectedLead.instagram_followers < 500 ? (
+                          <li className="flex items-start gap-2">
+                            <span className="text-[#DC2626] shrink-0 mt-0.5">⚠️</span>
+                            <span>Weak online presence on Instagram ({selectedLead.instagram_followers} followers).</span>
+                          </li>
+                        ) : null}
+                        {selectedLead.has_website && selectedLead.google_rating ? (
+                          <li className="flex items-start gap-2">
+                            <span className="text-[#16A34A] shrink-0 mt-0.5">✓</span>
+                            <span>Digital channels verified and indexed.</span>
+                          </li>
+                        ) : null}
+                      </ul>
+                    </div>
+
+                    {/* Recommended Action Checklist */}
+                    <div className="pt-3 border-t border-[#E5E7EB]">
+                      <h4 className="text-[10px] font-bold text-[#111827] uppercase tracking-wider mb-2">Recommended action</h4>
+                      <ul className="space-y-1.5 text-neutral-600 pl-1 list-none">
+                        {!selectedLead.has_website ? (
+                          <>
+                            <li className="flex items-center gap-2">
+                              <span className="text-[#2563EB] text-base shrink-0 leading-none">●</span>
+                              <span>Call founder and offer website build audit</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <span className="text-[#2563EB] text-base shrink-0 leading-none">●</span>
+                              <span>Pitch custom landing page design</span>
+                            </li>
+                          </>
+                        ) : (
+                          <li className="flex items-center gap-2">
+                            <span className="text-[#2563EB] text-base shrink-0 leading-none">●</span>
+                            <span>Pitch localized SEO optimization campaign</span>
+                          </li>
+                        )}
+                        {!(selectedLead.google_rating) && (
+                          <li className="flex items-center gap-2">
+                            <span className="text-[#2563EB] text-base shrink-0 leading-none">●</span>
+                            <span>Offer Google Profile listing configuration</span>
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 4: Notes */}
+                <div className="bg-white border border-[#E5E7EB] p-4 rounded-xl shadow-sm space-y-2">
+                  <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider border-b border-[#E5E7EB] pb-2">Notes</p>
+                  <p className="text-xs text-neutral-600 italic leading-relaxed pt-1">
+                    {selectedLead.notes ? selectedLead.notes.replace(/\[Source:.*\]/, "").replace(/\[Created By:.*\]/, "").trim() : "No custom notes recorded for this pipeline lead."}
+                  </p>
+                </div>
+
+                {/* Section 5: Timeline / Recent Activity */}
+                <div className="bg-white border border-[#E5E7EB] p-4 rounded-xl shadow-sm space-y-3">
+                  <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider border-b border-[#E5E7EB] pb-2">Timeline & Logs</p>
+                  <div className="space-y-3 pt-1">
+                    <div className="flex gap-2.5 items-start">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                      <div>
+                        <p className="text-xs font-semibold text-neutral-700">Lead Created</p>
+                        <p className="text-[10px] text-[#6B7280]">
+                          {selectedLead.created_at ? new Date(selectedLead.created_at).toLocaleString() : "Recently"} • Pipeline Registered
                         </p>
                       </div>
                     </div>
-                    <div className="p-3 rounded-md bg-[#0075de]/5 border border-[#0075de]/10">
-                      <p className="text-[9px] font-bold text-[#0075de] uppercase tracking-wider mb-1">Key Insight</p>
-                      <p className="text-xs font-medium text-neutral-700 italic">
-                        {!outreachLead.has_website ? "Critical lack of digital footprint. High probability for web development project." : "Strong foundation but low social presence detected."}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Section 2: AI Messages */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Generated Strategy</p>
-                      <button
-                        onClick={() => generateAIOutreach(outreachLead, true)}
-                        disabled={isGenerating}
-                        className="text-[9px] font-bold text-[#0075de] hover:text-[#005bab] flex items-center gap-1 transition-colors disabled:opacity-50"
-                      >
-                        <RefreshCw size={11} className={cn(isGenerating && "animate-spin")} /> REGENERATE
-                      </button>
-                    </div>
-
-                    {/* Tabs */}
-                    <div className="flex p-0.5 bg-[#f6f5f4] rounded-md border border-[#e6e6e6]">
-                      {(['whatsapp', 'email', 'call'] as const).map((tab) => (
-                        <button
-                          key={tab}
-                          onClick={() => setActiveTab(tab)}
-                          className={cn(
-                            "flex-1 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded transition-all",
-                            activeTab === tab ? "bg-white text-neutral-800 border border-[#e6e6e6] shadow-sm" : "text-neutral-400 hover:text-neutral-600"
-                          )}
-                        >
-                          {tab}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Message Block */}
-                    <div className="relative group">
-                      {isGenerating ? (
-                        <div className="h-40 rounded-md bg-[#f6f5f4]/50 animate-pulse flex items-center justify-center border border-[#e6e6e6]">
-                          <Loader2 className="h-5 w-5 text-neutral-300 animate-spin" />
+                    {selectedLead.outreach_sent && (
+                      <div className="flex gap-2.5 items-start">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#2563EB] mt-1.5 shrink-0" />
+                        <div>
+                          <p className="text-xs font-semibold text-neutral-700">Outreach Delivered</p>
+                          <p className="text-[10px] text-[#6B7280]">Status switched to Contacted</p>
                         </div>
-                      ) : (
-                        <>
-                          <Textarea
-                             value={generatedContent?.[activeTab] || ""}
-                             onChange={(e) => setGeneratedContent(cur => cur ? { ...cur, [activeTab]: e.target.value } : null)}
-                             className="min-h-[160px] bg-white border-[#e6e6e6] focus:border-[#0075de] text-xs leading-relaxed p-4 h-auto text-neutral-800"
-                          />
-                          <button
-                            onClick={() => {
-                              if (generatedContent?.[activeTab]) {
-                                navigator.clipboard.writeText(generatedContent[activeTab]);
-                                showToast("Copied to clipboard");
-                              }
-                            }}
-                            className="absolute bottom-3 right-3 p-1.5 bg-[#f6f5f4] hover:bg-[#e6e6e6] rounded border border-[#e6e6e6] text-neutral-400 hover:text-neutral-700 transition-all"
-                          >
-                            <Copy size={13} />
-                          </button>
-                        </>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Actions Footer */}
-                <div className="p-6 border-t border-[#e6e6e6] grid gap-3.5 bg-[#f6f5f4]/40">
-                  <div className="flex gap-3">
-                    {activeTab === 'whatsapp' && outreachLead.phone && (
-                      <a
-                        href={`https://wa.me/${outreachLead.phone.replace(/\D/g, '')}?text=${encodeURIComponent(generatedContent?.whatsapp || "")}`}
-                        target="_blank"
-                        className="flex-1"
-                      >
-                        <Button className="w-full h-11 bg-emerald-600 hover:bg-emerald-500 text-white gap-2 rounded-md shadow-sm">
-                          <Send size={15} /> Open WhatsApp
-                        </Button>
-                      </a>
-                    )}
-                    {activeTab === 'email' && outreachLead.email && (
-                      <a
-                        href={`mailto:${outreachLead.email}?subject=Partnership Strategy for ${outreachLead.business_name}&body=${encodeURIComponent(generatedContent?.email || "")}`}
-                        className="flex-1"
-                      >
-                        <Button className="w-full h-11 bg-[#0075de] hover:bg-[#005bab] text-white gap-2 rounded-md shadow-sm">
-                          <Mail size={15} /> Open Email
-                        </Button>
-                      </a>
-                    )}
-                    {activeTab === 'call' && (
-                      <Button onClick={() => showToast("Script copied for call")} className="flex-1 h-11 bg-[#0075de] hover:bg-[#005bab] text-white gap-2 rounded-md shadow-sm">
-                        <PhoneCall size={15} /> Copy Script
-                      </Button>
-                    )}
-                  </div>
+              </div>
 
-                  <Button
-                    onClick={handleMarkContacted}
-                    isLoading={updatingId === outreachLead.id}
-                    className="w-full h-10 bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-500 hover:text-neutral-700 rounded-md"
+              {/* Drawer Actions Footer */}
+              <div className="p-5 border-t border-[#E5E7EB] bg-slate-50/50 flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => updateStatus(selectedLead.id, 'qualified')}
+                    isLoading={updatingId === selectedLead.id}
+                    className="flex-1 h-9 bg-white border border-[#E5E7EB] text-neutral-600 hover:bg-slate-50 text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm"
                   >
-                    Mark as Contacted
+                    Mark Qualified
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      generateAIOutreach(selectedLead);
+                      showToast("Outreach generator active");
+                    }}
+                    className="flex-1 h-9 bg-[#2563EB] hover:bg-blue-700 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm"
+                  >
+                    Start Outreach
                   </Button>
                 </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-      </div>
+                <Button 
+                  onClick={() => alert("Proposal generator active for company.")}
+                  variant="outline"
+                  className="w-full h-9 bg-white border border-[#E5E7EB] hover:bg-slate-50 text-neutral-500 text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm"
+                >
+                  Generate Proposal
+                </Button>
+              </div>
 
-      {/* ADD LEAD MODAL */}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* --- ADD LEAD MODAL --- */}
       {showAddLead && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/30 backdrop-blur-[2px]">
-          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-md p-8 shadow-xl animate-in zoom-in-95 duration-200">
-            <h2 className="text-xl font-bold text-neutral-800 tracking-tight mb-1">Add New Lead</h2>
-            <p className="text-neutral-400 text-xs mb-6">Manually enter lead information into the pipeline.</p>
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white border border-[#E5E7EB] rounded-xl w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h2 className="text-lg font-bold text-[#111827] tracking-tight mb-1">Add New Lead</h2>
+            <p className="text-[#6B7280] text-xs mb-6">Manually register a business lead in the sales pipeline.</p>
+            
             <form onSubmit={handleAddLead} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Business Name</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Business Name</label>
                 <input 
-                  type="text" 
                   required
                   value={newLead.business_name}
-                  onChange={(e) => setNewLead({ ...newLead, business_name: e.target.value })}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-3 py-2.5 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-xs" 
+                  onChange={(e) => setNewLead({...newLead, business_name: e.target.value})}
+                  className="w-full bg-slate-50 border border-[#E5E7EB] rounded-lg h-10 px-3.5 text-xs text-[#111827] focus:outline-none focus:border-[#2563EB] focus:bg-white transition-all"
+                  placeholder="Company name..."
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Email Address</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Contact Person</label>
                 <input 
-                  type="email" 
-                  value={newLead.email}
-                  onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-3 py-2.5 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-xs" 
+                  value={newLead.business_name} // default mock name field mapping
+                  onChange={(e) => setNewLead({...newLead, business_name: e.target.value})}
+                  className="w-full bg-slate-50 border border-[#E5E7EB] rounded-lg h-10 px-3.5 text-xs text-[#111827] focus:outline-none focus:border-[#2563EB] focus:bg-white transition-all"
+                  placeholder="Founder or manager name..."
                 />
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Phone Number</label>
-                <input 
-                  type="text" 
-                  value={newLead.phone}
-                  onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-3 py-2.5 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-xs" 
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Email</label>
+                  <input 
+                    type="email"
+                    value={newLead.email}
+                    onChange={(e) => setNewLead({...newLead, email: e.target.value})}
+                    className="w-full bg-slate-50 border border-[#E5E7EB] rounded-lg h-10 px-3.5 text-xs text-[#111827] focus:outline-none focus:border-[#2563EB] focus:bg-white transition-all"
+                    placeholder="email@example.com"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Phone</label>
+                  <input 
+                    value={newLead.phone}
+                    onChange={(e) => setNewLead({...newLead, phone: e.target.value})}
+                    className="w-full bg-slate-50 border border-[#E5E7EB] rounded-lg h-10 px-3.5 text-xs text-[#111827] focus:outline-none focus:border-[#2563EB] focus:bg-white transition-all"
+                    placeholder="+91 98..."
+                  />
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">City</label>
-                <input 
-                  type="text" 
-                  value={newLead.city}
-                  onChange={(e) => setNewLead({ ...newLead, city: e.target.value })}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-3 py-2.5 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-xs" 
-                />
-              </div>
-              
-              <div className="pt-5 flex justify-end gap-2.5 border-t border-[#e6e6e6] mt-6">
-                 <Button type="button" onClick={() => setShowAddLead(false)} className="bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-500 h-9 px-4 rounded-md text-[9px] font-bold uppercase tracking-wider">Cancel</Button>
-                 <Button 
-                   type="submit" 
-                   disabled={isSubmitting}
-                   className="bg-[#0075de] hover:bg-[#005bab] text-white text-[9px] font-bold uppercase tracking-wider h-9 px-5 rounded-md shadow-sm"
-                 >
-                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Lead"}
-                 </Button>
+
+              <div className="mt-8 flex justify-end gap-2 pt-4 border-t border-[#E5E7EB]">
+                <Button type="button" onClick={() => setShowAddLead(false)} variant="ghost" className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] hover:text-[#111827] h-9 px-4 rounded-lg">Cancel</Button>
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-[#2563EB] hover:bg-blue-700 text-white text-[10px] font-bold uppercase tracking-wider h-9 px-5 rounded-lg shadow-sm min-w-[100px]"
+                >
+                  {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Save Lead"}
+                </Button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* IMPORT CSV MODAL */}
+      {/* --- IMPORT LEAD MODAL --- */}
       {showImportLead && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/30 backdrop-blur-[2px]">
-          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-md p-8 shadow-xl animate-in zoom-in-95 duration-200">
-            <h2 className="text-xl font-bold text-neutral-800 tracking-tight mb-1">Import Leads</h2>
-            <p className="text-neutral-400 text-xs mb-6">Upload a CSV file to bulk import leads.</p>
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white border border-[#E5E7EB] rounded-xl w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h2 className="text-lg font-bold text-[#111827] tracking-tight mb-1">Import Leads</h2>
+            <p className="text-[#6B7280] text-xs mb-6">Bulk upload business leads from a CSV spreadsheet.</p>
             
             <div 
               className={cn(
-                "relative border border-dashed rounded-md p-10 text-center transition-all",
-                selectedFile ? "border-emerald-300 bg-emerald-50/50" : "border-[#e6e6e6] bg-[#f6f5f4]/30 hover:bg-[#f6f5f4]/50"
+                "relative border border-dashed rounded-lg p-10 text-center transition-all cursor-pointer",
+                selectedFile ? "border-emerald-300 bg-emerald-50/50" : "border-[#E5E7EB] bg-slate-50/55 hover:bg-slate-100/50"
               )}
             >
               <input 
@@ -850,32 +1145,33 @@ export default function LeadsAdminPage() {
                 accept=".csv"
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
               />
-              <Upload size={28} className={cn("mx-auto mb-3", selectedFile ? "text-emerald-600" : "text-neutral-300")} />
-              <p className="text-[11px] font-bold text-neutral-700 uppercase tracking-wide">
-                {selectedFile ? selectedFile.name : "Drop CSV File Here"}
+              <Upload size={24} className={cn("mx-auto mb-2.5", selectedFile ? "text-emerald-600" : "text-[#6B7280]")} />
+              <p className="text-xs font-bold text-[#111827] uppercase tracking-wide">
+                {selectedFile ? selectedFile.name : "Select CSV File"}
               </p>
-              <p className="text-[9px] text-neutral-400 mt-1 uppercase">
-                {selectedFile ? `${(selectedFile.size / 1024).toFixed(2)} KB` : "or click to browse local files"}
+              <p className="text-[10px] text-[#6B7280] mt-1">
+                {selectedFile ? `${(selectedFile.size / 1024).toFixed(2)} KB` : "Maximum file size 5MB"}
               </p>
             </div>
 
-            <div className="mt-6 flex justify-end gap-2.5 border-t border-[#e6e6e6] pt-5">
-               <Button 
+            <div className="mt-6 flex justify-end gap-2 border-t border-[#E5E7EB] pt-4">
+              <Button 
                 type="button" 
                 onClick={() => {
                   setShowImportLead(false);
                   setSelectedFile(null);
                 }} 
-                className="bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-500 h-9 px-4 rounded-md text-[9px] font-bold uppercase tracking-wider"
+                variant="ghost"
+                className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] hover:text-[#111827] h-9 px-4 rounded-lg"
               >
                 Cancel
               </Button>
-               <Button 
+              <Button 
                 onClick={handleImportCSV}
                 disabled={!selectedFile || isSubmitting}
-                className="bg-[#0075de] hover:bg-[#005bab] text-white text-[9px] font-bold uppercase tracking-wider h-9 px-5 rounded-md shadow-sm"
+                className="bg-[#2563EB] hover:bg-blue-700 text-white text-[10px] font-bold uppercase tracking-wider h-9 px-5 rounded-lg shadow-sm min-w-[100px]"
               >
-                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Process File"}
+                {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Process Import"}
               </Button>
             </div>
           </div>

@@ -88,37 +88,39 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   const isCrmAgent = role === "crm_agent";
   const allowedPaths = (session?.user as any)?.allowed_paths || [];
 
+  const isPathAllowed = (itemHref: string) => {
+    return allowedPaths.some((p: string) => {
+      if (p === "/admin") {
+        return itemHref === "/admin";
+      }
+      if (p === "/admin/leads/scrape") {
+        return itemHref === "/admin/leads/scrape";
+      }
+      if (p === "/admin/leads") {
+        return itemHref.startsWith("/admin/leads") && !itemHref.startsWith("/admin/leads/scrape");
+      }
+      return itemHref === p || itemHref.startsWith(p + "/");
+    });
+  };
+
   const filteredNavItems = isCrmAgent 
-    ? navItems.filter(item => {
-        return allowedPaths.some((p: string) => {
-          if (p === "/admin") {
-            return item.href === "/admin";
-          }
-          if (p === "/admin/leads/scrape") {
-            return item.href === "/admin/leads/scrape";
-          }
-          if (p === "/admin/leads") {
-            return item.href === "/admin/leads";
-          }
-          return item.href.startsWith(p);
-        });
-      })
+    ? navItems.filter(item => isPathAllowed(item.href))
     : navItems;
 
   const filteredAcademyItems = isCrmAgent
-    ? academyItems.filter(item => allowedPaths.some((p: string) => item.href.startsWith(p)))
+    ? academyItems.filter(item => isPathAllowed(item.href))
     : academyItems;
 
   const filteredMonetizationItems = isCrmAgent
-    ? monetizationItems.filter(item => allowedPaths.some((p: string) => item.href.startsWith(p)))
+    ? monetizationItems.filter(item => isPathAllowed(item.href))
     : monetizationItems;
 
   const filteredFinancialItems = isCrmAgent
-    ? financialItems.filter(item => allowedPaths.some((p: string) => item.href.startsWith(p)))
+    ? financialItems.filter(item => isPathAllowed(item.href))
     : financialItems;
 
   const filteredTemplateItems = isCrmAgent
-    ? templateItems.filter(item => allowedPaths.some((p: string) => item.href.startsWith(p)))
+    ? templateItems.filter(item => isPathAllowed(item.href))
     : templateItems;
 
   const renderLink = (item: any) => {

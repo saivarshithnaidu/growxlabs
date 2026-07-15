@@ -11,19 +11,18 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 async function run() {
   const reshwanthId = "d1a1506c-caaf-4203-8759-ada2a12ac4b2";
 
-  console.log("=== UPDATING RESHWANTH PERMISSIONS ===");
-  const { data, error } = await supabase
-    .from("team_members")
-    .update({ 
-      allowed_paths: ["/admin/crm", "/admin/leads", "/admin/outreach"] 
-    })
-    .eq("id", reshwanthId)
-    .select();
+  console.log("=== INSPECTING TEAM SESSIONS ===");
+  const { data: sessions, error } = await supabase
+    .from("team_sessions")
+    .select("*, team_members(name, email, role)")
+    .order("login_at", { ascending: false })
+    .limit(10);
   
   if (error) {
-    console.error("Error setting reshwanth permissions:", error.message);
+    console.error("Error fetching sessions:", error.message);
   } else {
-    console.log("Successfully set reshwanth permissions to CRM, Leads, and Outreach!", data);
+    console.log("Recent Team Sessions in Database:");
+    console.log(JSON.stringify(sessions, null, 2));
   }
 }
 
