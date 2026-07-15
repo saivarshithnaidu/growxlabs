@@ -119,9 +119,28 @@ function PermissionsSelector({ selectedPaths, onChange }: PermissionsSelectorPro
         />
       </div>
 
-      <div className="flex border border-[#e6e6e6] rounded-md overflow-hidden h-[240px] bg-white">
+      <div 
+        style={{ 
+          display: 'flex', 
+          flexDirection: 'row',
+          border: '1px solid #e6e6e6', 
+          borderRadius: '6px', 
+          overflow: 'hidden', 
+          height: '260px', 
+          backgroundColor: '#ffffff' 
+        }}
+      >
         {/* Left Side: Categories */}
-        <div className="w-1/3 bg-[#f6f5f4] border-r border-[#e6e6e6] p-1.5 space-y-0.5 overflow-y-auto no-scrollbar">
+        <div 
+          style={{ 
+            width: '30%', 
+            backgroundColor: '#f6f5f4', 
+            borderRight: '1px solid #e6e6e6', 
+            padding: '6px', 
+            overflowY: 'auto' 
+          }} 
+          className="space-y-0.5 no-scrollbar"
+        >
           {categories.map((cat) => {
             const count = cat === "All" 
               ? AVAILABLE_PATHS.length 
@@ -150,7 +169,14 @@ function PermissionsSelector({ selectedPaths, onChange }: PermissionsSelectorPro
         </div>
 
         {/* Right Side: Checkboxes */}
-        <div className="w-2/3 p-3.5 overflow-y-auto space-y-2 bg-white scrollbar-thin">
+        <div 
+          style={{ 
+            width: '70%', 
+            padding: '14px', 
+            overflowY: 'auto' 
+          }} 
+          className="space-y-2 bg-white scrollbar-thin"
+        >
           {filteredPaths.length === 0 ? (
             <div className="text-center py-12 text-[10px] font-bold uppercase tracking-widest text-neutral-400">No permissions found.</div>
           ) : (
@@ -584,7 +610,7 @@ export default function AdminTeamPage() {
       {/* ADD MEMBER MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-2xl p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-2xl p-8 shadow-2xl animate-in zoom-in-95 duration-200" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
             <h2 className="text-xl font-bold text-neutral-800 tracking-tight mb-2">Add CRM Agent</h2>
             <p className="text-neutral-400 text-sm mb-6">Create a new team member account.</p>
             <form onSubmit={handleAddAgent} className="space-y-5">
@@ -658,7 +684,7 @@ export default function AdminTeamPage() {
       {/* EDIT PERMISSIONS MODAL */}
       {editPermissionsMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-2xl p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-2xl p-8 shadow-2xl animate-in zoom-in-95 duration-200" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
             <h2 className="text-xl font-bold text-neutral-800 tracking-tight mb-2">Edit Permissions</h2>
             <p className="text-neutral-400 text-sm mb-6">Manage path access permissions for {editPermissionsMember.name}.</p>
             <form onSubmit={handleSavePermissions} className="space-y-5">
