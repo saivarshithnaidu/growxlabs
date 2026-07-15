@@ -59,7 +59,7 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="flex justify-center lg:justify-start notranslate" translate="no">
             <Link href="/" className="flex items-center text-3xl font-serif text-white tracking-normal">
-              GrowX<span className="text-[#355CFF] font-sans font-black">Labs</span>.tech
+              GrowX<span className="text-[#C0F0FB] font-sans font-black">Labs</span>.tech
             </Link>
           </div>
 
@@ -139,95 +139,25 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {/* Social Proof Avatars */}
-          <div className="pt-6 border-t border-neutral-900 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-            <div className="flex -space-x-2.5 overflow-hidden">
-              {["Sai", "John", "Maria", "Alex", "Kate"].map((name, idx) => (
-                <div 
-                  key={idx} 
-                  className="inline-block h-8.5 w-8.5 rounded-full ring-2 ring-[#020202] bg-gradient-to-tr from-neutral-800 to-neutral-700 flex items-center justify-center text-[10px] font-black text-neutral-300 uppercase tracking-tighter"
-                >
-                  {name[0]}
-                </div>
-              ))}
-            </div>
-            <p className="text-[12px] text-neutral-400 leading-relaxed max-w-[280px]">
-              Join <span className="text-white font-bold">10,000+ developers</span> & founders partnering with us to build agentic pipelines.
-            </p>
-          </div>
-
-
         </div>
       </div>
 
-      {/* RIGHT SIDE: Testimonial & Branding (Futuristic Dark Theme) */}
-      <div className="hidden lg:flex flex-col justify-center items-center bg-[#050814] text-white p-12 lg:p-24 relative overflow-hidden select-none border-l border-neutral-900">
-        {/* Futuristic Grid / Glow Background */}
-        <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#355CFF]/10 rounded-full blur-[120px] pointer-events-none" />
-
-        {/* Futuristic Sketch 1: Orbit Grid (Top Right) */}
-        <svg className="absolute -top-10 -right-10 w-72 h-72 text-[#355CFF]/15 stroke-current fill-none pointer-events-none" viewBox="0 0 100 100" strokeWidth="0.5">
-          <circle cx="50" cy="50" r="40" strokeDasharray="2 2" />
-          <circle cx="50" cy="50" r="30" />
-          <circle cx="50" cy="50" r="20" strokeDasharray="4 4" />
-          <line x1="10" y1="50" x2="90" y2="50" />
-          <line x1="50" y1="10" x2="50" y2="90" />
-          <line x1="20" y1="20" x2="80" y2="80" />
-        </svg>
-
-        {/* Futuristic Sketch 2: Digital Network Grid (Bottom Left) */}
-        <svg className="absolute -bottom-10 -left-10 w-80 h-80 text-[#C0F0FB]/10 stroke-current fill-none pointer-events-none" viewBox="0 0 100 100" strokeWidth="0.5">
-          <path d="M10,10 L30,40 L70,30 L90,80 L50,90 Z" />
-          <line x1="30" y1="40" x2="50" y2="90" />
-          <line x1="70" y1="30" x2="50" y2="90" />
-          <circle cx="10" cy="10" r="2" fill="currentColor" />
-          <circle cx="30" cy="40" r="2" fill="currentColor" />
-          <circle cx="70" cy="30" r="2" fill="currentColor" />
-          <circle cx="90" cy="80" r="2" fill="currentColor" />
-          <circle cx="50" cy="90" r="2" fill="currentColor" />
-        </svg>
-
-        <div className="relative z-10 w-full max-w-md space-y-8 flex flex-col items-center">
-          <h2 className="text-[38px] font-black text-white leading-tight text-center max-w-sm font-serif tracking-tight">
-            Go Agent-native With <span className="italic font-serif font-normal text-[#355CFF]">GrowXLabs</span>
+      {/* RIGHT SIDE: Branding Handshake Image */}
+      <div className="hidden lg:block relative overflow-hidden border-l border-neutral-900 h-full min-h-screen">
+        <img 
+          src="/images/handshake.jpg" 
+          alt="GrowX Labs Partnership" 
+          className="absolute inset-0 w-full h-full object-cover opacity-85"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-[#020202]/30 to-transparent pointer-events-none" />
+        
+        <div className="absolute inset-x-0 bottom-0 p-12 xl:p-16 z-10 space-y-4 text-left">
+          <h2 className="text-[36px] font-black text-white leading-tight font-serif tracking-tight">
+            Go Agent-native With <span className="italic font-serif font-normal text-[#C0F0FB]">GrowXLabs</span>
           </h2>
-
-          {/* Testimonial Card */}
-          <div className="w-full bg-[#0F0F12] text-white rounded-2xl p-7 shadow-2xl border border-white/5 relative">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#355CFF] to-[#C0F0FB] flex items-center justify-center font-bold text-xs text-black">
-                  ER
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-[13px] font-bold text-white">Elena Rostova</span>
-                    {/* Verified check */}
-                    <svg className="w-4 h-4 text-[#C0F0FB] fill-current" viewBox="0 0 24 24">
-                      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                    </svg>
-                  </div>
-                  <div className="text-[11px] text-neutral-400 font-mono">@elenarostova</div>
-                </div>
-              </div>
-              
-              {/* Top right icon */}
-              <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 text-neutral-600 fill-current">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-            </div>
-
-            <p className="text-[15px] leading-relaxed text-neutral-200 mb-6 font-normal">
-              Migrating our entire multi-agent support pipeline to <span className="text-[#C0F0FB]">@growxlabs</span> reduced response latency by 72% and completely automated our onboarding triage. The speed of agentic execution is insane.
-            </p>
-
-            <div className="text-[10px] text-neutral-500 font-mono flex items-center gap-2 border-t border-neutral-900 pt-4">
-              <span>10:48 AM · Jun 8, 2026</span>
-              <span>·</span>
-              <span className="text-[#C0F0FB]">12.4K Views</span>
-            </div>
-          </div>
+          <p className="text-sm text-neutral-300 max-w-sm leading-relaxed font-sans font-normal">
+            Partner with us to build advanced, custom AI-native digital pipelines, CRM systems, and high-performance automation workflows.
+          </p>
         </div>
       </div>
     </div>
