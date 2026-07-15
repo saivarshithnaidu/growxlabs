@@ -88,7 +88,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   const isCrmAgent = role === "crm_agent";
 
   const filteredNavItems = isCrmAgent 
-    ? navItems.filter(i => ["CRM", "Leads", "Outreach"].includes(i.name)).map(i => i.name === "CRM" ? { ...i, href: "/admin/leads" } : i)
+    ? navItems.filter(i => ["CRM", "Leads", "Outreach"].includes(i.name))
     : navItems;
 
   const renderLink = (item: any) => {

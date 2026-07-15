@@ -38,17 +38,17 @@ async function authenticate(req: Request) {
   return null; // Update this logic if NextAuth is strictly needed here for Admins
 }
 
+import { authOptions } from "@/lib/auth";
+
 // Full logic for CRM API
 export async function GET(req: Request) {
   try {
-    // For now, let's bypass strict Admin NextAuth check in the API, 
-    // or just assume we have the auth token.
-    // Since I can't easily import authOptions right now, I'll allow access if they have a team_session, 
-    // OR if they pass a specific Admin header/cookie. We will assume NextAuth sets a cookie.
-    
-    // In a real scenario, we'd use getServerSession(). For the sake of the plan, we'll fetch all leads.
-    // Let's implement the Supabase query.
-    
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { role, id } = session.user as any;
     const { searchParams } = new URL(req.url);
     const assignedTo = searchParams.get('assigned_to');
     
@@ -57,7 +57,10 @@ export async function GET(req: Request) {
       assigned_to_member:team_members(name)
     `).order("created_at", { ascending: false });
     
-    if (assignedTo && assignedTo !== 'all') {
+    if (role === "crm_agent") {
+      // Agents only see their assigned leads
+      query = query.eq('assigned_to', id);
+    } else if (assignedTo && assignedTo !== 'all') {
       query = query.eq('assigned_to', assignedTo);
     }
     
