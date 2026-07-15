@@ -22,6 +22,7 @@ const AVAILABLE_PATHS = [
   { category: "Core Systems", label: "GrowX Email Client", path: "/admin/growx-email" },
   { category: "Core Systems", label: "Pitch Deck Generator", path: "/admin/pitch-deck" },
   { category: "Core Systems", label: "Client Onboarding", path: "/admin/onboarding" },
+  { category: "Core Systems", label: "SDR Onboarding", path: "/admin/employee-onboarding" },
   { category: "Core Systems", label: "Career Portal", path: "/admin/career-portal" },
   { category: "Core Systems", label: "Interviewer Playbook", path: "/admin/career-portal/playbook" },
   { category: "Core Systems", label: "Carousel Creator", path: "/admin/instagram-carousel" },
