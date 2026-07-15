@@ -33,7 +33,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       let isAllowed = false;
       
       for (const p of allowedPaths) {
-        if (p === "/admin/leads/scrape") {
+        if (p === "/admin") {
+          if (pathname === "/admin" || pathname === "/admin/") {
+            isAllowed = true;
+            break;
+          }
+        } else if (p === "/admin/leads/scrape") {
           if (pathname.startsWith("/admin/leads/scrape")) {
             isAllowed = true;
             break;

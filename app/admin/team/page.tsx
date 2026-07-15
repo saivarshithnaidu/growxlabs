@@ -6,17 +6,183 @@ import { Plus, Search, Shield, UserX, Key, Clock, Activity, Loader2, ShieldAlert
 import { Reveal } from "@/components/marketing/Reveal";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { cn } from "@/lib/utils";
 
 const AVAILABLE_PATHS = [
-  { label: "CRM Dashboard", path: "/admin/crm" },
-  { label: "Sales Pipeline", path: "/admin/leads" },
-  { label: "AI Lead Scraper", path: "/admin/leads/scrape" },
-  { label: "AI Outreach Planner", path: "/admin/outreach" },
-  { label: "GrowX Email Client", path: "/admin/growx-email" },
-  { label: "Client Onboarding", path: "/admin/onboarding" },
-  { label: "Apollo Lead Generation", path: "/admin/apollo" },
-  { label: "Pitch Deck Generator", path: "/admin/pitch-deck" }
+  // Core Systems
+  { category: "Core Systems", label: "Overview", path: "/admin" },
+  { category: "Core Systems", label: "Command Center", path: "/admin/command-center" },
+  { category: "Core Systems", label: "CRM Dashboard", path: "/admin/crm" },
+  { category: "Core Systems", label: "Team Management", path: "/admin/team" },
+  { category: "Core Systems", label: "Sales Pipeline", path: "/admin/leads" },
+  { category: "Core Systems", label: "AI Lead Scraper", path: "/admin/leads/scrape" },
+  { category: "Core Systems", label: "Apollo Leads", path: "/admin/apollo" },
+  { category: "Core Systems", label: "Clients Database", path: "/admin/clients" },
+  { category: "Core Systems", label: "AI Outreach Planner", path: "/admin/outreach" },
+  { category: "Core Systems", label: "GrowX Email Client", path: "/admin/growx-email" },
+  { category: "Core Systems", label: "Pitch Deck Generator", path: "/admin/pitch-deck" },
+  { category: "Core Systems", label: "Client Onboarding", path: "/admin/onboarding" },
+  { category: "Core Systems", label: "Career Portal", path: "/admin/career-portal" },
+  { category: "Core Systems", label: "Interviewer Playbook", path: "/admin/career-portal/playbook" },
+  { category: "Core Systems", label: "Carousel Creator", path: "/admin/instagram-carousel" },
+  { category: "Core Systems", label: "Reels Creator", path: "/admin/reels-creator" },
+  { category: "Core Systems", label: "Wish Game", path: "/admin/wish-game" },
+  { category: "Core Systems", label: "Settings", path: "/admin/settings" },
+
+  // Academy Suite
+  { category: "Academy Suite", label: "Courses", path: "/admin/academy/courses" },
+  { category: "Academy Suite", label: "Assessments", path: "/admin/academy/assessments" },
+  { category: "Academy Suite", label: "Students & Progress", path: "/admin/academy/users" },
+  { category: "Academy Suite", label: "Certificates", path: "/admin/academy/certificates" },
+
+  // Revenue
+  { category: "Revenue", label: "Coupons", path: "/admin/monetization/coupons" },
+  { category: "Revenue", label: "Order Logs", path: "/admin/monetization/orders" },
+  { category: "Revenue", label: "Revenue Tracking", path: "/admin/academy/payments" },
+
+  // Financials & Templates
+  { category: "Financials", label: "Invoices", path: "/admin/invoices" },
+  { category: "Financials", label: "Agreements", path: "/admin/agreements" },
+  { category: "Financials", label: "Proposals", path: "/admin/proposals" },
+  { category: "Templates", label: "Agreement Preview", path: "/admin/agreements/preview" },
+  { category: "Templates", label: "Invoice Preview", path: "/admin/invoices/preview" },
+  { category: "Templates", label: "Onboarding Preview", path: "/admin/onboarding/preview" },
 ];
+
+interface PermissionsSelectorProps {
+  selectedPaths: string[];
+  onChange: (paths: string[]) => void;
+}
+
+function PermissionsSelector({ selectedPaths, onChange }: PermissionsSelectorProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const categories = ["All", "Core Systems", "Academy Suite", "Revenue", "Financials", "Templates"];
+
+  const filteredPaths = AVAILABLE_PATHS.filter(p => {
+    const matchesCategory = activeCategory === "All" || p.category === activeCategory;
+    const matchesSearch = p.label.toLowerCase().includes(searchTerm.toLowerCase()) || p.path.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  const togglePath = (path: string) => {
+    if (selectedPaths.includes(path)) {
+      onChange(selectedPaths.filter(p => p !== path));
+    } else {
+      onChange([...selectedPaths, path]);
+    }
+  };
+
+  const handleSelectCategoryAll = () => {
+    const categoryPaths = AVAILABLE_PATHS.filter(p => activeCategory === "All" || p.category === activeCategory).map(p => p.path);
+    const uniqueNewPaths = Array.from(new Set([...selectedPaths, ...categoryPaths]));
+    onChange(uniqueNewPaths);
+  };
+
+  const handleDeselectCategoryAll = () => {
+    const categoryPaths = AVAILABLE_PATHS.filter(p => activeCategory === "All" || p.category === activeCategory).map(p => p.path);
+    onChange(selectedPaths.filter(p => !categoryPaths.includes(p)));
+  };
+
+  return (
+    <div className="space-y-3.5">
+      <div className="flex justify-between items-center">
+        <label className="text-[10px] font-bold uppercase tracking-widest text-[#a39e98]">Access Permissions</label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleSelectCategoryAll}
+            className="text-[9px] font-bold uppercase tracking-widest text-[#0075de] hover:underline bg-transparent"
+          >
+            Select Category All
+          </button>
+          <span className="text-neutral-300 text-[9px] font-bold">|</span>
+          <button
+            type="button"
+            onClick={handleDeselectCategoryAll}
+            className="text-[9px] font-bold uppercase tracking-widest text-neutral-400 hover:underline bg-transparent"
+          >
+            Deselect Category All
+          </button>
+        </div>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-3.5 h-3.5" />
+        <input
+          type="text"
+          placeholder="Search permissions..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md pl-9 pr-4 py-2.5 text-xs text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all"
+        />
+      </div>
+
+      <div className="flex border border-[#e6e6e6] rounded-md overflow-hidden h-[240px] bg-white">
+        {/* Left Side: Categories */}
+        <div className="w-1/3 bg-[#f6f5f4] border-r border-[#e6e6e6] p-1.5 space-y-0.5 overflow-y-auto no-scrollbar">
+          {categories.map((cat) => {
+            const count = cat === "All" 
+              ? AVAILABLE_PATHS.length 
+              : AVAILABLE_PATHS.filter(p => p.category === cat).length;
+            const isActive = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => { setActiveCategory(cat); setSearchTerm(""); }}
+                className={cn(
+                  "w-full text-left px-3 py-2 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center justify-between",
+                  isActive 
+                    ? "bg-white text-neutral-900 border border-[#e6e6e6]/80 shadow-sm font-bold" 
+                    : "text-neutral-500 hover:text-neutral-900 hover:bg-[#e6e6e6]/30"
+                )}
+              >
+                <span className="truncate mr-1.5">{cat}</span>
+                <span className={cn(
+                  "text-[8px] font-extrabold px-1.5 py-0.5 rounded-full",
+                  isActive ? "bg-[#0075de]/10 text-[#0075de]" : "bg-neutral-200/50 text-neutral-400"
+                )}>{count}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right Side: Checkboxes */}
+        <div className="w-2/3 p-3.5 overflow-y-auto space-y-2 bg-white scrollbar-thin">
+          {filteredPaths.length === 0 ? (
+            <div className="text-center py-12 text-[10px] font-bold uppercase tracking-widest text-neutral-400">No permissions found.</div>
+          ) : (
+            filteredPaths.map((p) => {
+              const checked = selectedPaths.includes(p.path);
+              return (
+                <label 
+                  key={p.path} 
+                  className={cn(
+                    "flex items-start gap-2.5 p-2 rounded-md border border-transparent hover:bg-[#f6f5f4]/45 cursor-pointer select-none transition-colors",
+                    checked && "bg-[#0075de]/5 border-[#0075de]/5"
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => togglePath(p.path)}
+                    className="rounded border-[#e6e6e6] bg-white text-[#0075de] focus:ring-[#0075de] mt-0.5"
+                  />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-neutral-800 tracking-tight leading-none mb-1">{p.label}</div>
+                    <div className="text-[9px] font-mono text-neutral-400 truncate">{p.path}</div>
+                  </div>
+                </label>
+              );
+            })
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminTeamPage() {
   const { data: session } = useSession();
@@ -415,77 +581,63 @@ export default function AdminTeamPage() {
             </div>
          </div>
       )}
-
       {/* ADD MEMBER MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-2xl p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <h2 className="text-xl font-bold text-neutral-800 tracking-tight mb-2">Add CRM Agent</h2>
-            <p className="text-neutral-400 text-sm mb-8">Create a new team member account.</p>
+            <p className="text-neutral-400 text-sm mb-6">Create a new team member account.</p>
             <form onSubmit={handleAddAgent} className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Full Name</label>
-                <input 
-                  type="text" 
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-4 py-3 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-sm" 
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Full Name</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-4 py-3 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-sm" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Email Address</label>
+                  <input 
+                    type="email" 
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-4 py-3 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-sm" 
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Email Address</label>
-                <input 
-                  type="email" 
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-4 py-3 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-sm" 
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Phone</label>
-                <input 
-                  type="text" 
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-4 py-3 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-sm" 
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Temporary Password</label>
-                <input 
-                  type="text" 
-                  required
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-4 py-3 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-sm" 
-                />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Phone</label>
+                  <input 
+                    type="text" 
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-4 py-3 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-sm" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Temporary Password</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md px-4 py-3 text-neutral-800 focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-sm" 
+                  />
+                </div>
               </div>
 
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 block mb-1">Access Permissions</label>
-                <div className="grid grid-cols-2 gap-2 bg-[#f6f5f4] border border-[#e6e6e6] p-4 rounded-md">
-                  {AVAILABLE_PATHS.map((p) => {
-                    const checked = formData.allowed_paths.includes(p.path);
-                    return (
-                      <label key={p.path} className="flex items-center gap-2 text-[11px] font-bold text-neutral-600 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={(e) => {
-                            const newPaths = checked
-                              ? formData.allowed_paths.filter(x => x !== p.path)
-                              : [...formData.allowed_paths, p.path];
-                            setFormData({ ...formData, allowed_paths: newPaths });
-                          }}
-                          className="rounded border-[#e6e6e6] bg-white text-[#0075de] focus:ring-[#0075de]"
-                        />
-                        {p.label}
-                      </label>
-                    );
-                  })}
-                </div>
+              <div className="pt-2">
+                <PermissionsSelector 
+                  selectedPaths={formData.allowed_paths} 
+                  onChange={(paths) => setFormData({ ...formData, allowed_paths: paths })} 
+                />
               </div>
               
               <div className="pt-6 flex justify-end gap-3 border-t border-[#e6e6e6] mt-8">
@@ -506,34 +658,14 @@ export default function AdminTeamPage() {
       {/* EDIT PERMISSIONS MODAL */}
       {editPermissionsMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white border border-[#e6e6e6] rounded-md w-full max-w-2xl p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <h2 className="text-xl font-bold text-neutral-800 tracking-tight mb-2">Edit Permissions</h2>
-            <p className="text-neutral-400 text-sm mb-8">Manage path access permissions for {editPermissionsMember.name}.</p>
+            <p className="text-neutral-400 text-sm mb-6">Manage path access permissions for {editPermissionsMember.name}.</p>
             <form onSubmit={handleSavePermissions} className="space-y-5">
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 block mb-1">Access Permissions</label>
-                <div className="grid grid-cols-2 gap-2 bg-[#f6f5f4] border border-[#e6e6e6] p-4 rounded-md">
-                  {AVAILABLE_PATHS.map((p) => {
-                    const checked = editAllowedPaths.includes(p.path);
-                    return (
-                      <label key={p.path} className="flex items-center gap-2 text-[11px] font-bold text-neutral-600 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={(e) => {
-                            const newPaths = checked
-                              ? editAllowedPaths.filter(x => x !== p.path)
-                              : [...editAllowedPaths, p.path];
-                            setEditAllowedPaths(newPaths);
-                          }}
-                          className="rounded border-[#e6e6e6] bg-white text-[#0075de] focus:ring-[#0075de]"
-                        />
-                        {p.label}
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
+              <PermissionsSelector 
+                selectedPaths={editAllowedPaths} 
+                onChange={(paths) => setEditAllowedPaths(paths)} 
+              />
 
               <div className="pt-6 flex justify-end gap-3 border-t border-[#e6e6e6] mt-8">
                 <Button type="button" onClick={() => setEditPermissionsMember(null)} variant="ghost" className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 hover:text-neutral-700">Cancel</Button>

@@ -91,6 +91,9 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   const filteredNavItems = isCrmAgent 
     ? navItems.filter(item => {
         return allowedPaths.some((p: string) => {
+          if (p === "/admin") {
+            return item.href === "/admin";
+          }
           if (p === "/admin/leads/scrape") {
             return item.href === "/admin/leads/scrape";
           }
@@ -101,6 +104,22 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         });
       })
     : navItems;
+
+  const filteredAcademyItems = isCrmAgent
+    ? academyItems.filter(item => allowedPaths.some((p: string) => item.href.startsWith(p)))
+    : academyItems;
+
+  const filteredMonetizationItems = isCrmAgent
+    ? monetizationItems.filter(item => allowedPaths.some((p: string) => item.href.startsWith(p)))
+    : monetizationItems;
+
+  const filteredFinancialItems = isCrmAgent
+    ? financialItems.filter(item => allowedPaths.some((p: string) => item.href.startsWith(p)))
+    : financialItems;
+
+  const filteredTemplateItems = isCrmAgent
+    ? templateItems.filter(item => allowedPaths.some((p: string) => item.href.startsWith(p)))
+    : templateItems;
 
   const renderLink = (item: any) => {
     const isWishAdmin = item.href === "/wish-admin";
@@ -168,37 +187,53 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       {/* Navigation Content */}
       <div className="flex-1 mt-4 px-3">
         <div className="flex flex-col space-y-1 mb-8">
-          <p className={cn(
-            "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mb-3 px-3",
-            isCollapsed ? "lg:hidden" : ""
-          )}>Core Systems</p>
-          {filteredNavItems.map(renderLink)}
+          {filteredNavItems.length > 0 && (
+            <>
+              <p className={cn(
+                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mb-3 px-3",
+                isCollapsed ? "lg:hidden" : ""
+              )}>Core Systems</p>
+              {filteredNavItems.map(renderLink)}
+            </>
+          )}
 
-          {!isCrmAgent && (
+          {filteredAcademyItems.length > 0 && (
             <>
               <p className={cn(
                 "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
                 isCollapsed ? "lg:hidden" : ""
               )}>Academy Suite</p>
-              {academyItems.map(renderLink)}
+              {filteredAcademyItems.map(renderLink)}
+            </>
+          )}
 
+          {filteredMonetizationItems.length > 0 && (
+            <>
               <p className={cn(
                 "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
                 isCollapsed ? "lg:hidden" : ""
               )}>Revenue</p>
-              {monetizationItems.map(renderLink)}
+              {filteredMonetizationItems.map(renderLink)}
+            </>
+          )}
 
+          {filteredFinancialItems.length > 0 && (
+            <>
               <p className={cn(
                 "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
                 isCollapsed ? "lg:hidden" : ""
               )}>Financials</p>
-              {financialItems.map(renderLink)}
-              
+              {filteredFinancialItems.map(renderLink)}
+            </>
+          )}
+          
+          {filteredTemplateItems.length > 0 && (
+            <>
               <p className={cn(
                 "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
                 isCollapsed ? "lg:hidden" : ""
               )}>Templates</p>
-              {templateItems.map(renderLink)}
+              {filteredTemplateItems.map(renderLink)}
             </>
           )}
         </div>
