@@ -24,13 +24,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     const role = (session?.user as any)?.role;
-    if (role === "ADMIN" || role === "CO_ADMIN" || role === "crm_agent") {
+    const pathname = window.location.pathname;
+
+    if (role === "ADMIN" || role === "CO_ADMIN") {
       setAuthorized(true);
-      
-      // Redirect crm_agent from root admin to leads
-      const pathname = window.location.pathname;
-      if (role === "crm_agent" && (pathname.endsWith("/admin") || pathname.endsWith("/admin/"))) {
-        router.push("/admin/leads");
+    } else if (role === "crm_agent") {
+      // CRM Agents are only allowed to access leads and outreach paths
+      const isAllowed = 
+        pathname.startsWith("/admin/leads") || 
+        pathname.startsWith("/admin/outreach") ||
+        pathname === "/admin" ||
+        pathname === "/admin/";
+
+      if (isAllowed) {
+        setAuthorized(true);
+        if (pathname.endsWith("/admin") || pathname.endsWith("/admin/")) {
+          router.push("/admin/leads");
+        }
+      } else {
+        setAuthorized(false);
+        // Log the unauthorized access attempt in the database
+        fetch("/api/team/log-alert", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pathname }),
+        }).catch(err => console.error("Failed to log security alert:", err));
       }
     } else {
       setAuthorized(false);

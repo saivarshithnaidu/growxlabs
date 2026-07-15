@@ -207,12 +207,14 @@ export default function AdminTeamPage() {
                      ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) 
                      : "--:--:--";
                    
-                   let badgeBg = "bg-[#0075de]/10 text-[#0075de] border border-[#0075de]/20";
-                   if (log.activity_type === "SYNC") {
-                     badgeBg = "bg-emerald-50 text-emerald-600 border border-emerald-200";
-                   } else if (log.activity_type === "AUTH") {
-                     badgeBg = "bg-purple-50 text-purple-600 border border-purple-200";
-                   }
+                    let badgeBg = "bg-[#0075de]/10 text-[#0075de] border border-[#0075de]/20";
+                    if (log.activity_type === "SYNC") {
+                      badgeBg = "bg-emerald-50 text-emerald-600 border border-emerald-200";
+                    } else if (log.activity_type === "AUTH") {
+                      badgeBg = "bg-purple-50 text-purple-600 border border-purple-200";
+                    } else if (log.activity_type === "ALERT") {
+                      badgeBg = "bg-red-500/10 text-red-500 border border-red-500/20";
+                    }
                    
                    return (
                      <div key={log.id} className="flex items-start gap-4 p-2.5 rounded hover:bg-white/40 transition-colors border border-transparent hover:border-[#e6e6e6]/45">
