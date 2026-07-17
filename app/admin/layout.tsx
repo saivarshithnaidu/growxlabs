@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { AdminNav } from "@/components/admin/AdminNav";
-import { Loader2, ShieldAlert, ArrowLeft } from "lucide-react";
+import { Loader2, ShieldAlert, ArrowLeft, LogOut, ExternalLink, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
@@ -117,21 +117,103 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   if (authorized === false) {
+    const allowedPaths = (session?.user as any)?.allowed_paths || [];
+    
+    // Path configuration mapping for user-friendly UI presentation
+    const PATH_CONFIGS: Record<string, { label: string; desc: string; color: string }> = {
+      "/admin": { label: "Overview", desc: "System activity and stats overview", color: "from-blue-500 to-indigo-600" },
+      "/admin/crm": { label: "CRM Dashboard", desc: "Manage client accounts and pipelines", color: "from-[#0075de] to-[#005bab]" },
+      "/admin/leads": { label: "Sales Pipeline", desc: "Track sales pipeline and deal status", color: "from-emerald-500 to-teal-600" },
+      "/admin/leads/scrape": { label: "AI Lead Scraper", desc: "Automate leads extraction from the web", color: "from-amber-500 to-orange-600" },
+      "/admin/outreach": { label: "AI Outreach Planner", desc: "Schedule and manage outbound email campaigns", color: "from-purple-500 to-indigo-600" },
+      "/admin/growx-email": { label: "Email Client", desc: "Manage company email communications", color: "from-blue-500 to-cyan-600" },
+      "/admin/onboarding": { label: "Client Onboarding", desc: "Onboard new client accounts and agreements", color: "from-pink-500 to-rose-600" },
+      "/admin/employee-onboarding": { label: "SDR Onboarding", desc: "Onboard team members and SDR agents", color: "from-violet-500 to-purple-600" },
+      "/admin/career-portal": { label: "Career Portal", desc: "Manage job postings and applications", color: "from-slate-500 to-slate-700" },
+      "/admin/academy/courses": { label: "Academy Courses", desc: "Access sales playbooks and educational resources", color: "from-rose-500 to-red-600" },
+      "/admin/monetization/coupons": { label: "Coupons Manager", desc: "Configure course discounts and coupons", color: "from-amber-500 to-yellow-600" },
+      "/admin/monetization/orders": { label: "Order Logs", desc: "Audit logs for academy subscriptions", color: "from-teal-500 to-emerald-600" },
+      "/admin/invoices": { label: "Invoices", desc: "Manage client billing and invoice logs", color: "from-sky-500 to-blue-600" },
+      "/admin/agreements": { label: "Agreements", desc: "Manage legal agreements and e-signs", color: "from-emerald-500 to-green-600" },
+      "/admin/proposals": { label: "Proposals", desc: "Draft and review business proposals", color: "from-indigo-500 to-violet-600" },
+    };
+
     return (
-      <div className="notion-theme min-h-screen bg-[var(--background)] flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-20 h-20 bg-red-500/10 border border-red-500/20 rounded-3xl flex items-center justify-center mb-8">
-          <ShieldAlert className="h-10 w-10 text-red-500" />
+      <div className="notion-theme min-h-screen bg-[#f6f5f4] flex flex-col justify-between p-6 sm:p-12 relative overflow-hidden">
+        {/* Decorative subtle background blur elements */}
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#0075de]/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+
+        {/* Top Header */}
+        <div className="max-w-4xl w-full mx-auto flex items-center justify-between shrink-0 mb-8 border-b border-[#e6e6e6] pb-6">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 bg-white rounded-lg border border-[#e6e6e6] flex items-center justify-center shadow-sm">
+              <ShieldAlert className="text-[#0075de] h-4 w-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-neutral-900 leading-tight">GrowX Labs</h2>
+              <p className="text-[10px] font-bold text-[#a39e98] uppercase tracking-widest mt-0.5">Agent Workspace</p>
+            </div>
+          </div>
+          <button
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#e6e6e6] bg-white text-[11px] font-bold uppercase tracking-wider text-[#615d59] hover:text-red-500 hover:border-red-100 hover:bg-red-50/50 transition-all"
+          >
+            <LogOut size={12} /> Sign Out
+          </button>
         </div>
-        <h1 className="heading-md text-[var(--text-primary)] mb-4">Security Restricted.</h1>
-        <p className="text-[var(--text-secondary)] max-w-md">Your account does not have the clearance levels required to access the outbound intelligence systems.</p>
-        <Button
-          onClick={() => router.push("/")}
-          variant="outline"
-          className="mt-8 h-12 px-8 rounded-xl"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Return Home
-        </Button>
+
+        {/* Workspace Menu */}
+        <div className="flex-1 flex flex-col justify-center max-w-4xl w-full mx-auto my-auto py-8">
+          <div className="space-y-2 mb-8">
+            <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900 leading-none">
+              Welcome back, <span className="text-[#0075de]">{session?.user?.name || "Agent"}</span>
+            </h1>
+            <p className="text-[#615d59] text-xs">
+              {allowedPaths.length > 0 
+                ? "Your account clearance allows access to the following workspace applications:" 
+                : "Your account is active but has no permissions assigned. Please contact your administrator."}
+            </p>
+          </div>
+
+          {allowedPaths.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {allowedPaths.map((path: string) => {
+                const config = PATH_CONFIGS[path] || { 
+                  label: path.split("/").pop()?.replace(/-/g, " ") || "Workspace", 
+                  desc: `Access application at ${path}`,
+                  color: "from-neutral-500 to-neutral-700" 
+                };
+                
+                return (
+                  <button
+                    key={path}
+                    onClick={() => router.push(path)}
+                    className="flex items-start text-left p-5 rounded-xl border border-[#e6e6e6] bg-white hover:border-[#0075de]/30 hover:shadow-md hover:shadow-neutral-200/50 hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer"
+                  >
+                    <div className={cn("w-10 h-10 rounded-lg bg-gradient-to-br flex items-center justify-center text-white shrink-0 shadow-sm mr-4", config.color)}>
+                      <ExternalLink size={16} className="group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <div className="min-w-0 flex-1 pr-2">
+                      <h3 className="text-sm font-bold text-neutral-900 group-hover:text-[#0075de] transition-colors leading-tight mb-1">
+                        {config.label}
+                      </h3>
+                      <p className="text-[11px] text-[#615d59] leading-snug font-medium">
+                        {config.desc}
+                      </p>
+                    </div>
+                    <ChevronRight size={14} className="text-neutral-400 group-hover:text-[#0075de] group-hover:translate-x-0.5 transition-all self-center ml-auto shrink-0" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Footer Info */}
+        <div className="max-w-4xl w-full mx-auto text-center shrink-0 pt-8 border-t border-[#e6e6e6]/60 text-[10px] font-bold uppercase tracking-widest text-[#a39e98]">
+          GrowX Labs outbound systems • Authorized Personnel Only
+        </div>
       </div>
     );
   }
