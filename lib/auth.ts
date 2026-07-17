@@ -50,27 +50,13 @@ export const authOptions: AuthOptions = {
             .eq("is_active", true)
             .single();
 
-          // Diagnostic log to Supabase
-          try {
-            await supabaseAdmin.from("lead_activities").insert([{
-              activity_type: "ALERT",
-              notes: `Lookup for ${emailLower}: found=${!!member}, error=${memberError ? JSON.stringify(memberError) : "none"}`,
-              created_at: new Date().toISOString()
-            }]);
-          } catch (e) {}
+          if (memberError) {
+            console.error(`Database lookup error for ${emailLower}:`, memberError);
+          }
 
           if (member && !memberError) {
             isValid = await bcrypt.compare(credentials.password, member.password_hash);
             
-            // Diagnostic log to Supabase
-            try {
-              await supabaseAdmin.from("lead_activities").insert([{
-                activity_type: "ALERT",
-                notes: `Bcrypt comparison for ${emailLower}: isValid=${isValid}`,
-                created_at: new Date().toISOString()
-              }]);
-            } catch (e) {}
-
             if (isValid) {
               userData = {
                 id: member.id,
@@ -79,37 +65,12 @@ export const authOptions: AuthOptions = {
                 role: member.role || "crm_agent",
                 allowed_paths: member.allowed_paths || [],
               };
-
-              // Record Session
-              await supabaseAdmin.from("team_sessions").insert([{
-                team_member_id: member.id,
-                login_at: new Date().toISOString(),
-                is_active: true
-              }]);
-
-              // Log session in lead_activities
-              await supabaseAdmin.from("lead_activities").insert([{
-                team_member_id: member.id,
-                activity_type: "AUTH",
-                notes: `${member.name} signed in to terminal.`,
-                created_at: new Date().toISOString()
-              }]);
             }
           }
         }
 
         if (!userData) {
-          // Log failed attempt to Supabase so the admin can see the exact email typed
-          try {
-            await supabaseAdmin.from("lead_activities").insert([{
-              activity_type: "ALERT",
-              notes: `Failed login attempt for email: "${credentials.email}"`,
-              created_at: new Date().toISOString()
-            }]);
-          } catch (e) {
-            console.error("Failed to log auth alert:", e);
-          }
-
+          console.warn(`Auth failure: Invalid credentials for ${emailLower}`);
           throw new Error("Invalid email or password");
         }
 
