@@ -62,6 +62,8 @@ function PermissionsSelector({ selectedPaths, onChange }: PermissionsSelectorPro
   const categories = ["All", "Core Systems", "Academy Suite", "Revenue", "Financials", "Templates"];
 
   const filteredPaths = AVAILABLE_PATHS.filter(p => {
+    // CRM agents should never have access to team management or command center
+    if (p.path === "/admin/team" || p.path === "/admin/command-center") return false;
     const matchesCategory = activeCategory === "All" || p.category === activeCategory;
     const matchesSearch = p.label.toLowerCase().includes(searchTerm.toLowerCase()) || p.path.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;

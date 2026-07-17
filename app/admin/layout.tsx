@@ -24,11 +24,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     const role = (session?.user as any)?.role;
-    const pathname = window.location.pathname;
+    const rawPathname = window.location.pathname;
+    // Strip locale prefix (e.g., /en-IN/admin → /admin)
+    const pathname = rawPathname.replace(/^\/[a-z]{2}(-[A-Z]{2})?(?=\/admin)/, '');
 
     if (role === "ADMIN" || role === "CO_ADMIN") {
       setAuthorized(true);
     } else if (role === "crm_agent") {
+      // Strict security override: CRM agents are never allowed to access team management or command-center
+      if (pathname.startsWith("/admin/team") || pathname.startsWith("/admin/command-center")) {
+        setAuthorized(false);
+        router.replace("/admin/crm");
+        return;
+      }
+
       const allowedPaths = (session?.user as any)?.allowed_paths || [];
       let isAllowed = false;
       
@@ -55,15 +64,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }
       }
 
-      const isRootPath = pathname === "/admin" || pathname === "/admin/";
+      const isRootPath = pathname === "/admin" || pathname === "/admin/" || rawPathname.match(/^(\/[a-z]{2}(-[A-Z]{2})?)?\/admin\/?$/);
       if (isAllowed || isRootPath) {
         setAuthorized(true);
         if (isRootPath) {
-          const fallbackPath = allowedPaths.find((p: string) => p !== "/admin/leads/scrape") || allowedPaths[0] || "/admin/leads";
-          router.push(fallbackPath);
+          // Prioritize /admin/crm for CRM agents, then fall back to first allowed path
+          const crmPath = allowedPaths.includes("/admin/crm") ? "/admin/crm" : null;
+          const fallbackPath = crmPath || allowedPaths.find((p: string) => p !== "/admin/leads/scrape") || allowedPaths[0] || "/admin/crm";
+          router.replace(fallbackPath);
         }
       } else {
         setAuthorized(false);
+        router.replace("/admin/crm");
         // Log the unauthorized access attempt in the database
         fetch("/api/team/log-alert", {
           method: "POST",

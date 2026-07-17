@@ -1,13 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { Link, usePathname } from "@/navigation-client";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   BarChart3, Users, Target, Inbox, Terminal,
   FileText, Zap, ShieldCheck, Rocket, FileCheck, LogOut, PanelLeftClose, PanelLeft,
   GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
-  TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2, Video, Mail, Presentation, UserCheck
+  TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2, Video, Mail, Presentation, UserCheck,
+  KeyRound, Eye, EyeOff, Loader2, CheckCircle
 } from "lucide-react";
 
 const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -88,6 +91,44 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   const role = (session?.user as any)?.role;
   const isCrmAgent = role === "crm_agent";
   const allowedPaths = (session?.user as any)?.allowed_paths || [];
+
+  // Change Password state
+  const [showPwModal, setShowPwModal] = useState(false);
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [pwLoading, setPwLoading] = useState(false);
+  const [pwError, setPwError] = useState("");
+  const [pwSuccess, setPwSuccess] = useState(false);
+
+  const handleChangePassword = async () => {
+    setPwError("");
+    if (!currentPw) { setPwError("Enter your current password."); return; }
+    if (newPw.length < 6) { setPwError("New password must be at least 6 characters."); return; }
+    if (newPw !== confirmPw) { setPwError("New passwords do not match."); return; }
+    setPwLoading(true);
+    try {
+      const res = await fetch("/api/admin/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to change password");
+      setPwSuccess(true);
+      setTimeout(() => {
+        setShowPwModal(false);
+        setPwSuccess(false);
+        setCurrentPw(""); setNewPw(""); setConfirmPw("");
+      }, 1800);
+    } catch (e: any) {
+      setPwError(e.message);
+    } finally {
+      setPwLoading(false);
+    }
+  };
 
   const isPathAllowed = (itemHref: string) => {
     return allowedPaths.some((p: string) => {
@@ -243,7 +284,22 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       </div>
 
       {/* Footer Area */}
-      <div className={cn("mt-auto py-4 border-t border-[#e6e6e6] bg-white/40", isCollapsed ? "lg:px-2 px-4" : "px-4")}>
+      <div className={cn("mt-auto py-4 border-t border-[#e6e6e6] bg-white/40 space-y-1", isCollapsed ? "lg:px-2 px-4" : "px-4")}>
+        {/* Change Password */}
+        <button
+          onClick={() => { setPwError(""); setPwSuccess(false); setCurrentPw(""); setNewPw(""); setConfirmPw(""); setShowPwModal(true); }}
+          className={cn(
+            "w-full flex items-center h-8 px-3 rounded-md text-[#615d59] hover:text-[#0075de] hover:bg-[#0075de]/5 transition-all group text-left",
+            isCollapsed && "lg:justify-center lg:px-0"
+          )}
+        >
+          <KeyRound className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-[#0075de]", !isCollapsed && "mr-2")} />
+          <span className={cn(
+            "text-[10px] font-bold uppercase tracking-wider",
+            isCollapsed ? "lg:hidden" : ""
+          )}>Change Password</span>
+        </button>
+        {/* Sign Out */}
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className={cn(
@@ -327,6 +383,174 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
           {isCollapsed ? <PanelLeft size={12} /> : <PanelLeftClose size={12} />}
         </button>
       </aside>
+
+      {/* ── Change Password Modal ── */}
+      <AnimatePresence>
+        {showPwModal && (
+          <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setShowPwModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.97 }}
+              transition={{ type: "spring", damping: 28, stiffness: 340 }}
+              className="relative w-full max-w-md bg-white rounded-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.25)] border border-[#e0e0e0] overflow-hidden"
+            >
+              {/* Header */}
+              <div className="px-6 pt-6 pb-4 border-b border-[#eee]">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0075de] to-[#0060b8] flex items-center justify-center shadow-md shadow-[#0075de]/20">
+                    <KeyRound className="text-white" size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-extrabold text-[#000] tracking-tight">Change Password</h3>
+                    <p className="text-[11px] text-[#888] font-medium mt-0.5">
+                      {(session?.user as any)?.email || "Update your account password"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="px-6 py-5 space-y-4">
+                {pwSuccess ? (
+                  <div className="flex flex-col items-center justify-center py-8 space-y-3">
+                    <div className="w-14 h-14 rounded-full bg-[#10b981]/10 flex items-center justify-center">
+                      <CheckCircle className="text-[#10b981]" size={28} />
+                    </div>
+                    <p className="text-[14px] font-bold text-[#222]">Password Updated!</p>
+                    <p className="text-[11px] text-[#888]">Your new password is now active.</p>
+                  </div>
+                ) : (
+                  <>
+                    {/* Current Password */}
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-[#888] uppercase tracking-wider">Current Password</label>
+                      <div className="relative">
+                        <input
+                          type={showCurrentPw ? "text" : "password"}
+                          value={currentPw}
+                          onChange={(e) => setCurrentPw(e.target.value)}
+                          placeholder="Enter current password"
+                          className="w-full bg-[#fafafa] border border-[#e6e6e6] rounded-lg px-3.5 py-2.5 text-[#222] text-[13px] font-medium focus:bg-white focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/10 focus:outline-none transition-all pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPw(!showCurrentPw)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa] hover:text-[#555] transition-colors"
+                        >
+                          {showCurrentPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-px bg-[#eee]" />
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#ccc]">New Password</span>
+                      <div className="flex-1 h-px bg-[#eee]" />
+                    </div>
+
+                    {/* New Password */}
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-[#888] uppercase tracking-wider">New Password</label>
+                      <div className="relative">
+                        <input
+                          type={showNewPw ? "text" : "password"}
+                          value={newPw}
+                          onChange={(e) => setNewPw(e.target.value)}
+                          placeholder="Min 6 characters"
+                          className="w-full bg-[#fafafa] border border-[#e6e6e6] rounded-lg px-3.5 py-2.5 text-[#222] text-[13px] font-medium focus:bg-white focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/10 focus:outline-none transition-all pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPw(!showNewPw)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa] hover:text-[#555] transition-colors"
+                        >
+                          {showNewPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                        </button>
+                      </div>
+                      {/* Strength indicator */}
+                      {newPw.length > 0 && (
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="flex-1 flex gap-1">
+                            <div className={cn("h-1 rounded-full flex-1 transition-colors", newPw.length >= 1 ? "bg-red-400" : "bg-[#eee]")} />
+                            <div className={cn("h-1 rounded-full flex-1 transition-colors", newPw.length >= 6 ? "bg-yellow-400" : "bg-[#eee]")} />
+                            <div className={cn("h-1 rounded-full flex-1 transition-colors", newPw.length >= 10 ? "bg-[#10b981]" : "bg-[#eee]")} />
+                          </div>
+                          <span className={cn("text-[9px] font-bold uppercase tracking-wider",
+                            newPw.length >= 10 ? "text-[#10b981]" : newPw.length >= 6 ? "text-yellow-500" : "text-red-400"
+                          )}>
+                            {newPw.length >= 10 ? "Strong" : newPw.length >= 6 ? "Medium" : "Weak"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Confirm Password */}
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-[#888] uppercase tracking-wider">Confirm New Password</label>
+                      <input
+                        type="password"
+                        value={confirmPw}
+                        onChange={(e) => setConfirmPw(e.target.value)}
+                        placeholder="Re-enter new password"
+                        className={cn(
+                          "w-full bg-[#fafafa] border rounded-lg px-3.5 py-2.5 text-[#222] text-[13px] font-medium focus:bg-white focus:outline-none transition-all",
+                          confirmPw && confirmPw === newPw
+                            ? "border-[#10b981] focus:border-[#10b981] focus:ring-2 focus:ring-[#10b981]/10"
+                            : confirmPw && confirmPw !== newPw
+                              ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-400/10"
+                              : "border-[#e6e6e6] focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/10"
+                        )}
+                      />
+                      {confirmPw && confirmPw !== newPw && (
+                        <p className="text-[10px] text-red-400 font-medium">Passwords do not match</p>
+                      )}
+                    </div>
+
+                    {/* Error */}
+                    {pwError && (
+                      <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <span className="text-red-500 text-[11px] font-semibold">{pwError}</span>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {/* Footer */}
+              {!pwSuccess && (
+                <div className="px-6 py-4 border-t border-[#eee] bg-[#fafafa] flex items-center justify-end gap-3">
+                  <button
+                    onClick={() => setShowPwModal(false)}
+                    className="px-4 h-9 rounded-lg border border-[#ddd] text-[#777] hover:bg-[#f0f0f0] text-[11px] font-bold transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleChangePassword}
+                    disabled={pwLoading || !currentPw || newPw.length < 6 || newPw !== confirmPw}
+                    className="px-5 h-9 rounded-lg bg-gradient-to-r from-[#0075de] to-[#005bab] hover:from-[#005bab] hover:to-[#004a8f] text-white text-[11px] font-bold flex items-center gap-2 shadow-md shadow-[#0075de]/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {pwLoading ? (
+                      <><Loader2 size={13} className="animate-spin" /> Updating…</>
+                    ) : (
+                      <><KeyRound size={13} /> Update Password</>
+                    )}
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

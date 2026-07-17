@@ -21,15 +21,12 @@ export default function LoginPage() {
     try {
       const locale = window.location.pathname.split('/')[1] || 'en-IN';
       
-      const callbackUrl = email.includes('admin') 
-        ? `/${locale}/admin/leads` 
-        : `/${locale}/client/dashboard`;
-
+      // Redirect is handled by NextAuth redirect callback based on user role
       const result = await signIn("credentials", {
         email,
         password,
         redirect: true,
-        callbackUrl: callbackUrl
+        callbackUrl: `/${locale}/admin`
       });
 
       if (result?.error) {

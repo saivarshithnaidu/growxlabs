@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     const password_hash = await bcrypt.hash(password, salt);
     
     const { data, error } = await supabaseAdmin.from("team_members").insert([{
-      name, email, phone, role, password_hash, allowed_paths: allowed_paths || []
+      name, email, phone, role, password_hash, allowed_paths: allowed_paths || [], is_active: true
     }]).select("id, name, email").single();
     
     if (error) throw error;
