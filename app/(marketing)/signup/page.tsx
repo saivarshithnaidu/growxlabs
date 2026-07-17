@@ -16,8 +16,7 @@ export default function SignupPage() {
     const email = localStorage.getItem("userEmail");
     const role = localStorage.getItem("userRole");
     if (email) {
-      const locale = window.location.pathname.split('/')[1] || 'en-IN';
-      router.push(role === "Admin" ? `/${locale}/admin/search` : `/${locale}/dashboard`);
+      router.push(role === "Admin" ? "/admin/leads" : "/dashboard");
     }
   }, [router]);
 
