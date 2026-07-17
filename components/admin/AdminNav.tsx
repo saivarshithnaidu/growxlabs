@@ -5,12 +5,13 @@ import { Link, usePathname } from "@/navigation-client";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTheme } from "next-themes";
 import {
   BarChart3, Users, Target, Inbox, Terminal,
   FileText, Zap, ShieldCheck, Rocket, FileCheck, LogOut, PanelLeftClose, PanelLeft,
   GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
   TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2, Video, Mail, Presentation, UserCheck,
-  KeyRound, Eye, EyeOff, Loader2, CheckCircle
+  KeyRound, Eye, EyeOff, Loader2, CheckCircle, Sun, Moon, Monitor
 } from "lucide-react";
 
 const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -91,6 +92,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   const role = (session?.user as any)?.role;
   const isCrmAgent = role === "crm_agent";
   const allowedPaths = (session?.user as any)?.allowed_paths || [];
+  const { theme, setTheme } = useTheme();
 
   // Change Password state
   const [showPwModal, setShowPwModal] = useState(false);
@@ -284,16 +286,60 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       </div>
 
       {/* Footer Area */}
-      <div className={cn("mt-auto py-4 border-t border-[#e6e6e6] bg-white/40 space-y-1", isCollapsed ? "lg:px-2 px-4" : "px-4")}>
+      <div className={cn("mt-auto py-4 border-t border-[#e6e6e6] dark:border-neutral-800 bg-white/40 dark:bg-black/10 space-y-2", isCollapsed ? "lg:px-2 px-4" : "px-4")}>
+        {/* Theme Switcher Segmented Control */}
+        <div className={cn(
+          "flex items-center bg-[#f6f5f4] dark:bg-neutral-950 border border-[#e6e6e6] dark:border-neutral-800 rounded-lg p-0.5 transition-all",
+          isCollapsed ? "justify-center h-8 w-8 mx-auto" : "h-8"
+        )}>
+          {isCollapsed ? (
+            <button
+              onClick={() => {
+                const nextTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
+                setTheme(nextTheme);
+              }}
+              className="flex items-center justify-center w-7 h-7 text-[#615d59] dark:text-neutral-400 hover:text-[#0075de] dark:hover:text-white rounded-md transition-all cursor-pointer"
+              title={`Theme: ${theme}`}
+            >
+              {theme === 'light' && <Sun size={13} />}
+              {theme === 'dark' && <Moon size={13} />}
+              {theme === 'system' && <Monitor size={13} />}
+            </button>
+          ) : (
+            <div className="flex w-full h-full">
+              {(['light', 'dark', 'system'] as const).map((t) => {
+                const isActive = theme === t;
+                return (
+                  <button
+                    key={t}
+                    onClick={() => setTheme(t)}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-1 rounded-[5px] text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer h-full",
+                      isActive 
+                        ? "bg-white dark:bg-neutral-850 text-[#0075de] dark:text-white shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-[#e6e6e6] dark:border-neutral-750" 
+                        : "text-[#a39e98] dark:text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-350"
+                    )}
+                  >
+                    {t === 'light' && <Sun size={11} />}
+                    {t === 'dark' && <Moon size={11} />}
+                    {t === 'system' && <Monitor size={11} />}
+                    <span className="hidden sm:inline">{t}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         {/* Change Password */}
         <button
           onClick={() => { setPwError(""); setPwSuccess(false); setCurrentPw(""); setNewPw(""); setConfirmPw(""); setShowPwModal(true); }}
           className={cn(
-            "w-full flex items-center h-8 px-3 rounded-md text-[#615d59] hover:text-[#0075de] hover:bg-[#0075de]/5 transition-all group text-left",
+            "w-full flex items-center h-8 px-3 rounded-md text-[#615d59] dark:text-neutral-450 hover:text-[#0075de] dark:hover:text-white hover:bg-[#0075de]/5 transition-all group text-left",
             isCollapsed && "lg:justify-center lg:px-0"
           )}
         >
-          <KeyRound className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-[#0075de]", !isCollapsed && "mr-2")} />
+          <KeyRound className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-[#0075de] dark:group-hover:text-white", !isCollapsed && "mr-2")} />
           <span className={cn(
             "text-[10px] font-bold uppercase tracking-wider",
             isCollapsed ? "lg:hidden" : ""

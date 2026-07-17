@@ -139,25 +139,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     };
 
     return (
-      <div className="notion-theme min-h-screen bg-[#f6f5f4] flex flex-col justify-between p-6 sm:p-12 relative overflow-hidden">
+      <div className="notion-theme min-h-screen bg-[var(--background)] text-[var(--text-primary)] flex flex-col justify-between p-6 sm:p-12 relative overflow-hidden transition-colors duration-300">
         {/* Decorative subtle background blur elements */}
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#0075de]/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
         {/* Top Header */}
-        <div className="max-w-4xl w-full mx-auto flex items-center justify-between shrink-0 mb-8 border-b border-[#e6e6e6] pb-6">
+        <div className="max-w-4xl w-full mx-auto flex items-center justify-between shrink-0 mb-8 border-b border-[var(--border-subtle)] pb-6">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 bg-white rounded-lg border border-[#e6e6e6] flex items-center justify-center shadow-sm">
+            <div className="h-9 w-9 bg-[var(--card)] rounded-lg border border-[var(--border-subtle)] flex items-center justify-center shadow-sm">
               <ShieldAlert className="text-[#0075de] h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-neutral-900 leading-tight">GrowX Labs</h2>
-              <p className="text-[10px] font-bold text-[#a39e98] uppercase tracking-widest mt-0.5">Agent Workspace</p>
+              <h2 className="text-sm font-bold text-[var(--text-primary)] leading-tight">GrowX Labs</h2>
+              <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mt-0.5">Agent Workspace</p>
             </div>
           </div>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#e6e6e6] bg-white text-[11px] font-bold uppercase tracking-wider text-[#615d59] hover:text-red-500 hover:border-red-100 hover:bg-red-50/50 transition-all"
+            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--card)] text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] hover:text-red-500 hover:border-red-500/20 hover:bg-red-500/5 transition-all"
           >
             <LogOut size={12} /> Sign Out
           </button>
@@ -166,10 +166,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Workspace Menu */}
         <div className="flex-1 flex flex-col justify-center max-w-4xl w-full mx-auto my-auto py-8">
           <div className="space-y-2 mb-8">
-            <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900 leading-none">
+            <h1 className="text-3xl font-extrabold tracking-tight text-[var(--text-primary)] leading-none">
               Welcome back, <span className="text-[#0075de]">{session?.user?.name || "Agent"}</span>
             </h1>
-            <p className="text-[#615d59] text-xs">
+            <p className="text-[var(--text-secondary)] text-xs">
               {allowedPaths.length > 0 
                 ? "Your account clearance allows access to the following workspace applications:" 
                 : "Your account is active but has no permissions assigned. Please contact your administrator."}
@@ -189,16 +189,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <button
                     key={path}
                     onClick={() => router.push(path)}
-                    className="flex items-start text-left p-5 rounded-xl border border-[#e6e6e6] bg-white hover:border-[#0075de]/30 hover:shadow-md hover:shadow-neutral-200/50 hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer"
+                    className="flex items-start text-left p-5 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] hover:border-[#0075de]/30 hover:shadow-md hover:shadow-neutral-900/5 dark:hover:shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer"
                   >
                     <div className={cn("w-10 h-10 rounded-lg bg-gradient-to-br flex items-center justify-center text-white shrink-0 shadow-sm mr-4", config.color)}>
                       <ExternalLink size={16} className="group-hover:scale-110 transition-transform duration-300" />
                     </div>
                     <div className="min-w-0 flex-1 pr-2">
-                      <h3 className="text-sm font-bold text-neutral-900 group-hover:text-[#0075de] transition-colors leading-tight mb-1">
+                      <h3 className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[#0075de] transition-colors leading-tight mb-1">
                         {config.label}
                       </h3>
-                      <p className="text-[11px] text-[#615d59] leading-snug font-medium">
+                      <p className="text-[11px] text-[var(--text-secondary)] leading-snug font-medium">
                         {config.desc}
                       </p>
                     </div>
@@ -211,7 +211,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Bottom Footer Info */}
-        <div className="max-w-4xl w-full mx-auto text-center shrink-0 pt-8 border-t border-[#e6e6e6]/60 text-[10px] font-bold uppercase tracking-widest text-[#a39e98]">
+        <div className="max-w-4xl w-full mx-auto text-center shrink-0 pt-8 border-t border-[var(--border-subtle)] text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
           GrowX Labs outbound systems • Authorized Personnel Only
         </div>
       </div>
