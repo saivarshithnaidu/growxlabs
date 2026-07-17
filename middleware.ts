@@ -87,15 +87,27 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. ENTERPRISE RATE LIMITING (Optimized)
+  // 2. ENTERPRISE RATE LIMITING (Optimized with Fast Fail-Open Timeout)
   if (req.method === 'POST') {
     const sensitiveRoutes = ['/api/contact', '/api/auth', '/api/login', '/api/signup'];
     if (sensitiveRoutes.some(route => pathname.startsWith(route))) {
       if (apiLimiter) {
         const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? '127.0.0.1';
-        const { success } = await apiLimiter.limit(`ratelimit_${ip}`);
-        if (!success) {
-          return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+        
+        try {
+          // Wrap rate limiting in a 600ms timeout promise so it fails open if Upstash Redis has latency
+          const timeoutPromise = new Promise<{ success: boolean }>((resolve) => 
+            setTimeout(() => resolve({ success: true }), 600)
+          );
+          
+          const limitPromise = apiLimiter.limit(`ratelimit_${ip}`);
+          const { success } = await Promise.race([limitPromise, timeoutPromise]);
+          
+          if (!success) {
+            return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+          }
+        } catch (err) {
+          console.error("Rate limiting error (failing open):", err);
         }
       }
     }
