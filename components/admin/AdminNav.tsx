@@ -209,11 +209,11 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
 
   // Shared sidebar content (used in both desktop fixed sidebar and mobile drawer)
   const sidebarContent = (
-    <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden no-scrollbar bg-[var(--surface-2)] text-[var(--text-primary)] transition-colors duration-300">
+    <div className="flex flex-col h-full overflow-hidden bg-[var(--surface-2)] text-[var(--text-primary)] transition-colors duration-300">
       
       {/* Branding Header */}
       <div className={cn(
-          "p-6 border-b border-[var(--border-subtle)] transition-all duration-500 bg-[var(--card)]/30", 
+          "p-6 border-b border-[var(--border-subtle)] transition-all duration-500 bg-[var(--card)]/30 shrink-0", 
           isCollapsed ? "lg:px-0 lg:flex lg:justify-center px-6" : "px-6"
       )}>
          <div className="flex items-center gap-3">
@@ -231,7 +231,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       </div>
 
       {/* Navigation Content */}
-      <div className="flex-1 mt-4 px-3">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar mt-4 px-3">
         <div className="flex flex-col space-y-1 mb-8">
           {filteredNavItems.length > 0 && (
             <>
@@ -396,7 +396,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       {/* ═══ MOBILE DRAWER SIDEBAR ═══ */}
       <aside
         className={cn(
-          "lg:hidden fixed left-0 top-0 h-screen w-72 bg-[var(--surface-2)] border-r border-[var(--border-subtle)] z-[300] transition-transform duration-300 ease-in-out overflow-visible",
+          "lg:hidden fixed left-0 top-0 h-screen w-72 bg-[var(--surface-2)] border-r border-[var(--border-subtle)] z-[300] transition-transform duration-300 ease-in-out overflow-hidden",
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -415,7 +415,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       {/* ═══ DESKTOP FIXED SIDEBAR (hidden on mobile) ═══ */}
       <aside 
         className={cn(
-          "hidden lg:flex h-screen border-r border-[var(--border-subtle)] bg-[var(--surface-2)] flex-col fixed left-0 top-0 overflow-visible transition-all duration-500 ease-in-out z-[200]",
+          "hidden lg:flex h-screen border-r border-[var(--border-subtle)] bg-[var(--surface-2)] flex-col fixed left-0 top-0 overflow-hidden transition-all duration-500 ease-in-out z-[200]",
           isCollapsed ? "w-20" : "w-64"
         )}
       >
