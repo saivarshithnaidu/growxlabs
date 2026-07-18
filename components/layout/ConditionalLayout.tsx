@@ -21,12 +21,17 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
 
   // Apply dark theme for admin/dashboard, light for marketing
   useEffect(() => {
+    if (pathname?.startsWith("/admin") || pathname?.startsWith("/client")) {
+      // Allow dashboard pages to manage their own theme switcher state
+      return;
+    }
+
     if (isDashboard || isDemo) {
       setTheme("dark");
     } else {
       setTheme("light");
     }
-  }, [isDashboard, isDemo, setTheme]);
+  }, [isDashboard, isDemo, setTheme, pathname]);
 
   const isBlog = pathname?.includes("/blog");
 
