@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/navigation-client";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
@@ -93,6 +93,11 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   const isCrmAgent = role === "crm_agent";
   const allowedPaths = (session?.user as any)?.allowed_paths || [];
   const { theme, setTheme } = useTheme();
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Change Password state
   const [showPwModal, setShowPwModal] = useState(false);
@@ -286,13 +291,17 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       </div>
 
       {/* Footer Area */}
-      <div className={cn("mt-auto py-4 border-t border-[var(--border-subtle)] bg-[var(--card)]/30 space-y-2.5", isCollapsed ? "lg:px-2 px-4" : "px-4")}>
+      <div className={cn("mt-auto py-4 border-t border-[var(--border-subtle)] bg-[var(--card)]/30 space-y-2.5 shrink-0", isCollapsed ? "lg:px-2 px-4" : "px-4")}>
         {/* Theme Switcher Segmented Control */}
         <div className={cn(
-          "flex items-center bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg p-0.5 transition-all w-full",
-          isCollapsed ? "justify-center h-9 w-9 mx-auto" : "h-9"
+          "flex items-center bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg p-0.5 transition-all w-full h-9",
+          isCollapsed ? "justify-center mx-auto w-9" : ""
         )}>
-          {isCollapsed ? (
+          {!mounted ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--text-muted)]" />
+            </div>
+          ) : isCollapsed ? (
             <button
               onClick={() => {
                 const nextTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
