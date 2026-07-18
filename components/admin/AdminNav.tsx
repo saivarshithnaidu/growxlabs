@@ -440,7 +440,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       {/* ═══ MOBILE DRAWER SIDEBAR ═══ */}
       <aside
         className={cn(
-          "lg:hidden fixed left-0 top-0 h-screen w-72 bg-[var(--surface-2)] border-r border-[var(--border-subtle)] z-[300] transition-transform duration-300 ease-in-out overflow-hidden",
+          "lg:hidden fixed left-0 top-0 h-screen w-72 bg-[var(--surface-2)] border-r border-[var(--border-subtle)] z-[300] transition-transform duration-300 ease-in-out overflow-visible",
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -459,7 +459,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       {/* ═══ DESKTOP FIXED SIDEBAR (hidden on mobile) ═══ */}
       <aside 
         className={cn(
-          "hidden lg:flex h-screen border-r border-[var(--border-subtle)] bg-[var(--surface-2)] flex-col fixed left-0 top-0 overflow-hidden transition-all duration-500 ease-in-out z-[200]",
+          "hidden lg:flex h-screen border-r border-[var(--border-subtle)] bg-[var(--surface-2)] flex-col fixed left-0 top-0 overflow-visible transition-all duration-500 ease-in-out z-[200]",
           isCollapsed ? "w-20" : "w-64"
         )}
       >
