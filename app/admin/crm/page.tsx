@@ -537,38 +537,38 @@ export default function AdminCRMPage() {
       
       {/* Toast Notification */}
       {toast && (
-        <div className="fixed bottom-5 right-5 z-[200] bg-white border border-[#e6e6e6] shadow-lg rounded-md p-3.5 text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-5 right-5 z-[200] bg-[var(--card)] border border-[var(--border-subtle)] shadow-lg rounded-md p-3.5 text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-5 duration-200">
           <div className={cn("w-2 h-2 rounded-full", toast.type === 'success' ? "bg-[#1aae39]" : "bg-[#dd5b00]")} />
-          <span className="text-[#31302e]">{toast.message}</span>
+          <span className="text-[var(--text-primary)]">{toast.message}</span>
         </div>
       )}
 
       {/* --- HEADER TOOLBAR --- */}
       <Reveal y={-10}>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-3 border-b border-[#e6e6e6] bg-white">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-3 border-b border-[var(--border-subtle)] bg-transparent">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-[#000000]">CRM Dashboard</h1>
+              <h1 className="text-xl font-bold tracking-tight text-[var(--text-primary)]">CRM Dashboard</h1>
               <span className="flex h-2.5 w-2.5 relative" title="Live Database Stream Connected">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
             </div>
-            <p className="text-[#615d59] text-xs">Manage workspace accounts, monitor pipeline value, and audit sales activities.</p>
+            <p className="text-[var(--text-muted)] text-xs">Manage workspace accounts, monitor pipeline value, and audit sales activities.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end shrink-0">
             <Button onClick={() => setShowAddLead(true)} className="h-8 px-3 bg-[#0075de] hover:bg-[#005bab] text-white text-[11px] font-semibold rounded-md shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0">
               <Plus size={12} className="shrink-0" /> Add Lead
             </Button>
-            <Button onClick={() => setShowImport(true)} variant="outline" className="h-8 px-3 bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-[#31302e] text-[11px] font-semibold rounded-md shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0">
+            <Button onClick={() => setShowImport(true)} variant="outline" className="h-8 px-3 bg-[var(--card)] border border-[var(--border-subtle)] hover:bg-[var(--surface-2)] text-[var(--text-secondary)] text-[11px] font-semibold rounded-md shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0">
               <Upload size={12} className="shrink-0" /> Import CSV
             </Button>
             {isAdminOrCoAdmin ? (
-              <Button onClick={() => setShowExport(true)} variant="outline" className="h-8 px-3 bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-[#31302e] text-[11px] font-semibold rounded-md shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0">
+              <Button onClick={() => setShowExport(true)} variant="outline" className="h-8 px-3 bg-[var(--card)] border border-[var(--border-subtle)] hover:bg-[var(--surface-2)] text-[var(--text-secondary)] text-[11px] font-semibold rounded-md shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0">
                 <Download size={12} className="shrink-0" /> Export Data
               </Button>
             ) : (
-              <div className="h-8 px-3 bg-slate-50 border border-[#e6e6e6] text-[#a39e98] text-[10px] font-semibold rounded-md flex items-center justify-center whitespace-nowrap shrink-0 cursor-not-allowed select-none" title="Admin permissions required to export database data">
+              <div className="h-8 px-3 bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[var(--text-muted)] text-[10px] font-semibold rounded-md flex items-center justify-center whitespace-nowrap shrink-0 cursor-not-allowed select-none" title="Admin permissions required to export database data">
                 🔒 Export
               </div>
             )}
@@ -585,31 +585,31 @@ export default function AdminCRMPage() {
           { label: "Conversion Rate", value: `${conversionRate}%` },
           { label: "Follow-ups Due", value: followupsDue },
         ].map((widget, i) => (
-          <div key={i} className="bg-white border border-[#e6e6e6] p-4 rounded-lg shadow-sm flex flex-col justify-between h-20 hover:border-slate-300 transition-colors">
-            <p className="text-[10px] font-bold text-[#615d59] uppercase tracking-wider leading-none">{widget.label}</p>
-            <p className="text-xl font-bold text-[#000000] leading-none">{widget.value}</p>
+          <div key={i} className="bg-[var(--card)] border border-[var(--border-subtle)] p-4 rounded-lg shadow-sm flex flex-col justify-between h-20 hover:border-[var(--border-hover)] transition-colors">
+            <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider leading-none">{widget.label}</p>
+            <p className="text-xl font-bold text-[var(--text-primary)] leading-none">{widget.value}</p>
           </div>
         ))}
       </div>
 
       {/* --- MAIN CRM Area --- */}
-      <div className="bg-white border border-[#e6e6e6] rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-[var(--card)] border border-[var(--border-subtle)] rounded-xl shadow-sm overflow-hidden">
         
         {/* --- TOOLBAR ROW --- */}
-        <div className="p-4 border-b border-[#e6e6e6] bg-[#f6f5f4]/30 space-y-3">
+        <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--surface-2)]/30 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             
             <div className="flex flex-wrap items-center gap-2">
               
               {/* Search */}
               <div className="relative w-full sm:w-56">
-                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[#615d59]" />
+                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[var(--text-secondary)]" />
                 <input
                   type="text"
                   placeholder="Search leads..."
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                  className="w-full pl-8 pr-3 py-1.5 border border-[#e6e6e6] rounded-lg text-xs bg-white text-[#000000] placeholder-[#615d59] focus:outline-none focus:ring-1 focus:ring-[#0075de] focus:border-[#0075de] transition-all"
+                  className="w-full pl-8 pr-3 py-1.5 border border-[var(--border-subtle)] rounded-lg text-xs bg-[var(--surface-1)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-all"
                 />
               </div>
 
@@ -617,21 +617,21 @@ export default function AdminCRMPage() {
               <div className="relative" ref={statusRef}>
                 <button
                   onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                  className="h-8 px-2.5 border border-[#e6e6e6] rounded-lg text-xs bg-white text-[#31302e] hover:bg-[#f6f5f4] flex items-center gap-1.5 transition-all shadow-sm"
+                  className="h-8 px-2.5 border border-[var(--border-subtle)] rounded-lg text-xs bg-[var(--card)] text-[var(--text-secondary)] hover:bg-[var(--surface-2)] flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
                 >
-                  <Filter size={11} className="text-[#615d59]" />
+                  <Filter size={11} className="text-[var(--text-secondary)]" />
                   <span>Status: {statusFilter ? statusFilter.replace("_", " ") : "All"}</span>
                 </button>
                 {showStatusDropdown && (
-                  <div className="absolute left-0 mt-1 w-40 bg-white border border-[#e6e6e6] rounded-lg shadow-lg py-1 z-50 text-left">
-                    <button onClick={() => { setStatusFilter(null); setShowStatusDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[#31302e] hover:bg-[#f6f5f4] font-medium flex items-center justify-between">
+                  <div className="absolute left-0 mt-1 w-40 bg-[var(--card)] border border-[var(--border-subtle)] rounded-lg shadow-lg py-1 z-50 text-left">
+                    <button onClick={() => { setStatusFilter(null); setShowStatusDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between cursor-pointer">
                       <span>All</span>
-                      {!statusFilter && <Check size={11} className="text-[#0075de]" />}
+                      {!statusFilter && <Check size={11} className="text-[var(--primary)]" />}
                     </button>
                     {['new', 'contacted', 'proposal', 'negotiation', 'closed_won', 'closed_lost'].map((st) => (
-                      <button key={st} onClick={() => { setStatusFilter(st); setShowStatusDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[#31302e] hover:bg-[#f6f5f4] font-medium flex items-center justify-between uppercase text-[10px] tracking-wider">
+                      <button key={st} onClick={() => { setStatusFilter(st); setShowStatusDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between uppercase text-[10px] tracking-wider cursor-pointer">
                         <span>{st.replace("_", " ")}</span>
-                        {statusFilter === st && <Check size={11} className="text-[#0075de]" />}
+                        {statusFilter === st && <Check size={11} className="text-[var(--primary)]" />}
                       </button>
                     ))}
                   </div>
@@ -643,21 +643,21 @@ export default function AdminCRMPage() {
                 <div className="relative" ref={ownerRef}>
                   <button
                     onClick={() => setShowOwnerDropdown(!showOwnerDropdown)}
-                    className="h-8 px-2.5 border border-[#e6e6e6] rounded-lg text-xs bg-white text-[#31302e] hover:bg-[#f6f5f4] flex items-center gap-1.5 transition-all shadow-sm"
+                    className="h-8 px-2.5 border border-[var(--border-subtle)] rounded-lg text-xs bg-[var(--card)] text-[var(--text-secondary)] hover:bg-[var(--surface-2)] flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
                   >
-                    <Users size={11} className="text-[#615d59]" />
+                    <Users size={11} className="text-[var(--text-secondary)]" />
                     <span>Owner: {ownerFilter ? (teamMembers.find(m => m.id === ownerFilter)?.name || "Agent") : "All"}</span>
                   </button>
                   {showOwnerDropdown && (
-                    <div className="absolute left-0 mt-1 w-44 bg-white border border-[#e6e6e6] rounded-lg shadow-lg py-1 z-50 text-left max-h-56 overflow-y-auto custom-scrollbar">
-                      <button onClick={() => { setOwnerFilter(null); setShowOwnerDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[#31302e] hover:bg-[#f6f5f4] font-medium flex items-center justify-between">
+                    <div className="absolute left-0 mt-1 w-44 bg-[var(--card)] border border-[var(--border-subtle)] rounded-lg shadow-lg py-1 z-50 text-left max-h-56 overflow-y-auto custom-scrollbar">
+                      <button onClick={() => { setOwnerFilter(null); setShowOwnerDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between cursor-pointer">
                         <span>All Owners</span>
-                        {!ownerFilter && <Check size={11} className="text-[#0075de]" />}
+                        {!ownerFilter && <Check size={11} className="text-[var(--primary)]" />}
                       </button>
                       {teamMembers.map((member) => (
-                        <button key={member.id} onClick={() => { setOwnerFilter(member.id); setShowOwnerDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[#31302e] hover:bg-[#f6f5f4] font-medium flex items-center justify-between">
+                        <button key={member.id} onClick={() => { setOwnerFilter(member.id); setShowOwnerDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between cursor-pointer">
                           <span className="truncate">{member.name}</span>
-                          {ownerFilter === member.id && <Check size={11} className="text-[#0075de]" />}
+                          {ownerFilter === member.id && <Check size={11} className="text-[var(--primary)]" />}
                         </button>
                       ))}
                     </div>
@@ -669,22 +669,22 @@ export default function AdminCRMPage() {
               <div className="relative" ref={sortRef}>
                 <button
                   onClick={() => setShowSortDropdown(!showSortDropdown)}
-                  className="h-8 px-2.5 border border-[#e6e6e6] rounded-lg text-xs bg-white text-[#31302e] hover:bg-[#f6f5f4] flex items-center gap-1.5 transition-all shadow-sm"
+                  className="h-8 px-2.5 border border-[var(--border-subtle)] rounded-lg text-xs bg-[var(--card)] text-[var(--text-secondary)] hover:bg-[var(--surface-2)] flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
                 >
-                  <SlidersHorizontal size={11} className="text-[#615d59]" />
+                  <SlidersHorizontal size={11} className="text-[var(--text-secondary)]" />
                   <span>Sort: {sortField === "created_at" ? "Date Added" : sortField === "score" ? "Lead Score" : sortField === "deal_value" ? "Deal Value" : "Business Name"}</span>
                 </button>
                 {showSortDropdown && (
-                  <div className="absolute left-0 mt-1 w-40 bg-white border border-[#e6e6e6] rounded-lg shadow-lg py-1 z-50 text-left">
+                  <div className="absolute left-0 mt-1 w-40 bg-[var(--card)] border border-[var(--border-subtle)] rounded-lg shadow-lg py-1 z-50 text-left">
                     {[
                       { field: "created_at", label: "Date Added" },
                       { field: "score", label: "Lead Score" },
                       { field: "deal_value", label: "Deal Value" },
                       { field: "business_name", label: "Business Name" }
                     ].map((opt) => (
-                      <button key={opt.field} onClick={() => { setSortField(opt.field); setSortOrder(curr => curr === "asc" ? "desc" : "asc"); setShowSortDropdown(false); }} className="w-full px-3 py-1.5 text-xs text-[#31302e] hover:bg-[#f6f5f4] font-medium flex items-center justify-between">
+                      <button key={opt.field} onClick={() => { setSortField(opt.field); setSortOrder(curr => curr === "asc" ? "desc" : "asc"); setShowSortDropdown(false); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between cursor-pointer">
                         <span>{opt.label}</span>
-                        {sortField === opt.field && <Check size={11} className="text-[#0075de]" />}
+                        {sortField === opt.field && <Check size={11} className="text-[var(--primary)]" />}
                       </button>
                     ))}
                   </div>
@@ -694,7 +694,7 @@ export default function AdminCRMPage() {
               {/* Refresh */}
               <button 
                 onClick={fetchLeads} 
-                className="h-8 w-8 border border-[#e6e6e6] hover:bg-[#f6f5f4] rounded-lg bg-white flex items-center justify-center text-[#615d59] active:scale-95 transition-all shadow-sm"
+                className="h-8 w-8 border border-[var(--border-subtle)] hover:bg-[var(--surface-2)] rounded-lg bg-[var(--card)] flex items-center justify-center text-[var(--text-secondary)] active:scale-95 transition-all shadow-sm cursor-pointer"
                 title="Refresh leads list"
               >
                 <RefreshCw size={12} className={cn(loading && "animate-spin")} />
@@ -787,16 +787,16 @@ export default function AdminCRMPage() {
                 ))
               ) : paginatedLeads.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-6 py-16 text-center bg-[#f6f5f4]/5">
+                  <td colSpan={10} className="px-6 py-16 text-center bg-[var(--surface-2)]/10">
                     <div className="flex flex-col items-center justify-center space-y-4 max-w-md mx-auto">
                       <div className="w-12 h-12 rounded-full bg-[#0075de]/5 border border-[#0075de]/10 flex items-center justify-center text-[#0075de] shadow-inner">
                         <Users size={18} />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-sm font-bold text-neutral-800 tracking-tight">No CRM Leads Found</h4>
-                        <p className="text-[11px] text-neutral-400 font-medium leading-relaxed">No lead profiles match your search criteria or filters. Reset your filters or add a new manual lead record.</p>
+                        <h4 className="text-sm font-bold text-[var(--text-primary)] tracking-tight">No CRM Leads Found</h4>
+                        <p className="text-[11px] text-[var(--text-muted)] font-medium leading-relaxed">No lead profiles match your search criteria or filters. Reset your filters or add a new manual lead record.</p>
                       </div>
-                      <Button onClick={() => setShowAddLead(true)} className="h-8 px-3.5 bg-[#0075de] text-white text-[10px] font-bold rounded-lg shadow-sm">
+                      <Button onClick={() => setShowAddLead(true)} className="h-8 px-3.5 bg-[#0075de] text-white text-[10px] font-bold rounded-lg shadow-sm cursor-pointer">
                         + Add Lead Record
                       </Button>
                     </div>
