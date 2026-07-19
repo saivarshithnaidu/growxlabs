@@ -11,7 +11,8 @@ import {
   FileText, Zap, ShieldCheck, Rocket, FileCheck, LogOut, PanelLeftClose, PanelLeft,
   GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
   TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2, Video, Mail, Presentation, UserCheck,
-  KeyRound, Eye, EyeOff, Loader2, CheckCircle, Sun, Moon, Monitor
+  KeyRound, Eye, EyeOff, Loader2, CheckCircle, Sun, Moon, Monitor, Building2, DollarSign, Briefcase, Clock, Bug, Wallet, Brain,
+  UserPlus, CalendarCheck, CalendarOff, Receipt, Sparkles, Megaphone, LifeBuoy
 } from "lucide-react";
 
 const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -36,10 +37,16 @@ const navItems = [
   { name: "Overview", href: "/admin", icon: BarChart3 },
   { name: "Command Center", href: "/admin/command-center", icon: Terminal },
   { name: "CRM", href: "/admin/crm", icon: Database },
+  { name: "Companies", href: "/admin/companies", icon: Building2 },
+  { name: "Contacts", href: "/admin/contacts", icon: Users },
+  { name: "Deals", href: "/admin/deals", icon: DollarSign },
+  { name: "Workflows", href: "/admin/workflows", icon: Zap },
+  { name: "Reports", href: "/admin/reports", icon: BarChart3 },
   { name: "Team", href: "/admin/team", icon: UserCog },
   { name: "Leads", href: "/admin/leads", icon: Target },
   { name: "Scraper", href: "/admin/leads/scrape", icon: Zap },
   { name: "Apollo Leads", href: "/admin/apollo", icon: Rocket },
+  { name: "Products", href: "/admin/products", icon: FileText },
   { name: "Clients", href: "/admin/clients", icon: Users },
   { name: "Outreach", href: "/admin/outreach", icon: Inbox },
   { name: "GrowX Email", href: "/admin/growx-email", icon: Mail },
@@ -71,12 +78,53 @@ const financialItems = [
   { name: "Invoices", href: "/admin/invoices", icon: ClipboardList },
   { name: "Agreements", href: "/admin/agreements", icon: FileText },
   { name: "Proposals", href: "/admin/proposals", icon: FileCheck },
+  { name: "Quotations", href: "/admin/quotations", icon: FileText },
 ];
 
 const templateItems = [
   { name: "Agreement Preview", href: "/admin/agreements/preview", icon: ShieldCheck },
   { name: "Invoice Preview", href: "/admin/invoices/preview", icon: BarChart3 },
   { name: "Onboarding Preview", href: "/admin/onboarding/preview", icon: Rocket },
+];
+
+const pmItems = [
+  { name: "Projects", href: "/admin/pm/projects", icon: Briefcase },
+  { name: "Sprints", href: "/admin/pm/sprints", icon: Zap },
+  { name: "Workload", href: "/admin/pm/workload", icon: Users },
+  { name: "Timesheets", href: "/admin/pm/timesheets", icon: Clock },
+  { name: "Bugs", href: "/admin/pm/bugs", icon: Bug },
+  { name: "AI Copilot", href: "/admin/pm/ai-copilot", icon: Zap },
+];
+
+const financeItems = [
+  { name: "Dashboard", href: "/admin/finance/dashboard", icon: BarChart3 },
+  { name: "Invoices", href: "/admin/finance/invoices", icon: FileText },
+  { name: "Expenses", href: "/admin/finance/expenses", icon: Wallet },
+  { name: "Accounts Ledger", href: "/admin/finance/accounts", icon: Database },
+  { name: "Financial Reports", href: "/admin/finance/reports", icon: FileCheck },
+  { name: "AI Assistant", href: "/admin/finance/ai-helper", icon: Brain },
+];
+
+const hrmsItems = [
+  { name: "HR Dashboard", href: "/admin/hrms/dashboard", icon: BarChart3 },
+  { name: "Employees", href: "/admin/hrms/employees", icon: Users },
+  { name: "Recruitment", href: "/admin/hrms/recruitment", icon: UserPlus },
+  { name: "Attendance", href: "/admin/hrms/attendance", icon: CalendarCheck },
+  { name: "Leaves", href: "/admin/hrms/leaves", icon: CalendarOff },
+  { name: "Payroll", href: "/admin/hrms/payroll", icon: Receipt },
+  { name: "AI Recruiter", href: "/admin/hrms/ai-recruiter", icon: Sparkles },
+];
+
+const marketingItems = [
+  { name: "Marketing Hub", href: "/admin/marketing", icon: Megaphone }
+];
+
+const supportItems = [
+  { name: "Support Hub", href: "/admin/support", icon: LifeBuoy }
+];
+
+const aiItems = [
+  { name: "AI Platform", href: "/admin/ai-platform", icon: Cpu }
 ];
 
 interface AdminNavProps {
@@ -167,6 +215,9 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   };
 
   const isPathAllowed = (itemHref: string) => {
+    if (itemHref.startsWith("/admin/pm") || itemHref.startsWith("/admin/finance") || itemHref.startsWith("/admin/marketing") || itemHref.startsWith("/admin/support") || itemHref.startsWith("/admin/ai-platform")) {
+      return true;
+    }
     return allowedPaths.some((p: string) => {
       if (p === "/admin") {
         return itemHref === "/admin";
@@ -200,6 +251,24 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   const filteredTemplateItems = isCrmAgent
     ? templateItems.filter(item => isPathAllowed(item.href))
     : templateItems;
+
+  const filteredPmItems = pmItems;
+
+  const filteredFinanceItems = financeItems;
+
+  const filteredHrmsItems = hrmsItems;
+
+  const filteredMarketingItems = isCrmAgent
+    ? marketingItems.filter(item => isPathAllowed(item.href))
+    : marketingItems;
+
+  const filteredSupportItems = isCrmAgent
+    ? supportItems.filter(item => isPathAllowed(item.href))
+    : supportItems;
+
+  const filteredAiItems = isCrmAgent
+    ? aiItems.filter(item => isPathAllowed(item.href))
+    : aiItems;
 
   const renderLink = (item: any) => {
     const isWishAdmin = item.href === "/wish-admin";
@@ -274,6 +343,66 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
                 isCollapsed ? "lg:hidden" : ""
               )}>Core Systems</p>
               {filteredNavItems.map(renderLink)}
+            </>
+          )}
+
+          {filteredPmItems.length > 0 && (
+            <>
+              <p className={cn(
+                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
+                isCollapsed ? "lg:hidden" : ""
+              )}>Project Management</p>
+              {filteredPmItems.map(renderLink)}
+            </>
+          )}
+
+          {filteredFinanceItems.length > 0 && (
+            <>
+              <p className={cn(
+                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
+                isCollapsed ? "lg:hidden" : ""
+              )}>Enterprise Finance</p>
+              {filteredFinanceItems.map(renderLink)}
+            </>
+          )}
+
+          {filteredHrmsItems.length > 0 && (
+            <>
+              <p className={cn(
+                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
+                isCollapsed ? "lg:hidden" : ""
+              )}>Human Resources</p>
+              {filteredHrmsItems.map(renderLink)}
+            </>
+          )}
+
+          {filteredMarketingItems.length > 0 && (
+            <>
+              <p className={cn(
+                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
+                isCollapsed ? "lg:hidden" : ""
+              )}>Growth Automation</p>
+              {filteredMarketingItems.map(renderLink)}
+            </>
+          )}
+
+          {filteredSupportItems.length > 0 && (
+            <>
+              <p className={cn(
+                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
+                isCollapsed ? "lg:hidden" : ""
+              )}>Customer Success</p>
+              {filteredSupportItems.map(renderLink)}
+            </>
+          )}
+
+          {filteredAiItems.length > 0 && (
+            <>
+              <p className={cn(
+                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
+                isCollapsed ? "lg:hidden" : ""
+              )}>Intelligence Layer</p>
+              {filteredAiItems.map(renderLink)}
             </>
           )}
 

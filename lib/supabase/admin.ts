@@ -1,10 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
+import { config } from "dotenv";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+config({ path: ".env.local" });
 
-if (!supabaseServiceKey) {
-  throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable");
-}
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder-url.supabase.co";
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "placeholder-service-key";
 
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);

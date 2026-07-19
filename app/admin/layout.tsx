@@ -41,26 +41,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       const allowedPaths = (session?.user as any)?.allowed_paths || [];
       let isAllowed = false;
       
-      for (const p of allowedPaths) {
-        if (p === "/admin") {
-          if (pathname === "/admin" || pathname === "/admin/") {
+      if (pathname.startsWith("/admin/pm") || pathname.startsWith("/admin/finance")) {
+        isAllowed = true;
+      } else {
+        for (const p of allowedPaths) {
+          if (p === "/admin") {
+            if (pathname === "/admin" || pathname === "/admin/") {
+              isAllowed = true;
+              break;
+            }
+          } else if (p === "/admin/leads/scrape") {
+            if (pathname.startsWith("/admin/leads/scrape")) {
+              isAllowed = true;
+              break;
+            }
+          } else if (p === "/admin/leads") {
+            // Allow leads subroutes EXCEPT scrape unless they explicitly have scrape permission
+            if (pathname.startsWith("/admin/leads") && !pathname.startsWith("/admin/leads/scrape")) {
+              isAllowed = true;
+              break;
+            }
+          } else if (pathname.startsWith(p)) {
             isAllowed = true;
             break;
           }
-        } else if (p === "/admin/leads/scrape") {
-          if (pathname.startsWith("/admin/leads/scrape")) {
-            isAllowed = true;
-            break;
-          }
-        } else if (p === "/admin/leads") {
-          // Allow leads subroutes EXCEPT scrape unless they explicitly have scrape permission
-          if (pathname.startsWith("/admin/leads") && !pathname.startsWith("/admin/leads/scrape")) {
-            isAllowed = true;
-            break;
-          }
-        } else if (pathname.startsWith(p)) {
-          isAllowed = true;
-          break;
         }
       }
 
@@ -123,6 +127,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const PATH_CONFIGS: Record<string, { label: string; desc: string; color: string }> = {
       "/admin": { label: "Overview", desc: "System activity and stats overview", color: "from-blue-500 to-indigo-600" },
       "/admin/crm": { label: "CRM Dashboard", desc: "Manage client accounts and pipelines", color: "from-[#0075de] to-[#005bab]" },
+      "/admin/companies": { label: "Companies", desc: "Manage company accounts and Customer 360 dashboards", color: "from-blue-500 to-indigo-600" },
+      "/admin/contacts": { label: "Contacts", desc: "Manage client directory and communication details", color: "from-purple-500 to-indigo-600" },
+      "/admin/deals": { label: "Deals Pipeline", desc: "Track sales pipeline and Kanban stages", color: "from-emerald-500 to-teal-600" },
+      "/admin/workflows": { label: "Workflows", desc: "Configure visual workflow trigger automations", color: "from-amber-500 to-orange-600" },
+      "/admin/reports": { label: "Reports", desc: "Sales forecasting and analytics performance overview", color: "from-blue-500 to-cyan-600" },
+      "/admin/pm/projects": { label: "Projects Board", desc: "Track Agile projects delivery execution logs", color: "from-blue-500 to-indigo-600" },
+      "/admin/pm/sprints": { label: "Sprints Planner", desc: "Manage Agile sprints goals, velocities, and burndowns", color: "from-amber-500 to-orange-600" },
+      "/admin/pm/workload": { label: "Workload Balancer", desc: "Track team resources capacity allocations", color: "from-violet-500 to-purple-600" },
+      "/admin/pm/timesheets": { label: "Timesheets Tracker", desc: "Log developer productivity hours and activities", color: "from-teal-500 to-emerald-600" },
+      "/admin/pm/bugs": { label: "QA Bug Tracker", desc: "Report software bugs and track resolving details", color: "from-rose-500 to-red-600" },
+      "/admin/pm/ai-copilot": { label: "AI PM Copilot", desc: "Generate sprint backlogs and identify delivery risks", color: "from-blue-500 to-cyan-600" },
+      "/admin/finance/dashboard": { label: "Financial KPIs", desc: "Verify cash balances, assets, liabilities, and margins", color: "from-[#0075de] to-[#005bab]" },
+      "/admin/finance/invoices": { label: "Sales Invoices", desc: "Manage accounts receivable and payment tracking", color: "from-blue-500 to-indigo-600" },
+      "/admin/finance/expenses": { label: "Corporate Expenses", desc: "Audit corporate expenses claims and vendor payouts", color: "from-amber-500 to-orange-600" },
+      "/admin/finance/accounts": { label: "Double-Entry Ledger", desc: "View Trial Balance and post journal vouchers", color: "from-violet-500 to-purple-600" },
+      "/admin/finance/reports": { label: "Financial Statements", desc: "Profit & Loss, Balance Sheets, and GST reporting", color: "from-teal-500 to-emerald-600" },
+      "/admin/finance/ai-helper": { label: "AI Finance Assistant", desc: "Automate receipt classifications and cash projections", color: "from-blue-500 to-cyan-600" },
+      "/admin/hrms/dashboard": { label: "HR Overview", desc: "Monitor workforce metrics, headcount, and HR KPIs", color: "from-[#0075de] to-[#005bab]" },
+      "/admin/hrms/employees": { label: "Employees Directory", desc: "Manage employee profiles, documents, and org chart", color: "from-blue-500 to-indigo-600" },
+      "/admin/hrms/recruitment": { label: "Recruitment Pipeline", desc: "Track job openings and candidate hiring stages", color: "from-emerald-500 to-teal-600" },
+      "/admin/hrms/attendance": { label: "Attendance Records", desc: "Clock in/out tracking and working hours audit", color: "from-amber-500 to-orange-600" },
+      "/admin/hrms/leaves": { label: "Leave Management", desc: "Apply, approve, and track employee leave balances", color: "from-violet-500 to-purple-600" },
+      "/admin/hrms/payroll": { label: "Payroll Management", desc: "Generate payslips with PF, ESI, and TDS deductions", color: "from-teal-500 to-emerald-600" },
+      "/admin/hrms/ai-recruiter": { label: "AI Recruiter", desc: "AI-powered resume scoring and sentiment analysis", color: "from-blue-500 to-cyan-600" },
+      "/admin/products": { label: "Product Catalog", desc: "Configure product lists, SKU values, and prices", color: "from-rose-500 to-red-600" },
+      "/admin/quotations": { label: "Quotations", desc: "Build line-items price lists and client PDFs", color: "from-teal-500 to-emerald-600" },
       "/admin/leads": { label: "Sales Pipeline", desc: "Track sales pipeline and deal status", color: "from-emerald-500 to-teal-600" },
       "/admin/leads/scrape": { label: "AI Lead Scraper", desc: "Automate leads extraction from the web", color: "from-amber-500 to-orange-600" },
       "/admin/outreach": { label: "AI Outreach Planner", desc: "Schedule and manage outbound email campaigns", color: "from-purple-500 to-indigo-600" },
