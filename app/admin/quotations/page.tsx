@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2, Plus, FileText, ArrowLeft, Send, Check } from "lucide-react";
+import { Loader2, Plus, FileText, ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { QuoteGenerator } from "@/components/admin/QuoteGenerator";
@@ -68,9 +68,9 @@ export default function QuotationsPage() {
       <div className="space-y-6">
         <button 
           onClick={() => setShowCreator(false)}
-          className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-450 hover:text-neutral-900 bg-transparent outline-none cursor-pointer"
+          className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
         >
-          <ArrowLeft size={14} /> Back to Listings
+          <ArrowLeft size={16} /> Back to Quotations List
         </button>
         <QuoteGenerator 
           products={products}
@@ -83,18 +83,28 @@ export default function QuotationsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 text-[var(--text-primary)]">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[var(--border-subtle)] pb-6">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold text-neutral-950 tracking-tight leading-none">Quotations Panel</h1>
-          <p className="text-neutral-500 text-xs">Configure quotations, apply discounts/taxes, and download PDFs.</p>
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-[#0075de]/10 border border-[#0075de]/20 rounded-lg text-[#0075de]">
+              <FileText size={20} />
+            </div>
+            <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
+              Quotations &amp; Estimates
+            </h1>
+          </div>
+          <p className="text-xs text-[var(--text-secondary)]">
+            Create price estimates, manage discounts &amp; GST tax line items.
+          </p>
         </div>
+        
         <Button 
           onClick={() => setShowCreator(true)}
-          className="bg-[#0075de] hover:bg-[#0075de]/90 text-white font-bold tracking-widest uppercase text-[10px] px-6 h-10 rounded-md"
+          className="bg-[#0075de] hover:bg-[#005bab] text-white font-bold text-xs px-4 h-10 rounded-xl shadow-md transition-all"
         >
-          <Plus size={14} className="mr-1" /> Create Quotation
+          <Plus size={16} className="mr-1.5" /> Create Quotation
         </Button>
       </div>
 
@@ -104,38 +114,47 @@ export default function QuotationsPage() {
           <Loader2 className="animate-spin text-[#0075de] h-6 w-6" />
         </div>
       ) : quotations.length === 0 ? (
-        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-white text-center p-6">
-          <FileText className="w-10 h-10 text-neutral-300 mb-2" />
-          <h4 className="text-sm font-bold text-neutral-850">No quotations generated</h4>
-          <p className="text-xs text-neutral-400 max-w-xs mt-1">Generate your first quotation to estimate deals for your accounts.</p>
-        </div>
+        <Card className="h-64 flex flex-col items-center justify-center border border-dashed border-[var(--border-subtle)] bg-[var(--card)] text-center p-6 rounded-xl">
+          <FileText className="w-10 h-10 text-[var(--text-muted)] mb-3" />
+          <h4 className="text-sm font-bold text-[var(--text-primary)]">No Quotations Found</h4>
+          <p className="text-xs text-[var(--text-secondary)] max-w-xs mt-1">
+            Generate your first quotation to estimate deals for your accounts.
+          </p>
+          <Button 
+            onClick={() => setShowCreator(true)}
+            size="sm"
+            className="mt-4 bg-[#0075de] text-white text-xs font-bold"
+          >
+            <Plus size={14} className="mr-1" /> Create First Quotation
+          </Button>
+        </Card>
       ) : (
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-6 border border-[var(--border-subtle)] bg-[var(--card)] rounded-xl shadow-sm">
           <div className="overflow-x-auto text-xs text-left">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-[#e6e6e6] text-[10px] font-bold uppercase tracking-wider text-neutral-450">
-                  <th className="py-2.5 pl-2">Account</th>
-                  <th className="py-2.5">Related Deal</th>
-                  <th className="py-2.5">Status</th>
-                  <th className="py-2.5">Tax (GST)</th>
-                  <th className="py-2.5">Discount</th>
-                  <th className="py-2.5 pr-2 text-right">Total Price</th>
+            <table className="w-full text-left whitespace-nowrap">
+              <thead className="border-b border-[var(--border-subtle)] bg-[var(--surface-1)]">
+                <tr className="text-[10px] font-black uppercase tracking-wider text-[var(--text-muted)]">
+                  <th className="py-3 px-4">Account</th>
+                  <th className="py-3 px-4">Related Deal</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Tax (GST)</th>
+                  <th className="py-3 px-4">Discount</th>
+                  <th className="py-3 px-4 text-right">Total Price</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-[var(--border-subtle)]">
                 {quotations.map((q) => (
-                  <tr key={q.id} className="border-b border-[#e6e6e6]/60 hover:bg-[#f6f5f4]/30 font-medium">
-                    <td className="py-3 pl-2 text-neutral-900 font-bold">{q.company?.name}</td>
-                    <td className="py-3 text-neutral-500 font-bold">{q.deal?.name || "No linked deal"}</td>
-                    <td className="py-3">
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#0075de] bg-[#0075de]/5 px-2 py-0.5 rounded border border-[#0075de]/10">
+                  <tr key={q.id} className="hover:bg-[var(--surface-1)]/50 transition-colors">
+                    <td className="py-3.5 px-4 text-[var(--text-primary)] font-bold">{q.company?.name || "N/A"}</td>
+                    <td className="py-3.5 px-4 text-[var(--text-secondary)] font-medium">{q.deal?.name || "No linked deal"}</td>
+                    <td className="py-3.5 px-4">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-[#0075de] bg-[#0075de]/10 border border-[#0075de]/20 px-2.5 py-0.5 rounded-full">
                         {q.status}
                       </span>
                     </td>
-                    <td className="py-3 text-neutral-500 font-mono">₹{Number(q.tax_amount).toLocaleString()}</td>
-                    <td className="py-3 text-red-500 font-mono">- ₹{Number(q.discount_amount).toLocaleString()}</td>
-                    <td className="py-3 pr-2 text-right text-neutral-950 font-bold font-mono">₹{Number(q.grand_total).toLocaleString()}</td>
+                    <td className="py-3.5 px-4 text-[var(--text-secondary)] font-mono">₹{Number(q.tax_amount || 0).toLocaleString()}</td>
+                    <td className="py-3.5 px-4 text-red-500 font-mono">- ₹{Number(q.discount_amount || 0).toLocaleString()}</td>
+                    <td className="py-3.5 px-4 text-right text-[var(--text-primary)] font-black font-mono">₹{Number(q.grand_total || 0).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
