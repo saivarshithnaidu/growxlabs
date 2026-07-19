@@ -34,7 +34,9 @@ const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export interface NavGroup {
+  id: string;
   title: string;
+  icon: any;
   items: {
     name: string;
     href: string;
@@ -44,14 +46,18 @@ export interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   {
+    id: "overview",
     title: "Overview",
+    icon: BarChart3,
     items: [
       { name: "Dashboard", href: "/admin", icon: BarChart3 },
       { name: "Command Center", href: "/admin/command-center", icon: Terminal },
     ]
   },
   {
+    id: "crm",
     title: "CRM & Sales",
+    icon: Database,
     items: [
       { name: "CRM Hub", href: "/admin/crm", icon: Database },
       { name: "Companies", href: "/admin/companies", icon: Building2 },
@@ -74,7 +80,9 @@ const NAV_GROUPS: NavGroup[] = [
     ]
   },
   {
+    id: "pm",
     title: "Projects & Agile",
+    icon: Briefcase,
     items: [
       { name: "Projects", href: "/admin/pm/projects", icon: Briefcase },
       { name: "Sprints", href: "/admin/pm/sprints", icon: Zap },
@@ -85,7 +93,9 @@ const NAV_GROUPS: NavGroup[] = [
     ]
   },
   {
-    title: "Finance & Accounting",
+    id: "finance",
+    title: "Finance & Accounts",
+    icon: Wallet,
     items: [
       { name: "Finance KPIs", href: "/admin/finance/dashboard", icon: BarChart3 },
       { name: "Sales Invoices", href: "/admin/finance/invoices", icon: ClipboardList },
@@ -96,7 +106,9 @@ const NAV_GROUPS: NavGroup[] = [
     ]
   },
   {
+    id: "hrms",
     title: "Human Resources",
+    icon: Users,
     items: [
       { name: "HR Dashboard", href: "/admin/hrms/dashboard", icon: BarChart3 },
       { name: "Employees", href: "/admin/hrms/employees", icon: Users },
@@ -109,7 +121,9 @@ const NAV_GROUPS: NavGroup[] = [
     ]
   },
   {
+    id: "marketing",
     title: "Growth & Marketing",
+    icon: Megaphone,
     items: [
       { name: "Marketing Hub", href: "/admin/marketing", icon: Megaphone },
       { name: "Carousel Creator", href: "/admin/instagram-carousel", icon: InstagramNavIcon },
@@ -117,19 +131,25 @@ const NAV_GROUPS: NavGroup[] = [
     ]
   },
   {
+    id: "support",
     title: "Customer Support",
+    icon: LifeBuoy,
     items: [
       { name: "Support Hub", href: "/admin/support", icon: LifeBuoy },
     ]
   },
   {
-    title: "AI Platform",
+    id: "ai",
+    title: "AI Intelligence",
+    icon: Cpu,
     items: [
       { name: "AI Command Center", href: "/admin/ai-platform", icon: Cpu },
     ]
   },
   {
-    title: "Academy & Monetization",
+    id: "academy",
+    title: "Academy & Orders",
+    icon: BookOpen,
     items: [
       { name: "Courses", href: "/admin/academy/courses", icon: BookOpen },
       { name: "Assessments", href: "/admin/academy/assessments", icon: PenTool },
@@ -140,7 +160,9 @@ const NAV_GROUPS: NavGroup[] = [
     ]
   },
   {
-    title: "Platform Administration",
+    id: "admin",
+    title: "Platform Admin",
+    icon: Settings,
     items: [
       { name: "Settings & Security", href: "/admin/settings", icon: Settings },
       { name: "Team & RBAC", href: "/admin/team", icon: UserCog },
@@ -165,6 +187,20 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   const { theme, setTheme } = useTheme();
 
   const [mounted, setMounted] = useState(false);
+  // Track open accordion sections
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    overview: true,
+    crm: true,
+    pm: true,
+    finance: true,
+    hrms: true,
+    marketing: true,
+    support: true,
+    ai: true,
+    academy: true,
+    admin: true,
+  });
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -246,6 +282,10 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
     });
   };
 
+  const toggleSection = (id: string) => {
+    setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
   const renderLink = (item: { name: string; href: string; icon: any }, isMobile = false) => {
     const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
     const Icon = item.icon;
@@ -259,7 +299,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
           if (isMobileOpen) onMobileToggle();
         }}
         className={cn(
-          "flex items-center h-9 px-3 rounded-lg transition-all duration-200 group relative border border-transparent",
+          "flex items-center h-8 px-2.5 rounded-md transition-all duration-150 group relative border border-transparent text-xs",
           isActive
             ? "bg-[#0075de]/10 text-[#0075de] dark:text-blue-400 font-bold border-[#0075de]/20 shadow-sm"
             : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-1)]",
@@ -267,13 +307,13 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         )}
       >
         <Icon className={cn(
-          "h-4 w-4 shrink-0 transition-colors",
+          "h-3.5 w-3.5 shrink-0 transition-colors",
           isActive ? "text-[#0075de] dark:text-blue-400" : "text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]",
-          (!isCollapsed || isMobile) && "mr-3"
+          (!isCollapsed || isMobile) && "mr-2.5"
         )} />
 
         <span className={cn(
-          "text-[13px] font-medium tracking-tight whitespace-nowrap",
+          "font-medium tracking-tight whitespace-nowrap truncate",
           isCollapsed && !isMobile ? "lg:hidden" : "block"
         )}>
           {item.name}
@@ -281,8 +321,8 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
 
         {isActive && (
           <div className={cn(
-            "absolute bg-[#0075de] rounded-r-sm left-0 top-1/2 -translate-y-1/2 w-[3px] h-4",
-            isCollapsed && !isMobile ? "lg:h-4 lg:w-1" : ""
+            "absolute bg-[#0075de] rounded-r-sm left-0 top-1/2 -translate-y-1/2 w-[3px] h-3.5",
+            isCollapsed && !isMobile ? "lg:h-3.5 lg:w-1" : ""
           )} />
         )}
       </Link>
@@ -297,7 +337,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         "h-14 border-b border-[var(--border-subtle)] flex items-center px-4 shrink-0 bg-[var(--card)]/40 justify-between",
         isCollapsed && !isMobile ? "lg:px-0 lg:justify-center" : ""
       )}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 bg-[#0075de]/10 border border-[#0075de]/20 rounded-lg flex items-center justify-center shrink-0">
             <ShieldCheck className="text-[#0075de] h-4 w-4" />
           </div>
@@ -308,8 +348,8 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
             <span className="text-sm font-bold tracking-tight text-[var(--text-primary)] leading-none">
               GrowX<span className="text-[#0075de]">Labs</span>
             </span>
-            <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-[0.15em] mt-1">
-              Enterprise Suite
+            <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-[0.15em] mt-0.5">
+              Enterprise Operating System
             </span>
           </div>
         </div>
@@ -318,7 +358,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         {isMobile && (
           <button
             onClick={onMobileToggle}
-            className="h-8 w-8 rounded-lg bg-[var(--surface-1)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all"
+            className="h-8 w-8 rounded-lg bg-[var(--surface-1)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer"
             aria-label="Close sidebar"
           >
             <X size={16} />
@@ -327,7 +367,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       </div>
 
       {/* Nav List */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar py-3 px-3 space-y-6">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar py-3 px-2.5 space-y-3">
         {NAV_GROUPS.map((group) => {
           const visibleItems = isCrmAgent
             ? group.items.filter(item => isPathAllowed(item.href))
@@ -335,15 +375,32 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
 
           if (visibleItems.length === 0) return null;
 
+          const isOpen = openSections[group.id] ?? true;
+          const GroupIcon = group.icon;
+
           return (
-            <div key={group.title} className="space-y-1">
-              <p className={cn(
-                "text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#a39e98] px-3 mb-1.5",
-                isCollapsed && !isMobile ? "lg:hidden" : ""
-              )}>
-                {group.title}
-              </p>
-              {visibleItems.map(item => renderLink(item, isMobile))}
+            <div key={group.id} className="space-y-0.5">
+              {/* Group Header */}
+              <button
+                onClick={() => toggleSection(group.id)}
+                className={cn(
+                  "w-full flex items-center justify-between h-7 px-2.5 rounded-md text-[10px] font-extrabold uppercase tracking-[0.15em] text-[#a39e98] hover:text-[var(--text-primary)] hover:bg-[var(--surface-1)]/60 transition-all cursor-pointer select-none",
+                  isCollapsed && !isMobile ? "lg:hidden" : ""
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <GroupIcon size={12} className="text-[#a39e98]" />
+                  <span>{group.title}</span>
+                </div>
+                <ChevronDown size={12} className={cn("transition-transform duration-200", isOpen ? "" : "-rotate-90")} />
+              </button>
+
+              {/* Group Items */}
+              {(isOpen || (isCollapsed && !isMobile)) && (
+                <div className="space-y-0.5 pl-1">
+                  {visibleItems.map(item => renderLink(item, isMobile))}
+                </div>
+              )}
             </div>
           );
         })}
@@ -410,13 +467,13 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         <button
           onClick={() => { setPwError(""); setPwSuccess(false); setCurrentPw(""); setNewPw(""); setConfirmPw(""); setShowPwModal(true); }}
           className={cn(
-            "w-full flex items-center h-8 px-3 rounded-lg text-[var(--text-secondary)] hover:text-[#0075de] hover:bg-[#0075de]/5 transition-all text-left group",
+            "w-full flex items-center h-8 px-2.5 rounded-lg text-[var(--text-secondary)] hover:text-[#0075de] hover:bg-[#0075de]/5 transition-all text-left group text-xs",
             isCollapsed && !isMobile && "lg:justify-center lg:px-0"
           )}
         >
-          <KeyRound className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-[#0075de]", (!isCollapsed || isMobile) && "mr-2.5")} />
+          <KeyRound className={cn("h-3.5 w-3.5 shrink-0 transition-colors group-hover:text-[#0075de]", (!isCollapsed || isMobile) && "mr-2.5")} />
           <span className={cn(
-            "text-[11px] font-bold uppercase tracking-wider",
+            "font-bold uppercase tracking-wider text-[10px]",
             isCollapsed && !isMobile ? "lg:hidden" : ""
           )}>Change Password</span>
         </button>
@@ -425,13 +482,13 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className={cn(
-            "w-full flex items-center h-8 px-3 rounded-lg text-[var(--text-secondary)] hover:text-red-500 hover:bg-red-500/5 transition-all text-left group",
+            "w-full flex items-center h-8 px-2.5 rounded-lg text-[var(--text-secondary)] hover:text-red-500 hover:bg-red-500/5 transition-all text-left group text-xs",
             isCollapsed && !isMobile && "lg:justify-center lg:px-0"
           )}
         >
-          <LogOut className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-red-500", (!isCollapsed || isMobile) && "mr-2.5")} />
+          <LogOut className={cn("h-3.5 w-3.5 shrink-0 transition-colors group-hover:text-red-500", (!isCollapsed || isMobile) && "mr-2.5")} />
           <span className={cn(
-            "text-[11px] font-bold uppercase tracking-wider",
+            "font-bold uppercase tracking-wider text-[10px]",
             isCollapsed && !isMobile ? "lg:hidden" : ""
           )}>Sign Out</span>
         </button>
@@ -443,7 +500,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
     <>
       {/* ═══ MOBILE TOP NAVBAR ═══ */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-[100] h-14 bg-[var(--card)] border-b border-[var(--border-subtle)] flex items-center justify-between px-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 bg-[#0075de]/10 border border-[#0075de]/20 rounded-lg flex items-center justify-center shrink-0">
             <ShieldCheck className="text-[#0075de] h-4 w-4" />
           </div>
@@ -452,7 +509,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
               GrowX<span className="text-[#0075de]">Labs</span>
             </span>
             <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-[0.15em] mt-0.5">
-              Admin Suite
+              Admin Platform
             </span>
           </div>
         </div>
