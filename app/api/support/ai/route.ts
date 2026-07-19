@@ -42,9 +42,10 @@ function getLocalSupportFallback(type: string, inputData: any) {
 }
 
 export async function POST(req: Request) {
+  let reqBody: any = {};
   try {
-    const body = await req.json();
-    const { type, inputData } = body; // type: classify, suggest-solution, summarize, predict-health
+    reqBody = await req.json();
+    const { type, inputData } = reqBody; // type: classify, suggest-solution, summarize, predict-health
 
     if (!inputData) return NextResponse.json({ error: "Input data required" }, { status: 400 });
 
@@ -59,14 +60,14 @@ export async function POST(req: Request) {
     if (type === "classify") {
       promptInstruction = "You are a Customer Support AI Classifier. Analyze the ticket title and description and return JSON with 'category', 'priority' (Low, Medium, High, Urgent), 'sentiment' (Positive, Neutral, Frustrated, Critical), 'suggestedAgentRole', and 'confidenceScore' (0-100).";
     } else if (type === "suggest-solution") {
-      promptInstruction = "You are an AI Support Assistant. Generate a polite, technical response and return JSON with 'suggestedReply' and 'relatedKnowledgeArticles' (array of objects with 'title' and 'slug').";
+      promptInstruction = "You are a Technical Support AI Specialist. Generate a polite, step-by-step resolution auto-reply to the customer and return JSON with 'suggestedReply' and 'kbArticleReferences' (array of strings).";
     } else if (type === "summarize") {
-      promptInstruction = "You are an AI Ticket Summarizer. Return JSON with 'summary' (2 sentences) and 'keyActionItems' (array of strings).";
+      promptInstruction = "You are a Support Lead AI Summarizer. Summarize the support thread context and return JSON with 'summary', 'keyPoints' (array), and 'pendingCustomerAction'.";
     } else {
-      promptInstruction = "You are a Customer Success AI Data Analyst. Analyze customer activity and return JSON with 'predictedHealthScore' (0-100), 'churnRisk' (Low, Medium, High, Critical), 'keyFactors' (array of strings), and 'renewalLikelihood'.";
+      promptInstruction = "You are a Customer Success AI Analyst. Predict customer churn risk based on account tickets and return JSON with 'predictedHealthScore' (0-100), 'churnRisk' (Low, Medium, High), and 'riskFactors' (array).";
     }
 
-    const fullPrompt = `${promptInstruction}\n\nInput Context: ${JSON.stringify(inputData)}\n\nReturn ONLY the valid JSON structure.`;
+    const fullPrompt = `${promptInstruction}\n\nInput Context: ${JSON.stringify(inputData)}\n\nIMPORTANT: Return ONLY valid JSON format matching the schema above.`;
 
     const response = await model.generateContent(fullPrompt);
     const text = response.response.text().trim();
@@ -85,7 +86,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ result: fallback, note: "Raw text returned or fallback parsed" });
     }
   } catch (error: any) {
-    const fallback = getLocalSupportFallback(body.type, body.inputData);
+    const fallback = getLocalSupportFallback(reqBody?.type, reqBody?.inputData);
     return NextResponse.json({ result: fallback, note: "Generated using fallback AI engine due to connection error" });
   }
 }

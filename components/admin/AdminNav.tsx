@@ -12,7 +12,7 @@ import {
   GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
   TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2, Video, Mail, Presentation, UserCheck,
   KeyRound, Eye, EyeOff, Loader2, CheckCircle, Sun, Moon, Monitor, Building2, DollarSign, Briefcase, Clock, Bug, Wallet, Brain,
-  UserPlus, CalendarCheck, CalendarOff, Receipt, Sparkles, Megaphone, LifeBuoy
+  UserPlus, CalendarCheck, CalendarOff, Receipt, Sparkles, Megaphone, LifeBuoy, Cpu
 } from "lucide-react";
 
 const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (

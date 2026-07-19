@@ -50,9 +50,10 @@ function getLocalAdminFallback(type: string, inputData: any) {
 }
 
 export async function POST(req: Request) {
+  let reqBody: any = {};
   try {
-    const body = await req.json();
-    const { type, inputData } = body;
+    reqBody = await req.json();
+    const { type, inputData } = reqBody;
 
     if (!genAI) {
       const fallback = getLocalAdminFallback(type, inputData);
@@ -91,7 +92,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ result: fallback, note: "Fallback response returned" });
     }
   } catch (error: any) {
-    const fallback = getLocalAdminFallback(body.type, body.inputData);
+    const fallback = getLocalAdminFallback(reqBody?.type, reqBody?.inputData);
     return NextResponse.json({ result: fallback, note: "Generated using fallback AI engine due to connection error" });
   }
 }

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { InvoiceBuilder } from "@/components/admin/finance/InvoiceBuilder";
 import { Input } from "@/components/ui/Input";
+import { cn } from "@/lib/utils";
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<any[]>([]);
@@ -79,7 +80,7 @@ export default function InvoicesPage() {
           invoice_id: payInvoiceId,
           amount: payAmount,
           payment_method: payMethod
-        });
+        })
       });
       if (res.ok) {
         setPayInvoiceId(null);

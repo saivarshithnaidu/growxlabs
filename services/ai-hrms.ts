@@ -1,7 +1,7 @@
-import { GoogleGenAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const geminiApiKey = process.env.GEMINI_API_KEY || "";
-const ai = geminiApiKey ? new GoogleGenAI({ apiKey: geminiApiKey }) : null;
+const ai = geminiApiKey ? new GoogleGenerativeAI(geminiApiKey) : null;
 
 export class AiHrmsService {
   /**

@@ -55,60 +55,58 @@ function getLocalFallback(type: string, prompt: string) {
 }
 
 export async function POST(req: Request) {
+  let reqBody: any = {};
   try {
-    const body = await req.json();
-    const { type, prompt } = body; // type can be blog, social, email, ad, keywords
+    reqBody = await req.json();
+    const { type, prompt } = reqBody; // type can be blog, social, email, ad, keywords
 
     if (!prompt) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
     }
 
     if (!genAI) {
-      // Return local fallback copy if no key is present
       const fallback = getLocalFallback(type, prompt);
-      return NextResponse.json({ result: fallback, note: "Generated using fallback engine (no API key configured)" });
+      return NextResponse.json({ result: fallback, note: "Generated using fallback engine." });
     }
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     let systemInstruction = "";
     if (type === "blog") {
-      systemInstruction = "You are a professional content marketer. Generate a JSON response with 'title', 'body' (in Markdown format), 'tags' (array of strings), 'seoTitle', and 'seoDescription'.";
+      systemInstruction = "You are an expert marketing blog writer. Return a structured JSON with title, summary, keyTakeaways (array), and fullMarkdown content.";
     } else if (type === "social") {
-      systemInstruction = "You are a social media copywriter. Generate a JSON response with an array of objects called 'posts', each containing 'platform' (LinkedIn, Instagram, or Twitter) and 'content'.";
+      systemInstruction = "You are a social media copywriter. Return a structured JSON with posts array containing channel, headline, body, and hashtags.";
     } else if (type === "email") {
-      systemInstruction = "You are a lifecycle email writer. Generate a JSON response with 'subject', 'body' (with placeholder tokens like {{Contact Name}}), and 'variables' (array of strings representing the tokens).";
+      systemInstruction = "You are an email marketing strategist. Return a structured JSON with subject, body, and variables array.";
     } else if (type === "ad") {
-      systemInstruction = "You are an ad copywriter. Generate a JSON response with 'headlines' (array of 3 strings) and 'descriptions' (array of 2 strings).";
+      systemInstruction = "You are a performance marketing ad copywriter. Return a structured JSON with headlines array, descriptions array, and callToAction.";
     } else {
-      systemInstruction = "You are an SEO analyst. Generate a JSON response with 'keywords' (array of objects, each with 'keyword', 'volume' (number), and 'difficulty' (number between 0 and 100)).";
+      systemInstruction = "You are an SEO analyst. Return a structured JSON with recommendations array (object with keyword, volume, difficulty).";
     }
 
-    const promptText = `${systemInstruction}\n\nUser request: ${prompt}\n\nReturn ONLY the JSON structure. Do not wrap in markdown quotes except JSON wrapper.`;
+    const fullPrompt = `${systemInstruction}\n\nUser Prompt: ${prompt}\n\nIMPORTANT: Return ONLY valid JSON format matching the instructions above.`;
 
-    const result = await model.generateContent(promptText);
-    const text = result.response.text().trim();
-    
-    // Attempt to extract and parse JSON from the response
+    const result = await model.generateContent(fullPrompt);
+    const responseText = result.response.text();
+
     try {
-      const jsonStart = text.indexOf("{");
-      const jsonEnd = text.lastIndexOf("}") + 1;
+      const jsonStart = responseText.indexOf("{");
+      const jsonEnd = responseText.lastIndexOf("}") + 1;
       if (jsonStart !== -1 && jsonEnd !== -1) {
-        const jsonStr = text.substring(jsonStart, jsonEnd);
+        const jsonStr = responseText.substring(jsonStart, jsonEnd);
         const parsed = JSON.parse(jsonStr);
         return NextResponse.json({ result: parsed });
       }
       throw new Error("Could not find JSON bounds");
     } catch (parseErr) {
-      // In case of parsing failures, return a fallback with the raw text
       return NextResponse.json({
-        result: { rawResponse: text },
+        result: { rawResponse: responseText },
         note: "Raw model text returned due to format parsing errors."
       });
     }
   } catch (error: any) {
     console.error("Gemini invocation failed: ", error.message);
-    const fallback = getLocalFallback(body.type, body.prompt);
+    const fallback = getLocalFallback(reqBody?.type, reqBody?.prompt);
     return NextResponse.json({ result: fallback, note: "Generated using fallback engine due to service error." });
   }
 }
