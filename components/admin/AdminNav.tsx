@@ -4,15 +4,15 @@ import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/navigation-client";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
-import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import {
-  BarChart3, Users, Target, Inbox, Terminal,
-  FileText, Zap, ShieldCheck, Rocket, FileCheck, LogOut, PanelLeftClose, PanelLeft,
-  GraduationCap, BookOpen, Award, CreditCard, ClipboardList, PenTool,
-  TicketPercent, ListOrdered, Database, UserCog, Settings, Menu, X, Gamepad2, Video, Mail, Presentation, UserCheck,
-  KeyRound, Eye, EyeOff, Loader2, CheckCircle, Sun, Moon, Monitor, Building2, DollarSign, Briefcase, Clock, Bug, Wallet, Brain,
-  UserPlus, CalendarCheck, CalendarOff, Receipt, Sparkles, Megaphone, LifeBuoy, Cpu
+  BarChart3, Users, Target, Inbox, Terminal, FileText, Zap, ShieldCheck, Rocket,
+  BookOpen, CreditCard, ClipboardList, PenTool, TicketPercent, ListOrdered,
+  Database, UserCog, Settings, Menu, X, Gamepad2, Video, Mail, Presentation,
+  UserCheck, KeyRound, Eye, EyeOff, Loader2, CheckCircle, Sun, Moon, Monitor,
+  Building2, DollarSign, Briefcase, Clock, Bug, Wallet, Brain, UserPlus,
+  CalendarCheck, CalendarOff, Receipt, Sparkles, Megaphone, LifeBuoy, Cpu, LogOut,
+  ChevronDown, ChevronRight, GraduationCap, Award
 } from "lucide-react";
 
 const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -33,98 +33,120 @@ const InstagramNavIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const navItems = [
-  { name: "Overview", href: "/admin", icon: BarChart3 },
-  { name: "Command Center", href: "/admin/command-center", icon: Terminal },
-  { name: "CRM", href: "/admin/crm", icon: Database },
-  { name: "Companies", href: "/admin/companies", icon: Building2 },
-  { name: "Contacts", href: "/admin/contacts", icon: Users },
-  { name: "Deals", href: "/admin/deals", icon: DollarSign },
-  { name: "Workflows", href: "/admin/workflows", icon: Zap },
-  { name: "Reports", href: "/admin/reports", icon: BarChart3 },
-  { name: "Team", href: "/admin/team", icon: UserCog },
-  { name: "Leads", href: "/admin/leads", icon: Target },
-  { name: "Scraper", href: "/admin/leads/scrape", icon: Zap },
-  { name: "Apollo Leads", href: "/admin/apollo", icon: Rocket },
-  { name: "Products", href: "/admin/products", icon: FileText },
-  { name: "Clients", href: "/admin/clients", icon: Users },
-  { name: "Outreach", href: "/admin/outreach", icon: Inbox },
-  { name: "GrowX Email", href: "/admin/growx-email", icon: Mail },
-  { name: "Pitch Deck Gen", href: "/admin/pitch-deck", icon: Presentation },
-  { name: "Onboarding", href: "/admin/onboarding", icon: Rocket },
-  { name: "SDR Onboarding", href: "/admin/employee-onboarding", icon: UserCheck },
-  { name: "Career Portal", href: "/admin/career-portal", icon: ClipboardList },
-  { name: "Interviewer Playbook", href: "/admin/career-portal/playbook", icon: BookOpen },
-  { name: "Carousel Creator", href: "/admin/instagram-carousel", icon: InstagramNavIcon },
-  { name: "Reels Creator", href: "/admin/reels-creator", icon: Video },
-  { name: "Wish Game", href: "/admin/wish-game", icon: Gamepad2 },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
-];
+export interface NavGroup {
+  title: string;
+  items: {
+    name: string;
+    href: string;
+    icon: any;
+  }[];
+}
 
-const academyItems = [
-  { name: "Courses", href: "/admin/academy/courses", icon: BookOpen },
-  { name: "Assessments", href: "/admin/academy/assessments", icon: PenTool },
-  { name: "Students & Progress", href: "/admin/academy/users", icon: GraduationCap },
-  { name: "Certificates", href: "/admin/academy/certificates", icon: Award },
-];
-
-const monetizationItems = [
-  { name: "Coupons", href: "/admin/monetization/coupons", icon: TicketPercent },
-  { name: "Order Logs", href: "/admin/monetization/orders", icon: ListOrdered },
-  { name: "Revenue Tracking", href: "/admin/academy/payments", icon: CreditCard },
-];
-
-const financialItems = [
-  { name: "Invoices", href: "/admin/invoices", icon: ClipboardList },
-  { name: "Agreements", href: "/admin/agreements", icon: FileText },
-  { name: "Proposals", href: "/admin/proposals", icon: FileCheck },
-  { name: "Quotations", href: "/admin/quotations", icon: FileText },
-];
-
-const templateItems = [
-  { name: "Agreement Preview", href: "/admin/agreements/preview", icon: ShieldCheck },
-  { name: "Invoice Preview", href: "/admin/invoices/preview", icon: BarChart3 },
-  { name: "Onboarding Preview", href: "/admin/onboarding/preview", icon: Rocket },
-];
-
-const pmItems = [
-  { name: "Projects", href: "/admin/pm/projects", icon: Briefcase },
-  { name: "Sprints", href: "/admin/pm/sprints", icon: Zap },
-  { name: "Workload", href: "/admin/pm/workload", icon: Users },
-  { name: "Timesheets", href: "/admin/pm/timesheets", icon: Clock },
-  { name: "Bugs", href: "/admin/pm/bugs", icon: Bug },
-  { name: "AI Copilot", href: "/admin/pm/ai-copilot", icon: Zap },
-];
-
-const financeItems = [
-  { name: "Dashboard", href: "/admin/finance/dashboard", icon: BarChart3 },
-  { name: "Invoices", href: "/admin/finance/invoices", icon: FileText },
-  { name: "Expenses", href: "/admin/finance/expenses", icon: Wallet },
-  { name: "Accounts Ledger", href: "/admin/finance/accounts", icon: Database },
-  { name: "Financial Reports", href: "/admin/finance/reports", icon: FileCheck },
-  { name: "AI Assistant", href: "/admin/finance/ai-helper", icon: Brain },
-];
-
-const hrmsItems = [
-  { name: "HR Dashboard", href: "/admin/hrms/dashboard", icon: BarChart3 },
-  { name: "Employees", href: "/admin/hrms/employees", icon: Users },
-  { name: "Recruitment", href: "/admin/hrms/recruitment", icon: UserPlus },
-  { name: "Attendance", href: "/admin/hrms/attendance", icon: CalendarCheck },
-  { name: "Leaves", href: "/admin/hrms/leaves", icon: CalendarOff },
-  { name: "Payroll", href: "/admin/hrms/payroll", icon: Receipt },
-  { name: "AI Recruiter", href: "/admin/hrms/ai-recruiter", icon: Sparkles },
-];
-
-const marketingItems = [
-  { name: "Marketing Hub", href: "/admin/marketing", icon: Megaphone }
-];
-
-const supportItems = [
-  { name: "Support Hub", href: "/admin/support", icon: LifeBuoy }
-];
-
-const aiItems = [
-  { name: "AI Platform", href: "/admin/ai-platform", icon: Cpu }
+const NAV_GROUPS: NavGroup[] = [
+  {
+    title: "Overview",
+    items: [
+      { name: "Dashboard", href: "/admin", icon: BarChart3 },
+      { name: "Command Center", href: "/admin/command-center", icon: Terminal },
+    ]
+  },
+  {
+    title: "CRM & Sales",
+    items: [
+      { name: "CRM Hub", href: "/admin/crm", icon: Database },
+      { name: "Companies", href: "/admin/companies", icon: Building2 },
+      { name: "Contacts", href: "/admin/contacts", icon: Users },
+      { name: "Deals Pipeline", href: "/admin/deals", icon: DollarSign },
+      { name: "Leads", href: "/admin/leads", icon: Target },
+      { name: "Lead Scraper", href: "/admin/leads/scrape", icon: Zap },
+      { name: "Apollo Leads", href: "/admin/apollo", icon: Rocket },
+      { name: "Products", href: "/admin/products", icon: FileText },
+      { name: "Quotations", href: "/admin/quotations", icon: FileText },
+      { name: "Invoices", href: "/admin/invoices", icon: ClipboardList },
+      { name: "Proposals", href: "/admin/proposals", icon: FileText },
+      { name: "Agreements", href: "/admin/agreements", icon: ShieldCheck },
+      { name: "Client Accounts", href: "/admin/clients", icon: Users },
+      { name: "Outreach", href: "/admin/outreach", icon: Inbox },
+      { name: "GrowX Email", href: "/admin/growx-email", icon: Mail },
+      { name: "Pitch Deck Gen", href: "/admin/pitch-deck", icon: Presentation },
+      { name: "Client Onboarding", href: "/admin/onboarding", icon: Rocket },
+      { name: "Workflows", href: "/admin/workflows", icon: Zap },
+    ]
+  },
+  {
+    title: "Projects & Agile",
+    items: [
+      { name: "Projects", href: "/admin/pm/projects", icon: Briefcase },
+      { name: "Sprints", href: "/admin/pm/sprints", icon: Zap },
+      { name: "Workload", href: "/admin/pm/workload", icon: Users },
+      { name: "Timesheets", href: "/admin/pm/timesheets", icon: Clock },
+      { name: "Bugs", href: "/admin/pm/bugs", icon: Bug },
+      { name: "PM Copilot", href: "/admin/pm/ai-copilot", icon: Sparkles },
+    ]
+  },
+  {
+    title: "Finance & Accounting",
+    items: [
+      { name: "Finance KPIs", href: "/admin/finance/dashboard", icon: BarChart3 },
+      { name: "Sales Invoices", href: "/admin/finance/invoices", icon: ClipboardList },
+      { name: "Expenses", href: "/admin/finance/expenses", icon: Wallet },
+      { name: "Ledger Accounts", href: "/admin/finance/accounts", icon: Database },
+      { name: "Reports", href: "/admin/finance/reports", icon: FileText },
+      { name: "AI Helper", href: "/admin/finance/ai-helper", icon: Brain },
+    ]
+  },
+  {
+    title: "Human Resources",
+    items: [
+      { name: "HR Dashboard", href: "/admin/hrms/dashboard", icon: BarChart3 },
+      { name: "Employees", href: "/admin/hrms/employees", icon: Users },
+      { name: "Recruitment", href: "/admin/hrms/recruitment", icon: UserPlus },
+      { name: "Attendance", href: "/admin/hrms/attendance", icon: CalendarCheck },
+      { name: "Leaves", href: "/admin/hrms/leaves", icon: CalendarOff },
+      { name: "Payroll", href: "/admin/hrms/payroll", icon: Receipt },
+      { name: "AI Recruiter", href: "/admin/hrms/ai-recruiter", icon: Sparkles },
+      { name: "SDR Onboarding", href: "/admin/employee-onboarding", icon: UserCheck },
+    ]
+  },
+  {
+    title: "Growth & Marketing",
+    items: [
+      { name: "Marketing Hub", href: "/admin/marketing", icon: Megaphone },
+      { name: "Carousel Creator", href: "/admin/instagram-carousel", icon: InstagramNavIcon },
+      { name: "Reels Creator", href: "/admin/reels-creator", icon: Video },
+    ]
+  },
+  {
+    title: "Customer Support",
+    items: [
+      { name: "Support Hub", href: "/admin/support", icon: LifeBuoy },
+    ]
+  },
+  {
+    title: "AI Platform",
+    items: [
+      { name: "AI Command Center", href: "/admin/ai-platform", icon: Cpu },
+    ]
+  },
+  {
+    title: "Academy & Monetization",
+    items: [
+      { name: "Courses", href: "/admin/academy/courses", icon: BookOpen },
+      { name: "Assessments", href: "/admin/academy/assessments", icon: PenTool },
+      { name: "Students", href: "/admin/academy/users", icon: GraduationCap },
+      { name: "Certificates", href: "/admin/academy/certificates", icon: Award },
+      { name: "Coupons", href: "/admin/monetization/coupons", icon: TicketPercent },
+      { name: "Orders", href: "/admin/monetization/orders", icon: ListOrdered },
+    ]
+  },
+  {
+    title: "Platform Administration",
+    items: [
+      { name: "Settings & Security", href: "/admin/settings", icon: Settings },
+      { name: "Team & RBAC", href: "/admin/team", icon: UserCog },
+      { name: "Reports & Analytics", href: "/admin/reports", icon: BarChart3 },
+    ]
+  }
 ];
 
 interface AdminNavProps {
@@ -153,8 +175,6 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
     }
   }, [mounted, theme]);
 
-  console.log("[AdminNav] Render -> mounted:", mounted, "theme:", theme);
-
   const updateThemeClass = (newTheme: string) => {
     if (typeof window === "undefined") return;
     const html = document.documentElement;
@@ -176,7 +196,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
     }
   };
 
-  // Change Password state
+  // Change Password Modal State
   const [showPwModal, setShowPwModal] = useState(false);
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
@@ -219,260 +239,143 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       return true;
     }
     return allowedPaths.some((p: string) => {
-      if (p === "/admin") {
-        return itemHref === "/admin";
-      }
-      if (p === "/admin/leads/scrape") {
-        return itemHref === "/admin/leads/scrape";
-      }
-      if (p === "/admin/leads") {
-        return itemHref.startsWith("/admin/leads") && !itemHref.startsWith("/admin/leads/scrape");
-      }
+      if (p === "/admin") return itemHref === "/admin";
+      if (p === "/admin/leads/scrape") return itemHref === "/admin/leads/scrape";
+      if (p === "/admin/leads") return itemHref.startsWith("/admin/leads") && !itemHref.startsWith("/admin/leads/scrape");
       return itemHref === p || itemHref.startsWith(p + "/");
     });
   };
 
-  const filteredNavItems = isCrmAgent 
-    ? navItems.filter(item => isPathAllowed(item.href))
-    : navItems;
+  const renderLink = (item: { name: string; href: string; icon: any }, isMobile = false) => {
+    const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
+    const Icon = item.icon;
 
-  const filteredAcademyItems = isCrmAgent
-    ? academyItems.filter(item => isPathAllowed(item.href))
-    : academyItems;
-
-  const filteredMonetizationItems = isCrmAgent
-    ? monetizationItems.filter(item => isPathAllowed(item.href))
-    : monetizationItems;
-
-  const filteredFinancialItems = isCrmAgent
-    ? financialItems.filter(item => isPathAllowed(item.href))
-    : financialItems;
-
-  const filteredTemplateItems = isCrmAgent
-    ? templateItems.filter(item => isPathAllowed(item.href))
-    : templateItems;
-
-  const filteredPmItems = pmItems;
-
-  const filteredFinanceItems = financeItems;
-
-  const filteredHrmsItems = hrmsItems;
-
-  const filteredMarketingItems = isCrmAgent
-    ? marketingItems.filter(item => isPathAllowed(item.href))
-    : marketingItems;
-
-  const filteredSupportItems = isCrmAgent
-    ? supportItems.filter(item => isPathAllowed(item.href))
-    : supportItems;
-
-  const filteredAiItems = isCrmAgent
-    ? aiItems.filter(item => isPathAllowed(item.href))
-    : aiItems;
-
-  const renderLink = (item: any) => {
-    const isWishAdmin = item.href === "/wish-admin";
-    const isActive = isWishAdmin ? pathname.includes("/wish-admin") : pathname === item.href;
     return (
       <Link
         key={item.href}
         href={item.href}
-        title={isCollapsed ? item.name : ""}
+        title={isCollapsed && !isMobile ? item.name : ""}
         onClick={() => {
-          // Close mobile drawer on navigation
           if (isMobileOpen) onMobileToggle();
         }}
         className={cn(
-          "flex items-center h-9 px-3 rounded-md transition-all duration-200 group relative border border-transparent",
+          "flex items-center h-9 px-3 rounded-lg transition-all duration-200 group relative border border-transparent",
           isActive
-            ? "bg-[var(--card)] text-[var(--text-primary)] border-[var(--border-subtle)] shadow-sm font-semibold"
-            : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--border-subtle)]/50",
-          isCollapsed && "lg:justify-center lg:px-0"
+            ? "bg-[#0075de]/10 text-[#0075de] dark:text-blue-400 font-bold border-[#0075de]/20 shadow-sm"
+            : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-1)]",
+          isCollapsed && !isMobile && "lg:justify-center lg:px-0"
         )}
       >
-        <item.icon className={cn(
+        <Icon className={cn(
           "h-4 w-4 shrink-0 transition-colors",
-          isActive ? "text-[#0075de]" : "text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]",
-          !isCollapsed && "mr-3"
+          isActive ? "text-[#0075de] dark:text-blue-400" : "text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]",
+          (!isCollapsed || isMobile) && "mr-3"
         )} />
-        {/* Always show labels on mobile drawer, conditionally on desktop */}
+
         <span className={cn(
-          "text-[13px] font-medium tracking-tight",
-          isCollapsed ? "lg:hidden" : ""
-        )}>{item.name}</span>
+          "text-[13px] font-medium tracking-tight whitespace-nowrap",
+          isCollapsed && !isMobile ? "lg:hidden" : "block"
+        )}>
+          {item.name}
+        </span>
+
         {isActive && (
           <div className={cn(
             "absolute bg-[#0075de] rounded-r-sm left-0 top-1/2 -translate-y-1/2 w-[3px] h-4",
-            isCollapsed ? "lg:h-4 lg:w-1" : ""
+            isCollapsed && !isMobile ? "lg:h-4 lg:w-1" : ""
           )} />
         )}
       </Link>
     );
   };
 
-  // Shared sidebar content (used in both desktop fixed sidebar and mobile drawer)
-  const sidebarContent = (
+  const renderNavContent = (isMobile = false) => (
     <div className="flex flex-col h-full overflow-hidden bg-[var(--surface-2)] text-[var(--text-primary)] transition-colors duration-300">
       
-      {/* Branding Header */}
+      {/* Sidebar Header */}
       <div className={cn(
-          "p-6 border-b border-[var(--border-subtle)] transition-all duration-500 bg-[var(--card)]/30 shrink-0", 
-          isCollapsed ? "lg:px-0 lg:flex lg:justify-center px-6" : "px-6"
+        "h-14 border-b border-[var(--border-subtle)] flex items-center px-4 shrink-0 bg-[var(--card)]/40 justify-between",
+        isCollapsed && !isMobile ? "lg:px-0 lg:justify-center" : ""
       )}>
-         <div className="flex items-center gap-3">
-            <div className="h-8 w-8 bg-[var(--surface-2)] rounded-md border border-[var(--border-subtle)] flex items-center justify-center shrink-0">
-               <ShieldCheck className="text-[#0075de] h-4 w-4" />
-            </div>
-            <div className={cn(
-              "flex flex-col overflow-hidden whitespace-nowrap",
-              isCollapsed ? "lg:hidden" : ""
-            )}>
-                 <span className="text-sm font-bold tracking-tight text-[var(--text-primary)] leading-none">GrowX<span className="text-[#0075de]">Labs</span></span>
-                 <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-[0.15em] mt-1">Admin Central</span>
-            </div>
-         </div>
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 bg-[#0075de]/10 border border-[#0075de]/20 rounded-lg flex items-center justify-center shrink-0">
+            <ShieldCheck className="text-[#0075de] h-4 w-4" />
+          </div>
+          <div className={cn(
+            "flex flex-col overflow-hidden whitespace-nowrap",
+            isCollapsed && !isMobile ? "lg:hidden" : ""
+          )}>
+            <span className="text-sm font-bold tracking-tight text-[var(--text-primary)] leading-none">
+              GrowX<span className="text-[#0075de]">Labs</span>
+            </span>
+            <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-[0.15em] mt-1">
+              Enterprise Suite
+            </span>
+          </div>
+        </div>
+
+        {/* Mobile close button inside header */}
+        {isMobile && (
+          <button
+            onClick={onMobileToggle}
+            className="h-8 w-8 rounded-lg bg-[var(--surface-1)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all"
+            aria-label="Close sidebar"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
-      {/* Navigation Content */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar mt-4 px-3">
-        <div className="flex flex-col space-y-1 mb-8">
-          {filteredNavItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Core Systems</p>
-              {filteredNavItems.map(renderLink)}
-            </>
-          )}
+      {/* Nav List */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar py-3 px-3 space-y-6">
+        {NAV_GROUPS.map((group) => {
+          const visibleItems = isCrmAgent
+            ? group.items.filter(item => isPathAllowed(item.href))
+            : group.items;
 
-          {filteredPmItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Project Management</p>
-              {filteredPmItems.map(renderLink)}
-            </>
-          )}
+          if (visibleItems.length === 0) return null;
 
-          {filteredFinanceItems.length > 0 && (
-            <>
+          return (
+            <div key={group.title} className="space-y-1">
               <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Enterprise Finance</p>
-              {filteredFinanceItems.map(renderLink)}
-            </>
-          )}
-
-          {filteredHrmsItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Human Resources</p>
-              {filteredHrmsItems.map(renderLink)}
-            </>
-          )}
-
-          {filteredMarketingItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Growth Automation</p>
-              {filteredMarketingItems.map(renderLink)}
-            </>
-          )}
-
-          {filteredSupportItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Customer Success</p>
-              {filteredSupportItems.map(renderLink)}
-            </>
-          )}
-
-          {filteredAiItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Intelligence Layer</p>
-              {filteredAiItems.map(renderLink)}
-            </>
-          )}
-
-          {filteredAcademyItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Academy Suite</p>
-              {filteredAcademyItems.map(renderLink)}
-            </>
-          )}
-
-          {filteredMonetizationItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Revenue</p>
-              {filteredMonetizationItems.map(renderLink)}
-            </>
-          )}
-
-          {filteredFinancialItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Financials</p>
-              {filteredFinancialItems.map(renderLink)}
-            </>
-          )}
-          
-          {filteredTemplateItems.length > 0 && (
-            <>
-              <p className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.25em] text-[#a39e98] mt-6 mb-3 px-3",
-                isCollapsed ? "lg:hidden" : ""
-              )}>Templates</p>
-              {filteredTemplateItems.map(renderLink)}
-            </>
-          )}
-        </div>
+                "text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#a39e98] px-3 mb-1.5",
+                isCollapsed && !isMobile ? "lg:hidden" : ""
+              )}>
+                {group.title}
+              </p>
+              {visibleItems.map(item => renderLink(item, isMobile))}
+            </div>
+          );
+        })}
       </div>
 
       {/* Footer Area */}
-      <div className={cn("mt-auto py-4 border-t border-[var(--border-subtle)] bg-[var(--card)]/30 space-y-2.5 shrink-0", isCollapsed ? "lg:px-2 px-4" : "px-4")}>
-        {/* Theme Switcher Segmented Control */}
+      <div className={cn(
+        "py-3 border-t border-[var(--border-subtle)] bg-[var(--card)]/40 space-y-2 shrink-0",
+        isCollapsed && !isMobile ? "lg:px-2 px-3" : "px-3"
+      )}>
+        {/* Theme Switcher */}
         <div className={cn(
-          "flex items-center bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg p-0.5 transition-all w-full h-9",
-          isCollapsed ? "justify-center mx-auto w-9" : ""
+          "flex items-center bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg p-0.5 transition-all w-full h-8",
+          isCollapsed && !isMobile ? "justify-center mx-auto w-8" : ""
         )}>
           {!mounted ? (
             <div className="w-full h-full flex items-center justify-center">
               <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--text-muted)]" />
             </div>
-          ) : isCollapsed ? (
+          ) : isCollapsed && !isMobile ? (
             <button
               onClick={() => {
                 const nextTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
-                console.log("Collapsed theme switcher clicked. Setting to:", nextTheme);
                 setTheme(nextTheme);
                 updateThemeClass(nextTheme);
               }}
-              className="flex items-center justify-center w-7 h-7 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-2)] rounded-md transition-all cursor-pointer"
+              className="flex items-center justify-center w-7 h-7 text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-md transition-all cursor-pointer"
               title={`Theme: ${theme}`}
             >
-              {theme === 'light' && <Sun size={14} />}
-              {theme === 'dark' && <Moon size={14} />}
-              {theme === 'system' && <Monitor size={14} />}
+              {theme === 'light' && <Sun size={13} />}
+              {theme === 'dark' && <Moon size={13} />}
+              {theme === 'system' && <Monitor size={13} />}
             </button>
           ) : (
             <div className="flex w-full h-full gap-0.5">
@@ -482,20 +385,19 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
                   <button
                     key={t}
                     onClick={() => {
-                      console.log("Theme switcher clicked. Setting to:", t);
                       setTheme(t);
                       updateThemeClass(t);
                     }}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-1 rounded-md text-[9px] font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer h-full px-1.5",
+                      "flex-1 flex items-center justify-center gap-1 rounded-md text-[9px] font-extrabold uppercase tracking-wider transition-all cursor-pointer h-full px-1",
                       isActive 
-                        ? "bg-[var(--surface-2)] text-[#0075de] dark:text-white border border-[var(--border-subtle)] shadow-[0_1px_2px_rgba(0,0,0,0.05)] font-black" 
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-2)]/40"
+                        ? "bg-[var(--surface-2)] text-[#0075de] dark:text-white border border-[var(--border-subtle)] font-black" 
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                     )}
                   >
-                    {t === 'light' && <Sun size={11} />}
-                    {t === 'dark' && <Moon size={11} />}
-                    {t === 'system' && <Monitor size={11} />}
+                    {t === 'light' && <Sun size={10} />}
+                    {t === 'dark' && <Moon size={10} />}
+                    {t === 'system' && <Monitor size={10} />}
                     <span>{t}</span>
                   </button>
                 );
@@ -508,28 +410,29 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         <button
           onClick={() => { setPwError(""); setPwSuccess(false); setCurrentPw(""); setNewPw(""); setConfirmPw(""); setShowPwModal(true); }}
           className={cn(
-            "w-full flex items-center h-8 px-3 rounded-md text-[#615d59] dark:text-neutral-450 hover:text-[#0075de] dark:hover:text-white hover:bg-[#0075de]/5 transition-all group text-left",
-            isCollapsed && "lg:justify-center lg:px-0"
+            "w-full flex items-center h-8 px-3 rounded-lg text-[var(--text-secondary)] hover:text-[#0075de] hover:bg-[#0075de]/5 transition-all text-left group",
+            isCollapsed && !isMobile && "lg:justify-center lg:px-0"
           )}
         >
-          <KeyRound className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-[#0075de] dark:group-hover:text-white", !isCollapsed && "mr-2")} />
+          <KeyRound className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-[#0075de]", (!isCollapsed || isMobile) && "mr-2.5")} />
           <span className={cn(
-            "text-[10px] font-bold uppercase tracking-wider",
-            isCollapsed ? "lg:hidden" : ""
+            "text-[11px] font-bold uppercase tracking-wider",
+            isCollapsed && !isMobile ? "lg:hidden" : ""
           )}>Change Password</span>
         </button>
+
         {/* Sign Out */}
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className={cn(
-            "w-full flex items-center h-8 px-3 rounded-md text-[#615d59] hover:text-red-500 hover:bg-red-500/5 transition-all group text-left",
-            isCollapsed && "lg:justify-center lg:px-0"
+            "w-full flex items-center h-8 px-3 rounded-lg text-[var(--text-secondary)] hover:text-red-500 hover:bg-red-500/5 transition-all text-left group",
+            isCollapsed && !isMobile && "lg:justify-center lg:px-0"
           )}
         >
-          <LogOut className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-red-500", !isCollapsed && "mr-2")} />
+          <LogOut className={cn("h-4 w-4 shrink-0 transition-colors group-hover:text-red-500", (!isCollapsed || isMobile) && "mr-2.5")} />
           <span className={cn(
-            "text-[10px] font-bold uppercase tracking-wider",
-            isCollapsed ? "lg:hidden" : ""
+            "text-[11px] font-bold uppercase tracking-wider",
+            isCollapsed && !isMobile ? "lg:hidden" : ""
           )}>Sign Out</span>
         </button>
       </div>
@@ -538,30 +441,35 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
 
   return (
     <>
-      {/* ═══ MOBILE TOP BAR ═══ */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-[250] h-14 bg-[var(--card)] border-b border-[var(--border-subtle)] flex items-center justify-between px-4">
+      {/* ═══ MOBILE TOP NAVBAR ═══ */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-[100] h-14 bg-[var(--card)] border-b border-[var(--border-subtle)] flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 bg-[var(--surface-2)] rounded-md border border-[var(--border-subtle)] flex items-center justify-center shrink-0">
+          <div className="h-8 w-8 bg-[#0075de]/10 border border-[#0075de]/20 rounded-lg flex items-center justify-center shrink-0">
             <ShieldCheck className="text-[#0075de] h-4 w-4" />
           </div>
-          <div className="flex flex-col overflow-hidden whitespace-nowrap">
-            <span className="text-sm font-bold tracking-tight text-[var(--text-primary)] leading-none">GrowXLabsTech</span>
-            <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-[0.15em] mt-1">Admin</span>
+          <div className="flex flex-col">
+            <span className="text-sm font-bold tracking-tight text-[var(--text-primary)] leading-none">
+              GrowX<span className="text-[#0075de]">Labs</span>
+            </span>
+            <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-[0.15em] mt-0.5">
+              Admin Suite
+            </span>
           </div>
         </div>
+
         <button
           onClick={onMobileToggle}
-          className="h-9 w-9 rounded-md bg-[var(--card)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--surface-2)] transition-all"
-          aria-label="Toggle navigation"
+          className="h-9 w-9 rounded-lg bg-[var(--surface-1)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--surface-2)] transition-all cursor-pointer"
+          aria-label="Toggle Navigation Menu"
         >
-          {isMobileOpen ? <X size={16} /> : <Menu size={16} />}
+          {isMobileOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
-      </div>
+      </header>
 
-      {/* ═══ MOBILE DRAWER OVERLAY ═══ */}
+      {/* ═══ MOBILE DRAWER BACKDROP ═══ */}
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[290]"
+          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] transition-opacity duration-300"
           onClick={onMobileToggle}
         />
       )}
@@ -569,207 +477,139 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       {/* ═══ MOBILE DRAWER SIDEBAR ═══ */}
       <aside
         className={cn(
-          "lg:hidden fixed left-0 top-0 h-screen w-72 bg-[var(--surface-2)] border-r border-[var(--border-subtle)] z-[300] transition-transform duration-300 ease-in-out overflow-visible",
+          "lg:hidden fixed left-0 top-0 h-full w-[280px] bg-[var(--surface-2)] border-r border-[var(--border-subtle)] z-[210] transition-transform duration-300 ease-in-out shadow-2xl",
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Close button inside drawer */}
-        <div className="absolute top-4 right-4 z-10">
-          <button
-            onClick={onMobileToggle}
-            className="h-8 w-8 rounded-lg bg-[var(--card)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-2)] transition-all"
-          >
-            <X size={16} />
-          </button>
-        </div>
-        {sidebarContent}
+        {renderNavContent(true)}
       </aside>
 
-      {/* ═══ DESKTOP FIXED SIDEBAR (hidden on mobile) ═══ */}
+      {/* ═══ DESKTOP FIXED SIDEBAR ═══ */}
       <aside 
         className={cn(
-          "hidden lg:flex h-screen border-r border-[var(--border-subtle)] bg-[var(--surface-2)] flex-col fixed left-0 top-0 overflow-visible transition-all duration-500 ease-in-out z-[200]",
+          "hidden lg:flex h-screen border-r border-[var(--border-subtle)] bg-[var(--surface-2)] flex-col fixed left-0 top-0 transition-all duration-300 ease-in-out z-[90]",
           isCollapsed ? "w-20" : "w-64"
         )}
       >
-        {sidebarContent}
+        {renderNavContent(false)}
 
-        {/* Toggle Control */}
+        {/* Desktop Collapse Toggle */}
         <button 
           onClick={onToggle}
-          className="absolute top-10 -right-3 h-6 w-6 rounded-full bg-white text-neutral-600 flex items-center justify-center border border-[#e6e6e6] z-[210] shadow-sm hover:bg-[#f6f5f4] hover:text-neutral-900 active:scale-95 transition-all duration-200"
+          className="absolute top-4 -right-3 h-6 w-6 rounded-full bg-[var(--card)] text-[var(--text-secondary)] flex items-center justify-center border border-[var(--border-subtle)] z-[95] shadow-md hover:text-[var(--text-primary)] active:scale-95 transition-all cursor-pointer"
+          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
-          {isCollapsed ? <PanelLeft size={12} /> : <PanelLeftClose size={12} />}
+          <ChevronRight className={cn("h-3.5 w-3.5 transition-transform duration-300", isCollapsed ? "" : "rotate-180")} />
         </button>
       </aside>
 
-      {/* ── Change Password Modal ── */}
-      <AnimatePresence>
-        {showPwModal && (
-          <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+      {/* ═══ CHANGE PASSWORD MODAL ═══ */}
+      {showPwModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[300] flex items-center justify-center p-4">
+          <div className="bg-[var(--card)] border border-[var(--border-subtle)] rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
+            <button
               onClick={() => setShowPwModal(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.97 }}
-              transition={{ type: "spring", damping: 28, stiffness: 340 }}
-              className="relative w-full max-w-md bg-[var(--card)] rounded-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.25)] border border-[var(--border-subtle)] overflow-hidden"
+              className="absolute top-4 right-4 text-neutral-400 hover:text-white transition-colors"
             >
-              {/* Header */}
-              <div className="px-6 pt-6 pb-4 border-b border-[var(--border-subtle)] bg-[var(--surface-2)]/30">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0075de] to-[#0060b8] flex items-center justify-center shadow-md shadow-[#0075de]/20">
-                    <KeyRound className="text-white" size={18} />
+              <X size={18} />
+            </button>
+
+            <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] pb-4">
+              <div className="p-2 bg-[#0075de]/10 text-[#0075de] rounded-lg">
+                <KeyRound size={20} />
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base">Change Password</h3>
+                <p className="text-xs text-neutral-400">Update your account access credentials.</p>
+              </div>
+            </div>
+
+            {pwSuccess ? (
+              <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center space-y-2">
+                <CheckCircle className="h-8 w-8 text-emerald-400 mx-auto animate-bounce" />
+                <p className="text-sm font-bold text-emerald-400">Password Updated Successfully!</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {pwError && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold rounded-xl">
+                    {pwError}
                   </div>
-                  <div>
-                    <h3 className="text-[15px] font-extrabold text-[var(--text-primary)] tracking-tight">Change Password</h3>
-                    <p className="text-[11px] text-[var(--text-secondary)] font-medium mt-0.5">
-                      {(session?.user as any)?.email || "Update your account password"}
-                    </p>
+                )}
+
+                <div>
+                  <label className="text-[10px] font-black uppercase text-neutral-400 mb-1 block">Current Password</label>
+                  <div className="relative">
+                    <input
+                      type={showCurrentPw ? "text" : "password"}
+                      value={currentPw}
+                      onChange={(e) => setCurrentPw(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full h-10 px-3 bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-xl text-sm text-white focus:outline-none pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPw(!showCurrentPw)}
+                      className="absolute right-3 top-2.5 text-neutral-400 hover:text-white"
+                    >
+                      {showCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
                 </div>
-              </div>
 
-              {/* Body */}
-              <div className="px-6 py-5 space-y-4">
-                {pwSuccess ? (
-                  <div className="flex flex-col items-center justify-center py-8 space-y-3">
-                    <div className="w-14 h-14 rounded-full bg-[#10b981]/10 flex items-center justify-center">
-                      <CheckCircle className="text-[#10b981]" size={28} />
-                    </div>
-                    <p className="text-[14px] font-bold text-[var(--text-primary)]">Password Updated!</p>
-                    <p className="text-[11px] text-[var(--text-secondary)]">Your new password is now active.</p>
+                <div>
+                  <label className="text-[10px] font-black uppercase text-neutral-400 mb-1 block">New Password</label>
+                  <div className="relative">
+                    <input
+                      type={showNewPw ? "text" : "password"}
+                      value={newPw}
+                      onChange={(e) => setNewPw(e.target.value)}
+                      placeholder="At least 6 characters"
+                      className="w-full h-10 px-3 bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-xl text-sm text-white focus:outline-none pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPw(!showNewPw)}
+                      className="absolute right-3 top-2.5 text-neutral-400 hover:text-white"
+                    >
+                      {showNewPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
-                ) : (
-                  <>
-                    {/* Current Password */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">Current Password</label>
-                      <div className="relative">
-                        <input
-                          type={showCurrentPw ? "text" : "password"}
-                          value={currentPw}
-                          onChange={(e) => setCurrentPw(e.target.value)}
-                          placeholder="Enter current password"
-                          className="w-full bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg px-3.5 py-2.5 text-[var(--text-primary)] text-[13px] font-medium focus:bg-[var(--card)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/10 focus:outline-none transition-all pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowCurrentPw(!showCurrentPw)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
-                        >
-                          {showCurrentPw ? <EyeOff size={14} /> : <Eye size={14} />}
-                        </button>
-                      </div>
-                    </div>
+                </div>
 
-                    {/* Divider */}
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-px bg-[var(--border-subtle)]" />
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">New Password</span>
-                      <div className="flex-1 h-px bg-[var(--border-subtle)]" />
-                    </div>
+                <div>
+                  <label className="text-[10px] font-black uppercase text-neutral-400 mb-1 block">Confirm New Password</label>
+                  <input
+                    type="password"
+                    value={confirmPw}
+                    onChange={(e) => setConfirmPw(e.target.value)}
+                    placeholder="Repeat new password"
+                    className="w-full h-10 px-3 bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-xl text-sm text-white focus:outline-none"
+                  />
+                </div>
 
-                    {/* New Password */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">New Password</label>
-                      <div className="relative">
-                        <input
-                          type={showNewPw ? "text" : "password"}
-                          value={newPw}
-                          onChange={(e) => setNewPw(e.target.value)}
-                          placeholder="Min 6 characters"
-                          className="w-full bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg px-3.5 py-2.5 text-[var(--text-primary)] text-[13px] font-medium focus:bg-[var(--card)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/10 focus:outline-none transition-all pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowNewPw(!showNewPw)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
-                        >
-                          {showNewPw ? <EyeOff size={14} /> : <Eye size={14} />}
-                        </button>
-                      </div>
-                      {/* Strength indicator */}
-                      {newPw.length > 0 && (
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="flex-1 flex gap-1">
-                            <div className={cn("h-1 rounded-full flex-1 transition-colors", newPw.length >= 1 ? "bg-red-400" : "bg-[var(--border-subtle)]")} />
-                            <div className={cn("h-1 rounded-full flex-1 transition-colors", newPw.length >= 6 ? "bg-yellow-400" : "bg-[var(--border-subtle)]")} />
-                            <div className={cn("h-1 rounded-full flex-1 transition-colors", newPw.length >= 10 ? "bg-[#10b981]" : "bg-[var(--border-subtle)]")} />
-                          </div>
-                          <span className={cn("text-[9px] font-bold uppercase tracking-wider",
-                            newPw.length >= 10 ? "text-[#10b981]" : newPw.length >= 6 ? "text-yellow-500" : "text-red-400"
-                          )}>
-                            {newPw.length >= 10 ? "Strong" : newPw.length >= 6 ? "Medium" : "Weak"}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Confirm Password */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">Confirm New Password</label>
-                      <input
-                        type="password"
-                        value={confirmPw}
-                        onChange={(e) => setConfirmPw(e.target.value)}
-                        placeholder="Re-enter new password"
-                        className={cn(
-                          "w-full bg-[var(--surface-1)] border rounded-lg px-3.5 py-2.5 text-[var(--text-primary)] text-[13px] font-medium focus:bg-[var(--card)] focus:outline-none transition-all",
-                          confirmPw && confirmPw === newPw
-                            ? "border-[#10b981] focus:border-[#10b981] focus:ring-2 focus:ring-[#10b981]/10"
-                            : confirmPw && confirmPw !== newPw
-                              ? "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/10"
-                              : "border-[var(--border-subtle)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/10"
-                        )}
-                      />
-                      {confirmPw && confirmPw !== newPw && (
-                        <p className="text-[10px] text-red-400 font-medium">Passwords do not match</p>
-                      )}
-                    </div>
-
-                    {/* Error */}
-                    {pwError && (
-                      <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                        <span className="text-red-400 text-[11px] font-semibold">{pwError}</span>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* Footer */}
-              {!pwSuccess && (
-                <div className="px-6 py-4 border-t border-[var(--border-subtle)] bg-[var(--surface-2)] flex items-center justify-end gap-3">
+                <div className="flex gap-3 pt-2">
                   <button
+                    type="button"
                     onClick={() => setShowPwModal(false)}
-                    className="px-4 h-9 rounded-lg border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--surface-1)] text-[11px] font-bold transition-all cursor-pointer"
+                    className="flex-1 h-10 border border-[var(--border-subtle)] rounded-xl text-xs font-bold text-neutral-400 hover:text-white transition-all"
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={handleChangePassword}
-                    disabled={pwLoading || !currentPw || newPw.length < 6 || newPw !== confirmPw}
-                    className="px-5 h-9 rounded-lg bg-gradient-to-r from-[#0075de] to-[#005bab] hover:from-[#005bab] hover:to-[#004a8f] text-white text-[11px] font-bold flex items-center gap-2 shadow-md shadow-[#0075de]/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                    disabled={pwLoading}
+                    className="flex-1 h-10 bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center"
                   >
-                    {pwLoading ? (
-                      <><Loader2 size={13} className="animate-spin" /> Updating…</>
-                    ) : (
-                      <><KeyRound size={13} /> Update Password</>
-                    )}
+                    {pwLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Update Password"}
                   </button>
                 </div>
-              )}
-            </motion.div>
+              </div>
+            )}
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </>
   );
 }
