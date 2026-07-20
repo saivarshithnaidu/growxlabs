@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, User, Mail, RefreshCw, Send, Eye, Edit3, CheckCircle2, AlertCircle, Phone, Award, ShieldCheck, FileText, Printer, AlertTriangle, Lock } from "lucide-react";
+import { Loader2, User, Mail, RefreshCw, Send, Eye, Edit3, CheckCircle2, AlertCircle, Phone, Award, ShieldCheck, FileText, Printer } from "lucide-react";
 import { Reveal } from "@/components/marketing/Reveal";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
@@ -37,7 +37,7 @@ export default function AdminEmployeeOnboardingPage() {
   const [bccEmail, setBccEmail] = useState("saivarshith8284@gmail.com");
   const [emailSubject, setEmailSubject] = useState("Formal Employment Offer: Sales Development Representative (SDR) - GrowX Labs Tech Pvt. Ltd.");
 
-  // Plain English Offer Terms (No complex legal jargon)
+  // Plain English Offer Terms
   const [roleTitle, setRoleTitle] = useState("Sales Development Representative (SDR)");
   const [incentiveValue, setIncentiveValue] = useState("₹1,000");
   const [commissionValue, setCommissionValue] = useState("10% to 15%");
@@ -65,11 +65,11 @@ export default function AdminEmployeeOnboardingPage() {
       const agents = teamList.filter((m: any) => m.role === "crm_agent" || m.role === "agent");
       
       // Add Akhilesh to team list if not present
-      if (!agents.find((a: any) => a.email === "akhilesh@growxlabs.tech" || a.email === "saivarshith8284@gmail.com")) {
+      if (!agents.find((a: any) => a.email === "akhilesh@growxlabs.tech")) {
         agents.unshift({
           id: "akhilesh-sdr-001",
-          name: "Akhilesh",
-          email: "saivarshith8284@gmail.com",
+          name: "Lakshmi Akhilesh P",
+          email: "akhilesh@growxlabs.tech",
           phone: "+91 98765 43210",
           role: "crm_agent",
           accepted_terms: false
@@ -124,7 +124,7 @@ export default function AdminEmployeeOnboardingPage() {
     const errors: string[] = [];
     if (!candidateName.trim()) errors.push("Candidate Name is required.");
     if (!candidateEmail.trim() || !candidateEmail.includes("@")) errors.push("Valid Candidate Email is required.");
-    if (senderEmail.trim().toLowerCase() !== "saivarshith8284@gmail.com") errors.push("Sender Email MUST be saivarshith8284@gmail.com.");
+    if (senderEmail.trim().toLowerCase() !== "sai@growxlabs.tech") errors.push("Sender Email MUST be sai@growxlabs.tech.");
     if (!joiningDate.trim()) errors.push("Joining Date is required.");
     if (!roleTitle.trim()) errors.push("Role Title is required.");
     return errors;
@@ -220,7 +220,7 @@ export default function AdminEmployeeOnboardingPage() {
 
         <!-- Responsibilities & KPIs -->
         <h3 style="font-size: 12px; font-weight: 800; color: #0075de; text-transform: uppercase; margin: 20px 0 8px 0;">
-          03. Responsibilities &amp; Target Targets
+          03. Responsibilities &amp; Target Goals
         </h3>
         <p style="font-size: 11px; color: #334155; margin-bottom: 10px;">
           Your main duties include cold outreach, cold emails, LinkedIn messaging, lead qualification, and scheduling discovery calls for senior executives.
@@ -341,30 +341,32 @@ export default function AdminEmployeeOnboardingPage() {
 
   if (loading) {
     return (
-      <div className="h-[80vh] flex items-center justify-center bg-white">
+      <div className="h-[80vh] flex items-center justify-center bg-[var(--card)]">
         <Loader2 className="animate-spin text-[#0075de]" size={36} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto px-4 py-4 bg-white text-[#31302e]">
+    <div className="space-y-8 max-w-6xl mx-auto px-4 py-6 text-[var(--text-primary)]">
       
       {/* HEADER SECTION */}
       <Reveal y={-10}>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-5 border-b border-[#e6e6e6]">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-5 border-b border-[var(--border-subtle)]">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-[#0f172a] text-white rounded-xl shadow-md">
+            <div className="p-3 bg-[#0075de] text-white rounded-xl shadow-md">
               <ShieldCheck size={24} />
             </div>
-            <div className="space-y-0.5">
-              <h1 className="text-2xl font-black text-[#0f172a] tracking-tight">SDR Onboarding &amp; Offer Dispatch</h1>
-              <p className="text-[#64748b] text-xs">Review offer contracts and send directly to candidates via <span className="font-bold text-[#0075de]">saivarshith8284@gmail.com</span>.</p>
+            <div className="space-y-1">
+              <h1 className="text-2xl font-extrabold text-[var(--text-primary)] tracking-tight">SDR Onboarding &amp; Offer Studio</h1>
+              <p className="text-[var(--text-secondary)] text-xs font-medium">
+                Send formal SDR offer letters from <span className="font-bold text-[#0075de]">sai@growxlabs.tech</span> (BCC: <span className="font-bold text-[var(--text-primary)]">saivarshith8284@gmail.com</span>).
+              </p>
             </div>
           </div>
           <button 
             onClick={fetchEmployees}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-[#e2e8f0] hover:bg-[#f8fafc] text-[#0f172a] text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[var(--surface-1)] border border-[var(--border-subtle)] hover:bg-[var(--surface-2)] text-[var(--text-primary)] text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-sm"
           >
             <RefreshCw size={13} /> Refresh Roster
           </button>
@@ -379,68 +381,103 @@ export default function AdminEmployeeOnboardingPage() {
             const progress = calculateProgress(state);
             return (
               <Reveal key={emp.id} delay={i * 0.05}>
-                <div className="p-6 border border-[#e2e8f0] bg-white rounded-xl hover:shadow-lg transition-all duration-200 group relative">
+                <div className="p-6 border border-[var(--border-subtle)] bg-[var(--card)] rounded-2xl hover:shadow-lg transition-all duration-200 relative space-y-6">
                   
                   {/* Basic employee header */}
-                  <div className="grid md:grid-cols-4 gap-6 items-start">
+                  <div className="grid md:grid-cols-4 gap-6 items-center">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#0075de] flex items-center gap-1.5">
-                        <User size={11} /> SDR Candidate
+                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#0075de] flex items-center gap-1.5">
+                        <User size={12} /> SDR Candidate
                       </p>
-                      <h3 className="font-extrabold text-[#0f172a] text-base tracking-tight">{emp.name}</h3>
-                      <p className="text-xs text-[#64748b] font-medium">{emp.email}</p>
-                      {emp.phone && <p className="text-[11px] text-[#94a3b8] font-medium flex items-center gap-1"><Phone size={10} /> {emp.phone}</p>}
+                      <h3 className="font-extrabold text-[var(--text-primary)] text-base tracking-tight">{emp.name}</h3>
+                      <p className="text-xs text-[var(--text-secondary)] font-medium">{emp.email}</p>
+                      {emp.phone && <p className="text-[11px] text-[var(--text-muted)] font-medium flex items-center gap-1"><Phone size={10} /> {emp.phone}</p>}
                     </div>
 
                     {/* Offer & Credentials setup checklist */}
-                    <div className="space-y-2 text-left">
-                      <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#94a3b8]">Offer Status</p>
+                    <div className="space-y-2 text-left bg-[var(--surface-1)] p-3 rounded-xl border border-[var(--border-subtle)]">
+                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">Contract &amp; Status</p>
                       
                       {/* Offer letter status */}
                       <div className="flex items-center gap-2 text-xs">
                         <button
                           onClick={() => updateOnboardingState(emp.id, { offerSent: !state.offerSent })}
-                          className={`w-4 h-4 rounded border flex items-center justify-center transition-colors cursor-pointer ${state.offerSent ? 'bg-[#0075de] border-[#0075de] text-white' : 'border-[#cbd5e1] hover:border-neutral-400'}`}
+                          className={`w-4 h-4 rounded border flex items-center justify-center transition-colors cursor-pointer ${state.offerSent ? 'bg-[#0075de] border-[#0075de] text-white' : 'border-[var(--border-subtle)] bg-[var(--card)]'}`}
                         >
-                          {state.offerSent && <span className="text-[9px]">✓</span>}
+                          {state.offerSent && <span className="text-[10px] font-bold">✓</span>}
                         </button>
-                        <span className={state.offerSent ? "text-[#0f172a] font-semibold" : "text-[#64748b]"}>Offer Letter Sent</span>
+                        <span className={state.offerSent ? "text-[var(--text-primary)] font-bold" : "text-[var(--text-secondary)]"}>Offer Sent</span>
                       </div>
 
                       {/* Credentials status */}
                       <div className="flex items-center gap-2 text-xs">
                         <button
                           onClick={() => updateOnboardingState(emp.id, { credentialsCreated: !state.credentialsCreated })}
-                          className={`w-4 h-4 rounded border flex items-center justify-center transition-colors cursor-pointer ${state.credentialsCreated ? 'bg-[#0075de] border-[#0075de] text-white' : 'border-[#cbd5e1] hover:border-neutral-400'}`}
+                          className={`w-4 h-4 rounded border flex items-center justify-center transition-colors cursor-pointer ${state.credentialsCreated ? 'bg-[#0075de] border-[#0075de] text-white' : 'border-[var(--border-subtle)] bg-[var(--card)]'}`}
                         >
-                          {state.credentialsCreated && <span className="text-[9px]">✓</span>}
+                          {state.credentialsCreated && <span className="text-[10px] font-bold">✓</span>}
                         </button>
-                        <span className={state.credentialsCreated ? "text-[#0f172a] font-semibold" : "text-[#64748b]"}>Account Created</span>
+                        <span className={state.credentialsCreated ? "text-[var(--text-primary)] font-bold" : "text-[var(--text-secondary)]"}>Account Created</span>
                       </div>
                     </div>
 
                     {/* Progress tracking */}
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#94a3b8]">Ramp Progress</span>
-                        <span className="text-xs font-black text-[#0075de]">{progress}%</span>
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">Ramp Progress</span>
+                        <span className="text-xs font-extrabold text-[#0075de]">{progress}%</span>
                       </div>
-                      <div className="w-full bg-[#f8fafc] rounded-full h-2 overflow-hidden border border-[#e2e8f0]">
+                      <div className="w-full bg-[var(--surface-2)] rounded-full h-2.5 overflow-hidden border border-[var(--border-subtle)]">
                         <div 
-                          className="bg-[#0075de] h-2 rounded-full transition-all duration-300" 
+                          className="bg-[#0075de] h-full rounded-full transition-all duration-300" 
                           style={{ width: `${progress}%` }}
                         />
                       </div>
+                      <p className="text-[10px] text-[var(--text-secondary)] font-medium">
+                        {progress === 100 ? "🎉 Onboarding Complete" : "Training & setup in progress"}
+                      </p>
                     </div>
 
-                    {/* Action buttons */}
+                    {/* Action button - Vibrant Blue with high contrast text */}
                     <div className="flex flex-col gap-2 justify-center h-full">
-                      <Button 
+                      <button 
                         onClick={() => handleOpenEmailModal(emp)}
-                        className="w-full bg-[#0f172a] hover:bg-[#1e293b] text-white text-[10px] font-extrabold uppercase tracking-wider h-10 rounded-lg flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                        className="w-full bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
                       >
-                        <Mail size={14} /> Send Offer To My Email
-                      </Button>
+                        <Mail size={14} /> Review &amp; Send Contract
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 5-Day Onboarding Checklist */}
+                  <div className="pt-4 border-t border-[var(--border-subtle)]">
+                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] mb-3">5-Day Structured Onboarding Ramp</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                      {[
+                        { key: "day1Checked" as const, label: "Day 1: Credentials" },
+                        { key: "day2Checked" as const, label: "Day 2: Prospect Lists" },
+                        { key: "day3Checked" as const, label: "Day 3: Call Scripts" },
+                        { key: "day4Checked" as const, label: "Day 4: Warm Dials" },
+                        { key: "day5Checked" as const, label: "Day 5: Full Launch" }
+                      ].map((day) => (
+                        <label 
+                          key={day.key}
+                          className={cn(
+                            "flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer transition-all select-none text-xs",
+                            state[day.key] 
+                              ? 'bg-[#0075de]/10 border-[#0075de]/30 text-[#0075de] font-bold' 
+                              : 'border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--text-primary)] hover:bg-[var(--surface-2)] font-medium'
+                          )}
+                        >
+                          <input 
+                            type="checkbox"
+                            checked={state[day.key]}
+                            onChange={() => updateOnboardingState(emp.id, { [day.key]: !state[day.key] })}
+                            className="rounded border-[var(--border-subtle)] bg-[var(--card)] text-[#0075de] focus:ring-0 w-3.5 h-3.5"
+                          />
+                          <span className="text-[11px] tracking-tight">{day.label}</span>
+                        </label>
+                      ))}
                     </div>
                   </div>
 
@@ -450,9 +487,9 @@ export default function AdminEmployeeOnboardingPage() {
           })
         ) : (
           <Reveal>
-            <div className="h-64 flex flex-col items-center justify-center border border-[#cbd5e1] border-dashed rounded-xl bg-[#f8fafc]">
-              <AlertCircle className="text-[#94a3b8] mb-3" size={32} />
-              <p className="text-[#334155] text-sm font-semibold">No candidates found</p>
+            <div className="h-64 flex flex-col items-center justify-center border border-[var(--border-subtle)] border-dashed rounded-xl bg-[var(--surface-1)]">
+              <AlertCircle className="text-[var(--text-muted)] mb-3" size={32} />
+              <p className="text-[var(--text-secondary)] text-sm font-semibold">No candidates found</p>
             </div>
           </Reveal>
         )}
@@ -490,7 +527,7 @@ export default function AdminEmployeeOnboardingPage() {
                         Offer Letter Dispatch Studio
                       </h3>
                       <p className="text-xs text-slate-300 font-medium">
-                        Sending To: <span className="font-extrabold text-[#60a5fa]">{candidateEmail}</span> &nbsp;|&nbsp; From: <span className="font-extrabold text-white">{senderEmail}</span>
+                        From: <span className="font-extrabold text-[#60a5fa]">{senderEmail}</span> &nbsp;|&nbsp; To: <span className="font-extrabold text-white">{candidateEmail}</span>
                       </p>
                     </div>
                   </div>
@@ -533,7 +570,7 @@ export default function AdminEmployeeOnboardingPage() {
                         : "text-slate-400 hover:text-white hover:bg-slate-800"
                     )}
                   >
-                    <Edit3 size={13} /> Change Recipient / Email
+                    <Edit3 size={13} /> Edit Email &amp; Candidate Info
                   </button>
                 </div>
               </div>
@@ -550,24 +587,10 @@ export default function AdminEmployeeOnboardingPage() {
                   /* EDIT RECIPIENT EMAIL TAB */
                   <div className="p-6 sm:p-8 space-y-6 max-w-2xl mx-auto bg-white rounded-2xl shadow border border-[#cbd5e1] my-6">
                     <h4 className="text-xs font-black uppercase tracking-wider text-[#0075de] flex items-center gap-1.5">
-                      <Mail size={14} /> Send Directly To Your Inbox
+                      <Mail size={14} /> Candidate Email Settings
                     </h4>
 
                     <div className="space-y-4">
-                      <div>
-                        <label className="text-[10px] font-bold uppercase text-[#64748b]">Recipient Email Address</label>
-                        <input
-                          type="email"
-                          value={candidateEmail}
-                          onChange={(e) => setCandidateEmail(e.target.value)}
-                          placeholder="saivarshith8284@gmail.com"
-                          className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3.5 py-2.5 text-xs font-bold text-[#0f172a] focus:outline-none focus:border-[#0075de]"
-                        />
-                        <p className="text-[10px] text-[#0075de] font-semibold mt-1">
-                          💡 Put your email here (<span className="font-extrabold">saivarshith8284@gmail.com</span>) to inspect the email immediately in your inbox!
-                        </p>
-                      </div>
-
                       <div>
                         <label className="text-[10px] font-bold uppercase text-[#64748b]">Candidate Name</label>
                         <input
@@ -575,6 +598,26 @@ export default function AdminEmployeeOnboardingPage() {
                           value={candidateName}
                           onChange={(e) => setCandidateName(e.target.value)}
                           className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3.5 py-2.5 text-xs font-bold text-[#0f172a] focus:outline-none focus:border-[#0075de]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-bold uppercase text-[#64748b]">Recipient Email Address</label>
+                        <input
+                          type="email"
+                          value={candidateEmail}
+                          onChange={(e) => setCandidateEmail(e.target.value)}
+                          className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3.5 py-2.5 text-xs font-bold text-[#0f172a] focus:outline-none focus:border-[#0075de]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-bold uppercase text-[#64748b]">BCC Copy Delivered To</label>
+                        <input
+                          type="email"
+                          value={bccEmail}
+                          onChange={(e) => setBccEmail(e.target.value)}
+                          className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3.5 py-2.5 text-xs font-bold text-[#0075de] focus:outline-none focus:border-[#0075de]"
                         />
                       </div>
                     </div>
