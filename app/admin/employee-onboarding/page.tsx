@@ -594,7 +594,7 @@ export default function DedicatedOfferLetterStudioPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F7F5] text-[#111827] font-sans antialiased pb-20">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#F7F7F5] text-[#111827] font-sans antialiased pb-20">
       
       {/* ── BREADCRUMB NAV ── */}
       <div className="max-w-[1400px] mx-auto px-6 pt-6 pb-2">

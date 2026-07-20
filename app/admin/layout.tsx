@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { Loader2, ShieldAlert, ArrowLeft, LogOut, ExternalLink, ChevronRight } from "lucide-react";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const currentPath = usePathname();
   const { data: session, status } = useSession();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -95,7 +96,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // Close mobile drawer on route change
   useEffect(() => {
     setIsMobileOpen(false);
-  }, []);
+  }, [currentPath]);
 
   // Prevent body scroll when mobile drawer is open
   useEffect(() => {
@@ -249,7 +250,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="notion-theme min-h-screen bg-[var(--background)] text-[var(--text-primary)] flex overflow-hidden relative print:bg-white print:text-black print:block print:overflow-visible">
+    <div className="notion-theme min-h-screen w-full max-w-full overflow-x-hidden bg-[var(--background)] text-[var(--text-primary)] flex relative print:bg-white print:text-black print:block print:overflow-visible">
       {/* PERSISTENT SIDEBAR */}
       <div className="print:hidden">
         <AdminNav
@@ -262,14 +263,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       
       {/* SCROLLABLE MAIN CONTENT AREA */}
       <main className={cn(
-        "flex-1 min-h-screen overflow-y-auto relative custom-scrollbar transition-all duration-500 ease-in-out bg-[var(--background)] z-10 print:ml-0 print:bg-transparent print:overflow-visible print:min-h-0",
+        "flex-1 min-h-screen w-full max-w-full overflow-x-hidden overflow-y-auto relative custom-scrollbar transition-all duration-500 ease-in-out bg-[var(--background)] z-10 print:ml-0 print:bg-transparent print:overflow-visible print:min-h-0",
         // Desktop margin based on sidebar state
         isCollapsed ? "lg:ml-20" : "lg:ml-64",
         // Mobile: no margin, add top padding for the mobile top bar
         "ml-0 pt-14 lg:pt-0"
       )}>
          {/* Internal Spacing — responsive padding */}
-         <div className="p-4 sm:p-6 lg:p-12 max-w-[1600px] mx-auto space-y-6 sm:space-y-8 lg:space-y-10 print:p-0 print:m-0 print:space-y-0 print:max-w-none">
+         <div className="p-4 sm:p-6 lg:p-12 max-w-[1600px] w-full mx-auto space-y-6 sm:space-y-8 lg:space-y-10 print:p-0 print:m-0 print:space-y-0 print:max-w-none">
             {children}
          </div>
       </main>
