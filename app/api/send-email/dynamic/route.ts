@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { toEmail, fromName, fromEmail, subject, body, html, leadId } = await req.json();
+    const { toEmail, fromName, fromEmail, subject, body, html, attachments, leadId } = await req.json();
 
     if (!toEmail || !fromName || !fromEmail || !subject || (!body && !html)) {
       return NextResponse.json({ error: "All required email fields must be provided" }, { status: 400 });
@@ -33,7 +33,8 @@ export async function POST(req: Request) {
       to: [toEmail],
       subject: subject,
       text: body || undefined,
-      html: html || (body ? body.replace(/\n/g, "<br />") : "")
+      html: html || (body ? body.replace(/\n/g, "<br />") : ""),
+      attachments: attachments || undefined
     });
 
     if (sendError) {
