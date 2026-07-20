@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
@@ -9,7 +9,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, Bot, Workflow, Database, Cpu, Activity, Send, MessageSquare,
   ShieldCheck, RefreshCw, Plus, CheckCircle, Search, Terminal, Lock, UserCheck,
-  Zap, Layers, ArrowUpRight, Check
+  Zap, Layers, ArrowUpRight, Check, Paperclip, FileText, ChevronDown, ChevronUp,
+  X, Table, Code, FileSpreadsheet
 } from "lucide-react";
 
 type Role =
@@ -40,6 +41,12 @@ export default function AIPlatformPage() {
   const [selectedRole, setSelectedRole] = useState<Role>("Super Admin");
   const [loading, setLoading] = useState(false);
 
+  // Plus Dropdown & Model Selection
+  const [showPlusMenu, setShowPlusMenu] = useState(false);
+  const [selectedModel, setSelectedModel] = useState("Gemini 1.5 Pro");
+  const [activeAttachment, setActiveAttachment] = useState<string | null>(null);
+  const plusMenuRef = useRef<HTMLDivElement>(null);
+
   // AI Chat State
   const [chatMessages, setChatMessages] = useState<any[]>([
     { sender: "GrowXLabs Copilot", text: "Hello! I am your Enterprise AI Orchestrator. How can I assist you with CRM, Finance, HRMS, Support, or Workflows today?", time: "10:00 AM" }
@@ -59,6 +66,17 @@ export default function AIPlatformPage() {
     fetchAgents();
     fetchWorkflows();
     fetchObservability();
+  }, []);
+
+  // Close + dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (plusMenuRef.current && !plusMenuRef.current.contains(event.target as Node)) {
+        setShowPlusMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const fetchAgents = async () => {
@@ -93,19 +111,24 @@ export default function AIPlatformPage() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!chatInput.trim()) return;
+    if (!chatInput.trim() && !activeAttachment) return;
 
-    const userMsg = { sender: "User", text: chatInput, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+    const fullPrompt = activeAttachment 
+      ? `[Context Attached: ${activeAttachment}]\n${chatInput}` 
+      : chatInput;
+
+    const userMsg = { sender: "User", text: fullPrompt, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
     setChatMessages((prev) => [...prev, userMsg]);
-    const currentPrompt = chatInput;
     setChatInput("");
+    setActiveAttachment(null);
+    setShowPlusMenu(false);
     setLoading(true);
 
     try {
       const res = await fetch("/api/ai-platform/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: currentPrompt })
+        body: JSON.stringify({ message: fullPrompt, model: selectedModel })
       });
       const data = await res.json();
       if (res.ok) {
@@ -119,6 +142,17 @@ export default function AIPlatformPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSelectPreset = (prompt: string) => {
+    setChatInput(prompt);
+    setShowPlusMenu(false);
+  };
+
+  const handleSelectAttachment = (name: string) => {
+    setActiveAttachment(name);
+    setShowPlusMenu(false);
+    toast.success(`Attached ${name} to prompt context`);
   };
 
   return (
@@ -164,9 +198,9 @@ export default function AIPlatformPage() {
               toast.success("Synchronized AI Platform Engine.");
             }}
             variant="outline"
-            className="h-10 px-4 bg-white/5 border border-white/10 text-neutral-300 hover:text-white"
+            className="h-10 px-4 bg-white/5 border border-white/10 text-neutral-300 hover:text-white whitespace-nowrap active:scale-95 cursor-pointer"
           >
-            <RefreshCw className="h-4 w-4 mr-2" /> Sync AI Platform
+            <RefreshCw className="h-4 w-4 mr-2 shrink-0" /> Sync AI Platform
           </Button>
         </div>
       </div>
@@ -223,51 +257,235 @@ export default function AIPlatformPage() {
 
               {/* ══ 1. AI COMMAND CENTER ══ */}
               {activeTab === "command_center" && (
-                <Card className="p-6 bg-white/[0.02] border-white/10 flex flex-col h-[650px]">
-                  <div className="flex justify-between items-center pb-4 border-b border-white/10 mb-4">
+                <Card className="p-6 bg-white/[0.02] border-white/10 flex flex-col h-[680px] relative overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10 mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl">
+                      <div className="p-2.5 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl shrink-0">
                         <Terminal size={20} />
                       </div>
                       <div>
                         <h3 className="font-bold text-white text-base">Enterprise AI Orchestrator</h3>
-                        <p className="text-xs text-neutral-400">Context-Aware Gemini 1.5 Engine · RAG Enabled</p>
+                        <p className="text-xs text-neutral-400 flex items-center gap-2">
+                          <span>Context-Aware Engine</span>
+                          <span className="w-1 h-1 rounded-full bg-purple-400" />
+                          <span className="text-purple-400 font-semibold">{selectedModel}</span>
+                        </p>
                       </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded-full flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> RAG Knowledge Active
+                      </span>
                     </div>
                   </div>
 
                   {/* Chat Stream */}
-                  <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+                  <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
                     {chatMessages.map((m, idx) => (
                       <div
                         key={idx}
                         className={`flex flex-col ${m.sender === "User" ? "items-end" : "items-start"}`}
                       >
+                        <div className="flex items-center gap-2 mb-1 px-1">
+                          {m.sender !== "User" && <Bot size={14} className="text-purple-400" />}
+                          <span className="text-[10px] font-black uppercase text-neutral-400">{m.sender} · {m.time}</span>
+                        </div>
                         <div
                           className={`max-w-2xl p-4 rounded-2xl text-sm leading-relaxed ${
                             m.sender === "User"
-                              ? "bg-purple-600 text-white rounded-br-none"
+                              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-none shadow-md"
                               : "bg-neutral-900 border border-white/10 text-neutral-200 rounded-bl-none font-mono"
                           }`}
                         >
-                          <p className="text-[10px] font-black uppercase text-neutral-400 mb-1">{m.sender} · {m.time}</p>
                           <p className="whitespace-pre-wrap">{m.text}</p>
                         </div>
                       </div>
                     ))}
+                    {loading && (
+                      <div className="flex items-center gap-2 p-3 bg-neutral-900/60 border border-white/10 rounded-2xl w-fit text-xs text-purple-400">
+                        <Sparkles size={14} className="animate-spin" />
+                        <span>AI Copilot is analyzing context &amp; generating response…</span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Chat Input */}
-                  <form onSubmit={handleSendMessage} className="mt-4 pt-4 border-t border-white/10 flex gap-3">
+                  {/* Prompt Preset Quick Pills */}
+                  <div className="pt-3 flex items-center gap-2 overflow-x-auto custom-scrollbar no-scrollbar">
+                    <span className="text-[10px] font-bold uppercase text-neutral-500 whitespace-nowrap shrink-0">Quick Prompts:</span>
+                    {[
+                      "📊 Forecast Q3 Sales Revenue",
+                      "🎯 Score & Qualify Top 10 SDR Leads",
+                      "📄 Audit Offer Letter Clause 05",
+                      "⚡ Trigger Multi-Agent Workflow"
+                    ].map((pill, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handleSelectPreset(pill.substring(3))}
+                        className="px-3 py-1 bg-white/5 hover:bg-purple-500/10 border border-white/10 hover:border-purple-500/30 text-neutral-300 hover:text-purple-300 text-[11px] font-medium rounded-full transition-all whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
+                      >
+                        {pill}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Active Attachment Badge */}
+                  {activeAttachment && (
+                    <div className="mt-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/30 rounded-xl flex items-center justify-between text-xs text-purple-300 w-fit">
+                      <div className="flex items-center gap-2">
+                        <Paperclip size={14} />
+                        <span className="font-semibold">{activeAttachment}</span>
+                      </div>
+                      <button
+                        onClick={() => setActiveAttachment(null)}
+                        className="ml-3 hover:text-white text-neutral-400"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Chat Input Container with Sleek + Dropdown */}
+                  <form onSubmit={handleSendMessage} className="mt-3 relative flex items-center gap-2">
+                    
+                    {/* Plus Button Container with Dropdown Popup */}
+                    <div className="relative" ref={plusMenuRef}>
+                      <button
+                        type="button"
+                        onClick={() => setShowPlusMenu(!showPlusMenu)}
+                        className={`h-11 w-11 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
+                          showPlusMenu 
+                            ? "bg-purple-600 border-purple-500 text-white shadow-lg" 
+                            : "bg-neutral-900 border-white/10 text-neutral-300 hover:text-white hover:bg-neutral-800"
+                        }`}
+                        title="Add attachments, prompts, or select model"
+                      >
+                        <Plus size={20} className={`transition-transform duration-200 ${showPlusMenu ? "rotate-45" : ""}`} />
+                      </button>
+
+                      {/* Interactive + Dropdown Menu */}
+                      <AnimatePresence>
+                        {showPlusMenu && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute left-0 bottom-14 z-50 w-72 bg-neutral-950 border border-white/15 rounded-2xl shadow-2xl p-3 space-y-3 backdrop-blur-xl"
+                          >
+                            {/* Option Group 1: Attach Context */}
+                            <div>
+                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 px-2.5 mb-1.5 flex items-center gap-1.5">
+                                <Paperclip size={12} /> Attach Context / Document
+                              </p>
+                              <div className="space-y-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleSelectAttachment("B2B_Leads_Database_Q3.csv")}
+                                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-neutral-200 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <FileSpreadsheet size={14} className="text-emerald-400 shrink-0" />
+                                  <span className="truncate">B2B Leads Database (CSV)</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSelectAttachment("SDR_Employment_Contract.pdf")}
+                                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-neutral-200 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <FileText size={14} className="text-blue-400 shrink-0" />
+                                  <span className="truncate">Offer Letter Template (PDF)</span>
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Option Group 2: Switch Model */}
+                            <div className="pt-2 border-t border-white/10">
+                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 px-2.5 mb-1.5 flex items-center gap-1.5">
+                                <Cpu size={12} /> Switch LLM Model Engine
+                              </p>
+                              <div className="space-y-1">
+                                {[
+                                  "Gemini 1.5 Pro (RAG)",
+                                  "Claude 3.5 Sonnet",
+                                  "GPT-4o Multimodal"
+                                ].map((model) => (
+                                  <button
+                                    key={model}
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedModel(model);
+                                      setShowPlusMenu(false);
+                                      toast.success(`Switched AI Engine to ${model}`);
+                                    }}
+                                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors cursor-pointer ${
+                                      selectedModel === model 
+                                        ? "bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30" 
+                                        : "hover:bg-white/10 text-neutral-300"
+                                    }`}
+                                  >
+                                    <span>{model}</span>
+                                    {selectedModel === model && <Check size={14} className="text-purple-400" />}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Option Group 3: Quick AI Workflows */}
+                            <div className="pt-2 border-t border-white/10">
+                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 px-2.5 mb-1.5 flex items-center gap-1.5">
+                                <Zap size={12} /> Trigger AI Preset Workflow
+                              </p>
+                              <div className="space-y-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleSelectPreset("Run automated BANT qualification on recent SDR leads.")}
+                                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-neutral-200 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <Bot size={14} className="text-amber-400 shrink-0" />
+                                  <span className="truncate">Qualify SDR Leads</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSelectPreset("Generate PDF Offer Letter for candidate Lakshmi (SDR).")}
+                                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-neutral-200 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
+                                  <FileText size={14} className="text-purple-400 shrink-0" />
+                                  <span className="truncate">Generate Offer Letter PDF</span>
+                                </button>
+                              </div>
+                            </div>
+
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
                     <Input
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
-                      placeholder="Ask AI Copilot to qualify leads, forecast revenue, score resumes, or analyze tickets..."
-                      className="h-11 bg-white/5 border-white/10 text-white font-medium"
+                      placeholder="Ask AI Copilot to qualify leads, forecast revenue, score resumes, or analyze contracts..."
+                      className="h-11 bg-neutral-900 border-white/10 text-white font-medium pl-4 pr-4 rounded-xl focus:border-purple-500 transition-all"
                     />
-                    <Button type="submit" disabled={loading} className="bg-purple-500 hover:bg-purple-600 text-white font-bold h-11 px-6 rounded-md">
-                      {loading ? "Thinking..." : <Send size={18} />}
+
+                    <Button 
+                      type="submit" 
+                      disabled={loading} 
+                      className="bg-purple-600 hover:bg-purple-500 text-white font-bold h-11 px-6 rounded-xl shrink-0 whitespace-nowrap active:scale-95 cursor-pointer shadow-md"
+                    >
+                      {loading ? (
+                        <span className="flex items-center gap-2">
+                          <Sparkles size={16} className="animate-spin" />
+                          <span>Thinking...</span>
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <Send size={16} />
+                          <span>Send</span>
+                        </span>
+                      )}
                     </Button>
+
                   </form>
                 </Card>
               )}
