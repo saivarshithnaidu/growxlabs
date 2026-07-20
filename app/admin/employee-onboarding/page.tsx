@@ -134,152 +134,256 @@ export default function DedicatedOfferLetterStudioPage() {
     window.print();
   };
 
-  // Generate Pure Vector PDF Attachment Contract
+  // Generate Fortune 500 Corporate Employment Agreement PDF Contract
   const generatePDFBase64 = async (): Promise<string | null> => {
     try {
       const doc = new jsPDF({ unit: "pt", format: "a4" });
       const width = doc.internal.pageSize.getWidth();
-      
-      // Document Title & Header
+      const height = doc.internal.pageSize.getHeight();
+      const candidateName = selectedCandidate?.name || "Lakshmi Akhilesh P";
+
+      // ── PAGE 1: HEADER & CONTRACT TERMS ──
+
+      // Header Brand Title
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(18);
-      doc.setTextColor(17, 24, 39); // #111827
-      doc.text("GROWX LABS TECH PVT. LTD.", 40, 50);
+      doc.setFontSize(20);
+      doc.setTextColor(15, 23, 42); // #0F172A
+      doc.text("GROWX LABS TECH PVT. LTD.", 45, 55);
 
       doc.setFontSize(9);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(37, 99, 235); // #2563eb
-      doc.text("AI-NATIVE PRODUCT STUDIO & ENTERPRISE AI SOLUTIONS", 40, 66);
+      doc.setTextColor(37, 99, 235); // #2563EB
+      doc.text("AI-NATIVE PRODUCT STUDIO & ENTERPRISE AI SOLUTIONS", 45, 70);
 
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(107, 114, 128); // #6b7280
-      doc.text("Andhra Pradesh, India • https://growxlabs.tech", 40, 80);
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139); // #64748B
+      doc.text("Andhra Pradesh, India • https://growxlabs.tech • contact@growxlabs.tech", 45, 83);
+
+      // Confidential Badge Header Top Right
+      doc.setFillColor(241, 245, 249);
+      doc.setDrawColor(203, 213, 225);
+      doc.roundedRect(width - 175, 42, 130, 22, 4, 4, "FD");
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("STRICTLY CONFIDENTIAL", width - 110, 56, { align: "center" });
 
       // Divider Line
-      doc.setDrawColor(229, 231, 235); // #e5e7eb
+      doc.setDrawColor(226, 232, 240);
       doc.setLineWidth(1);
-      doc.line(40, 92, width - 40, 92);
+      doc.line(45, 95, width - 45, 95);
 
-      // Ref Box
-      doc.setFillColor(247, 247, 245);
-      doc.rect(40, 104, width - 80, 28, "F");
+      // Ref & Metadata Table Box
+      doc.setFillColor(248, 250, 252);
+      doc.setDrawColor(226, 232, 240);
+      doc.roundedRect(45, 108, width - 90, 32, 4, 4, "FD");
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(71, 85, 105);
+      doc.text(`CONTRACT REF: ${refNumber}`, 58, 128);
+      doc.text(`ISSUANCE DATE: ${offerDate}`, 250, 128);
+      doc.text(`JOINING DATE: ${joiningDate}`, 430, 128);
+
+      // Document Title Header
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("FORMAL OFFER OF EMPLOYMENT & ENGAGEMENT CONTRACT", 45, 165);
+
+      // Candidate Engagement Address Block
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(226, 232, 240);
+      doc.roundedRect(45, 178, width - 90, 50, 4, 4, "FD");
+      
       doc.setFontSize(9);
-      doc.setTextColor(55, 65, 81);
-      doc.text(`REF: ${refNumber}      OFFER DATE: ${offerDate}      JOINING: ${joiningDate}`, 52, 121);
-
-      // Position Header
-      doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(17, 24, 39);
-      doc.text(`Offer of Engagement: ${roleTitle}`, 40, 160);
-
-      // Body Text
-      doc.setFontSize(10);
+      doc.setTextColor(15, 23, 42);
+      doc.text("Candidate Name:", 55, 196);
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(55, 65, 81);
+      doc.text(candidateName, 140, 196);
 
-      const candidateName = selectedCandidate?.name || "Akhilesh";
-      doc.text(`Dear ${candidateName},`, 40, 185);
-
-      const introText = `On behalf of GrowX Labs Tech Pvt. Ltd., we are pleased to offer you the position of ${roleTitle}. We were thoroughly impressed by your background and execution capabilities during our discussions. This document sets out the core terms of your engagement with our team.`;
-      const splitIntro = doc.splitTextToSize(introText, width - 80);
-      doc.text(splitIntro, 40, 205);
-
-      // Section 1
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.setTextColor(17, 24, 39);
-      doc.text("01. Appointment & Engagement Model", 40, 250);
+      doc.text("Offered Role:", 55, 214);
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(75, 85, 99);
-      const s1 = `You will serve as an Independent Contractor / Performance-Based. Your engagement commences on ${joiningDate} with an initial 90-day performance review window. Work is fully remote adhering to IST operational hours.`;
-      doc.text(doc.splitTextToSize(s1, width - 80), 40, 265);
+      doc.text(roleTitle, 140, 214);
 
-      // Section 2 - Compensation
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.setTextColor(17, 24, 39);
-      doc.text("02. Pay & Remuneration Structure", 40, 310);
+      doc.text("Department:", 340, 196);
+      doc.setFont("helvetica", "normal");
+      doc.text(department, 415, 196);
 
-      // Box 1
-      doc.setFillColor(247, 247, 245);
-      doc.setDrawColor(229, 231, 235);
-      doc.roundedRect(40, 322, 245, 50, 6, 6, "FD");
+      doc.setFont("helvetica", "bold");
+      doc.text("Engagement:", 340, 214);
+      doc.setFont("helvetica", "normal");
+      doc.text(employmentType, 415, 214);
+
+      // Preamble Text
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(51, 65, 85);
+      doc.text(`Dear ${candidateName},`, 45, 248);
+
+      const introMsg = `On behalf of GrowX Labs Tech Pvt. Ltd., we are pleased to extend this formal offer of engagement for the position of ${roleTitle}. This contract sets forth the terms, compensation model, performance benchmarks, and legal protections governing your engagement with the company.`;
+      doc.text(doc.splitTextToSize(introMsg, width - 90), 45, 263);
+
+      // 01. Appointment
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("1. APPOINTMENT & ENGAGEMENT SCOPE", 45, 305);
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(71, 85, 105);
+      const s1 = `You will serve as an ${employmentType}. Your engagement commences on ${joiningDate} with an initial 90-day review window. Work is fully remote adhering to Indian Standard Time (IST) business hours.`;
+      doc.text(doc.splitTextToSize(s1, width - 90), 45, 320);
+
+      // 02. Remuneration Structure (Formal Corporate Table)
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("2. REMUNERATION & COMMISSION SCHEDULE", 45, 360);
+
+      // Table Header Row
+      const tableY = 372;
+      doc.setFillColor(15, 23, 42); // Dark Navy #0F172A
+      doc.rect(45, tableY, width - 90, 22, "F");
       doc.setFontSize(8);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(107, 114, 128);
-      doc.text("REVENUE COMMISSION", 52, 338);
-      doc.setFontSize(14);
+      doc.setTextColor(255, 255, 255);
+      doc.text("COMPENSATION COMPONENT", 55, tableY + 14);
+      doc.text("RATE / STRUCTURE", 240, tableY + 14);
+      doc.text("PAYOUT SCHEDULE & ELIGIBILITY", 400, tableY + 14);
+
+      // Table Row 1
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(226, 232, 240);
+      doc.rect(45, tableY + 22, width - 90, 24, "FD");
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("Revenue Commission", 55, tableY + 37);
+      doc.setFont("helvetica", "bold");
       doc.setTextColor(37, 99, 235);
-      doc.text(commissionRate, 52, 358);
+      doc.text(commissionRate, 240, tableY + 37);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(71, 85, 105);
+      doc.text("Disbursed monthly on net contract revenue", 400, tableY + 37);
 
-      // Box 2
-      doc.roundedRect(300, 322, 245, 50, 6, 6, "FD");
-      doc.setFontSize(8);
+      // Table Row 2
+      doc.setFillColor(248, 250, 252);
+      doc.rect(45, tableY + 46, width - 90, 24, "FD");
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(107, 114, 128);
-      doc.text("DISCOVERY MEETING INCENTIVE", 312, 338);
-      doc.setFontSize(14);
+      doc.setTextColor(15, 23, 42);
+      doc.text("Discovery Call Bonus", 55, tableY + 61);
+      doc.setFont("helvetica", "bold");
       doc.setTextColor(22, 163, 74);
-      doc.text(meetingBonus, 312, 358);
-
-      // Section 3 - Target Benchmarks
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.setTextColor(17, 24, 39);
-      doc.text("03. Key Performance Benchmarks", 40, 398);
+      doc.text(`${meetingBonus} per qualified meeting`, 240, tableY + 61);
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(75, 85, 99);
-      doc.text("• Daily Outreach: 40 Dials / 50 Personalised Outbound Emails", 45, 414);
-      doc.text("• Weekly Benchmark: 5 Qualified BANT Discovery Meetings Booked", 45, 429);
-      doc.text("• Monthly Milestone: 3 Converted Partner Contracts (SQOs)", 45, 444);
+      doc.setTextColor(71, 85, 105);
+      doc.text("Disbursed bi-weekly per qualified BANT call", 400, tableY + 61);
 
-      // Section 4 - Legal Terms
-      doc.setFont("helvetica", "bold");
+      // 03. Performance Benchmarks (KPI Table)
+      const kpiY = tableY + 88;
       doc.setFontSize(10);
-      doc.setTextColor(17, 24, 39);
-      doc.text("04. Confidentiality & Non-Solicitation", 40, 472);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(75, 85, 99);
-      const legalText = `You agree to keep all company client data, lead lists, and software workflows strictly confidential. A 12-month non-solicitation restriction applies post-termination. Governed under the laws of India.`;
-      doc.text(doc.splitTextToSize(legalText, width - 80), 40, 487);
-
-      // Signatures
-      doc.line(40, 530, width - 40, 530);
-
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(9);
-      doc.setTextColor(107, 114, 128);
-      doc.text("FOR GROWX LABS TECH PVT. LTD.", 40, 550);
-      doc.setFontSize(11);
+      doc.setTextColor(15, 23, 42);
+      doc.text("3. KEY PERFORMANCE INDICATOR (KPI) BENCHMARKS", 45, kpiY);
+
+      doc.setFillColor(15, 23, 42);
+      doc.rect(45, kpiY + 12, width - 90, 22, "F");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(255, 255, 255);
+      doc.text("METRIC CATEGORY", 55, kpiY + 26);
+      doc.text("TARGET BENCHMARK", 240, kpiY + 26);
+      doc.text("EVALUATION FREQUENCY", 430, kpiY + 26);
+
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(226, 232, 240);
+      doc.rect(45, kpiY + 34, width - 90, 22, "FD");
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("Daily Prospecting", 55, kpiY + 48);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(71, 85, 105);
+      doc.text("40 Outbound Dials / 50 Personalised Emails", 240, kpiY + 48);
+      doc.text("Daily", 430, kpiY + 48);
+
+      doc.setFillColor(248, 250, 252);
+      doc.rect(45, kpiY + 56, width - 90, 22, "FD");
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("Discovery Calls", 55, kpiY + 70);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(71, 85, 105);
+      doc.text("5 Qualified BANT Discovery Meetings Booked", 240, kpiY + 70);
+      doc.text("Weekly", 430, kpiY + 70);
+
+      doc.setFillColor(255, 255, 255);
+      doc.rect(45, kpiY + 78, width - 90, 22, "FD");
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("Converted Deals", 55, kpiY + 92);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(71, 85, 105);
+      doc.text("3 Sales Qualified Opportunities (SQOs)", 240, kpiY + 92);
+      doc.text("Monthly", 430, kpiY + 92);
+
+      // 04. Legal Clauses
+      const legalY = kpiY + 120;
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("4. CONFIDENTIALITY, IP ASSIGNMENT & GOVERNING LAW", 45, legalY);
+
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(71, 85, 105);
+      const legalBody = `a) Confidentiality: You agree to hold all company lead lists, workflows, and intellectual property strictly confidential.\nb) Non-Solicitation: 12-month post-termination restriction applies to company clients and staff.\nc) Governing Law: Governed by the laws of India under exclusive jurisdiction of Visakhapatnam courts.`;
+      doc.text(doc.splitTextToSize(legalBody, width - 90), 45, legalY + 16);
+
+      // Formal Signature Block
+      const sigY = legalY + 75;
+      doc.setDrawColor(226, 232, 240);
+      doc.line(45, sigY, width - 45, sigY);
+
+      // Company Box
+      doc.setFillColor(248, 250, 252);
+      doc.roundedRect(45, sigY + 12, 240, 75, 4, 4, "FD");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(100, 116, 139);
+      doc.text("FOR GROWX LABS TECH PVT. LTD.", 55, sigY + 28);
+      doc.setFontSize(10);
       doc.setTextColor(37, 99, 235);
-      doc.text(senderName, 40, 568);
-      doc.setFontSize(9);
-      doc.setTextColor(107, 114, 128);
-      doc.text("Founder & CEO", 40, 582);
+      doc.text(senderName, 55, 50 + sigY);
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text("Founder & CEO", 55, 64 + sigY);
 
-      doc.setFontSize(9);
-      doc.setTextColor(107, 114, 128);
-      doc.text("CANDIDATE ACCEPTANCE", 320, 550);
-      doc.setFontSize(11);
-      doc.setTextColor(17, 24, 39);
-      doc.text(candidateName, 320, 568);
-      doc.setFontSize(9);
-      doc.setTextColor(107, 114, 128);
-      doc.text("Signature & Date: ___________________", 320, 582);
+      // Candidate Acceptance Box
+      doc.roundedRect(width - 285, sigY + 12, 240, 75, 4, 4, "FD");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(100, 116, 139);
+      doc.text("CANDIDATE ACCEPTANCE", width - 275, sigY + 28);
+      doc.setFontSize(10);
+      doc.setTextColor(15, 23, 42);
+      doc.text(candidateName, width - 275, 50 + sigY);
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text("Signature & Date: ___________________", width - 275, 64 + sigY);
 
       // Footer
       doc.setFontSize(8);
-      doc.setTextColor(156, 163, 175);
-      doc.text("CONFIDENTIAL • Official Offer Letter Contract • GrowX Labs HR Studio • Page 1 of 1", width / 2, 630, { align: "center" });
+      doc.setTextColor(148, 163, 184);
+      doc.text("CONFIDENTIAL • Official Employment & Engagement Agreement • GrowX Labs HR Studio • Page 1 of 1", width / 2, height - 25, { align: "center" });
 
       const dataUri = doc.output("datauristring");
       const base64 = dataUri.split(",")[1];
       return base64 || null;
     } catch (err) {
-      console.error("Vector PDF generation error:", err);
+      console.error("Corporate PDF generation error:", err);
       return null;
     }
   };
