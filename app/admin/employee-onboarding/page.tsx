@@ -1,13 +1,25 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   ChevronRight, FileText, CheckCircle2, ShieldCheck, Mail, Send, 
   Printer, Sparkles, User, Calendar, Award, Lock, ChevronDown, 
-  ArrowRight, Download, Check, AlertCircle, RefreshCw, X, Building2, Phone, Briefcase, Clock
+  ArrowRight, Download, Check, AlertCircle, RefreshCw, X, Building2, Phone, Briefcase, Clock, Paperclip
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+
+interface OnboardingState {
+  offerSent: boolean;
+  credentialsCreated: boolean;
+  day1Checked: boolean;
+  day2Checked: boolean;
+  day3Checked: boolean;
+  day4Checked: boolean;
+  day5Checked: boolean;
+}
 
 export default function DedicatedOfferLetterStudioPage() {
   // Candidate Selection & Data State
@@ -34,6 +46,9 @@ export default function DedicatedOfferLetterStudioPage() {
   const [showEmailDrawer, setShowEmailDrawer] = useState(false);
   const [emailSending, setEmailSending] = useState(false);
   const [expandedAnnexure, setExpandedAnnexure] = useState<string | null>("annexure-a");
+
+  // Ref to the document DOM node for PDF capture
+  const documentCanvasRef = useRef<HTMLDivElement>(null);
 
   // Pre-flight Hiring Checklist (6/6)
   const [checklist, setChecklist] = useState({
@@ -88,7 +103,7 @@ export default function DedicatedOfferLetterStudioPage() {
         }
       });
 
-      // Default Akhilesh
+      // Default candidate
       if (!list.find((c: any) => c.email === "akhilesh@growxlabs.tech")) {
         list.unshift({
           id: "akhilesh-sdr-001",
@@ -109,16 +124,55 @@ export default function DedicatedOfferLetterStudioPage() {
     }
   };
 
+  const candidateFirstName = selectedCandidate?.name 
+    ? selectedCandidate.name.split(' ')[0] 
+    : "Akhilesh";
+  
+  const pdfFilename = `Offer_Letter_${candidateFirstName}.pdf`;
+
   const handlePrintPDF = () => {
     window.print();
   };
 
+  // Generate Base64 PDF Attachment from Document Canvas
+  const generatePDFBase64 = async (): Promise<string | null> => {
+    if (!documentCanvasRef.current) return null;
+    try {
+      const canvas = await html2canvas(documentCanvasRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff"
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const dataUri = pdf.output("datauristring");
+      return dataUri.split(",")[1] || null;
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      return null;
+    }
+  };
+
+  // Dispatch Offer via Email with Attached PDF Contract
   const handleDispatchOffer = async () => {
     if (!selectedCandidate) return;
 
     setEmailSending(true);
 
     try {
+      // 1. Generate PDF attachment
+      const pdfBase64 = await generatePDFBase64();
+      
+      const attachments = pdfBase64 ? [{
+        filename: pdfFilename,
+        content: pdfBase64
+      }] : undefined;
+
+      // 2. Dispatch email notification with PDF attached
       const res = await fetch("/api/send-email/dynamic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -127,16 +181,17 @@ export default function DedicatedOfferLetterStudioPage() {
           fromName: `${senderName} | GrowX Labs`,
           fromEmail: senderEmail,
           bccEmail: bccEmail,
-          subject: `Formal Employment Offer: ${roleTitle} — GrowX Labs Tech Pvt. Ltd.`,
-          html: generateEmailHTML(),
-          body: `Dear ${selectedCandidate.name},\n\nPlease find attached your official offer letter for the position of ${roleTitle} at GrowX Labs Tech Pvt. Ltd.`
+          subject: `Offer of Engagement – Sales Development Representative (SDR) | GrowX Labs Tech Pvt. Ltd.`,
+          html: generateEmailCoverHTML(),
+          attachments: attachments,
+          body: `Dear ${selectedCandidate.name},\n\nPlease find attached your official Offer Letter (PDF) for the position of Sales Development Representative (SDR) at GrowX Labs Tech Pvt. Ltd.`
         })
       });
 
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(data.error || "Email delivery failed");
 
-      alert(`🎉 Offer Letter successfully dispatched to ${selectedCandidate.name} (${selectedCandidate.email})! BCC copy sent to ${bccEmail}.`);
+      alert(`🎉 Offer Letter PDF (${pdfFilename}) successfully sent to ${selectedCandidate.name} (${selectedCandidate.email})! BCC copy sent to ${bccEmail}.`);
       setShowEmailDrawer(false);
     } catch (e: any) {
       alert(`Error: ${e.message}`);
@@ -145,32 +200,27 @@ export default function DedicatedOfferLetterStudioPage() {
     }
   };
 
-  const generateEmailHTML = () => {
+  // Clean ATS Cover Email Notification (NO embedded contract)
+  const generateEmailCoverHTML = () => {
     const name = selectedCandidate?.name || "Akhilesh";
-    const email = selectedCandidate?.email || "akhilesh@growxlabs.tech";
 
     return `
-      <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 0 auto; background-color: #ffffff; color: #111827; line-height: 1.6; padding: 40px; border: 1px solid #e5e7eb; border-radius: 12px;">
-        <div style="border-bottom: 2px solid #2563eb; padding-bottom: 16px; margin-bottom: 24px;">
-          <h1 style="font-size: 20px; font-weight: 800; color: #111827; margin: 0;">GROWX LABS TECH PVT. LTD.</h1>
-          <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0; font-weight: 600; text-transform: uppercase;">AI-Native Product Studio & Enterprise AI Solutions</p>
-          <p style="font-size: 10px; color: #9ca3af; margin: 2px 0 0 0;">Andhra Pradesh, India | https://growxlabs.tech</p>
-        </div>
-        <p style="font-size: 13px; color: #111827; margin-bottom: 16px;">Dear <strong>${name}</strong> (${email}),</p>
-        <p style="font-size: 12px; color: #374151; margin-bottom: 20px;">We are pleased to extend this formal offer of engagement for the position of <strong>${roleTitle}</strong> at GrowX Labs Tech Pvt. Ltd.</p>
-        <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 11px;">
-          <p style="margin: 0 0 8px 0; font-weight: 700; color: #111827;">Key Engagement Details:</p>
-          <ul style="margin: 0; padding-left: 18px; color: #4b5563;">
-            <li><strong>Role:</strong> ${roleTitle}</li>
-            <li><strong>Joining Date:</strong> ${joiningDate}</li>
-            <li><strong>Commission:</strong> ${commissionRate} Net Contract Value</li>
-            <li><strong>Discovery Meeting Bonus:</strong> ${meetingBonus} per qualified meeting</li>
-          </ul>
-        </div>
-        <p style="font-size: 11px; color: #6b7280;">Please review your complete contract materials attached or log in to your candidate portal at https://growxlabs.tech/login.</p>
-        <div style="margin-top: 32px; border-top: 1px solid #e5e7eb; padding-top: 16px; font-size: 11px; color: #111827;">
-          <p style="margin: 0; font-weight: 800;">Sai Varshith</p>
-          <p style="margin: 2px 0 0 0; color: #6b7280;">Founder & CEO | GrowX Labs Tech Pvt. Ltd.</p>
+      <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #111827; line-height: 1.6; padding: 36px; border: 1px solid #e5e7eb; border-radius: 12px;">
+        <p style="font-size: 14px; margin-bottom: 16px; font-weight: 600; color: #111827;">Dear ${name},</p>
+        <p style="font-size: 13px; color: #374151; margin-bottom: 16px;">Congratulations.</p>
+        <p style="font-size: 13px; color: #374151; margin-bottom: 16px;">Following our recent discussions, we are pleased to extend an offer for the position of <strong>Sales Development Representative (SDR)</strong> at GrowX Labs Tech Pvt. Ltd.</p>
+        <p style="font-size: 13px; color: #374151; margin-bottom: 16px;">Please find your official Offer Letter attached as a PDF (<strong>${pdfFilename}</strong>).</p>
+        <p style="font-size: 13px; color: #374151; margin-bottom: 16px;">Kindly review the document carefully, including the engagement terms, responsibilities, confidentiality obligations, and commission structure.</p>
+        <p style="font-size: 13px; color: #374151; margin-bottom: 16px;">If you accept the offer, please sign and return the attached document or follow the acceptance instructions included within it.</p>
+        <p style="font-size: 13px; color: #374151; margin-bottom: 24px;">Should you have any questions, feel free to reply to this email.</p>
+        <p style="font-size: 13px; color: #374151; margin-bottom: 24px;">We look forward to welcoming you to GrowX Labs.</p>
+        
+        <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; font-size: 13px;">
+          <p style="margin: 0; font-weight: 800; color: #111827;">Regards,</p>
+          <p style="margin: 4px 0 0 0; font-weight: 800; color: #111827;">Sai Varshith</p>
+          <p style="margin: 2px 0 0 0; color: #6b7280; font-size: 12px;">Founder &amp; CEO</p>
+          <p style="margin: 2px 0 0 0; color: #2563eb; font-size: 12px; font-weight: 600;">GrowX Labs Tech Pvt. Ltd.</p>
+          <p style="margin: 2px 0 0 0; color: #6b7280; font-size: 12px;">https://growxlabs.tech</p>
         </div>
       </div>
     `;
@@ -208,7 +258,7 @@ export default function DedicatedOfferLetterStudioPage() {
           <div className="space-y-1">
             <h1 className="text-2xl font-bold text-[#111827] tracking-tight">Offer Letter Studio</h1>
             <p className="text-xs text-[#6B7280]">
-              Review the legal agreement and performance structure before dispatching to candidate.
+              Review contract materials and dispatch official PDF offer letter to candidate.
             </p>
           </div>
 
@@ -256,7 +306,7 @@ export default function DedicatedOfferLetterStudioPage() {
               onClick={() => setShowEmailDrawer(true)}
               className="px-5 py-2 bg-[#111827] hover:bg-black text-white text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
-              <Send size={14} /> Send Offer Contract
+              <Send size={14} /> Email PDF Offer
             </button>
           </div>
         </div>
@@ -377,9 +427,13 @@ export default function DedicatedOfferLetterStudioPage() {
 
         </div>
 
-        {/* ═══ RIGHT PANEL (70% = 8 COLS) — NOTION-STYLE DOCUMENT ═══ */}
+        {/* ═══ RIGHT PANEL (70% = 8 COLS) — NOTION-STYLE DOCUMENT CANVAS ═══ */}
         <div className="lg:col-span-8 flex justify-center">
-          <div className="w-full max-w-[840px] bg-white border border-[#E5E7EB] rounded-2xl shadow-sm p-8 sm:p-12 space-y-8">
+          <div 
+            ref={documentCanvasRef}
+            id="offer-letter-canvas"
+            className="w-full max-w-[840px] bg-white border border-[#E5E7EB] rounded-2xl shadow-sm p-8 sm:p-12 space-y-8"
+          >
             
             {/* Notion Header */}
             <div className="border-b border-[#E5E7EB] pb-6 space-y-4">
@@ -533,7 +587,7 @@ export default function DedicatedOfferLetterStudioPage() {
 
                 <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-1">
                   <p className="font-bold uppercase text-[10px] text-[#6B7280]">Candidate Acceptance</p>
-                  <p className="font-extrabold text-[#111827] pt-2">{selectedCandidate?.name || "Akhilesh"}</p>
+                  <p className="font-extrabold text-[#111827]">{selectedCandidate?.name || "Akhilesh"}</p>
                   <p className="text-[10px] text-[#6B7280]">Date: ________________</p>
                   <p className="text-[10px] text-[#6B7280]">Signature: ________________</p>
                 </div>
@@ -550,7 +604,7 @@ export default function DedicatedOfferLetterStudioPage() {
 
       </div>
 
-      {/* ── EMAIL PREVIEW DRAWER (SLIDE-OVER FROM RIGHT) ── */}
+      {/* ── EMAIL PREVIEW DRAWER (SLIDE-OVER FROM RIGHT — GMAIL ATS STYLE) ── */}
       <AnimatePresence>
         {showEmailDrawer && (
           <div className="fixed inset-0 z-50 flex justify-end">
@@ -573,7 +627,7 @@ export default function DedicatedOfferLetterStudioPage() {
               <div className="p-6 border-b border-[#E5E7EB] flex items-center justify-between bg-[#F7F7F5]">
                 <div className="flex items-center gap-2">
                   <Mail size={18} className="text-[#2563EB]" />
-                  <h3 className="font-bold text-sm text-[#111827]">Email Dispatch Preview</h3>
+                  <h3 className="font-bold text-sm text-[#111827]">Email Notification Preview (Gmail ATS Style)</h3>
                 </div>
                 <button
                   onClick={() => setShowEmailDrawer(false)}
@@ -583,22 +637,44 @@ export default function DedicatedOfferLetterStudioPage() {
                 </button>
               </div>
 
-              {/* Drawer Content */}
+              {/* Drawer Content — Clean ATS Email Notification Only */}
               <div className="flex-1 overflow-y-auto p-6 space-y-5 text-xs text-[#374151]">
                 <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-2">
                   <div><span className="text-[#6B7280] font-medium">From:</span> <strong className="text-[#111827]">{senderName} &lt;{senderEmail}&gt;</strong></div>
-                  <div><span className="text-[#6B7280] font-medium">To:</span> <strong className="text-[#2563EB]">{selectedCandidate?.email}</strong></div>
-                  <div><span className="text-[#6B7280] font-medium">BCC Copy:</span> <strong className="text-[#111827]">{bccEmail}</strong></div>
-                  <div><span className="text-[#6B7280] font-medium">Subject:</span> <strong className="text-[#111827]">Formal Employment Offer: {roleTitle} — GrowX Labs</strong></div>
+                  <div><span className="text-[#6B7280] font-medium">To:</span> <strong className="text-[#2563EB]">{selectedCandidate?.name} &lt;{selectedCandidate?.email}&gt;</strong></div>
+                  <div><span className="text-[#6B7280] font-medium">BCC:</span> <strong className="text-[#111827]">{bccEmail}</strong></div>
+                  <div><span className="text-[#6B7280] font-medium">Subject:</span> <strong className="text-[#111827]">Offer of Engagement – Sales Development Representative (SDR) | GrowX Labs Tech Pvt. Ltd.</strong></div>
                 </div>
 
-                <div className="border border-[#E5E7EB] rounded-xl p-4 bg-white shadow-xs space-y-3">
+                {/* Email Body Notification Text */}
+                <div className="border border-[#E5E7EB] rounded-xl p-5 bg-white shadow-xs space-y-4 leading-relaxed text-[#374151]">
                   <p className="font-semibold text-[#111827]">Dear {selectedCandidate?.name},</p>
-                  <p>We are pleased to extend this formal offer of engagement for the position of <strong>{roleTitle}</strong> at GrowX Labs Tech Pvt. Ltd.</p>
-                  <div className="p-3 bg-[#F7F7F5] rounded-lg border border-[#E5E7EB] text-[11px] font-mono text-[#111827]">
-                    📎 Attachment: Offer_Contract_${selectedCandidate?.name?.replace(/\s+/g, '_')}.pdf
+                  <p>Congratulations.</p>
+                  <p>Following our recent discussions, we are pleased to extend an offer for the position of <strong>Sales Development Representative (SDR)</strong> at GrowX Labs Tech Pvt. Ltd.</p>
+                  <p>Please find your official Offer Letter attached as a PDF (<strong>{pdfFilename}</strong>).</p>
+                  <p>Kindly review the document carefully, including the engagement terms, responsibilities, confidentiality obligations, and commission structure.</p>
+                  <p>If you accept the offer, please sign and return the attached document or follow the acceptance instructions included within it.</p>
+                  <p>Should you have any questions, feel free to reply to this email.</p>
+                  <p>We look forward to welcoming you to GrowX Labs.</p>
+                  
+                  <div className="pt-3 border-t border-[#E5E7EB] text-xs">
+                    <p className="font-bold text-[#111827]">Regards,</p>
+                    <p className="font-bold text-[#111827]">Sai Varshith</p>
+                    <p className="text-[#6B7280]">Founder &amp; CEO</p>
+                    <p className="text-[#2563EB] font-medium">GrowX Labs Tech Pvt. Ltd.</p>
+                    <p className="text-[#6B7280]">https://growxlabs.tech</p>
                   </div>
-                  <p>Please review your complete contract and click below to sign and start onboarding.</p>
+                </div>
+
+                {/* Attached PDF Pill */}
+                <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between text-xs text-[#2563EB]">
+                  <div className="flex items-center gap-2 font-semibold">
+                    <Paperclip size={16} />
+                    <span>{pdfFilename}</span>
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider bg-white px-2 py-0.5 rounded border border-blue-200 text-blue-700">
+                    PDF Attachment
+                  </span>
                 </div>
               </div>
 
@@ -613,9 +689,9 @@ export default function DedicatedOfferLetterStudioPage() {
                 <button
                   onClick={handleDispatchOffer}
                   disabled={emailSending}
-                  className="px-6 py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
-                  {emailSending ? "Dispatching Email…" : "Confirm & Send Offer"}
+                  {emailSending ? "Generating PDF & Dispatching…" : `Confirm & Send ${pdfFilename}`}
                 </button>
               </div>
 
