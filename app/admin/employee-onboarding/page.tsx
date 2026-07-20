@@ -675,42 +675,42 @@ export default function DedicatedOfferLetterStudioPage() {
         <div className="lg:col-span-4 space-y-5">
           
           {/* Candidate Profile Card */}
-          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-4 shadow-xs">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center text-base font-bold shadow-sm">
+          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-4 shadow-xs overflow-hidden">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center text-base font-bold shadow-sm shrink-0">
                 {selectedCandidate?.name ? selectedCandidate.name.charAt(0) : "A"}
               </div>
-              <div className="space-y-0.5">
-                <h3 className="font-bold text-sm text-[#111827]">{selectedCandidate?.name}</h3>
-                <p className="text-xs text-[#6B7280] font-medium">{roleTitle}</p>
-                <span className="inline-block text-[10px] font-bold text-[#2563EB] bg-[#2563EB]/10 px-2 py-0.5 rounded">
+              <div className="space-y-0.5 min-w-0 flex-1">
+                <h3 className="font-bold text-sm text-[#111827] truncate">{selectedCandidate?.name}</h3>
+                <p className="text-xs text-[#6B7280] font-medium truncate">{roleTitle}</p>
+                <span className="inline-block text-[10px] font-bold text-[#2563EB] bg-[#2563EB]/10 px-2 py-0.5 rounded truncate">
                   {department}
                 </span>
               </div>
             </div>
 
             <div className="pt-3 border-t border-[#E5E7EB] space-y-2.5 text-xs text-[#4B5563]">
-              <div className="flex items-center justify-between">
-                <span className="text-[#6B7280] font-medium">Email:</span>
-                <span className="font-semibold text-[#111827] text-[11px] truncate max-w-[170px]">{selectedCandidate?.email}</span>
+              <div className="flex items-center justify-between gap-2 min-w-0">
+                <span className="text-[#6B7280] font-medium shrink-0">Email:</span>
+                <span className="font-semibold text-[#111827] text-[11px] truncate text-right max-w-[180px]">{selectedCandidate?.email}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#6B7280] font-medium">Phone:</span>
-                <span className="font-semibold text-[#111827]">{selectedCandidate?.phone}</span>
+              <div className="flex items-center justify-between gap-2 min-w-0">
+                <span className="text-[#6B7280] font-medium shrink-0">Phone:</span>
+                <span className="font-semibold text-[#111827] truncate text-right">{selectedCandidate?.phone}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#6B7280] font-medium">Joining Date:</span>
-                <span className="font-semibold text-emerald-600">{joiningDate}</span>
+              <div className="flex items-center justify-between gap-2 min-w-0">
+                <span className="text-[#6B7280] font-medium shrink-0">Joining Date:</span>
+                <span className="font-semibold text-emerald-600 truncate text-right">{joiningDate}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#6B7280] font-medium">Engagement:</span>
-                <span className="font-semibold text-[#111827]">Commission Contractor</span>
+              <div className="flex items-center justify-between gap-2 min-w-0">
+                <span className="text-[#6B7280] font-medium shrink-0">Engagement:</span>
+                <span className="font-semibold text-[#111827] truncate text-right">{employmentType}</span>
               </div>
             </div>
           </div>
 
           {/* Hiring Pre-Flight Checklist */}
-          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-4 shadow-xs">
+          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-4 shadow-xs overflow-hidden">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-[#111827] uppercase tracking-wider">Hiring Checklist</h4>
               <span className="text-xs font-extrabold text-[#2563EB] bg-[#2563EB]/10 px-2.5 py-0.5 rounded-full">
@@ -737,15 +737,15 @@ export default function DedicatedOfferLetterStudioPage() {
               ].map((item) => (
                 <label 
                   key={item.key} 
-                  className="flex items-center gap-2.5 p-2 hover:bg-[#F7F7F5] rounded-lg cursor-pointer transition-colors select-none"
+                  className="flex items-center gap-2.5 p-2 hover:bg-[#F7F7F5] rounded-lg cursor-pointer transition-colors select-none min-w-0"
                 >
                   <input
                     type="checkbox"
                     checked={checklist[item.key]}
                     onChange={() => setChecklist(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
-                    className="rounded border-[#E5E7EB] text-[#2563EB] focus:ring-0 w-3.5 h-3.5"
+                    className="rounded border-[#E5E7EB] text-[#2563EB] focus:ring-0 w-3.5 h-3.5 shrink-0"
                   />
-                  <span className={checklist[item.key] ? "text-[#111827] font-semibold" : "text-[#6B7280]"}>
+                  <span className={cn("truncate", checklist[item.key] ? "text-[#111827] font-semibold" : "text-[#6B7280]")}>
                     {item.label}
                   </span>
                 </label>
@@ -754,28 +754,28 @@ export default function DedicatedOfferLetterStudioPage() {
           </div>
 
           {/* Activity Log */}
-          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-3 shadow-xs">
+          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-3 shadow-xs overflow-hidden">
             <h4 className="text-xs font-bold text-[#111827] uppercase tracking-wider">Document Activity</h4>
             <div className="space-y-3 text-xs text-[#4B5563]">
-              <div className="flex gap-2.5">
+              <div className="flex gap-2.5 min-w-0">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                <div>
-                  <p className="font-semibold text-[#111827]">Document Draft Created</p>
-                  <p className="text-[10px] text-[#6B7280]">By Sai Varshith • Today 11:45 AM</p>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-[#111827] truncate">Document Draft Created</p>
+                  <p className="text-[10px] text-[#6B7280] truncate">By Sai Varshith • Today 11:45 AM</p>
                 </div>
               </div>
-              <div className="flex gap-2.5">
+              <div className="flex gap-2.5 min-w-0">
                 <span className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0" />
-                <div>
-                  <p className="font-semibold text-[#111827]">Sender &amp; BCC Verified</p>
-                  <p className="text-[10px] text-[#6B7280]">sai@growxlabs.tech • saivarshith8284@gmail.com</p>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-[#111827] truncate">Sender &amp; BCC Verified</p>
+                  <p className="text-[10px] text-[#6B7280] truncate">sai@growxlabs.tech • saivarshith8284@gmail.com</p>
                 </div>
               </div>
-              <div className="flex gap-2.5">
+              <div className="flex gap-2.5 min-w-0">
                 <span className="w-2 h-2 rounded-full bg-purple-500 mt-1.5 shrink-0" />
-                <div>
-                  <p className="font-semibold text-[#111827]">Legal Clauses Validated</p>
-                  <p className="text-[10px] text-[#6B7280]">14 Sections + 3 Annexures ready</p>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-[#111827] truncate">Legal Clauses Validated</p>
+                  <p className="text-[10px] text-[#6B7280] truncate">14 Sections + 3 Annexures ready</p>
                 </div>
               </div>
             </div>
@@ -784,36 +784,36 @@ export default function DedicatedOfferLetterStudioPage() {
         </div>
 
         {/* ═══ RIGHT PANEL (70% = 8 COLS) — NOTION-STYLE DOCUMENT CANVAS ═══ */}
-        <div className="lg:col-span-8 flex justify-center">
+        <div className="lg:col-span-8 flex justify-center w-full max-w-full overflow-hidden">
           <div 
             ref={documentCanvasRef}
             id="offer-letter-canvas"
-            className="w-full max-w-[840px] bg-white border border-[#E5E7EB] rounded-2xl shadow-sm p-8 sm:p-12 space-y-8"
+            className="w-full max-w-[840px] bg-white border border-[#E5E7EB] rounded-2xl shadow-sm p-6 sm:p-12 space-y-8 overflow-hidden"
           >
             
             {/* Notion Header */}
             <div className="border-b border-[#E5E7EB] pb-6 space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                <div className="space-y-1">
                   <h2 className="text-xl font-black text-[#111827] tracking-tight">GROWX LABS TECH PVT. LTD.</h2>
-                  <p className="text-xs font-semibold text-[#2563EB] uppercase tracking-wider mt-0.5">
+                  <p className="text-xs font-semibold text-[#2563EB] uppercase tracking-wider">
                     AI-Native Product Studio &amp; Enterprise AI Solutions
                   </p>
-                  <p className="text-[11px] text-[#6B7280] mt-1">
+                  <p className="text-[11px] text-[#6B7280]">
                     Andhra Pradesh, India • https://growxlabs.tech
                   </p>
                 </div>
-                <div className="text-right">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-slate-100 text-[#0F172A] border border-slate-200 rounded-md">
+                <div className="sm:text-right shrink-0">
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-slate-100 text-[#0F172A] border border-slate-200 rounded-md">
                     CONFIDENTIAL CONTRACT
                   </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-3 text-xs text-[#374151]">
-                <div><span className="text-[#6B7280]">REF:</span> <strong className="font-mono text-[#111827]">{refNumber}</strong></div>
-                <div><span className="text-[#6B7280]">OFFER DATE:</span> <strong className="text-[#111827]">{offerDate}</strong></div>
-                <div className="text-right"><span className="text-[#6B7280]">JOINING:</span> <strong className="text-[#2563EB]">{joiningDate}</strong></div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-3 text-xs text-[#374151]">
+                <div className="truncate"><span className="text-[#6B7280]">REF:</span> <strong className="font-mono text-[#111827]">{refNumber}</strong></div>
+                <div className="truncate"><span className="text-[#6B7280]">OFFER DATE:</span> <strong className="text-[#111827]">{offerDate}</strong></div>
+                <div className="truncate sm:text-right"><span className="text-[#6B7280]">JOINING:</span> <strong className="text-[#2563EB]">{joiningDate}</strong></div>
               </div>
             </div>
 
@@ -843,13 +843,13 @@ export default function DedicatedOfferLetterStudioPage() {
               <h4 className="text-xs font-bold text-[#111827] uppercase tracking-wider">02. Pay &amp; Remuneration Structure</h4>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-1">
+                <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-1 overflow-hidden">
                   <p className="text-[10px] font-bold uppercase text-[#6B7280]">Revenue Commission</p>
                   <p className="text-base font-extrabold text-[#2563EB]">{commissionRate}</p>
                   <p className="text-[11px] text-[#4B5563]">Paid on net contract revenue from converted partner deals.</p>
                 </div>
 
-                <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-1">
+                <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-1 overflow-hidden">
                   <p className="text-[10px] font-bold uppercase text-[#6B7280]">Discovery Meeting Incentive</p>
                   <p className="text-base font-extrabold text-emerald-600">{meetingBonus}</p>
                   <p className="text-[11px] text-[#4B5563]">Earned per qualified BANT discovery meeting conducted.</p>
@@ -864,16 +864,16 @@ export default function DedicatedOfferLetterStudioPage() {
                 Your primary focus is outbound prospecting, qualified outreach, cold email sequencing, and scheduling discovery calls.
               </p>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1 overflow-hidden">
                   <p className="text-[10px] font-bold uppercase text-[#6B7280]">Daily Activity</p>
                   <p className="text-xs font-bold text-[#111827]">40 Dials / 50 Emails</p>
                 </div>
-                <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1">
+                <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1 overflow-hidden">
                   <p className="text-[10px] font-bold uppercase text-[#6B7280]">Weekly Target</p>
                   <p className="text-xs font-extrabold text-[#2563EB]">5 Meetings Booked</p>
                 </div>
-                <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1">
+                <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1 overflow-hidden">
                   <p className="text-[10px] font-bold uppercase text-[#6B7280]">Monthly Goal</p>
                   <p className="text-xs font-extrabold text-emerald-600">3 Qualified Deals</p>
                 </div>
@@ -933,19 +933,19 @@ export default function DedicatedOfferLetterStudioPage() {
             <div className="pt-6 border-t-2 border-[#111827]">
               <h4 className="text-xs font-bold text-[#111827] uppercase tracking-wider mb-4">14. Signatures &amp; Acceptance</h4>
 
-              <div className="grid grid-cols-2 gap-6 text-xs text-[#111827]">
-                <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-[#111827]">
+                <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-1 overflow-hidden">
                   <p className="font-bold uppercase text-[10px] text-[#6B7280]">For GrowX Labs Tech Pvt. Ltd.</p>
-                  <p className="font-extrabold text-[#2563EB] pt-2">{senderName}</p>
-                  <p className="text-[10px] text-[#6B7280]">Founder &amp; CEO</p>
-                  <p className="text-[10px] text-[#6B7280]">Email: {senderEmail}</p>
+                  <p className="font-extrabold text-[#2563EB] pt-2 truncate">{senderName}</p>
+                  <p className="text-[10px] text-[#6B7280] truncate">Founder &amp; CEO</p>
+                  <p className="text-[10px] text-[#6B7280] truncate">Email: {senderEmail}</p>
                 </div>
 
-                <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-1">
+                <div className="bg-[#F7F7F5] border border-[#E5E7EB] rounded-xl p-4 space-y-1 overflow-hidden">
                   <p className="font-bold uppercase text-[10px] text-[#6B7280]">Candidate Acceptance</p>
-                  <p className="font-extrabold text-[#111827]">{selectedCandidate?.name || "Akhilesh"}</p>
-                  <p className="text-[10px] text-[#6B7280]">Date: ________________</p>
-                  <p className="text-[10px] text-[#6B7280]">Signature: ________________</p>
+                  <p className="font-extrabold text-[#111827] truncate">{selectedCandidate?.name || "Akhilesh"}</p>
+                  <p className="text-[10px] text-[#6B7280] truncate">Date: ________________</p>
+                  <p className="text-[10px] text-[#6B7280] truncate">Signature: ________________</p>
                 </div>
               </div>
             </div>
