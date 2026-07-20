@@ -254,31 +254,30 @@ export default function AIPlatformPage() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.25 }}
               className="space-y-8"
             >
 
               {/* ══ 1. AI COMMAND CENTER ══ */}
               {activeTab === "command_center" && (
-                <Card className="p-6 bg-white/[0.02] border-white/10 flex flex-col h-[680px] relative overflow-hidden">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10 mb-4">
+                <Card className="p-6 bg-white border border-[#E5E7EB] shadow-xs flex flex-col h-[700px] relative overflow-hidden rounded-2xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E5E7EB] mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl shrink-0">
+                      <div className="p-2.5 bg-purple-50 border border-purple-200 text-purple-700 rounded-xl shrink-0">
                         <Terminal size={20} />
                       </div>
                       <div>
-                        <h3 className="font-bold text-white text-base">Enterprise AI Orchestrator</h3>
-                        <p className="text-xs text-neutral-400 flex items-center gap-2">
+                        <h3 className="font-bold text-[#111827] text-base">Enterprise AI Orchestrator</h3>
+                        <p className="text-xs text-[#6B7280] flex items-center gap-2">
                           <span>Context-Aware Engine</span>
-                          <span className="w-1 h-1 rounded-full bg-purple-400" />
-                          <span className="text-purple-400 font-semibold">{selectedModel}</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />
+                          <span className="text-purple-700 font-bold">{selectedModel}</span>
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded-full flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> RAG Knowledge Active
+                      <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-extrabold rounded-full flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> RAG Knowledge Active
                       </span>
                     </div>
                   </div>
@@ -291,14 +290,14 @@ export default function AIPlatformPage() {
                         className={`flex flex-col ${m.sender === "User" ? "items-end" : "items-start"}`}
                       >
                         <div className="flex items-center gap-2 mb-1 px-1">
-                          {m.sender !== "User" && <Bot size={14} className="text-purple-400" />}
-                          <span className="text-[10px] font-black uppercase text-neutral-400">{m.sender} · {m.time}</span>
+                          {m.sender !== "User" && <Bot size={14} className="text-purple-600" />}
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">{m.sender} · {m.time}</span>
                         </div>
                         <div
-                          className={`max-w-2xl p-4 rounded-2xl text-sm leading-relaxed ${
+                          className={`max-w-2xl p-4 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
                             m.sender === "User"
-                              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-none shadow-md"
-                              : "bg-neutral-900 border border-white/10 text-neutral-200 rounded-bl-none font-mono"
+                              ? "bg-[#2563EB] text-white rounded-br-none shadow-sm"
+                              : "bg-[#F9FAFB] border border-[#E5E7EB] text-[#111827] rounded-bl-none shadow-xs"
                           }`}
                         >
                           <p className="whitespace-pre-wrap">{m.text}</p>
@@ -306,16 +305,16 @@ export default function AIPlatformPage() {
                       </div>
                     ))}
                     {loading && (
-                      <div className="flex items-center gap-2 p-3 bg-neutral-900/60 border border-white/10 rounded-2xl w-fit text-xs text-purple-400">
-                        <Sparkles size={14} className="animate-spin" />
+                      <div className="flex items-center gap-2 p-3 bg-purple-50 border border-purple-200 rounded-2xl w-fit text-xs text-purple-700 font-semibold">
+                        <Sparkles size={14} className="animate-spin text-purple-600" />
                         <span>AI Copilot is analyzing context &amp; generating response…</span>
                       </div>
                     )}
                   </div>
 
                   {/* Prompt Preset Quick Pills */}
-                  <div className="pt-3 flex items-center gap-2 overflow-x-auto custom-scrollbar no-scrollbar">
-                    <span className="text-[10px] font-bold uppercase text-neutral-500 whitespace-nowrap shrink-0">Quick Prompts:</span>
+                  <div className="pt-3 pb-1 border-t border-[#E5E7EB] flex items-center gap-2 overflow-x-auto custom-scrollbar no-scrollbar">
+                    <span className="text-[10px] font-bold uppercase text-[#6B7280] whitespace-nowrap shrink-0">Quick Prompts:</span>
                     {[
                       "📊 Forecast Q3 Sales Revenue",
                       "🎯 Score & Qualify Top 10 SDR Leads",
@@ -326,7 +325,7 @@ export default function AIPlatformPage() {
                         key={i}
                         type="button"
                         onClick={() => handleSelectPreset(pill.substring(3))}
-                        className="px-3 py-1 bg-white/5 hover:bg-purple-500/10 border border-white/10 hover:border-purple-500/30 text-neutral-300 hover:text-purple-300 text-[11px] font-medium rounded-full transition-all whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
+                        className="px-3 py-1 bg-[#F3F4F6] hover:bg-purple-50 border border-[#E5E7EB] hover:border-purple-300 text-[#374151] hover:text-purple-700 text-[11px] font-semibold rounded-full transition-all whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
                       >
                         {pill}
                       </button>
@@ -335,14 +334,14 @@ export default function AIPlatformPage() {
 
                   {/* Active Attachment Badge */}
                   {activeAttachment && (
-                    <div className="mt-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/30 rounded-xl flex items-center justify-between text-xs text-purple-300 w-fit">
-                      <div className="flex items-center gap-2">
+                    <div className="mt-2 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between text-xs text-blue-700 w-fit">
+                      <div className="flex items-center gap-2 font-semibold">
                         <Paperclip size={14} />
-                        <span className="font-semibold">{activeAttachment}</span>
+                        <span>{activeAttachment}</span>
                       </div>
                       <button
                         onClick={() => setActiveAttachment(null)}
-                        className="ml-3 hover:text-white text-neutral-400"
+                        className="ml-3 hover:text-blue-900 text-blue-500 cursor-pointer"
                       >
                         <X size={14} />
                       </button>
@@ -352,60 +351,60 @@ export default function AIPlatformPage() {
                   {/* Chat Input Container with Sleek + Dropdown */}
                   <form onSubmit={handleSendMessage} className="mt-3 relative flex items-center gap-2">
                     
-                    {/* Plus Button Container with Dropdown Popup */}
+                    {/* Plus Button Container with Non-Jumping Dropdown Popup */}
                     <div className="relative" ref={plusMenuRef}>
                       <button
                         type="button"
                         onClick={() => setShowPlusMenu(!showPlusMenu)}
                         className={`h-11 w-11 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
                           showPlusMenu 
-                            ? "bg-purple-600 border-purple-500 text-white shadow-lg" 
-                            : "bg-neutral-900 border-white/10 text-neutral-300 hover:text-white hover:bg-neutral-800"
+                            ? "bg-[#2563EB] border-[#2563EB] text-white shadow-md" 
+                            : "bg-[#F3F4F6] border-[#E5E7EB] text-[#374151] hover:text-[#111827] hover:bg-[#E5E7EB]"
                         }`}
                         title="Add attachments, prompts, or select model"
                       >
                         <Plus size={20} className={`transition-transform duration-200 ${showPlusMenu ? "rotate-45" : ""}`} />
                       </button>
 
-                      {/* Interactive + Dropdown Menu */}
+                      {/* Interactive + Dropdown Menu anchored top-floating */}
                       <AnimatePresence>
                         {showPlusMenu && (
                           <motion.div
-                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            initial={{ opacity: 0, y: 8, scale: 0.96 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            exit={{ opacity: 0, y: 8, scale: 0.96 }}
                             transition={{ duration: 0.15 }}
-                            className="absolute left-0 bottom-14 z-50 w-72 bg-neutral-950 border border-white/15 rounded-2xl shadow-2xl p-3 space-y-3 backdrop-blur-xl"
+                            className="absolute left-0 bottom-full mb-3 z-50 w-80 bg-white border border-[#E5E7EB] rounded-2xl shadow-2xl p-3.5 space-y-3.5 text-[#111827] drop-shadow-xl"
                           >
                             {/* Option Group 1: Attach Context */}
                             <div>
-                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 px-2.5 mb-1.5 flex items-center gap-1.5">
-                                <Paperclip size={12} /> Attach Context / Document
+                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 px-2.5 mb-1.5 flex items-center gap-1.5">
+                                <Paperclip size={12} className="text-purple-600" /> Attach Context / Document
                               </p>
                               <div className="space-y-1">
                                 <button
                                   type="button"
                                   onClick={() => handleSelectAttachment("B2B_Leads_Database_Q3.csv")}
-                                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-neutral-200 flex items-center gap-2 transition-colors cursor-pointer"
+                                  className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-[#F3F4F6] text-xs font-semibold text-[#111827] flex items-center gap-2.5 transition-colors cursor-pointer"
                                 >
-                                  <FileSpreadsheet size={14} className="text-emerald-400 shrink-0" />
+                                  <FileSpreadsheet size={16} className="text-emerald-600 shrink-0" />
                                   <span className="truncate">B2B Leads Database (CSV)</span>
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => handleSelectAttachment("SDR_Employment_Contract.pdf")}
-                                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-neutral-200 flex items-center gap-2 transition-colors cursor-pointer"
+                                  className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-[#F3F4F6] text-xs font-semibold text-[#111827] flex items-center gap-2.5 transition-colors cursor-pointer"
                                 >
-                                  <FileText size={14} className="text-blue-400 shrink-0" />
+                                  <FileText size={16} className="text-blue-600 shrink-0" />
                                   <span className="truncate">Offer Letter Template (PDF)</span>
                                 </button>
                               </div>
                             </div>
 
                             {/* Option Group 2: Switch Model */}
-                            <div className="pt-2 border-t border-white/10">
-                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 px-2.5 mb-1.5 flex items-center gap-1.5">
-                                <Cpu size={12} /> Switch LLM Model Engine
+                            <div className="pt-2.5 border-t border-[#E5E7EB]">
+                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 px-2.5 mb-1.5 flex items-center gap-1.5">
+                                <Cpu size={12} className="text-purple-600" /> Switch LLM Model Engine
                               </p>
                               <div className="space-y-1">
                                 {[
@@ -421,39 +420,39 @@ export default function AIPlatformPage() {
                                       setShowPlusMenu(false);
                                       toast.success(`Switched AI Engine to ${model}`);
                                     }}
-                                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors cursor-pointer ${
+                                    className={`w-full text-left px-2.5 py-2 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer ${
                                       selectedModel === model 
-                                        ? "bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30" 
-                                        : "hover:bg-white/10 text-neutral-300"
+                                        ? "bg-purple-50 text-purple-700 font-bold border border-purple-200" 
+                                        : "hover:bg-[#F3F4F6] text-[#374151] font-medium"
                                     }`}
                                   >
                                     <span>{model}</span>
-                                    {selectedModel === model && <Check size={14} className="text-purple-400" />}
+                                    {selectedModel === model && <Check size={14} className="text-purple-600" />}
                                   </button>
                                 ))}
                               </div>
                             </div>
 
                             {/* Option Group 3: Quick AI Workflows */}
-                            <div className="pt-2 border-t border-white/10">
-                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 px-2.5 mb-1.5 flex items-center gap-1.5">
-                                <Zap size={12} /> Trigger AI Preset Workflow
+                            <div className="pt-2.5 border-t border-[#E5E7EB]">
+                              <p className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 px-2.5 mb-1.5 flex items-center gap-1.5">
+                                <Zap size={12} className="text-purple-600" /> Trigger AI Preset Workflow
                               </p>
                               <div className="space-y-1">
                                 <button
                                   type="button"
                                   onClick={() => handleSelectPreset("Run automated BANT qualification on recent SDR leads.")}
-                                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-neutral-200 flex items-center gap-2 transition-colors cursor-pointer"
+                                  className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-[#F3F4F6] text-xs font-semibold text-[#111827] flex items-center gap-2.5 transition-colors cursor-pointer"
                                 >
-                                  <Bot size={14} className="text-amber-400 shrink-0" />
+                                  <Bot size={16} className="text-amber-600 shrink-0" />
                                   <span className="truncate">Qualify SDR Leads</span>
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => handleSelectPreset("Generate PDF Offer Letter for candidate Lakshmi (SDR).")}
-                                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-neutral-200 flex items-center gap-2 transition-colors cursor-pointer"
+                                  className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-[#F3F4F6] text-xs font-semibold text-[#111827] flex items-center gap-2.5 transition-colors cursor-pointer"
                                 >
-                                  <FileText size={14} className="text-purple-400 shrink-0" />
+                                  <FileText size={16} className="text-purple-600 shrink-0" />
                                   <span className="truncate">Generate Offer Letter PDF</span>
                                 </button>
                               </div>
@@ -468,13 +467,13 @@ export default function AIPlatformPage() {
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
                       placeholder="Ask AI Copilot to qualify leads, forecast revenue, score resumes, or analyze contracts..."
-                      className="h-11 bg-neutral-900 border-white/10 text-white font-medium pl-4 pr-4 rounded-xl focus:border-purple-500 transition-all"
+                      className="h-11 bg-white border-[#E5E7EB] text-[#111827] placeholder:text-[#9CA3AF] font-medium pl-4 pr-4 rounded-xl focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-all"
                     />
 
                     <Button 
                       type="submit" 
                       disabled={loading} 
-                      className="bg-purple-600 hover:bg-purple-500 text-white font-bold h-11 px-6 rounded-xl shrink-0 whitespace-nowrap active:scale-95 cursor-pointer shadow-md"
+                      className="bg-[#2563EB] hover:bg-blue-700 text-white font-bold h-11 px-6 rounded-xl shrink-0 whitespace-nowrap active:scale-95 cursor-pointer shadow-md"
                     >
                       {loading ? (
                         <span className="flex items-center gap-2">
