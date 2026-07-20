@@ -330,11 +330,11 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   };
 
   const renderNavContent = (isMobile = false) => (
-    <div className="flex flex-col h-full overflow-hidden bg-[var(--surface-2)] text-[var(--text-primary)] transition-colors duration-300">
+    <div className="flex flex-col h-full overflow-hidden bg-white dark:bg-[var(--surface-2)] text-[var(--text-primary)] transition-colors duration-300">
       
       {/* Sidebar Header */}
       <div className={cn(
-        "h-14 border-b border-[var(--border-subtle)] flex items-center px-4 shrink-0 bg-[var(--card)]/40 justify-between",
+        "h-14 flex items-center px-4 shrink-0 bg-transparent justify-between border-b border-slate-100 dark:border-[var(--border-subtle)]",
         isCollapsed && !isMobile ? "lg:px-0 lg:justify-center" : ""
       )}>
         <div className="flex items-center gap-2.5">
@@ -348,7 +348,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
             <span className="text-sm font-bold tracking-tight text-[var(--text-primary)] leading-none">
               GrowX<span className="text-[#0075de]">Labs</span>
             </span>
-            <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-[0.15em] mt-0.5">
+            <span className="text-[8px] font-bold text-[#6B7280] uppercase tracking-[0.15em] mt-0.5">
               Enterprise Operating System
             </span>
           </div>
@@ -358,7 +358,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         {isMobile && (
           <button
             onClick={onMobileToggle}
-            className="h-8 w-8 rounded-lg bg-[var(--surface-1)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer"
+            className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-[var(--surface-1)] border border-slate-200 dark:border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer"
             aria-label="Close sidebar"
           >
             <X size={16} />
@@ -384,12 +384,12 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
               <button
                 onClick={() => toggleSection(group.id)}
                 className={cn(
-                  "w-full flex items-center justify-between h-7 px-2.5 rounded-md text-[10px] font-extrabold uppercase tracking-[0.15em] text-[#a39e98] hover:text-[var(--text-primary)] hover:bg-[var(--surface-1)]/60 transition-all cursor-pointer select-none",
+                  "w-full flex items-center justify-between h-7 px-2.5 rounded-md text-[10px] font-extrabold uppercase tracking-[0.15em] text-[#94A3B8] hover:text-[#0F172A] hover:bg-slate-50 transition-all cursor-pointer select-none",
                   isCollapsed && !isMobile ? "lg:hidden" : ""
                 )}
               >
                 <div className="flex items-center gap-2">
-                  <GroupIcon size={12} className="text-[#a39e98]" />
+                  <GroupIcon size={12} className="text-[#94A3B8]" />
                   <span>{group.title}</span>
                 </div>
                 <ChevronDown size={12} className={cn("transition-transform duration-200", isOpen ? "" : "-rotate-90")} />
@@ -408,12 +408,12 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
 
       {/* Footer Area */}
       <div className={cn(
-        "py-3 border-t border-[var(--border-subtle)] bg-[var(--card)]/40 space-y-2 shrink-0",
+        "py-3 border-t border-slate-100 dark:border-[var(--border-subtle)] bg-white dark:bg-[var(--surface-2)] space-y-2 shrink-0",
         isCollapsed && !isMobile ? "lg:px-2 px-3" : "px-3"
       )}>
         {/* Theme Switcher */}
         <div className={cn(
-          "flex items-center bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg p-0.5 transition-all w-full h-8",
+          "flex items-center bg-slate-100 dark:bg-[var(--surface-1)] border border-slate-200 dark:border-[var(--border-subtle)] rounded-lg p-0.5 transition-all w-full h-8",
           isCollapsed && !isMobile ? "justify-center mx-auto w-8" : ""
         )}>
           {!mounted ? (
@@ -446,10 +446,10 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
                       updateThemeClass(t);
                     }}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-1 rounded-md text-[9px] font-extrabold uppercase tracking-wider transition-all cursor-pointer h-full px-1",
+                      "flex-1 flex items-center justify-center gap-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer h-full px-1",
                       isActive 
-                        ? "bg-[var(--surface-2)] text-[#0075de] dark:text-white border border-[var(--border-subtle)] font-black" 
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                        ? "bg-white text-[#0075de] dark:bg-[var(--surface-2)] dark:text-white border border-slate-200 dark:border-[var(--border-subtle)] shadow-xs font-black" 
+                        : "text-[#64748B] hover:text-[#0F172A]"
                     )}
                   >
                     {t === 'light' && <Sun size={10} />}
@@ -467,7 +467,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         <button
           onClick={() => { setPwError(""); setPwSuccess(false); setCurrentPw(""); setNewPw(""); setConfirmPw(""); setShowPwModal(true); }}
           className={cn(
-            "w-full flex items-center h-8 px-2.5 rounded-lg text-[var(--text-secondary)] hover:text-[#0075de] hover:bg-[#0075de]/5 transition-all text-left group text-xs",
+            "w-full flex items-center h-8 px-2.5 rounded-lg text-slate-600 dark:text-[var(--text-secondary)] hover:text-[#0075de] hover:bg-[#0075de]/5 transition-all text-left group text-xs",
             isCollapsed && !isMobile && "lg:justify-center lg:px-0"
           )}
         >
@@ -482,7 +482,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className={cn(
-            "w-full flex items-center h-8 px-2.5 rounded-lg text-[var(--text-secondary)] hover:text-red-500 hover:bg-red-500/5 transition-all text-left group text-xs",
+            "w-full flex items-center h-8 px-2.5 rounded-lg text-slate-600 dark:text-[var(--text-secondary)] hover:text-red-500 hover:bg-red-500/5 transition-all text-left group text-xs",
             isCollapsed && !isMobile && "lg:justify-center lg:px-0"
           )}
         >
@@ -499,16 +499,16 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
   return (
     <>
       {/* ═══ MOBILE TOP NAVBAR ═══ */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-[100] h-14 bg-[var(--card)] border-b border-[var(--border-subtle)] flex items-center justify-between px-4">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-[100] h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4">
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 bg-[#0075de]/10 border border-[#0075de]/20 rounded-lg flex items-center justify-center shrink-0">
             <ShieldCheck className="text-[#0075de] h-4 w-4" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-bold tracking-tight text-[var(--text-primary)] leading-none">
+            <span className="text-sm font-bold tracking-tight text-[#0F172A] leading-none">
               GrowX<span className="text-[#0075de]">Labs</span>
             </span>
-            <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-[0.15em] mt-0.5">
+            <span className="text-[8px] font-bold text-[#64748B] uppercase tracking-[0.15em] mt-0.5">
               Admin Platform
             </span>
           </div>
@@ -516,7 +516,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
 
         <button
           onClick={onMobileToggle}
-          className="h-9 w-9 rounded-lg bg-[var(--surface-1)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--surface-2)] transition-all cursor-pointer"
+          className="h-9 w-9 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-[#0F172A] hover:bg-slate-200 transition-all cursor-pointer"
           aria-label="Toggle Navigation Menu"
         >
           {isMobileOpen ? <X size={18} /> : <Menu size={18} />}
@@ -534,7 +534,7 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       {/* ═══ MOBILE DRAWER SIDEBAR ═══ */}
       <aside
         className={cn(
-          "lg:hidden fixed left-0 top-0 h-full w-[280px] bg-[var(--surface-2)] border-r border-[var(--border-subtle)] z-[210] transition-transform duration-300 ease-in-out shadow-2xl",
+          "lg:hidden fixed left-0 top-0 h-full w-[280px] bg-white border-r border-slate-200 z-[210] transition-transform duration-300 ease-in-out shadow-2xl",
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -544,19 +544,19 @@ export function AdminNav({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }
       {/* ═══ DESKTOP FIXED SIDEBAR ═══ */}
       <aside 
         className={cn(
-          "hidden lg:flex h-screen border-r border-[var(--border-subtle)] bg-[var(--surface-2)] flex-col fixed left-0 top-0 transition-all duration-300 ease-in-out z-[90]",
+          "hidden lg:flex h-screen border-r border-slate-200 bg-white flex-col fixed left-0 top-0 transition-all duration-300 ease-in-out z-[90] overflow-visible",
           isCollapsed ? "w-20" : "w-64"
         )}
       >
         {renderNavContent(false)}
 
-        {/* Desktop Collapse Toggle */}
+        {/* Desktop Collapse Toggle Button (Prominent Floating Badge) */}
         <button 
           onClick={onToggle}
-          className="absolute top-4 -right-3 h-6 w-6 rounded-full bg-[var(--card)] text-[var(--text-secondary)] flex items-center justify-center border border-[var(--border-subtle)] z-[95] shadow-md hover:text-[var(--text-primary)] active:scale-95 transition-all cursor-pointer"
+          className="absolute top-5 -right-3.5 h-7 w-7 rounded-full bg-white text-[#0F172A] flex items-center justify-center border border-slate-300 z-[120] shadow-md hover:bg-slate-50 hover:scale-105 active:scale-95 transition-all cursor-pointer"
           title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
-          <ChevronRight className={cn("h-3.5 w-3.5 transition-transform duration-300", isCollapsed ? "" : "rotate-180")} />
+          <ChevronRight className={cn("h-4 w-4 text-[#0075de] transition-transform duration-300", isCollapsed ? "" : "rotate-180")} />
         </button>
       </aside>
 
