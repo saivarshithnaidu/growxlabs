@@ -154,6 +154,7 @@ export default function DedicatedOfferLetterStudioPage() {
         <div style="border-bottom: 2px solid #2563eb; padding-bottom: 16px; margin-bottom: 24px;">
           <h1 style="font-size: 20px; font-weight: 800; color: #111827; margin: 0;">GROWX LABS TECH PVT. LTD.</h1>
           <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0; font-weight: 600; text-transform: uppercase;">AI-Native Product Studio & Enterprise AI Solutions</p>
+          <p style="font-size: 10px; color: #9ca3af; margin: 2px 0 0 0;">https://growxlabs.tech | contact@growxlabs.tech</p>
         </div>
         <p style="font-size: 13px; color: #111827; margin-bottom: 16px;">Dear <strong>${name}</strong> (${email}),</p>
         <p style="font-size: 12px; color: #374151; margin-bottom: 20px;">We are pleased to extend this formal offer of engagement for the position of <strong>${roleTitle}</strong> at GrowX Labs Tech Pvt. Ltd.</p>
@@ -389,7 +390,7 @@ export default function DedicatedOfferLetterStudioPage() {
                     AI-Native Product Studio &amp; Enterprise AI Solutions
                   </p>
                   <p className="text-[11px] text-[#6B7280] mt-1">
-                    Visakhapatnam, Andhra Pradesh, India • https://growxlabs.tech
+                    https://growxlabs.tech • contact@growxlabs.tech
                   </p>
                 </div>
                 <div className="text-right">
