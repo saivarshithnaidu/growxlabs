@@ -28,19 +28,27 @@ export async function POST(req: Request) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const bccList = bccEmail ? [bccEmail] : (bcc ? (Array.isArray(bcc) ? bcc : [bcc]) : undefined);
 
-    let formattedAttachments = undefined;
+    let formattedAttachments: any[] | undefined = undefined;
     if (attachments && Array.isArray(attachments)) {
       formattedAttachments = attachments.map((att: any) => {
         if (typeof att.content === "string") {
-          const base64Data = att.content.replace(/^data:application\/pdf;base64,/, "").replace(/^data:image\/\w+;base64,/, "");
+          let base64Data = att.content;
+          if (base64Data.includes(",")) {
+            base64Data = base64Data.split(",")[1];
+          }
+          const buf = Buffer.from(base64Data, "base64");
+          console.log(`[Email Route] Attachment ${att.filename} formatted with buffer size: ${buf.length} bytes`);
           return {
             filename: att.filename || "Offer_Letter.pdf",
-            content: Buffer.from(base64Data, "base64")
+            content: buf,
+            contentType: "application/pdf"
           };
         }
         return att;
       });
     }
+
+    console.log(`[Email Route] Sending email to ${toEmail} with ${formattedAttachments?.length || 0} attachments.`);
 
     // Send the dynamic email using Resend with optional BCC & PDF attachment
     const { data, error: sendError } = await resend.emails.send({

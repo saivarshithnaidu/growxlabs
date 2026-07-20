@@ -134,44 +134,153 @@ export default function DedicatedOfferLetterStudioPage() {
     window.print();
   };
 
-  // Generate Base64 PDF Attachment from Document Canvas
+  // Generate Pure Vector PDF Attachment Contract
   const generatePDFBase64 = async (): Promise<string | null> => {
     try {
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+      const width = doc.internal.pageSize.getWidth();
+      
+      // Document Title & Header
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.setTextColor(17, 24, 39); // #111827
+      doc.text("GROWX LABS TECH PVT. LTD.", 40, 50);
 
-      if (documentCanvasRef.current) {
-        const canvas = await html2canvas(documentCanvasRef.current, {
-          scale: 2,
-          useCORS: true,
-          logging: false,
-          backgroundColor: "#ffffff"
-        });
-        const imgData = canvas.toDataURL("image/png");
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      } else {
-        pdf.setFontSize(18);
-        pdf.text("GROWX LABS TECH PVT. LTD.", 20, 25);
-        pdf.setFontSize(12);
-        pdf.text("OFFER OF ENGAGEMENT: " + roleTitle, 20, 35);
-        pdf.text("Candidate: " + (selectedCandidate?.name || "Akhilesh"), 20, 45);
-        pdf.text("Joining Date: " + joiningDate, 20, 55);
-        pdf.text("Commission Rate: " + commissionRate, 20, 65);
-      }
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(37, 99, 235); // #2563eb
+      doc.text("AI-NATIVE PRODUCT STUDIO & ENTERPRISE AI SOLUTIONS", 40, 66);
 
-      const dataUri = pdf.output("datauristring");
-      return dataUri.split(",")[1] || null;
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(107, 114, 128); // #6b7280
+      doc.text("Andhra Pradesh, India • https://growxlabs.tech", 40, 80);
+
+      // Divider Line
+      doc.setDrawColor(229, 231, 235); // #e5e7eb
+      doc.setLineWidth(1);
+      doc.line(40, 92, width - 40, 92);
+
+      // Ref Box
+      doc.setFillColor(247, 247, 245);
+      doc.rect(40, 104, width - 80, 28, "F");
+      doc.setFontSize(9);
+      doc.setTextColor(55, 65, 81);
+      doc.text(`REF: ${refNumber}      OFFER DATE: ${offerDate}      JOINING: ${joiningDate}`, 52, 121);
+
+      // Position Header
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(17, 24, 39);
+      doc.text(`Offer of Engagement: ${roleTitle}`, 40, 160);
+
+      // Body Text
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(55, 65, 81);
+
+      const candidateName = selectedCandidate?.name || "Akhilesh";
+      doc.text(`Dear ${candidateName},`, 40, 185);
+
+      const introText = `On behalf of GrowX Labs Tech Pvt. Ltd., we are pleased to offer you the position of ${roleTitle}. We were thoroughly impressed by your background and execution capabilities during our discussions. This document sets out the core terms of your engagement with our team.`;
+      const splitIntro = doc.splitTextToSize(introText, width - 80);
+      doc.text(splitIntro, 40, 205);
+
+      // Section 1
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(17, 24, 39);
+      doc.text("01. Appointment & Engagement Model", 40, 250);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(75, 85, 99);
+      const s1 = `You will serve as an Independent Contractor / Performance-Based. Your engagement commences on ${joiningDate} with an initial 90-day performance review window. Work is fully remote adhering to IST operational hours.`;
+      doc.text(doc.splitTextToSize(s1, width - 80), 40, 265);
+
+      // Section 2 - Compensation
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(17, 24, 39);
+      doc.text("02. Pay & Remuneration Structure", 40, 310);
+
+      // Box 1
+      doc.setFillColor(247, 247, 245);
+      doc.setDrawColor(229, 231, 235);
+      doc.roundedRect(40, 322, 245, 50, 6, 6, "FD");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(107, 114, 128);
+      doc.text("REVENUE COMMISSION", 52, 338);
+      doc.setFontSize(14);
+      doc.setTextColor(37, 99, 235);
+      doc.text(commissionRate, 52, 358);
+
+      // Box 2
+      doc.roundedRect(300, 322, 245, 50, 6, 6, "FD");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(107, 114, 128);
+      doc.text("DISCOVERY MEETING INCENTIVE", 312, 338);
+      doc.setFontSize(14);
+      doc.setTextColor(22, 163, 74);
+      doc.text(meetingBonus, 312, 358);
+
+      // Section 3 - Target Benchmarks
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(17, 24, 39);
+      doc.text("03. Key Performance Benchmarks", 40, 398);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(75, 85, 99);
+      doc.text("• Daily Outreach: 40 Dials / 50 Personalised Outbound Emails", 45, 414);
+      doc.text("• Weekly Benchmark: 5 Qualified BANT Discovery Meetings Booked", 45, 429);
+      doc.text("• Monthly Milestone: 3 Converted Partner Contracts (SQOs)", 45, 444);
+
+      // Section 4 - Legal Terms
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(17, 24, 39);
+      doc.text("04. Confidentiality & Non-Solicitation", 40, 472);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(75, 85, 99);
+      const legalText = `You agree to keep all company client data, lead lists, and software workflows strictly confidential. A 12-month non-solicitation restriction applies post-termination. Governed under the laws of India.`;
+      doc.text(doc.splitTextToSize(legalText, width - 80), 40, 487);
+
+      // Signatures
+      doc.line(40, 530, width - 40, 530);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(107, 114, 128);
+      doc.text("FOR GROWX LABS TECH PVT. LTD.", 40, 550);
+      doc.setFontSize(11);
+      doc.setTextColor(37, 99, 235);
+      doc.text(senderName, 40, 568);
+      doc.setFontSize(9);
+      doc.setTextColor(107, 114, 128);
+      doc.text("Founder & CEO", 40, 582);
+
+      doc.setFontSize(9);
+      doc.setTextColor(107, 114, 128);
+      doc.text("CANDIDATE ACCEPTANCE", 320, 550);
+      doc.setFontSize(11);
+      doc.setTextColor(17, 24, 39);
+      doc.text(candidateName, 320, 568);
+      doc.setFontSize(9);
+      doc.setTextColor(107, 114, 128);
+      doc.text("Signature & Date: ___________________", 320, 582);
+
+      // Footer
+      doc.setFontSize(8);
+      doc.setTextColor(156, 163, 175);
+      doc.text("CONFIDENTIAL • Official Offer Letter Contract • GrowX Labs HR Studio • Page 1 of 1", width / 2, 630, { align: "center" });
+
+      const dataUri = doc.output("datauristring");
+      const base64 = dataUri.split(",")[1];
+      return base64 || null;
     } catch (err) {
-      console.error("PDF generation failed:", err);
-      const pdf = new jsPDF("p", "mm", "a4");
-      pdf.setFontSize(18);
-      pdf.text("GROWX LABS TECH PVT. LTD.", 20, 25);
-      pdf.setFontSize(12);
-      pdf.text("OFFER OF ENGAGEMENT: " + roleTitle, 20, 35);
-      pdf.text("Candidate: " + (selectedCandidate?.name || "Akhilesh"), 20, 45);
-      const dataUri = pdf.output("datauristring");
-      return dataUri.split(",")[1] || null;
+      console.error("Vector PDF generation error:", err);
+      return null;
     }
   };
 
