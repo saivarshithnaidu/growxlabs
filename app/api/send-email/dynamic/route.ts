@@ -40,8 +40,7 @@ export async function POST(req: Request) {
           console.log(`[Email Route] Attachment ${att.filename} formatted with buffer size: ${buf.length} bytes`);
           return {
             filename: att.filename || "Offer_Letter.pdf",
-            content: buf,
-            contentType: "application/pdf"
+            content: buf
           };
         }
         return att;
