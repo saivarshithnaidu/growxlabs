@@ -15,10 +15,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { toEmail, fromName, fromEmail, subject, body, leadId } = await req.json();
+    const { toEmail, fromName, fromEmail, subject, body, html, leadId } = await req.json();
 
-    if (!toEmail || !fromName || !fromEmail || !subject || !body) {
-      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+    if (!toEmail || !fromName || !fromEmail || !subject || (!body && !html)) {
+      return NextResponse.json({ error: "All required email fields must be provided" }, { status: 400 });
     }
 
     if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === "your_resend_key_here") {
@@ -27,13 +27,13 @@ export async function POST(req: Request) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // Send the dynamic email using Resend (using clean, minimal layout to land in Primary inbox)
+    // Send the dynamic email using Resend
     const { data, error: sendError } = await resend.emails.send({
       from: `${fromName} <${fromEmail}>`,
       to: [toEmail],
       subject: subject,
-      text: body, // Plain text is highly favored by Gmail's Primary tab algorithm
-      html: body.replace(/\n/g, "<br />") // Very lightweight HTML with no wrapper divs or inline styles
+      text: body || undefined,
+      html: html || (body ? body.replace(/\n/g, "<br />") : "")
     });
 
     if (sendError) {
