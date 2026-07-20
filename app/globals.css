@@ -34,18 +34,49 @@
 }
 
 /* ═══════════════════════════════════════════════════ */
-/* UNIVERSAL LIGHT THEME (Pertaining across all pages) */
+/* ROOT & DARK THEME (Public Pages / Studio default)  */
 /* ═══════════════════════════════════════════════════ */
 :root,
-html,
-body,
-.light,
 .dark,
-.notion-theme,
-html.dark .notion-theme,
-.dark .notion-theme,
-.dark.notion-theme,
-.posts-page {
+html.dark {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --card: #18181b;
+  --card-foreground: #f4f4f5;
+  --popover: #09090b;
+  --popover-foreground: #f4f4f5;
+  --primary: #0075de;
+  --primary-foreground: #ffffff;
+  --secondary: #27272a;
+  --secondary-foreground: #f4f4f5;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #0075de;
+  --accent-foreground: #ffffff;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #f4f4f5;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #0075de;
+  
+  --surface-1: #121215;
+  --surface-2: #18181b;
+  --border-subtle: #27272a;
+  --border-hover: #0075de;
+  
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-tertiary: #52525b;
+  --radius: 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════ */
+/* LIGHT THEME & NOTION THEME (Admin / Offer Studio)   */
+/* ═══════════════════════════════════════════════════ */
+.light,
+html.light,
+.notion-theme {
   --background: #f6f5f4;
   --foreground: #0f172a;
   --card: #ffffff;

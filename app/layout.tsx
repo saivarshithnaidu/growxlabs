@@ -255,7 +255,7 @@ export default async function RootLayout({
         />
         <PHProvider>
           <AuthProvider>
-            <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" enableSystem={false} disableTransitionOnChange>
+            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
               <GlobalBackground />
 
               <ConditionalLayout>
