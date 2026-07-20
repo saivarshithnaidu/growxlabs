@@ -677,7 +677,7 @@ export default function DedicatedOfferLetterStudioPage() {
           {/* Candidate Profile Card */}
           <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-4 shadow-xs">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-[#111827] text-white flex items-center justify-center text-base font-bold shadow-sm">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center text-base font-bold shadow-sm">
                 {selectedCandidate?.name ? selectedCandidate.name.charAt(0) : "A"}
               </div>
               <div className="space-y-0.5">
@@ -804,7 +804,7 @@ export default function DedicatedOfferLetterStudioPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 bg-[#111827] text-white rounded-md">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-slate-100 text-[#0F172A] border border-slate-200 rounded-md">
                     CONFIDENTIAL CONTRACT
                   </span>
                 </div>
