@@ -34,55 +34,68 @@
 }
 
 /* ═══════════════════════════════════════════════════ */
-/* ROOT & DARK THEME (Public Pages / Studio default)  */
+/* DARK THEME (DEFAULT) — Marketing / Public pages    */
 /* ═══════════════════════════════════════════════════ */
-:root,
-.dark,
-html.dark {
-  --background: #09090b;
-  --foreground: #f4f4f5;
-  --card: #18181b;
-  --card-foreground: #f4f4f5;
-  --popover: #09090b;
-  --popover-foreground: #f4f4f5;
-  --primary: #0075de;
-  --primary-foreground: #ffffff;
-  --secondary: #27272a;
-  --secondary-foreground: #f4f4f5;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: #0075de;
-  --accent-foreground: #ffffff;
-  --destructive: #7f1d1d;
-  --destructive-foreground: #f4f4f5;
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #0075de;
-  
-  --surface-1: #121215;
-  --surface-2: #18181b;
-  --border-subtle: #27272a;
-  --border-hover: #0075de;
-  
-  --text-primary: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --text-tertiary: #52525b;
+:root {
+  --background: #111111;
+  --foreground: #FFFFFF;
+  --card: #1A1A1A;
+  --card-foreground: #FFFFFF;
+  --popover: #1A1A1A;
+  --popover-foreground: #FFFFFF;
+  --primary: #C0F0FB;
+  --primary-foreground: #111111;
+  --secondary: #2A2A2A;
+  --secondary-foreground: #FFFFFF;
+  --muted: #2A2A2A;
+  --muted-foreground: #9A9A9A;
+  --accent: #C0F0FB;
+  --accent-foreground: #111111;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #2A2A2A;
+  --input: #1A1A1A;
+  --ring: #C0F0FB;
   --radius: 0.5rem;
 }
 
 /* ═══════════════════════════════════════════════════ */
-/* LIGHT THEME & NOTION THEME (Admin / Offer Studio)   */
+/* LIGHT THEME — Blog / Reading / Essay pages          */
 /* ═══════════════════════════════════════════════════ */
-.light,
-html.light,
-.notion-theme {
+.posts-page {
+  --background: #020202;
+  --foreground: #FFFFFF;
+  --card: #0C0C0C;
+  --card-foreground: #FFFFFF;
+  --popover: #0C0C0C;
+  --popover-foreground: #FFFFFF;
+  --primary: #FFFFFF;
+  --primary-foreground: #020202;
+  --secondary: #161616;
+  --secondary-foreground: #FFFFFF;
+  --muted: #161616;
+  --muted-foreground: #8E8E93;
+  --accent: #FFFFFF;
+  --accent-foreground: #020202;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #161616;
+  --input: #0C0C0C;
+  --ring: #FFFFFF;
+}
+
+/* ═══════════════════════════════════════════════════ */
+/* NOTION LIGHT THEME — Dashboard pages (Default Light)*/
+/* ═══════════════════════════════════════════════════ */
+.notion-theme,
+html:not(.dark) .notion-theme,
+html.light .notion-theme {
   --background: #f6f5f4;
-  --foreground: #0f172a;
+  --foreground: #000000;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #000000;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #000000;
   --primary: #0075de;
   --primary-foreground: #ffffff;
   --secondary: #ffffff;
@@ -102,11 +115,47 @@ html.light,
   --border-subtle: #e6e6e6;
   --border-hover: #0075de;
   
-  --text-primary: #0f172a;
+  --text-primary: #000000;
   --text-secondary: #31302e;
   --text-muted: #615d59;
   --text-tertiary: #a39e98;
-  --radius: 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════ */
+/* VERCEL DARK THEME — Dashboard Dark Mode Override    */
+/* ═══════════════════════════════════════════════════ */
+html.dark .notion-theme,
+.dark .notion-theme,
+.dark.notion-theme {
+  --background: #080808;
+  --foreground: #ffffff;
+  --card: #0e0e0e;
+  --card-foreground: #ffffff;
+  --popover: #0e0e0e;
+  --popover-foreground: #ffffff;
+  --primary: #0075de;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #ededed;
+  --muted: #141414;
+  --muted-foreground: #a0a0a0;
+  --accent: #0075de;
+  --accent-foreground: #ffffff;
+  --destructive: #f43f5e;
+  --destructive-foreground: #ffffff;
+  --border: #222222;
+  --input: #121212;
+  --ring: #0075de;
+  
+  --surface-1: #0e0e0e;
+  --surface-2: #080808;
+  --border-subtle: #1c1c1c;
+  --border-hover: #0075de;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+  --text-tertiary: #525252;
 }
 
 /* Notion Specific Layout Overrides */
