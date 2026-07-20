@@ -29,11 +29,12 @@ export default function AdminEmployeeOnboardingPage() {
   const [selectedEmp, setSelectedEmp] = useState<any | null>(null);
   const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
   
-  // Candidate & Sender Details
+  // Candidate, Sender & BCC Details
   const [candidateName, setCandidateName] = useState("Akhilesh");
-  const [candidateEmail, setCandidateEmail] = useState("saivarshith8284@gmail.com"); // Set default destination to your email so you can inspect!
+  const [candidateEmail, setCandidateEmail] = useState("akhilesh@growxlabs.tech");
   const [senderName, setSenderName] = useState("Sai Varshith");
-  const [senderEmail, setSenderEmail] = useState("saivarshith8284@gmail.com");
+  const [senderEmail, setSenderEmail] = useState("sai@growxlabs.tech");
+  const [bccEmail, setBccEmail] = useState("saivarshith8284@gmail.com");
   const [emailSubject, setEmailSubject] = useState("Formal Employment Offer: Sales Development Representative (SDR) - GrowX Labs Tech Pvt. Ltd.");
 
   // Plain English Offer Terms (No complex legal jargon)
@@ -285,8 +286,7 @@ export default function AdminEmployeeOnboardingPage() {
   const handleOpenEmailModal = (emp: any) => {
     setSelectedEmp(emp);
     setCandidateName(emp.name || "Akhilesh");
-    // Default recipient is set to your email so you get it directly!
-    setCandidateEmail("saivarshith8284@gmail.com");
+    setCandidateEmail(emp.email || "akhilesh@growxlabs.tech");
     setActiveTab("preview");
     setShowEmailModal(true);
   };
@@ -295,7 +295,7 @@ export default function AdminEmployeeOnboardingPage() {
     window.print();
   };
 
-  // Dispatch Offer Email directly to saivarshith8284@gmail.com
+  // Dispatch Offer Email from sai@growxlabs.tech with BCC copy to saivarshith8284@gmail.com
   const handleSendOnboardingEmail = async () => {
     if (!isValid) {
       alert("Cannot send offer letter. Please complete all fields first.");
@@ -310,9 +310,10 @@ export default function AdminEmployeeOnboardingPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          toEmail: candidateEmail, // Sending directly to candidateEmail (saivarshith8284@gmail.com)
+          toEmail: candidateEmail,
           fromName: `${senderName} | GrowX Labs`,
-          fromEmail: senderEmail, // Sent from saivarshith8284@gmail.com
+          fromEmail: senderEmail, // Sent from sai@growxlabs.tech
+          bccEmail: bccEmail,     // BCC copy to saivarshith8284@gmail.com
           subject: emailSubject,
           html: htmlContent,
           body: `Job Offer: ${roleTitle}\n\nDear ${candidateName},\n\nPlease review your formal offer letter from GrowX Labs Tech Pvt. Ltd.`
@@ -328,7 +329,7 @@ export default function AdminEmployeeOnboardingPage() {
         updateOnboardingState(selectedEmp.id, { offerSent: true });
       }
 
-      alert(`🚀 Offer Letter successfully dispatched directly to your email: ${candidateEmail}! Check your inbox!`);
+      alert(`🚀 Offer Letter successfully dispatched from ${senderEmail} to ${candidateEmail}! BCC copy delivered to ${bccEmail}.`);
       setShowEmailModal(false);
     } catch (e: any) {
       console.error(e);
@@ -583,9 +584,10 @@ export default function AdminEmployeeOnboardingPage() {
 
               {/* Action Footer */}
               <div className="shrink-0 border-t border-[#cbd5e1] bg-[#f8fafc] px-6 py-4 flex items-center justify-between">
-                <p className="text-xs font-bold text-[#334155]">
-                  📧 Email will be sent to: <span className="text-[#0075de] font-extrabold">{candidateEmail}</span>
-                </p>
+                <div className="text-xs font-bold text-[#334155] space-y-0.5">
+                  <p>📧 From: <span className="text-[#0075de] font-extrabold">{senderEmail}</span> &rarr; To: <span className="text-[#0f172a] font-extrabold">{candidateEmail}</span></p>
+                  <p className="text-[11px] text-emerald-600 font-semibold">📬 Automatic BCC Copy &rarr; <span className="font-extrabold">{bccEmail}</span></p>
+                </div>
 
                 <div className="flex items-center gap-3">
                   <Button
@@ -606,7 +608,7 @@ export default function AdminEmployeeOnboardingPage() {
                       </>
                     ) : (
                       <>
-                        <Send size={15} /> Send Email Now to {candidateEmail}
+                        <Send size={15} /> Dispatch Offer (BCC to {bccEmail})
                       </>
                     )}
                   </Button>

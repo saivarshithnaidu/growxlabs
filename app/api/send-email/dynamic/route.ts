@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { toEmail, fromName, fromEmail, subject, body, html, attachments, leadId } = await req.json();
+    const { toEmail, fromName, fromEmail, bccEmail, bcc, subject, body, html, attachments, leadId } = await req.json();
 
     if (!toEmail || !fromName || !fromEmail || !subject || (!body && !html)) {
       return NextResponse.json({ error: "All required email fields must be provided" }, { status: 400 });
@@ -26,11 +26,13 @@ export async function POST(req: Request) {
     }
 
     const resend = new Resend(process.env.RESEND_API_KEY);
+    const bccList = bccEmail ? [bccEmail] : (bcc ? (Array.isArray(bcc) ? bcc : [bcc]) : undefined);
 
-    // Send the dynamic email using Resend
+    // Send the dynamic email using Resend with optional BCC
     const { data, error: sendError } = await resend.emails.send({
       from: `${fromName} <${fromEmail}>`,
       to: [toEmail],
+      bcc: bccList,
       subject: subject,
       text: body || undefined,
       html: html || (body ? body.replace(/\n/g, "<br />") : ""),
