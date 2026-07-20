@@ -294,13 +294,13 @@ export default function AIPlatformPage() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">{m.sender} · {m.time}</span>
                         </div>
                         <div
-                          className={`max-w-2xl p-4 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          className={`max-w-2xl p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                             m.sender === "User"
-                              ? "bg-[#2563EB] text-white rounded-br-none shadow-sm"
-                              : "bg-[#F9FAFB] border border-[#E5E7EB] text-[#111827] rounded-bl-none shadow-xs"
+                              ? "bg-[#2563EB] text-white rounded-br-none shadow-sm font-bold"
+                              : "bg-[#F3F4F6] border border-[#CBD5E1] text-[#0F172A] rounded-bl-none shadow-xs font-semibold"
                           }`}
                         >
-                          <p className="whitespace-pre-wrap">{m.text}</p>
+                          <p className={`whitespace-pre-wrap ${m.sender === "User" ? "text-white" : "text-[#0F172A]"}`}>{m.text}</p>
                         </div>
                       </div>
                     ))}
