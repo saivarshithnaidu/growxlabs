@@ -28,7 +28,21 @@ export async function POST(req: Request) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const bccList = bccEmail ? [bccEmail] : (bcc ? (Array.isArray(bcc) ? bcc : [bcc]) : undefined);
 
-    // Send the dynamic email using Resend with optional BCC
+    let formattedAttachments = undefined;
+    if (attachments && Array.isArray(attachments)) {
+      formattedAttachments = attachments.map((att: any) => {
+        if (typeof att.content === "string") {
+          const base64Data = att.content.replace(/^data:application\/pdf;base64,/, "").replace(/^data:image\/\w+;base64,/, "");
+          return {
+            filename: att.filename || "Offer_Letter.pdf",
+            content: Buffer.from(base64Data, "base64")
+          };
+        }
+        return att;
+      });
+    }
+
+    // Send the dynamic email using Resend with optional BCC & PDF attachment
     const { data, error: sendError } = await resend.emails.send({
       from: `${fromName} <${fromEmail}>`,
       to: [toEmail],
@@ -36,7 +50,7 @@ export async function POST(req: Request) {
       subject: subject,
       text: body || undefined,
       html: html || (body ? body.replace(/\n/g, "<br />") : ""),
-      attachments: attachments || undefined
+      attachments: formattedAttachments
     });
 
     if (sendError) {

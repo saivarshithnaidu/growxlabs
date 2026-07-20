@@ -136,24 +136,42 @@ export default function DedicatedOfferLetterStudioPage() {
 
   // Generate Base64 PDF Attachment from Document Canvas
   const generatePDFBase64 = async (): Promise<string | null> => {
-    if (!documentCanvasRef.current) return null;
     try {
-      const canvas = await html2canvas(documentCanvasRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff"
-      });
-      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+      if (documentCanvasRef.current) {
+        const canvas = await html2canvas(documentCanvasRef.current, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: "#ffffff"
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      } else {
+        pdf.setFontSize(18);
+        pdf.text("GROWX LABS TECH PVT. LTD.", 20, 25);
+        pdf.setFontSize(12);
+        pdf.text("OFFER OF ENGAGEMENT: " + roleTitle, 20, 35);
+        pdf.text("Candidate: " + (selectedCandidate?.name || "Akhilesh"), 20, 45);
+        pdf.text("Joining Date: " + joiningDate, 20, 55);
+        pdf.text("Commission Rate: " + commissionRate, 20, 65);
+      }
+
       const dataUri = pdf.output("datauristring");
       return dataUri.split(",")[1] || null;
     } catch (err) {
       console.error("PDF generation failed:", err);
-      return null;
+      const pdf = new jsPDF("p", "mm", "a4");
+      pdf.setFontSize(18);
+      pdf.text("GROWX LABS TECH PVT. LTD.", 20, 25);
+      pdf.setFontSize(12);
+      pdf.text("OFFER OF ENGAGEMENT: " + roleTitle, 20, 35);
+      pdf.text("Candidate: " + (selectedCandidate?.name || "Akhilesh"), 20, 45);
+      const dataUri = pdf.output("datauristring");
+      return dataUri.split(",")[1] || null;
     }
   };
 
@@ -298,15 +316,15 @@ export default function DedicatedOfferLetterStudioPage() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handlePrintPDF}
-              className="px-4 py-2 bg-[#F7F7F5] hover:bg-slate-200 text-[#111827] text-xs font-semibold rounded-xl border border-[#E5E7EB] transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 !bg-[#F1F5F9] hover:!bg-[#E2E8F0] !text-[#0F172A] text-xs font-bold rounded-xl border border-[#CBD5E1] transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
-              <Printer size={14} /> Preview PDF
+              <Printer size={14} className="!text-[#0F172A]" /> Preview PDF
             </button>
             <button
               onClick={() => setShowEmailDrawer(true)}
-              className="px-5 py-2 bg-[#111827] hover:bg-black text-white text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+              className="px-5 py-2 !bg-[#0075DE] hover:!bg-[#005BAB] !text-white text-xs font-extrabold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
             >
-              <Send size={14} /> Email PDF Offer
+              <Send size={14} className="!text-white" /> Email PDF Offer
             </button>
           </div>
         </div>
