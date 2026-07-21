@@ -5,6 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Earth } from './Earth';
+import { NightLights } from './NightLights';
 import { Atmosphere } from './Atmosphere';
 import { Clouds } from './Clouds';
 import { Stars } from './Stars';
@@ -18,7 +19,7 @@ const SUN_POSITION: [number, number, number] = [5, 3, 5];
 function CameraRig() {
   useFrame(({ camera, clock }) => {
     const time = clock.getElapsedTime();
-    // Very subtle camera float
+    // Subtle camera floating movement
     camera.position.x = Math.sin(time * 0.08) * 0.04;
     camera.position.y = 0.2 + Math.cos(time * 0.1) * 0.03;
     camera.lookAt(0, -0.2, 0);
@@ -31,16 +32,19 @@ function GlobeContent() {
 
   return (
     <group ref={earthGroupRef} position={[0, -0.35, 0]} {...bindInteractions}>
-      {/* 1. Earth Body (Surface skin: dayMap + normalMap + light direction day/night blending) */}
-      <Earth radius={1.75} sunPosition={SUN_POSITION} />
+      {/* 1. Earth Body (Surface skin: dayMap + normalMap) */}
+      <Earth radius={1.75} />
 
-      {/* 2. Cloud Sphere (1.01x scale = 1.7675 radius, 35% opacity) */}
+      {/* 2. Night Lights Overlay (Warm City Lights) */}
+      <NightLights radius={1.752} />
+
+      {/* 3. Cloud Sphere (1.01x scale = 1.7675 radius, 35% opacity) */}
       <Clouds radius={1.7675} cloudsRef={cloudsRef} />
 
-      {/* 3. Atmosphere Layer (1.02x scale = 1.785 radius, Fresnel BackSide shader) */}
+      {/* 4. Atmosphere Layer (1.02x scale = 1.785 radius, Fresnel BackSide shader) */}
       <Atmosphere radius={1.785} />
 
-      {/* 4. Minimal Orbit Rings (< 3% opacity) */}
+      {/* 5. Minimal Orbit Rings (< 3% opacity) */}
       <OrbitRings ringsRef={ringsRef} />
     </group>
   );
@@ -68,8 +72,8 @@ export function EarthScene() {
       >
         <color attach="background" args={[EARTH_COLORS.background]} />
 
-        {/* Sun Directional Light at (5, 3, 5) + Subtle AmbientLight 0.25 */}
-        <ambientLight intensity={0.25} />
+        {/* Lighting: AmbientLight 0.35 + DirectionalLight 2.2 at (5, 3, 5) */}
+        <ambientLight intensity={0.35} />
         <directionalLight
           position={SUN_POSITION}
           intensity={2.2}

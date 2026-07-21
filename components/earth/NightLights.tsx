@@ -8,27 +8,26 @@ interface NightLightsProps {
   radius?: number;
 }
 
-export const NightLights: React.FC<NightLightsProps> = ({ radius = 2.002 }) => {
-  // Load official NASA Night Lights map
-  const nightTexture = useTexture('/textures/earth_night.jpg');
+export const NightLights: React.FC<NightLightsProps> = ({ radius = 1.752 }) => {
+  // Load official NASA Night Lights texture
+  const nightMap = useTexture('/textures/earth_night.jpg');
 
   useLayoutEffect(() => {
-    if (nightTexture) {
-      nightTexture.colorSpace = THREE.SRGBColorSpace;
-      nightTexture.wrapS = THREE.RepeatWrapping;
-      nightTexture.wrapT = THREE.ClampToEdgeWrapping;
-      nightTexture.repeat.set(1, 1);
-      nightTexture.needsUpdate = true;
-      console.log('nightTexture loaded:', nightTexture);
+    if (nightMap) {
+      nightMap.colorSpace = THREE.SRGBColorSpace;
+      nightMap.wrapS = THREE.RepeatWrapping;
+      nightMap.wrapT = THREE.ClampToEdgeWrapping;
+      nightMap.repeat.set(1, 1);
+      nightMap.needsUpdate = true;
     }
-  }, [nightTexture]);
+  }, [nightMap]);
 
   return (
     <mesh>
-      {/* 128x128 segments */}
+      {/* 128x128 segment geometry */}
       <sphereGeometry args={[radius, 128, 128]} />
       <meshBasicMaterial
-        map={nightTexture}
+        map={nightMap}
         blending={THREE.AdditiveBlending}
         transparent
         opacity={0.65}
