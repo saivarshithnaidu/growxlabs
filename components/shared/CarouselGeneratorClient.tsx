@@ -1205,15 +1205,18 @@ export function CarouselGeneratorClient() {
 
   const renderVisualMediaCard = (slide: Slide, scale = 1.0) => {
     const mediaUrl = slide.customVideo || slide.customImage;
+    const isPreview = scale < 0.8;
+    const cardMinHeight = isPreview ? "135px" : `${Math.round(320 * scale)}px`;
+
     if (mediaUrl) {
       const isVideo = isVideoMedia(mediaUrl);
-      const isPreview = scale < 0.8;
       return (
         <div 
-          className="w-full bg-[#050505] rounded-2xl text-white my-1 flex flex-col justify-center items-center overflow-hidden shrink-0 relative"
+          className="w-full bg-[#050505] rounded-2xl border border-neutral-800 text-white my-2 flex flex-col justify-center items-center overflow-hidden shrink-0 relative"
           style={{
             borderRadius: `${Math.round(18 * scale)}px`,
-            margin: `${Math.round(6 * scale)}px 0`
+            minHeight: cardMinHeight,
+            margin: `${Math.round(8 * scale)}px 0`
           }}
         >
           {isVideo ? (
@@ -1226,7 +1229,7 @@ export function CarouselGeneratorClient() {
               controls={!isPreview}
               className="w-full h-auto object-contain block rounded-2xl"
               style={{ 
-                maxHeight: isPreview ? "135px" : `${Math.round(280 * scale)}px`,
+                maxHeight: isPreview ? "135px" : `${Math.round(320 * scale)}px`,
                 borderRadius: `${Math.round(18 * scale)}px`
               }}
             />
@@ -1236,7 +1239,7 @@ export function CarouselGeneratorClient() {
               alt={slide.title || "Slide Media"}
               className="w-full h-auto object-contain block"
               style={{ 
-                maxHeight: isPreview ? "130px" : `${Math.round(280 * scale)}px`,
+                maxHeight: isPreview ? "135px" : `${Math.round(320 * scale)}px`,
                 borderRadius: `${Math.round(18 * scale)}px`
               }}
             />
@@ -1250,18 +1253,22 @@ export function CarouselGeneratorClient() {
 
     return (
       <div 
-        className="w-full bg-[#050505] rounded-2xl p-4 border border-neutral-800 text-white my-3 flex flex-col justify-center items-center overflow-hidden shrink-0"
+        className="w-full bg-[#050505] rounded-2xl p-5 border border-neutral-800 text-white my-2 flex flex-col justify-center items-center overflow-hidden shrink-0 box-border"
         style={{
           borderRadius: `${Math.round(18 * scale)}px`,
-          padding: `${Math.round(16 * scale)}px`,
-          margin: `${Math.round(12 * scale)}px 0`
+          padding: `${Math.round(20 * scale)}px`,
+          minHeight: cardMinHeight,
+          margin: `${Math.round(8 * scale)}px 0`
         }}
       >
         {chartType === "logo" && (
-          <div className="py-8 text-center w-full flex items-center justify-center">
+          <div className="w-full h-full flex flex-col items-center justify-center py-6 text-center">
             <span 
-              className="font-extrabold text-white tracking-wide font-sans inline-block drop-shadow-sm"
-              style={{ fontSize: `${Math.round(20 * scale)}px`, color: "#ffffff" }}
+              className="font-black text-white tracking-tight font-sans inline-block drop-shadow-md"
+              style={{ 
+                fontSize: isPreview ? "15px" : `${Math.round(32 * scale)}px`, 
+                color: "#ffffff" 
+              }}
             >
               {slide.visualMediaCardTitle || "GrowXLabs | AI Copilot"}
             </span>
@@ -1269,21 +1276,17 @@ export function CarouselGeneratorClient() {
         )}
 
         {chartType === "leaderboard" && (
-          <div className="w-full text-left font-sans space-y-2">
-            <div className="flex justify-between items-center border-b border-neutral-800 pb-1.5">
-              <span className="font-bold text-white text-[11px]" style={{ fontSize: `${Math.max(Math.round(11 * scale), 8)}px` }}>
-                General Agents
+          <div className="w-full h-full flex flex-col justify-between text-left font-sans space-y-2">
+            <div className="flex justify-between items-center border-b border-neutral-800 pb-2">
+              <span className="font-bold text-white text-[12px]" style={{ fontSize: `${Math.max(Math.round(12 * scale), 8)}px` }}>
+                General Agents Leaderboard
               </span>
-              <span className="text-[9px] text-neutral-400" style={{ fontSize: `${Math.max(Math.round(9 * scale), 7)}px` }}>
-                All maxed out on thinking effort: max or xhigh.
+              <span className="text-[9px] text-neutral-400 font-mono" style={{ fontSize: `${Math.max(Math.round(9 * scale), 7)}px` }}>
+                Max Thinking Effort (Elo v2)
               </span>
             </div>
 
-            <div className="text-[10px] font-bold text-neutral-300 pt-0.5" style={{ fontSize: `${Math.max(Math.round(10 * scale), 7.5)}px` }}>
-              GDPval-AA v2 Elo
-            </div>
-
-            <div className="space-y-1">
+            <div className="space-y-1.5 py-1">
               {[
                 { name: "Fable 5", score: "1760.0", width: "95%", highlight: false },
                 { name: "GPT-5.6 Sol", score: "1748.0", width: "92%", highlight: false },
@@ -1292,15 +1295,15 @@ export function CarouselGeneratorClient() {
                 { name: "GLM-5.2", score: "1514.0", width: "65%", highlight: false },
                 { name: "GPT-5.5", score: "1494.0", width: "60%", highlight: false },
               ].map((bar, bIdx) => (
-                <div key={bIdx} className="flex items-center gap-1.5 text-[9px]" style={{ fontSize: `${Math.max(Math.round(9 * scale), 7)}px` }}>
-                  <span className="w-16 shrink-0 font-medium truncate text-neutral-300">{bar.name}</span>
-                  <div className="flex-1 bg-neutral-900 rounded-full h-2.5 overflow-hidden p-0.5 border border-neutral-800 flex items-center">
+                <div key={bIdx} className="flex items-center gap-2 text-[10px]" style={{ fontSize: `${Math.max(Math.round(10 * scale), 7.5)}px` }}>
+                  <span className="w-20 shrink-0 font-bold truncate text-neutral-200">{bar.name}</span>
+                  <div className="flex-1 bg-neutral-900 rounded-full h-3 overflow-hidden p-0.5 border border-neutral-800 flex items-center">
                     <div 
                       className={`h-full rounded-full transition-all ${bar.highlight ? "bg-[#0075FF]" : "bg-neutral-600"}`}
                       style={{ width: bar.width }}
                     />
                   </div>
-                  <span className={`w-10 text-right font-mono font-bold ${bar.highlight ? "text-[#0075FF]" : "text-neutral-400"}`}>
+                  <span className={`w-12 text-right font-mono font-extrabold ${bar.highlight ? "text-[#0075FF]" : "text-neutral-400"}`}>
                     {bar.score}
                   </span>
                 </div>
@@ -1310,76 +1313,84 @@ export function CarouselGeneratorClient() {
         )}
 
         {chartType === "cost" && (
-          <div className="w-full text-left font-sans space-y-2">
-            <div className="flex justify-between items-center border-b border-neutral-800 pb-1">
-              <span className="font-bold text-white text-[11px]" style={{ fontSize: `${Math.max(Math.round(11 * scale), 8)}px` }}>
+          <div className="w-full h-full flex flex-col justify-between text-left font-sans space-y-2">
+            <div className="flex justify-between items-center border-b border-neutral-800 pb-1.5">
+              <span className="font-bold text-white text-[12px]" style={{ fontSize: `${Math.max(Math.round(12 * scale), 8)}px` }}>
                 BrowseComp · Score vs Cost per Task
+              </span>
+              <span className="text-[9px] text-[#0075FF] font-bold font-mono" style={{ fontSize: `${Math.max(Math.round(9 * scale), 7)}px` }}>
+                ★ Kimi K3 ~91% @ $2
               </span>
             </div>
             
-            <div className="relative h-24 w-full border-l border-b border-neutral-700 p-1 font-mono text-[8px] text-neutral-400">
-              <div className="absolute top-1 left-2 text-[#0075FF] font-bold">★ Kimi K3 ~91% @ $2</div>
-              <div className="absolute top-4 left-14 text-neutral-300">GPT-5.6 Sol</div>
-              <div className="absolute top-6 right-10 text-emerald-400">Claude Mythos 5</div>
-              <div className="absolute bottom-4 right-2 text-amber-400">Opus 4.8</div>
-              <div className="absolute bottom-2 left-20 text-rose-400">Sonnet 5</div>
+            <div className="relative h-36 w-full border-l border-b border-neutral-700 p-2 font-mono text-[9px] text-neutral-400">
+              <div className="absolute top-2 left-4 text-[#0075FF] font-bold">★ Kimi K3 (~91% @ $2)</div>
+              <div className="absolute top-8 left-20 text-neutral-300">GPT-5.6 Sol</div>
+              <div className="absolute top-10 right-12 text-emerald-400">Claude Mythos 5</div>
+              <div className="absolute bottom-8 right-4 text-amber-400">Opus 4.8</div>
+              <div className="absolute bottom-4 left-28 text-rose-400">Sonnet 5</div>
               
               <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
                 <polyline 
                   fill="none" 
                   stroke="#0075FF" 
-                  strokeWidth="1.5" 
-                  points="20,15 60,30 120,35 180,45 220,55" 
+                  strokeWidth="2" 
+                  points="30,25 90,45 160,55 240,75 300,95" 
                 />
-                <circle cx="20" cy="15" r="3" fill="#FF4D4D" />
-                <circle cx="60" cy="30" r="2.5" fill="#ffffff" />
-                <circle cx="120" cy="35" r="2.5" fill="#10B981" />
-                <circle cx="180" cy="45" r="2.5" fill="#F59E0B" />
-                <circle cx="220" cy="55" r="2.5" fill="#EF4444" />
+                <circle cx="30" cy="25" r="4" fill="#FF4D4D" />
+                <circle cx="90" cy="45" r="3.5" fill="#ffffff" />
+                <circle cx="160" cy="55" r="3.5" fill="#10B981" />
+                <circle cx="240" cy="75" r="3.5" fill="#F59E0B" />
+                <circle cx="300" cy="95" r="3.5" fill="#EF4444" />
               </svg>
             </div>
           </div>
         )}
 
         {chartType === "architecture" && (
-          <div className="w-full text-left font-sans space-y-1.5">
-            <div className="flex justify-between items-center border-b border-neutral-800 pb-1">
-              <span className="font-bold text-white text-[10px]" style={{ fontSize: `${Math.max(Math.round(10 * scale), 7.5)}px` }}>
+          <div className="w-full h-full flex flex-col justify-between text-left font-sans space-y-2">
+            <div className="flex justify-between items-center border-b border-neutral-800 pb-1.5">
+              <span className="font-bold text-white text-[11px]" style={{ fontSize: `${Math.max(Math.round(11 * scale), 7.5)}px` }}>
                 Speedup vs FLA Triton Baseline (%)
               </span>
-              <span className="text-[8px] text-emerald-400 font-bold" style={{ fontSize: `${Math.max(Math.round(8 * scale), 6.5)}px` }}>
+              <span className="text-[9px] text-emerald-400 font-bold" style={{ fontSize: `${Math.max(Math.round(9 * scale), 6.5)}px` }}>
                 AttnRes GPU Kernel
               </span>
             </div>
 
-            <div className="relative h-24 w-full border-l border-b border-neutral-700 p-1 font-mono text-[8px]">
-              <div className="space-y-0.5 text-right text-[8px] pr-1">
+            <div className="relative h-36 w-full border-l border-b border-neutral-700 p-2 font-mono text-[9px]">
+              <div className="space-y-1 text-right text-[9px] pr-2">
                 <span className="text-[#FF4D4D] font-bold block">● Kimi K3 +59.7%</span>
                 <span className="text-blue-400 block">● Claude Fable 5 +57.1%</span>
                 <span className="text-emerald-400 block">● GPT 5.5 +30.8%</span>
               </div>
               
               <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
-                <path d="M 10 80 Q 40 65, 70 30 T 140 15 L 220 10" fill="none" stroke="#FF4D4D" strokeWidth="2" />
-                <path d="M 10 80 Q 50 70, 90 38 T 170 20 L 220 16" fill="none" stroke="#60A5FA" strokeWidth="1" strokeDasharray="2 2" />
+                <path d="M 15 110 Q 60 90, 110 40 T 220 20 L 320 15" fill="none" stroke="#FF4D4D" strokeWidth="2.5" />
+                <path d="M 15 110 Q 70 95, 130 50 T 250 30 L 320 25" fill="none" stroke="#60A5FA" strokeWidth="1.5" strokeDasharray="3 3" />
               </svg>
             </div>
           </div>
         )}
 
         {chartType === "roofline" && (
-          <div className="w-full text-left font-sans space-y-1.5">
-            <div className="flex justify-between items-center border-b border-neutral-800 pb-1">
-              <span className="font-bold text-white text-[10px]" style={{ fontSize: `${Math.max(Math.round(10 * scale), 7.5)}px` }}>
-                MiniTriton CUDA-core roofline — NVIDIA L20
+          <div className="w-full h-full flex flex-col justify-between text-left font-sans space-y-2">
+            <div className="flex justify-between items-center border-b border-neutral-800 pb-1.5">
+              <span className="font-bold text-white text-[11px]" style={{ fontSize: `${Math.max(Math.round(11 * scale), 7.5)}px` }}>
+                MiniTriton CUDA-core roofline — NVIDIA L20 (sm_89), fp32
+              </span>
+              <span className="text-[9px] text-emerald-400 font-bold font-mono" style={{ fontSize: `${Math.max(Math.round(9 * scale), 6.5)}px` }}>
+                Peak FP32 37.2 TFLOPS
               </span>
             </div>
 
-            <div className="relative h-24 w-full border-l border-b border-neutral-700 p-1 font-mono text-[8px] text-neutral-400">
-              <div className="absolute top-1 right-2 text-emerald-400 font-bold">Peak FP32 Performance</div>
+            <div className="relative h-36 w-full border-l border-b border-neutral-700 p-2 font-mono text-[9px] text-neutral-400">
               <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
-                <polyline fill="none" stroke="#ffffff" strokeWidth="1" points="10,80 90,20 220,20" />
-                <polyline fill="none" stroke="#FF4D4D" strokeWidth="1.5" points="15,75 60,50 110,30 160,25" />
+                <polyline fill="none" stroke="#ffffff" strokeWidth="1.5" points="15,110 130,30 320,30" />
+                <polyline fill="none" stroke="#FF4D4D" strokeWidth="2" points="20,105 90,70 160,45 240,38" />
+                <circle cx="90" cy="70" r="3.5" fill="#3B82F6" />
+                <circle cx="160" cy="45" r="3.5" fill="#EF4444" />
+                <circle cx="240" cy="38" r="3.5" fill="#10B981" />
               </svg>
             </div>
           </div>
