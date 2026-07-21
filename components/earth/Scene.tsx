@@ -5,12 +5,6 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Earth } from './Earth';
-import { NightLights } from './NightLights';
-import { Atmosphere } from './Atmosphere';
-import { Clouds } from './Clouds';
-import { Stars } from './Stars';
-import { OrbitRings } from './OrbitRings';
-import { Particles } from './Particles';
 import { useEarthRotation } from '@/hooks/useEarthRotation';
 import { EARTH_COLORS } from '@/lib/three';
 
@@ -26,24 +20,12 @@ function CameraRig() {
 }
 
 function GlobeContent() {
-  const { earthGroupRef, cloudsRef, ringsRef, bindInteractions } = useEarthRotation();
+  const { earthGroupRef, bindInteractions } = useEarthRotation();
 
   return (
     <group ref={earthGroupRef} {...bindInteractions}>
-      {/* 1. Earth Body (NASA Blue Marble Day Map, Normal, Specular) */}
+      {/* Isolated NASA Blue Marble Day Texture (Atmosphere, Clouds & Night Lights disabled for verification) */}
       <Earth radius={2.0} />
-
-      {/* 2. Night Lights (Warm Yellow City Lights) */}
-      <NightLights radius={2.002} />
-
-      {/* 3. Clouds Layer (Scale 1.01x, 35% opacity) */}
-      <Clouds radius={2.02} cloudsRef={cloudsRef} />
-
-      {/* 4. Atmosphere Layer (Scale 1.02x, Soft Blue Fresnel) */}
-      <Atmosphere radius={2.04} />
-
-      {/* Orbit Rings & Space Particles */}
-      <OrbitRings ringsRef={ringsRef} />
     </group>
   );
 }
@@ -82,8 +64,6 @@ export function EarthScene() {
 
         <Suspense fallback={null}>
           <GlobeContent />
-          <Stars count={2000} />
-          <Particles count={180} />
         </Suspense>
 
         <OrbitControls
