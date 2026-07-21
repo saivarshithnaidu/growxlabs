@@ -17,7 +17,9 @@ import {
   Info,
   Type,
   LayoutGrid,
-  Upload
+  Upload,
+  Film,
+  Video
 } from "lucide-react";
 
 const BotIcon = ({ size = 14, className = "" }: { size?: number; className?: string }) => (
@@ -59,6 +61,11 @@ const InstagramIcon = ({ size = 20, className = "", style = {} }: { size?: numbe
 import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
 
+const isVideoMedia = (url?: string) => {
+  if (!url) return false;
+  return url.startsWith("data:video/") || url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov") || url.endsWith(".ogg");
+};
+
 interface Slide {
   title: string;
   subtitle: string;
@@ -70,6 +77,7 @@ interface Slide {
   svgCode?: string;
   imageLayout?: "split-right" | "split-left" | "centered";
   customImage?: string;
+  customVideo?: string;
   categoryTag?: string;
   visualMediaCardTitle?: string;
   visualMediaCardSub?: string;
@@ -1196,25 +1204,43 @@ export function CarouselGeneratorClient() {
   };
 
   const renderVisualMediaCard = (slide: Slide, scale = 1.0) => {
-    if (slide.customImage) {
+    const mediaUrl = slide.customVideo || slide.customImage;
+    if (mediaUrl) {
+      const isVideo = isVideoMedia(mediaUrl);
       const isPreview = scale < 0.8;
       return (
         <div 
-          className="w-full bg-[#050505] rounded-2xl text-white my-1 flex flex-col justify-center items-center overflow-hidden shrink-0"
+          className="w-full bg-[#050505] rounded-2xl text-white my-1 flex flex-col justify-center items-center overflow-hidden shrink-0 relative"
           style={{
             borderRadius: `${Math.round(18 * scale)}px`,
             margin: `${Math.round(6 * scale)}px 0`
           }}
         >
-          <img 
-            src={slide.customImage} 
-            alt={slide.title || "Slide Image"}
-            className="w-full h-auto object-contain block"
-            style={{ 
-              maxHeight: isPreview ? "130px" : `${Math.round(280 * scale)}px`,
-              borderRadius: `${Math.round(18 * scale)}px`
-            }}
-          />
+          {isVideo ? (
+            <video 
+              src={mediaUrl} 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              controls={!isPreview}
+              className="w-full h-auto object-contain block rounded-2xl"
+              style={{ 
+                maxHeight: isPreview ? "135px" : `${Math.round(280 * scale)}px`,
+                borderRadius: `${Math.round(18 * scale)}px`
+              }}
+            />
+          ) : (
+            <img 
+              src={mediaUrl} 
+              alt={slide.title || "Slide Media"}
+              className="w-full h-auto object-contain block"
+              style={{ 
+                maxHeight: isPreview ? "130px" : `${Math.round(280 * scale)}px`,
+                borderRadius: `${Math.round(18 * scale)}px`
+              }}
+            />
+          )}
         </div>
       );
     }
@@ -1850,13 +1876,13 @@ export function CarouselGeneratorClient() {
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Graphic Card Type</label>
                       <select
-                        value={activeSlide.customImage ? "custom-upload" : (activeSlide.visualMediaCardChartType || "logo")}
+                        value={(activeSlide.customImage || activeSlide.customVideo) ? "custom-upload" : (activeSlide.visualMediaCardChartType || "logo")}
                         onChange={(e) => {
                           const val = e.target.value;
                           if (val === "custom-upload") {
-                            // keeps existing customImage or opens file picker
+                            // keeps existing customImage / customVideo or opens file picker
                           } else {
-                            updateActiveSlide({ customImage: undefined, visualMediaCardChartType: val as any });
+                            updateActiveSlide({ customImage: undefined, customVideo: undefined, visualMediaCardChartType: val as any });
                           }
                         }}
                         className="w-full h-10 bg-neutral-800 border border-neutral-700 rounded-lg px-3 text-xs text-white focus:outline-none focus:border-[#0075de]"
@@ -1866,29 +1892,36 @@ export function CarouselGeneratorClient() {
                         <option value="cost">BrowseComp Cost Scatter Plot</option>
                         <option value="architecture">GPU Speedup Architecture Curve</option>
                         <option value="roofline">Roofline Memory Plot</option>
-                        <option value="custom-upload">📷 Custom Image File / Data URL</option>
+                        <option value="custom-upload">🎥 Custom Image / Video File (MP4, WebM)</option>
                       </select>
                     </div>
                   </div>
 
-                  {/* Direct Image Upload for Dark Graphic Box */}
+                  {/* Direct Image/Video Upload for Dark Graphic Box */}
                   <div className="pt-2 border-t border-neutral-800 flex items-center justify-between gap-3">
                     <div className="flex-1">
                       <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">
-                        Upload Image for Middle Graphic Box
+                        Upload Image or Video (MP4 / WebM / MOV)
                       </label>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                         <input
                           type="file"
-                          accept="image/*"
-                          id="editorial-custom-image-file"
+                          accept="image/*,video/*"
+                          id="editorial-custom-media-file"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
+                              const isVideo = file.type.startsWith("video/");
                               const reader = new FileReader();
                               reader.onloadend = () => {
-                                updateActiveSlide({ customImage: reader.result as string, imageEnabled: true });
-                                toast.success("Image uploaded & fitted to post!");
+                                const dataUrl = reader.result as string;
+                                if (isVideo) {
+                                  updateActiveSlide({ customVideo: dataUrl, customImage: undefined, imageEnabled: true });
+                                  toast.success("Video uploaded & auto-playing in post!");
+                                } else {
+                                  updateActiveSlide({ customImage: dataUrl, customVideo: undefined, imageEnabled: true });
+                                  toast.success("Image uploaded & fitted to post!");
+                                }
                               };
                               reader.readAsDataURL(file);
                             }
@@ -1896,20 +1929,20 @@ export function CarouselGeneratorClient() {
                           className="hidden"
                         />
                         <label
-                          htmlFor="editorial-custom-image-file"
+                          htmlFor="editorial-custom-media-file"
                           className="px-3 py-1.5 bg-[#0075de] hover:bg-[#0075de]/90 text-white rounded-lg text-xs font-bold cursor-pointer transition-all flex items-center gap-1.5"
                         >
-                          <Upload size={12} />
-                          Upload Picture
+                          <Film size={13} />
+                          Upload Picture / Video
                         </label>
 
-                        {activeSlide.customImage && (
+                        {(activeSlide.customImage || activeSlide.customVideo) && (
                           <button
                             type="button"
-                            onClick={() => updateActiveSlide({ customImage: undefined })}
+                            onClick={() => updateActiveSlide({ customImage: undefined, customVideo: undefined })}
                             className="px-2.5 py-1.5 bg-red-900/60 text-red-300 hover:bg-red-900 border border-red-700 rounded-lg text-[11px] font-bold transition-all"
                           >
-                            Remove Image
+                            Remove Media
                           </button>
                         )}
                       </div>
