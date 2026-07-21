@@ -54,7 +54,8 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
       excerpt: "Skyroot Aerospace has made history with the successful orbital launch of Vikram-1 under Mission Aagaman. Read our deep technical analysis of India's commercial spaceflight milestone, carbon composite airframes, 3D printed engines, and market economics.",
       category: "Space • India • Deep-Tech",
       date: "July 21, 2026",
-      readTime: "14 min read"
+      readTime: "14 min read",
+      image: "/images/blog-skyroot-vikram1.png"
     },
     {
       slug: "chatgpt-gpt-5-6-preview-everything-you-need-to-know",
