@@ -9,10 +9,9 @@ interface EarthProps {
 }
 
 export const Earth: React.FC<EarthProps> = ({ radius = 1.75 }) => {
-  // Load official Three.js NASA Earth maps
+  // Load official NASA Blue Marble Earth maps
   const dayMap = useTexture('/textures/earth_daymap.jpg');
   const normalMap = useTexture('/textures/earth_normal.jpg');
-  const specularMap = useTexture('/textures/earth_specular.jpg');
 
   useLayoutEffect(() => {
     if (dayMap) {
@@ -28,13 +27,7 @@ export const Earth: React.FC<EarthProps> = ({ radius = 1.75 }) => {
       normalMap.repeat.set(1, 1);
       normalMap.needsUpdate = true;
     }
-    if (specularMap) {
-      specularMap.wrapS = THREE.RepeatWrapping;
-      specularMap.wrapT = THREE.ClampToEdgeWrapping;
-      specularMap.repeat.set(1, 1);
-      specularMap.needsUpdate = true;
-    }
-  }, [dayMap, normalMap, specularMap]);
+  }, [dayMap, normalMap]);
 
   return (
     <mesh castShadow receiveShadow>
@@ -43,9 +36,9 @@ export const Earth: React.FC<EarthProps> = ({ radius = 1.75 }) => {
       <meshStandardMaterial
         map={dayMap}
         normalMap={normalMap}
-        roughnessMap={specularMap}
-        metalness={0.1}
-        roughness={0.7}
+        normalScale={new THREE.Vector2(0.5, 0.5)}
+        roughness={0.65}
+        metalness={0.0}
         side={THREE.FrontSide}
       />
     </mesh>
