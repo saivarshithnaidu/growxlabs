@@ -249,8 +249,8 @@ export function CarouselGeneratorClient() {
   // Customization settings
   const [theme, setTheme] = useState<"cyberpunk" | "cream" | "sunset" | "terminal" | "glass" | "emerald" | "minimal" | "gold" | "ainews">("ainews");
   const [bgPattern, setBgPattern] = useState<"none" | "grid" | "dots" | "glow" | "isometric" | "waves" | "hexagons">("none");
-  const [brandName, setBrandName] = useState("360Labs");
-  const [instagramHandle, setInstagramHandle] = useState("@360labs.ai");
+  const [brandName, setBrandName] = useState("GrowXLabs");
+  const [instagramHandle, setInstagramHandle] = useState("@growxlabs.tech");
   const [showHandle, setShowHandle] = useState(false);
   const [showPageNumber, setShowPageNumber] = useState(true);
   const [showProgressBar, setShowProgressBar] = useState(true);
@@ -1208,10 +1208,10 @@ export function CarouselGeneratorClient() {
         }}
       >
         {chartType === "logo" && (
-          <div className="py-6 text-center w-full">
+          <div className="py-8 text-center w-full flex items-center justify-center">
             <span 
-              className="font-bold text-white tracking-wide font-sans inline-block"
-              style={{ fontSize: `${Math.round(20 * scale)}px` }}
+              className="font-extrabold text-white tracking-wide font-sans inline-block drop-shadow-sm"
+              style={{ fontSize: `${Math.round(20 * scale)}px`, color: "#ffffff" }}
             >
               {slide.visualMediaCardTitle || "GrowXLabs | AI Copilot"}
             </span>
