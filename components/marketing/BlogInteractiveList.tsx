@@ -21,7 +21,8 @@ interface BlogInteractiveListProps {
   featuredPost: BlogPost;
 }
 
-const getPostImage = (slug: string): string => {
+const getPostImage = (post: BlogPost): string => {
+  if (post.image) return post.image;
   const images: Record<string, string> = {
     "nvidia-vision-agentic-to-useful-ai": "/images/nvidia-vision-agentic-to-useful-ai.png",
     "chatbots-are-dying-agents-are-taking-over": "/images/chatbots-are-dying-agents-are-taking-over.png",
@@ -39,9 +40,11 @@ const getPostImage = (slug: string): string => {
     "claude-fable-5-mythos-5-anthropic-models": "/images/blog-claude-fable-5-mythos-5.png",
     "claude-fable-5-mythos-5-banned-us-government": "/images/blog-claude-fable-5-mythos-5-banned.png",
     "elon-musks-path-to-becoming-the-worlds-first-trillionaire": "/images/blog-elon-trillionaire.png",
-    "chatgpt-gpt-5-6-preview-everything-you-need-to-know": "/images/blog-gpt56-preview.png"
+    "chatgpt-gpt-5-6-preview-everything-you-need-to-know": "/images/blog-gpt56-preview.png",
+    "skyroot-aerospace-vikram-1-orbital-launch": "/images/blog-skyroot-vikram1.png",
+    "kimi-k3-open-frontier-intelligence-model": "/images/kimi-k3-logo.png"
   };
-  return images[slug] || "/images/nvidia-vision-agentic-to-useful-ai.png";
+  return images[post.slug] || "/images/nvidia-vision-agentic-to-useful-ai.png";
 };
 
 const getAccentWord = (slug: string): string => {
@@ -62,7 +65,9 @@ const getAccentWord = (slug: string): string => {
     "claude-fable-5-mythos-5-anthropic-models": "Fable",
     "claude-fable-5-mythos-5-banned-us-government": "Banned",
     "elon-musks-path-to-becoming-the-worlds-first-trillionaire": "Trillionaire",
-    "chatgpt-gpt-5-6-preview-everything-you-need-to-know": "Preview"
+    "chatgpt-gpt-5-6-preview-everything-you-need-to-know": "Preview",
+    "skyroot-aerospace-vikram-1-orbital-launch": "Orbital",
+    "kimi-k3-open-frontier-intelligence-model": "Frontier"
   };
   return accents[slug] || "";
 };
@@ -190,7 +195,7 @@ export function BlogInteractiveList({ posts, featuredPost }: BlogInteractiveList
                     <Link href={`/blog/${post.slug}`} className="block">
                       <div className="w-full overflow-hidden rounded-md border border-white/5 flex items-center justify-center">
                         <img
-                          src={getPostImage(post.slug)}
+                          src={getPostImage(post)}
                           alt={post.title}
                           className="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]"
                         />
@@ -240,7 +245,7 @@ export function BlogInteractiveList({ posts, featuredPost }: BlogInteractiveList
                   <Link href={`/blog/${displayFeatured.slug}`} className="block">
                     <div className="w-full overflow-hidden rounded-md border border-white/5 flex items-center justify-center">
                       <img
-                        src={getPostImage(displayFeatured.slug)}
+                        src={getPostImage(displayFeatured)}
                         alt={displayFeatured.title}
                         className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-[1.02]"
                       />
@@ -399,7 +404,7 @@ export function BlogInteractiveList({ posts, featuredPost }: BlogInteractiveList
                   <Link href={`/blog/${post.slug}`} className="shrink-0 block">
                     <div className="w-16 h-16 overflow-hidden rounded-md border border-white/5 flex items-center justify-center">
                       <img
-                        src={getPostImage(post.slug)}
+                        src={getPostImage(post)}
                         alt={post.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
                       />
