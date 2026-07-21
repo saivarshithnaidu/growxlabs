@@ -1212,11 +1212,11 @@ export function CarouselGeneratorClient() {
       const isVideo = isVideoMedia(mediaUrl);
       return (
         <div 
-          className="w-full bg-[#050505] rounded-2xl border border-neutral-800 text-white my-2 flex flex-col justify-center items-center overflow-hidden shrink-0 relative"
+          className="w-full bg-[#050505] rounded-2xl border border-neutral-800 text-white my-2 flex flex-col justify-center items-center text-center overflow-hidden shrink-0 relative mx-auto"
           style={{
             borderRadius: `${Math.round(18 * scale)}px`,
             minHeight: cardMinHeight,
-            margin: `${Math.round(8 * scale)}px 0`
+            margin: `${Math.round(8 * scale)}px auto`
           }}
         >
           {isVideo ? (
@@ -1227,20 +1227,22 @@ export function CarouselGeneratorClient() {
               muted 
               playsInline 
               controls={!isPreview}
-              className="w-full h-auto object-contain block rounded-2xl"
+              className="max-w-full h-auto object-contain block rounded-2xl mx-auto self-center"
               style={{ 
                 maxHeight: isPreview ? "135px" : `${Math.round(320 * scale)}px`,
-                borderRadius: `${Math.round(18 * scale)}px`
+                borderRadius: `${Math.round(18 * scale)}px`,
+                margin: "0 auto"
               }}
             />
           ) : (
             <img 
               src={mediaUrl} 
               alt={slide.title || "Slide Media"}
-              className="w-full h-auto object-contain block"
+              className="max-w-full h-auto object-contain block mx-auto self-center"
               style={{ 
                 maxHeight: isPreview ? "135px" : `${Math.round(320 * scale)}px`,
-                borderRadius: `${Math.round(18 * scale)}px`
+                borderRadius: `${Math.round(18 * scale)}px`,
+                margin: "0 auto"
               }}
             />
           )}
@@ -1402,12 +1404,12 @@ export function CarouselGeneratorClient() {
   const renderImageOrSvgMarkup = (slide: Slide, className: string, style: React.CSSProperties = {}, svgHeight = "400px") => {
     if (slide.customImage) {
       return (
-        <div style={{ position: "relative", overflow: "hidden", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ position: "relative", overflow: "hidden", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", margin: "0 auto" }}>
           <img 
             src={slide.customImage} 
             alt="Slide Graphic" 
             className={className}
-            style={style} 
+            style={{ margin: "0 auto", alignSelf: "center", display: "block", ...style }} 
           />
         </div>
       );
@@ -1420,8 +1422,11 @@ export function CarouselGeneratorClient() {
             position: "relative", 
             width: "100%", 
             display: "flex", 
+            flexDirection: "column",
             alignItems: "center", 
             justifyContent: "center",
+            textAlign: "center",
+            margin: "0 auto",
             maxHeight: svgHeight,
             overflow: "hidden"
           }}
@@ -1432,12 +1437,12 @@ export function CarouselGeneratorClient() {
 
     const src = `https://image.pollinations.ai/prompt/${encodeURIComponent(slide.imagePrompt || slide.title)}?width=500&height=500&nologo=true&model=flux`;
     return (
-      <div style={{ position: "relative", overflow: "hidden", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ position: "relative", overflow: "hidden", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", margin: "0 auto" }}>
         <img 
           src={src} 
           alt="Slide Graphic" 
           className={className}
-          style={style} 
+          style={{ margin: "0 auto", alignSelf: "center", display: "block", ...style }} 
         />
       </div>
     );
@@ -2087,18 +2092,23 @@ export function CarouselGeneratorClient() {
 
                     {getGraphicType(activeSlide) === "upload" && (
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Upload Image File</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Upload Image or Video File</label>
                         <div className="flex items-center gap-4">
                           <input
                             type="file"
-                            accept="image/*"
+                            accept="image/*,video/*"
                             id="custom-image-file-input"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
                                 const reader = new FileReader();
                                 reader.onloadend = () => {
-                                  updateActiveSlide({ customImage: reader.result as string });
+                                  const result = reader.result as string;
+                                  if (file.type.startsWith("video/")) {
+                                    updateActiveSlide({ customVideo: result, customImage: result });
+                                  } else {
+                                    updateActiveSlide({ customImage: result, customVideo: undefined });
+                                  }
                                 };
                                 reader.readAsDataURL(file);
                               }
@@ -2111,11 +2121,15 @@ export function CarouselGeneratorClient() {
                           >
                             Choose File
                           </label>
-                          {activeSlide.customImage && (
+                          {(activeSlide.customImage || activeSlide.customVideo) && (
                             <div className="flex items-center gap-2">
-                              <img src={activeSlide.customImage} alt="Preview" className="h-10 w-10 object-cover rounded border border-neutral-200" />
+                              {isVideoMedia(activeSlide.customVideo || activeSlide.customImage) ? (
+                                <video src={activeSlide.customVideo || activeSlide.customImage} className="h-10 w-10 object-cover rounded border border-neutral-200" />
+                              ) : (
+                                <img src={activeSlide.customImage} alt="Preview" className="h-10 w-10 object-cover rounded border border-neutral-200" />
+                              )}
                               <button
-                                onClick={() => updateActiveSlide({ customImage: "" })}
+                                onClick={() => updateActiveSlide({ customImage: "", customVideo: undefined })}
                                 className="text-[10px] text-red-500 hover:underline font-bold"
                               >
                                 Clear

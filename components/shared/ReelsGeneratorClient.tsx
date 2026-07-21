@@ -888,42 +888,69 @@ export function ReelsGeneratorClient() {
       const fps = 30;
       const stream = canvas.captureStream(fps);
       
-      let options = { mimeType: "video/webm;codecs=vp9" };
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      let options: MediaRecorderOptions = { mimeType: "video/webm;codecs=vp9" };
+      if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
         options = { mimeType: "video/webm" };
       }
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
         options = { mimeType: "video/mp4" };
+      }
+      if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
+        options = {};
       }
 
       const recorder = new MediaRecorder(stream, options);
       const chunks: Blob[] = [];
+
       recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunks.push(e.data);
+        if (e.data && e.data.size > 0) {
+          chunks.push(e.data);
+        }
       };
 
       recorder.onstop = () => {
-        const fileBlob = new Blob(chunks, { type: chunks[0].type });
-        const downloadUrl = URL.createObjectURL(fileBlob);
-        const a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = `reels-${Date.now()}.mp4`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(downloadUrl);
-        toast.success("Video compiled and downloaded successfully!", { id: compileToast });
-        setIsExporting(false);
+        try {
+          const mimeType = (chunks.length > 0 && chunks[0] && chunks[0].type) ? chunks[0].type : (options.mimeType || "video/mp4");
+          const fileBlob = new Blob(chunks, { type: mimeType });
+          const downloadUrl = URL.createObjectURL(fileBlob);
+          
+          const a = document.createElement("a");
+          a.href = downloadUrl;
+          const ext = mimeType.includes("webm") ? "webm" : "mp4";
+          a.download = `growxlabs-reel-${Date.now()}.${ext}`;
+          a.style.display = "none";
+          document.body.appendChild(a);
+          a.click();
+          
+          setTimeout(() => {
+            if (document.body.contains(a)) {
+              document.body.removeChild(a);
+            }
+            URL.revokeObjectURL(downloadUrl);
+          }, 2000);
+
+          toast.success("Video compiled and downloaded successfully!", { id: compileToast });
+        } catch (err: any) {
+          console.error("Video export save error:", err);
+          toast.error("Failed to save exported video.", { id: compileToast });
+        } finally {
+          setIsExporting(false);
+        }
       };
 
-      recorder.start();
+      // Start recording with 100ms timeslice buffer
+      recorder.start(100);
 
       let timeElapsed = 0;
       const frameDuration = 1000 / fps;
 
       const recordFrame = () => {
         if (timeElapsed >= durationMs) {
-          recorder.stop();
+          setTimeout(() => {
+            if (recorder.state !== "inactive") {
+              recorder.stop();
+            }
+          }, 200);
           return;
         }
 
