@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function SkyrootBlogPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const titleName = "INSIGHTS";
+  const titleName = "VIKRAM-1";
 
   const headings = [
     { id: "introduction", text: "1. Introduction" },

@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function KimiK3BlogPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const titleName = "INSIGHTS";
+  const titleName = "KIMI K3";
 
   const headings = [
     { id: "the-ai-race-before-kimi-k3", text: "1. The AI Race Before Kimi K3" },
