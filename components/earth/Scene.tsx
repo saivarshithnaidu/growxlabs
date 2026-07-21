@@ -12,7 +12,7 @@ import { EARTH_COLORS } from '@/lib/three';
 function CameraRig() {
   useFrame(({ camera, clock }) => {
     const time = clock.getElapsedTime();
-    // Subtle camera floating movement
+    // Very subtle floating movement for camera
     camera.position.x = Math.sin(time * 0.08) * 0.04;
     camera.position.y = 0.2 + Math.cos(time * 0.1) * 0.03;
     camera.lookAt(0, -0.2, 0);
@@ -25,7 +25,7 @@ function GlobeContent() {
 
   return (
     <group ref={earthGroupRef} position={[0, -0.35, 0]} {...bindInteractions}>
-      {/* Isolated Pure NASA Blue Marble Day Earth (No outer grey night shell or cloud shells) */}
+      {/* Photorealistic NASA Blue Marble Earth */}
       <Earth radius={1.75} />
     </group>
   );
@@ -53,12 +53,17 @@ export function EarthScene() {
       >
         <color attach="background" args={[EARTH_COLORS.background]} />
 
-        {/* High Brightness Studio Lighting: AmbientLight 0.8 + DirectionalLight 2.5 at (5, 3, 5) */}
-        <ambientLight intensity={0.8} />
+        {/* Studio Front Key Light facing front camera + Ambient Fill Light */}
+        <ambientLight intensity={1.2} />
         <directionalLight
-          position={[5, 3, 5]}
-          intensity={2.5}
+          position={[0, 4, 8]}
+          intensity={2.8}
           color="#ffffff"
+        />
+        <directionalLight
+          position={[-5, -2, -4]}
+          intensity={0.4}
+          color="#53D9FF"
         />
 
         <CameraRig />
