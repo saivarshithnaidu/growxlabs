@@ -7,6 +7,7 @@ import { ArrowRight, Calendar, Clock, User, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { BlogInteractiveList } from "@/components/marketing/BlogInteractiveList";
 import { AstroChatCTA } from "@/components/marketing/AstroChatCTA";
+import { FlickerText } from "@/components/marketing/FlickerText";
 
 // ═══════════════════════════════════════════════════
 // METADATA GENERATOR (Perfect SEO / Directory SEO)
@@ -240,9 +241,11 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-400 mb-4 block font-mono">
               Editorial Insights
             </span>
-            <h1 className="font-serif font-black text-4xl md:text-5xl lg:text-6xl text-foreground tracking-tight leading-tight mb-4 uppercase">
-              Insights
-            </h1>
+            <div className="w-full overflow-hidden flex justify-center items-end select-none pointer-events-none mb-6">
+              <h1 className="font-black select-none tracking-[-0.06em] text-foreground leading-[0.8] text-[clamp(2.5rem,9.2vw,130px)] uppercase whitespace-nowrap">
+                <FlickerText text={titleName} />
+              </h1>
+            </div>
             <p className="text-[14px] text-muted-foreground leading-relaxed max-w-xl mx-auto">
               Curated engineering papers, case studies, and technical deep-dives from the GrowXLabsTech team.
             </p>
