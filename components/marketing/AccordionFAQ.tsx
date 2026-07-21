@@ -23,8 +23,28 @@ export function AccordionFAQ({ items }: { items: FAQItem[] }) {
   const hoverText = isBlog ? "group-hover:text-[#355CFF]" : "group-hover:text-[#C0F0FB]";
   const activeText = isBlog ? "text-[#355CFF]" : "text-[#C0F0FB]";
 
+  // Build Google-verified FAQPage JSON-LD schema
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": items.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer,
+      },
+    })),
+  };
+
   return (
     <div className="w-full">
+      {/* Google & Perplexity Rich Search FAQ Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {items.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
@@ -74,6 +94,3 @@ export function AccordionFAQ({ items }: { items: FAQItem[] }) {
     </div>
   );
 }
-
-
-
