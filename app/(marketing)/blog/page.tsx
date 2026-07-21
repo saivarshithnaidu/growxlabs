@@ -44,7 +44,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
     category: "AI Research • Architecture • Open Weights",
     date: "July 21, 2026",
     readTime: "18 min read",
-    image: "/images/kimi-k3-logo.png"
+    image: "/images/blog-kimi-k3-woodcut.png"
   };
 
   const regularPosts = [
