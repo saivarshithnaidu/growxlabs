@@ -10,7 +10,7 @@ interface AtmosphereProps {
 }
 
 export const Atmosphere: React.FC<AtmosphereProps> = ({
-  radius = 2.055, // Slightly larger than Earth radius (2.0)
+  radius = 2.04, // Exact 1.02x scale (Earth radius = 2.0)
   color = EARTH_COLORS.atmosphere,
 }) => {
   const atmosphereMaterial = useMemo(() => {
@@ -20,7 +20,7 @@ export const Atmosphere: React.FC<AtmosphereProps> = ({
       uniforms: {
         color: { value: new THREE.Color(color) },
         coefficient: { value: 0.75 },
-        power: { value: 3.8 }, // Thin, realistic atmospheric rim
+        power: { value: 4.2 }, // Subtle soft blue rim, no thick glow
       },
       blending: THREE.AdditiveBlending,
       side: THREE.BackSide,

@@ -10,14 +10,15 @@ interface CloudsProps {
 }
 
 export const Clouds: React.FC<CloudsProps> = ({
-  radius = 2.022,
+  radius = 2.02, // Exact 1.01x scale (Earth radius = 2.0)
   cloudsRef,
 }) => {
-  // Load real atmospheric cloud texture
-  const cloudsMap = useTexture('/textures/earth_clouds_8k.png');
+  // Load transparent PNG cloud texture
+  const cloudsMap = useTexture('/textures/earth_clouds.png');
 
   if (cloudsMap) {
     cloudsMap.anisotropy = 16;
+    cloudsMap.colorSpace = THREE.SRGBColorSpace;
   }
 
   return (
@@ -26,7 +27,7 @@ export const Clouds: React.FC<CloudsProps> = ({
       <meshStandardMaterial
         map={cloudsMap}
         transparent
-        opacity={0.4}
+        opacity={0.35} // Opacity around 35%
         blending={THREE.AdditiveBlending}
         depthWrite={false}
         roughness={1}

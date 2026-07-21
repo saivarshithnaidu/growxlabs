@@ -1,22 +1,20 @@
 import * as THREE from 'three';
 
 /**
- * Photorealistic Earth Color Palette Constants
+ * NASA Earth Palette Constants
  */
 export const EARTH_COLORS = {
-  background: '#050505',
-  atmosphere: '#53D9FF', // Soft cyan atmospheric rim
+  background: '#000000',
+  atmosphere: '#40A0FF', // Soft Blue Fresnel Rim
   orbitRing: 'rgba(83, 217, 255, 0.08)',
   stars: '#FFFFFF',
-  cityLights: '#FFE0B2', // Warm White / Amber city lights
 };
 
 /**
- * Photorealistic Earth Shader
- * Combines NASA Blue Marble Day map, Night city lights, Normal bump map, Specular ocean reflections,
- * and a realistic day/night terminator blend.
+ * NASA Blue Marble Earth Shader
+ * Blends daymap, night lights, specular ocean reflection, and normal map.
  */
-export const PhotorealisticEarthShader = {
+export const NasaEarthShader = {
   vertexShader: /* glsl */ `
     varying vec2 vUv;
     varying vec3 vNormal;
@@ -49,35 +47,38 @@ export const PhotorealisticEarthShader = {
     uniform vec3 sunPosition;
 
     void main() {
-      // Sample textures
+      // 1. Sample Day Texture (Pure NASA Blue Marble colors - deep blue ocean, green forests, brown deserts, white ice)
       vec3 dayColor = texture2D(dayMap, vUv).rgb;
-      vec3 nightColor = texture2D(nightMap, vUv).rgb * vec3(1.3, 1.15, 0.9); // Warm city lights
+
+      // 2. Sample Night Lights Texture (Warm yellow city lights)
+      vec3 nightColor = texture2D(nightMap, vUv).rgb * vec3(1.4, 1.2, 0.8);
+
+      // 3. Sample Ocean Specular Mask (White oceans, Black land)
       float specularMask = texture2D(specularMap, vUv).r;
 
-      // Calculate lighting angles
-      vec3 normal = vNormal;
+      // 4. Lighting Dot Product (Day vs Night hemisphere)
+      vec3 normal = normalize(vNormal);
       vec3 sunDir = vSunDirection;
       float sunDot = dot(normal, sunDir);
 
-      // Smooth day/night terminator blend
-      float terminator = smoothstep(-0.2, 0.25, sunDot);
+      // Smooth Day/Night Terminator Blend
+      float dayFactor = smoothstep(-0.15, 0.25, sunDot);
 
-      // Sun diffuse intensity on day side
-      float diffuse = max(0.0, sunDot);
+      // Day diffuse (Sun intensity)
+      float diffuse = max(0.0, sunDot) * 0.85 + 0.15;
+      vec3 dayLit = dayColor * diffuse;
 
       // Specular ocean reflection on day side
       vec3 viewDir = normalize(-vWorldPosition);
       vec3 reflectDir = reflect(-sunDir, normal);
-      float spec = pow(max(0.0, dot(viewDir, reflectDir)), 32.0) * specularMask * 0.8;
+      float spec = pow(max(0.0, dot(viewDir, reflectDir)), 32.0) * specularMask * 0.65;
+      dayLit += vec3(spec);
 
-      // Day hemisphere color with realistic diffuse & ocean shine
-      vec3 dayFinal = dayColor * (diffuse * 0.9 + 0.1) + vec3(spec);
+      // Night side city lights (only visible on unlit night side)
+      vec3 nightLit = nightColor * (1.0 - dayFactor) * 1.6;
 
-      // Night hemisphere color with glowing city lights
-      vec3 nightFinal = nightColor * (1.0 - terminator);
-
-      // Blend day and night hemispheres smoothly across the globe
-      vec3 finalColor = mix(nightFinal, dayFinal, terminator);
+      // Final day/night composition
+      vec3 finalColor = mix(nightLit, dayLit, dayFactor);
 
       gl_FragColor = vec4(finalColor, 1.0);
     }
@@ -85,7 +86,7 @@ export const PhotorealisticEarthShader = {
 };
 
 /**
- * Thin Atmospheric Scattering Shader (Fresnel Effect)
+ * Soft Blue Atmospheric Fresnel Scattering Shader (Sphere 2, 1.02x scale)
  */
 export const AtmosphereShader = {
   vertexShader: /* glsl */ `
@@ -110,13 +111,13 @@ export const AtmosphereShader = {
       vec3 viewDirection = normalize(-vPosition);
       float intensity = pow(coefficient - dot(vNormal, viewDirection), power);
       intensity = clamp(intensity, 0.0, 1.0);
-      gl_FragColor = vec4(color, intensity * 0.4);
+      gl_FragColor = vec4(color, intensity * 0.3); // Subtle soft blue atmosphere
     }
   `,
 };
 
 /**
- * Memory Disposal Utility
+ * WebGL Memory Disposal Utility
  */
 export function disposeObject(object: THREE.Object3D): void {
   if (!object) return;

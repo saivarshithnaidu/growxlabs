@@ -16,10 +16,10 @@ import { EARTH_COLORS } from '@/lib/three';
 function CameraRig() {
   useFrame(({ camera, clock }) => {
     const time = clock.getElapsedTime();
-    // Subtle camera floating movement
-    camera.position.x = Math.sin(time * 0.12) * 0.12;
-    camera.position.y = 1.05 + Math.cos(time * 0.18) * 0.06;
-    camera.lookAt(0, -0.15, 0);
+    // Very subtle floating movement
+    camera.position.x = Math.sin(time * 0.1) * 0.08;
+    camera.position.y = Math.cos(time * 0.15) * 0.05;
+    camera.lookAt(0, 0, 0);
   });
   return null;
 }
@@ -29,9 +29,17 @@ function GlobeContent() {
 
   return (
     <group ref={earthGroupRef} {...bindInteractions}>
-      <Earth radius={2} />
-      <Clouds radius={2.022} cloudsRef={cloudsRef} />
-      <Atmosphere radius={2.055} />
+
+      {/* Sphere 1: Earth Body (radius = 2.0) */}
+      <Earth radius={2.0} />
+
+      {/* Sphere 2: Clouds (scale 1.01x, radius = 2.02) */}
+      <Clouds radius={2.02} cloudsRef={cloudsRef} />
+
+      {/* Sphere 3: Atmosphere (scale 1.02x, radius = 2.04) */}
+      <Atmosphere radius={2.04} />
+
+      {/* Orbit Rings & Particles */}
       <OrbitRings ringsRef={ringsRef} />
     </group>
   );
@@ -46,23 +54,24 @@ export function EarthScene() {
       className="relative w-full h-full min-h-[480px] md:min-h-[620px] select-none"
     >
       <Canvas
-        camera={{ position: [0, 1.05, 5.2], fov: 45 }}
+        camera={{ position: [0, 0, 5.8], fov: 35 }} // FOV 35 so Earth fills ~70% of container
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: 'high-performance',
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.15,
+          toneMappingExposure: 1.0,
+          outputColorSpace: THREE.SRGBColorSpace,
         }}
-        className="w-full h-full bg-[#050505]"
+        className="w-full h-full bg-[#000000]"
       >
         <color attach="background" args={[EARTH_COLORS.background]} />
 
-        {/* Photorealistic Sun & Ambient Lighting */}
-        <ambientLight intensity={0.3} />
+        {/* Lighting: AmbientLight 0.15 + DirectionalLight 2.0 at (5, 3, 5) */}
+        <ambientLight intensity={0.15} />
         <directionalLight
-          position={[6, 3, 5]}
-          intensity={3.0}
+          position={[5, 3, 5]}
+          intensity={2.0}
           color="#ffffff"
         />
 
@@ -70,8 +79,8 @@ export function EarthScene() {
 
         <Suspense fallback={null}>
           <GlobeContent />
-          <Stars count={2200} />
-          <Particles count={200} />
+          <Stars count={2000} />
+          <Particles count={180} />
         </Suspense>
 
         <OrbitControls
