@@ -12,14 +12,11 @@ interface FlickerTextProps {
 const flickerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: (delay: number) => ({
-    opacity: [0, 1, 0.15, 0.9, 0.3, 1, 0.7, 1],
+    opacity: 1,
     transition: {
-      duration: 1.2,
+      duration: 0.8,
       delay: delay,
-      repeat: Infinity,
-      repeatDelay: 5 + (delay * 3),
-      times: [0, 0.2, 0.35, 0.5, 0.65, 0.8, 0.9, 1],
-      ease: "easeInOut",
+      ease: "easeOut",
     },
   }),
 };
