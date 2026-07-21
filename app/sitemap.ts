@@ -42,6 +42,7 @@ const blogRoutes = [
   { path: '/blog/ferraris-electric-future-why-the-luce-marks-a-historic-turning-point', priority: 0.8, changefreq: 'weekly' as const },
   { path: '/blog/chatgpt-gpt-5-6-preview-everything-you-need-to-know', priority: 0.8, changefreq: 'weekly' as const },
   { path: '/blog/skyroot-aerospace-vikram-1-orbital-launch', priority: 0.9, changefreq: 'daily' as const },
+  { path: '/blog/kimi-k3-open-frontier-intelligence-model', priority: 0.9, changefreq: 'daily' as const },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

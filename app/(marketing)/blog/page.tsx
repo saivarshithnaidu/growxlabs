@@ -38,16 +38,24 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   // Blog posts database
   const featuredPost = {
-    slug: "skyroot-aerospace-vikram-1-orbital-launch",
-    title: "Skyroot Aerospace Launches Vikram-1, Ushering India Into Private Orbital Era",
-    excerpt: "Skyroot Aerospace has made history with the successful orbital launch of Vikram-1 under Mission Aagaman. Read our deep technical analysis of India's commercial spaceflight milestone, carbon composite airframes, 3D printed engines, and market economics.",
-    category: "Space • India • Deep-Tech",
+    slug: "kimi-k3-open-frontier-intelligence-model",
+    title: "Kimi K3 Technical Analysis: Inside Moonshot AI's Open Frontier Intelligence Model",
+    excerpt: "Moonshot AI has released Kimi K3, a 2.8T parameter open-weight Mixture-of-Experts model that sets global records across long-horizon software engineering and knowledge work benchmarks. Read our full technical report.",
+    category: "AI Research • Architecture • Open Weights",
     date: "July 21, 2026",
-    readTime: "14 min read",
-    image: "/images/blog-skyroot-vikram1.png"
+    readTime: "18 min read",
+    image: "/images/kimi-k3-logo.png"
   };
 
   const regularPosts = [
+    {
+      slug: "skyroot-aerospace-vikram-1-orbital-launch",
+      title: "Skyroot Aerospace Launches Vikram-1, Ushering India Into Private Orbital Era",
+      excerpt: "Skyroot Aerospace has made history with the successful orbital launch of Vikram-1 under Mission Aagaman. Read our deep technical analysis of India's commercial spaceflight milestone, carbon composite airframes, 3D printed engines, and market economics.",
+      category: "Space • India • Deep-Tech",
+      date: "July 21, 2026",
+      readTime: "14 min read"
+    },
     {
       slug: "chatgpt-gpt-5-6-preview-everything-you-need-to-know",
       title: "ChatGPT GPT-5.6 Preview: Everything You Need to Know",
