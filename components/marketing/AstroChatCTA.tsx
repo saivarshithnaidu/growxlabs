@@ -8,7 +8,7 @@ import { ChatInput, ChatInputTextArea, ChatInputSubmit } from "@/components/ui/c
 const EarthScene = dynamic(() => import("@/components/earth/Scene"), {
   ssr: false,
   loading: () => (
-    <div className="absolute inset-0 bg-[#050505] flex items-center justify-center">
+    <div className="w-full h-full min-h-[360px] sm:min-h-[440px] md:min-h-[500px] bg-[#050505] flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
     </div>
   ),
@@ -24,18 +24,18 @@ export function AstroChatCTA() {
   };
 
   return (
-    <section className="relative w-full max-w-[1400px] mx-auto min-h-[580px] sm:min-h-[640px] md:min-h-[720px] flex flex-col justify-end items-center px-4 sm:px-6 pt-16 pb-12 select-none bg-[#050505] overflow-hidden">
-      {/* 1. Seamless GPU 3D Earth Canvas Background (No Hero Card/Border) */}
-      <div className="absolute inset-0 z-0 flex items-center justify-center">
+    <section className="relative w-full max-w-[1400px] mx-auto flex flex-col items-center justify-start px-4 sm:px-6 pt-4 pb-16 select-none bg-[#050505] overflow-hidden">
+      {/* 1. Large Uncropped Rotating Earth (Top Visual Hero) */}
+      <div className="relative w-full max-w-[1000px] h-[360px] sm:h-[440px] md:h-[500px] flex items-center justify-center z-0">
         <EarthScene />
       </div>
 
-      {/* 2. Subtle Radial Vignette for Smooth Background Blending */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,#050505_90%)] pointer-events-none z-[5]" />
+      {/* 2. Comfortable 56px Vertical Whitespace Spacing between Earth and Prompt */}
+      <div className="h-10 sm:h-12 md:h-14" />
 
-      {/* 3. Floating Minimal Prompt Input (Primary UI Element) */}
+      {/* 3. Primary Interactive Prompt Input (Positioned BELOW Earth in Normal Flow) */}
       <div 
-        className="relative w-full max-w-[880px] p-5 sm:p-6 md:p-7 z-10 transition-all duration-300 mb-2 sm:mb-4"
+        className="relative w-full max-w-[880px] p-5 sm:p-6 md:p-7 z-10 transition-all duration-300"
         style={{
           background: "rgba(12, 12, 14, 0.82)",
           backdropFilter: "blur(24px)",

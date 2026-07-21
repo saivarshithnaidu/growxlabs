@@ -12,10 +12,10 @@ import { EARTH_COLORS } from '@/lib/three';
 function CameraRig() {
   useFrame(({ camera, clock }) => {
     const time = clock.getElapsedTime();
-    // Very subtle floating movement for camera
+    // Subtle camera floating movement
     camera.position.x = Math.sin(time * 0.08) * 0.04;
-    camera.position.y = 0.2 + Math.cos(time * 0.1) * 0.03;
-    camera.lookAt(0, -0.2, 0);
+    camera.position.y = Math.cos(time * 0.1) * 0.03;
+    camera.lookAt(0, 0, 0);
   });
   return null;
 }
@@ -24,8 +24,8 @@ function GlobeContent() {
   const { earthGroupRef, bindInteractions } = useEarthRotation();
 
   return (
-    <group ref={earthGroupRef} position={[0, -0.35, 0]} {...bindInteractions}>
-      {/* Photorealistic NASA Blue Marble Earth */}
+    <group ref={earthGroupRef} position={[0, 0, 0]} {...bindInteractions}>
+      {/* 100% Uncropped Photorealistic NASA Blue Marble Earth */}
       <Earth radius={1.75} />
     </group>
   );
@@ -37,10 +37,10 @@ export function EarthScene() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full min-h-[580px] sm:min-h-[640px] md:min-h-[720px] select-none bg-[#050505]"
+      className="relative w-full h-full min-h-[360px] sm:min-h-[440px] md:min-h-[500px] select-none bg-[#050505]"
     >
       <Canvas
-        camera={{ position: [0, 0.2, 5.6], fov: 34 }}
+        camera={{ position: [0, 0, 5.2], fov: 38 }}
         gl={{
           antialias: true,
           alpha: true,
