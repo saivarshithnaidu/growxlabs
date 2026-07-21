@@ -16,7 +16,8 @@ import {
   Check,
   Info,
   Type,
-  LayoutGrid
+  LayoutGrid,
+  Upload
 } from "lucide-react";
 
 const BotIcon = ({ size = 14, className = "" }: { size?: number; className?: string }) => (
@@ -1195,6 +1196,26 @@ export function CarouselGeneratorClient() {
   };
 
   const renderVisualMediaCard = (slide: Slide, scale = 1.0) => {
+    if (slide.customImage) {
+      return (
+        <div 
+          className="w-full bg-[#050505] rounded-2xl border border-neutral-800 text-white my-3 flex flex-col justify-center items-center overflow-hidden shrink-0 p-3"
+          style={{
+            borderRadius: `${Math.round(18 * scale)}px`,
+            padding: `${Math.round(12 * scale)}px`,
+            margin: `${Math.round(12 * scale)}px 0`
+          }}
+        >
+          <img 
+            src={slide.customImage} 
+            alt={slide.title || "Slide Image"}
+            className="w-full h-auto object-contain rounded-xl border border-neutral-800"
+            style={{ maxHeight: `${Math.round(260 * scale)}px`, borderRadius: `${Math.round(12 * scale)}px` }}
+          />
+        </div>
+      );
+    }
+
     const chartType = slide.visualMediaCardChartType || "none";
     if (chartType === "none" && !slide.visualMediaCardTitle) return null;
 
@@ -1801,6 +1822,99 @@ export function CarouselGeneratorClient() {
                 </div>
               </div>
 
+              {/* Editorial / AI News Controls */}
+              {theme === "ainews" && (
+                <div className="p-4 bg-neutral-900 text-white rounded-xl space-y-3 border border-neutral-800">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                      ✨ GrowXLabs Editorial Controls
+                    </span>
+                    <span className="text-[10px] text-neutral-400 font-mono">[ GrowXLabs ]</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Category Tag</label>
+                      <input
+                        type="text"
+                        value={activeSlide.categoryTag || "GROWX INSIGHTS"}
+                        onChange={(e) => updateActiveSlide({ categoryTag: e.target.value })}
+                        placeholder="e.g. GROWX INSIGHTS or AI NEWS"
+                        className="w-full h-10 bg-neutral-800 border border-neutral-700 rounded-lg px-3 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#0075de]"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Graphic Card Type</label>
+                      <select
+                        value={activeSlide.customImage ? "custom-upload" : (activeSlide.visualMediaCardChartType || "logo")}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === "custom-upload") {
+                            // keeps existing customImage or opens file picker
+                          } else {
+                            updateActiveSlide({ customImage: undefined, visualMediaCardChartType: val as any });
+                          }
+                        }}
+                        className="w-full h-10 bg-neutral-800 border border-neutral-700 rounded-lg px-3 text-xs text-white focus:outline-none focus:border-[#0075de]"
+                      >
+                        <option value="logo">Brand Title Badge (Text Logo)</option>
+                        <option value="leaderboard">ELO Leaderboard Bar Chart</option>
+                        <option value="cost">BrowseComp Cost Scatter Plot</option>
+                        <option value="architecture">GPU Speedup Architecture Curve</option>
+                        <option value="roofline">Roofline Memory Plot</option>
+                        <option value="custom-upload">📷 Custom Image File / Data URL</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Direct Image Upload for Dark Graphic Box */}
+                  <div className="pt-2 border-t border-neutral-800 flex items-center justify-between gap-3">
+                    <div className="flex-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">
+                        Upload Image for Middle Graphic Box
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          id="editorial-custom-image-file"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                updateActiveSlide({ customImage: reader.result as string, imageEnabled: true });
+                                toast.success("Image uploaded & fitted to post!");
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="editorial-custom-image-file"
+                          className="px-3 py-1.5 bg-[#0075de] hover:bg-[#0075de]/90 text-white rounded-lg text-xs font-bold cursor-pointer transition-all flex items-center gap-1.5"
+                        >
+                          <Upload size={12} />
+                          Upload Picture
+                        </label>
+
+                        {activeSlide.customImage && (
+                          <button
+                            type="button"
+                            onClick={() => updateActiveSlide({ customImage: undefined })}
+                            className="px-2.5 py-1.5 bg-red-900/60 text-red-300 hover:bg-red-900 border border-red-700 rounded-lg text-[11px] font-bold transition-all"
+                          >
+                            Remove Image
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
                   {activeSlide.layout === "quote" ? "Quote Text" : "Description / Subtitle"}
@@ -1808,7 +1922,7 @@ export function CarouselGeneratorClient() {
                 <textarea
                   value={activeSlide.subtitle}
                   onChange={(e) => updateActiveSlide({ subtitle: e.target.value })}
-                  rows={2}
+                  rows={3}
                   className="w-full bg-neutral-50 border border-neutral-200/80 rounded-xl p-4 text-xs text-neutral-900 focus:outline-none focus:border-[#0075de]/50 transition-all font-medium resize-none"
                 />
               </div>
