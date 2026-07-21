@@ -5,13 +5,20 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Earth } from './Earth';
+import { Atmosphere } from './Atmosphere';
+import { Clouds } from './Clouds';
+import { Stars } from './Stars';
+import { OrbitRings } from './OrbitRings';
+import { Particles } from './Particles';
 import { useEarthRotation } from '@/hooks/useEarthRotation';
 import { EARTH_COLORS } from '@/lib/three';
+
+const SUN_POSITION: [number, number, number] = [5, 3, 5];
 
 function CameraRig() {
   useFrame(({ camera, clock }) => {
     const time = clock.getElapsedTime();
-    // Very subtle floating movement for camera
+    // Very subtle camera float
     camera.position.x = Math.sin(time * 0.08) * 0.04;
     camera.position.y = 0.2 + Math.cos(time * 0.1) * 0.03;
     camera.lookAt(0, -0.2, 0);
@@ -20,12 +27,21 @@ function CameraRig() {
 }
 
 function GlobeContent() {
-  const { earthGroupRef, bindInteractions } = useEarthRotation();
+  const { earthGroupRef, cloudsRef, ringsRef, bindInteractions } = useEarthRotation();
 
   return (
     <group ref={earthGroupRef} position={[0, -0.35, 0]} {...bindInteractions}>
-      {/* Isolated NASA Blue Marble Day Map (Atmosphere, Clouds & Night Lights disabled for debugging step 5) */}
-      <Earth radius={1.75} />
+      {/* 1. Earth Body (Surface skin: dayMap + normalMap + light direction day/night blending) */}
+      <Earth radius={1.75} sunPosition={SUN_POSITION} />
+
+      {/* 2. Cloud Sphere (1.01x scale = 1.7675 radius, 35% opacity) */}
+      <Clouds radius={1.7675} cloudsRef={cloudsRef} />
+
+      {/* 3. Atmosphere Layer (1.02x scale = 1.785 radius, Fresnel BackSide shader) */}
+      <Atmosphere radius={1.785} />
+
+      {/* 4. Minimal Orbit Rings (< 3% opacity) */}
+      <OrbitRings ringsRef={ringsRef} />
     </group>
   );
 }
@@ -52,10 +68,10 @@ export function EarthScene() {
       >
         <color attach="background" args={[EARTH_COLORS.background]} />
 
-        {/* Lighting: AmbientLight 0.35 + DirectionalLight 2.2 at (5, 3, 5) */}
-        <ambientLight intensity={0.35} />
+        {/* Sun Directional Light at (5, 3, 5) + Subtle AmbientLight 0.25 */}
+        <ambientLight intensity={0.25} />
         <directionalLight
-          position={[5, 3, 5]}
+          position={SUN_POSITION}
           intensity={2.2}
           color="#ffffff"
         />
@@ -64,6 +80,8 @@ export function EarthScene() {
 
         <Suspense fallback={null}>
           <GlobeContent />
+          <Stars count={1200} />
+          <Particles count={100} />
         </Suspense>
 
         <OrbitControls

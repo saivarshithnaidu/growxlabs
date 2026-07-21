@@ -10,33 +10,32 @@ interface CloudsProps {
 }
 
 export const Clouds: React.FC<CloudsProps> = ({
-  radius = 2.02, // Scale 1.01x (Earth radius = 2.0)
+  radius = 1.7675, // Scale 1.01x (1.75 * 1.01)
   cloudsRef,
 }) => {
-  // Load transparent PNG cloud texture via useTexture
-  const cloudsTexture = useTexture('/textures/earth_clouds.png');
+  // Load transparent cloud map
+  const cloudMap = useTexture('/textures/earth_clouds.png');
 
   useLayoutEffect(() => {
-    if (cloudsTexture) {
-      cloudsTexture.colorSpace = THREE.SRGBColorSpace;
-      cloudsTexture.wrapS = THREE.RepeatWrapping;
-      cloudsTexture.wrapT = THREE.ClampToEdgeWrapping;
-      cloudsTexture.repeat.set(1, 1);
-      cloudsTexture.needsUpdate = true;
-      console.log('cloudsTexture loaded:', cloudsTexture);
+    if (cloudMap) {
+      cloudMap.colorSpace = THREE.SRGBColorSpace;
+      cloudMap.wrapS = THREE.RepeatWrapping;
+      cloudMap.wrapT = THREE.ClampToEdgeWrapping;
+      cloudMap.repeat.set(1, 1);
+      cloudMap.needsUpdate = true;
     }
-  }, [cloudsTexture]);
+  }, [cloudMap]);
 
   return (
     <mesh ref={cloudsRef}>
-      {/* 128x128 segments */}
+      {/* 128x128 segment geometry */}
       <sphereGeometry args={[radius, 128, 128]} />
       <meshStandardMaterial
-        map={cloudsTexture}
+        map={cloudMap}
         transparent
-        opacity={0.35} // Opacity around 35%
-        blending={THREE.AdditiveBlending}
+        opacity={0.35}
         depthWrite={false}
+        side={THREE.FrontSide}
         roughness={1}
       />
     </mesh>

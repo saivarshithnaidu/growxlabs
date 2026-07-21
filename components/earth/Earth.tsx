@@ -1,25 +1,24 @@
 'use client';
 
-import React, { useLayoutEffect } from 'react';
+import React, { useMemo, useLayoutEffect } from 'react';
 import * as THREE from 'three';
 import { useTexture } from '@react-three/drei';
 
 interface EarthProps {
   radius?: number;
+  sunPosition?: [number, number, number];
 }
 
-export const Earth: React.FC<EarthProps> = ({ radius = 1.75 }) => {
-  // Load official NASA Earth texture maps
+export const Earth: React.FC<EarthProps> = ({
+  radius = 1.75,
+  sunPosition = [5, 3, 5],
+}) => {
+  // Load official NASA Earth textures
   const dayMap = useTexture('/textures/earth_daymap.jpg');
   const normalMap = useTexture('/textures/earth_normal.jpg');
-  const specularMap = useTexture('/textures/earth_specular.jpg');
+  const nightMap = useTexture('/textures/earth_night.jpg');
 
   useLayoutEffect(() => {
-    // Debug step 4: Log every loaded texture
-    console.log('dayMap:', dayMap);
-    console.log('normalMap:', normalMap);
-    console.log('specularMap:', specularMap);
-
     if (dayMap) {
       dayMap.colorSpace = THREE.SRGBColorSpace;
       dayMap.wrapS = THREE.RepeatWrapping;
@@ -33,24 +32,78 @@ export const Earth: React.FC<EarthProps> = ({ radius = 1.75 }) => {
       normalMap.repeat.set(1, 1);
       normalMap.needsUpdate = true;
     }
-    if (specularMap) {
-      specularMap.wrapS = THREE.RepeatWrapping;
-      specularMap.wrapT = THREE.ClampToEdgeWrapping;
-      specularMap.repeat.set(1, 1);
-      specularMap.needsUpdate = true;
+    if (nightMap) {
+      nightMap.colorSpace = THREE.SRGBColorSpace;
+      nightMap.wrapS = THREE.RepeatWrapping;
+      nightMap.wrapT = THREE.ClampToEdgeWrapping;
+      nightMap.repeat.set(1, 1);
+      nightMap.needsUpdate = true;
     }
-  }, [dayMap, normalMap, specularMap]);
+  }, [dayMap, normalMap, nightMap]);
+
+  // Create custom shader material that blends day and night based on light direction
+  const earthMaterial = useMemo(() => {
+    const mat = new THREE.MeshStandardMaterial({
+      map: dayMap,
+      normalMap: normalMap,
+      normalScale: new THREE.Vector2(0.85, 0.85),
+      roughness: 0.65,
+      metalness: 0.05,
+      side: THREE.FrontSide,
+    });
+
+    const sunDir = new THREE.Vector3(...sunPosition).normalize();
+
+    mat.onBeforeCompile = (shader) => {
+      shader.uniforms.uNightMap = { value: nightMap };
+      shader.uniforms.uSunDirection = { value: sunDir };
+
+      // Pass world normal from vertex shader
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <common>',
+        `
+        #include <common>
+        varying vec3 vWorldNormal;
+        `
+      );
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <worldpos_vertex>',
+        `
+        #include <worldpos_vertex>
+        vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        `
+      );
+
+      // Fragment shader: mix night city lights ONLY on pixels facing away from sun
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <common>',
+        `
+        #include <common>
+        uniform sampler2D uNightMap;
+        uniform vec3 uSunDirection;
+        varying vec3 vWorldNormal;
+        `
+      );
+
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <opaque_fragment>',
+        `
+        vec3 nightColor = texture2D(uNightMap, vUv).rgb;
+        float dayFactor = smoothstep(-0.2, 0.25, dot(vWorldNormal, uSunDirection));
+        vec3 finalColor = mix(nightColor * 1.6, outgoingLight, dayFactor);
+        gl_FragColor = vec4(finalColor, 1.0);
+        `
+      );
+    };
+
+    return mat;
+  }, [dayMap, normalMap, nightMap, sunPosition]);
 
   return (
-    <mesh castShadow receiveShadow>
-      {/* 128x128 segments */}
+    <mesh castShadow receiveShadow material={earthMaterial}>
+      {/* 128x128 segment geometry */}
       <sphereGeometry args={[radius, 128, 128]} />
-      {/* Step 5: Render ONLY dayMap first */}
-      <meshStandardMaterial
-        map={dayMap}
-        metalness={0}
-        roughness={1}
-      />
     </mesh>
   );
 };

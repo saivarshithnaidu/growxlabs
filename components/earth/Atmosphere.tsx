@@ -10,7 +10,7 @@ interface AtmosphereProps {
 }
 
 export const Atmosphere: React.FC<AtmosphereProps> = ({
-  radius = 2.03, // Scale 1.015x (Earth radius = 2.0)
+  radius = 1.785, // Scale 1.02x (1.75 * 1.02)
   color = EARTH_COLORS.atmosphere,
 }) => {
   const atmosphereMaterial = useMemo(() => {
@@ -20,7 +20,7 @@ export const Atmosphere: React.FC<AtmosphereProps> = ({
       uniforms: {
         color: { value: new THREE.Color(color) },
         coefficient: { value: 0.65 },
-        power: { value: 5.5 }, // Sharp, ultra-thin atmosphere rim with 70% reduced intensity
+        power: { value: 5.5 }, // Soft Fresnel atmosphere rim near the edge of the globe
       },
       blending: THREE.AdditiveBlending,
       side: THREE.BackSide,
@@ -31,6 +31,7 @@ export const Atmosphere: React.FC<AtmosphereProps> = ({
 
   return (
     <mesh>
+      {/* 128x128 segment geometry */}
       <sphereGeometry args={[radius, 128, 128]} />
       <primitive object={atmosphereMaterial} attach="material" />
     </mesh>
