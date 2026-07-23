@@ -66,6 +66,25 @@ const isVideoMedia = (url?: string) => {
   return url.startsWith("data:video/") || url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov") || url.endsWith(".ogg");
 };
 
+const renderFormattedText = (text?: string) => {
+  if (!text) return "";
+  const regex = /(<strong>.*?<\/strong>|<em>.*?<\/em>|<u>.*?<\/u>)/gi;
+  const parts = text.split(regex);
+  return parts.map((part, index) => {
+    const partLower = part.toLowerCase();
+    if (partLower.startsWith("<strong>") && partLower.endsWith("</strong>")) {
+      return <strong key={index} className="font-extrabold" style={{ fontWeight: 900 }}>{part.slice(8, -9)}</strong>;
+    }
+    if (partLower.startsWith("<em>") && partLower.endsWith("</em>")) {
+      return <em key={index} className="italic" style={{ fontStyle: "italic" }}>{part.slice(4, -5)}</em>;
+    }
+    if (partLower.startsWith("<u>") && partLower.endsWith("</u>")) {
+      return <u key={index} className="underline" style={{ textDecoration: "underline" }}>{part.slice(3, -4)}</u>;
+    }
+    return part;
+  });
+};
+
 interface Slide {
   title: string;
   subtitle: string;
@@ -410,6 +429,30 @@ export function CarouselGeneratorClient() {
     const newSlides = [...slides];
     newSlides[activeIndex] = { ...activeSlide, ...updatedFields };
     setSlides(newSlides);
+  };
+
+  // Helper to dynamically insert bold/italic/underline HTML tags based on user selection
+  const handleFormatText = (field: "title" | "subtitle", tag: "strong" | "em" | "u") => {
+    const elementId = field === "title" ? "slide-editor-title" : "slide-editor-subtitle";
+    const element = document.getElementById(elementId) as HTMLInputElement | HTMLTextAreaElement | null;
+    if (!element) return;
+
+    const start = element.selectionStart;
+    const end = element.selectionEnd;
+    if (start === null || end === null) return;
+
+    const text = field === "title" ? activeSlide.title : activeSlide.subtitle;
+    const selectedText = text.substring(start, end);
+    const formattedText = `<${tag}>${selectedText}</${tag}>`;
+    const newText = text.substring(0, start) + formattedText + text.substring(end);
+
+    updateActiveSlide({ [field]: newText });
+
+    // Refocus and restore cursor selection after state updates
+    setTimeout(() => {
+      element.focus();
+      element.setSelectionRange(start + tag.length + 2, start + tag.length + 2 + selectedText.length);
+    }, 10);
   };
 
   // Add bullet to active slide
@@ -1857,8 +1900,37 @@ export function CarouselGeneratorClient() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Slide Title</label>
+                  <div className="flex justify-between items-center h-5">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Slide Title</label>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleFormatText("title", "strong")}
+                        className="px-2 py-0.5 rounded bg-white hover:bg-neutral-100 border border-neutral-200 text-[10px] font-extrabold text-neutral-700 transition-colors shadow-sm cursor-pointer select-none"
+                        title="Bold"
+                      >
+                        B
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleFormatText("title", "em")}
+                        className="px-2 py-0.5 rounded bg-white hover:bg-neutral-100 border border-neutral-200 text-[10px] italic text-neutral-700 transition-colors shadow-sm cursor-pointer select-none"
+                        title="Italic"
+                      >
+                        I
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleFormatText("title", "u")}
+                        className="px-2 py-0.5 rounded bg-white hover:bg-neutral-100 border border-neutral-200 text-[10px] underline text-neutral-700 transition-colors shadow-sm cursor-pointer select-none"
+                        title="Underline"
+                      >
+                        U
+                      </button>
+                    </div>
+                  </div>
                   <input
+                    id="slide-editor-title"
                     type="text"
                     value={activeSlide.title}
                     onChange={(e) => updateActiveSlide({ title: e.target.value })}
@@ -1968,10 +2040,39 @@ export function CarouselGeneratorClient() {
               )}
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
-                  {activeSlide.layout === "quote" ? "Quote Text" : "Description / Subtitle"}
-                </label>
+                <div className="flex justify-between items-center h-5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                    {activeSlide.layout === "quote" ? "Quote Text" : "Description / Subtitle"}
+                  </label>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleFormatText("subtitle", "strong")}
+                      className="px-2 py-0.5 rounded bg-white hover:bg-neutral-100 border border-neutral-200 text-[10px] font-extrabold text-neutral-700 transition-colors shadow-sm cursor-pointer select-none"
+                      title="Bold"
+                    >
+                      B
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleFormatText("subtitle", "em")}
+                      className="px-2 py-0.5 rounded bg-white hover:bg-neutral-100 border border-neutral-200 text-[10px] italic text-neutral-700 transition-colors shadow-sm cursor-pointer select-none"
+                      title="Italic"
+                    >
+                      I
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleFormatText("subtitle", "u")}
+                      className="px-2 py-0.5 rounded bg-white hover:bg-neutral-100 border border-neutral-200 text-[10px] underline text-neutral-700 transition-colors shadow-sm cursor-pointer select-none"
+                      title="Underline"
+                    >
+                      U
+                    </button>
+                  </div>
+                </div>
                 <textarea
+                  id="slide-editor-subtitle"
                   value={activeSlide.subtitle}
                   onChange={(e) => updateActiveSlide({ subtitle: e.target.value })}
                   rows={3}
@@ -2511,7 +2612,7 @@ export function CarouselGeneratorClient() {
                         className="font-black text-black leading-tight font-sans tracking-tight"
                         style={{ fontSize: `${Math.round(16 * scaleMultiplier)}px` }}
                       >
-                        {activeSlide.title}
+                        {renderFormattedText(activeSlide.title)}
                       </div>
                     </div>
 
@@ -2523,7 +2624,7 @@ export function CarouselGeneratorClient() {
                       className="w-full text-neutral-800 text-[10px] leading-snug font-sans whitespace-pre-line font-normal shrink-0 pt-0.5"
                       style={{ fontSize: `${Math.max(Math.round(10 * scaleMultiplier), 8)}px` }}
                     >
-                      {activeSlide.subtitle}
+                      {renderFormattedText(activeSlide.subtitle)}
                     </div>
                   </div>
                 ) : (
@@ -2541,7 +2642,7 @@ export function CarouselGeneratorClient() {
                           fontStyle: theme === "cyberpunk" ? "italic" : "normal",
                           textAlign: "center"
                         }}>
-                          {activeSlide.title}
+                          {renderFormattedText(activeSlide.title)}
                         </div>
                         <div style={{
                           color: styles.subtitleColor,
@@ -2551,7 +2652,7 @@ export function CarouselGeneratorClient() {
                           opacity: 0.9,
                           textAlign: "center"
                         }}>
-                          {activeSlide.subtitle}
+                          {renderFormattedText(activeSlide.subtitle)}
                         </div>
                       </div>
                     )}
@@ -2575,7 +2676,7 @@ export function CarouselGeneratorClient() {
                                 fontWeight: 800, 
                                 lineHeight: 1.2 
                               }}>
-                                {activeSlide.title}
+                                {renderFormattedText(activeSlide.title)}
                               </div>
                               {renderImageElement("rounded-lg border border-white/10 w-full object-cover", 100)}
                               <ul style={{ display: "flex", flexDirection: "column", gap: `${Math.round(4 * scaleMultiplier)}px` }}>
@@ -2613,7 +2714,7 @@ export function CarouselGeneratorClient() {
                                       fontWeight: 800, 
                                       lineHeight: 1.2 
                                     }}>
-                                      {activeSlide.title}
+                                      {renderFormattedText(activeSlide.title)}
                                     </div>
                                     <ul style={{ display: "flex", flexDirection: "column", gap: `${Math.round(4 * scaleMultiplier)}px` }}>
                                       {activeSlide.bullets.map((bullet, index) => (
@@ -2645,7 +2746,7 @@ export function CarouselGeneratorClient() {
                                       fontWeight: 800, 
                                       lineHeight: 1.2 
                                     }}>
-                                      {activeSlide.title}
+                                      {renderFormattedText(activeSlide.title)}
                                     </div>
                                     <ul style={{ display: "flex", flexDirection: "column", gap: `${Math.round(4 * scaleMultiplier)}px` }}>
                                       {activeSlide.bullets.map((bullet, index) => (
@@ -2681,7 +2782,7 @@ export function CarouselGeneratorClient() {
                               lineHeight: 1.2,
                               marginBottom: `${Math.round(8 * scaleMultiplier)}px`
                             }}>
-                              {activeSlide.title}
+                              {renderFormattedText(activeSlide.title)}
                             </div>
                             <div style={{
                               color: styles.subtitleColor,
@@ -2690,7 +2791,7 @@ export function CarouselGeneratorClient() {
                               opacity: 0.8,
                               marginBottom: `${Math.round(12 * scaleMultiplier)}px`
                             }}>
-                              {activeSlide.subtitle}
+                              {renderFormattedText(activeSlide.subtitle)}
                             </div>
                             <ul style={{ display: "flex", flexDirection: "column", gap: `${Math.round(6 * scaleMultiplier)}px` }}>
                               {activeSlide.bullets.map((bullet, index) => (
@@ -2733,7 +2834,7 @@ export function CarouselGeneratorClient() {
                           color: styles.quoteTextColor,
                           fontFamily: theme === "cream" ? "'Playfair Display', serif" : styles.titleFont
                         }}>
-                          "{activeSlide.subtitle}"
+                          "{renderFormattedText(activeSlide.subtitle)}"
                         </div>
                         <div style={{ 
                           fontSize: `${Math.max(Math.round(9 * scaleMultiplier), 8)}px`, 
@@ -2773,7 +2874,7 @@ export function CarouselGeneratorClient() {
                           fontWeight: 900,
                           lineHeight: 1.2
                         }}>
-                          {activeSlide.title}
+                          {renderFormattedText(activeSlide.title)}
                         </div>
                         <div style={{
                           color: styles.subtitleColor,
@@ -2781,7 +2882,7 @@ export function CarouselGeneratorClient() {
                           fontSize: `${Math.max(Math.round(12 * scaleMultiplier), 9)}px`,
                           opacity: 0.8
                         }}>
-                          {activeSlide.subtitle}
+                          {renderFormattedText(activeSlide.subtitle)}
                         </div>
                         <div>
                           <div 
@@ -3009,19 +3110,19 @@ export function CarouselGeneratorClient() {
                             {slide.categoryTag !== undefined ? slide.categoryTag : "GROWX INSIGHTS"}
                           </div>
                           <h1 style={{ fontSize: `${Math.round(44 * scaleMultiplier)}px`, fontWeight: 900, color: "#000000", lineHeight: 1.08, letterSpacing: "-1px", fontFamily: "'Inter', sans-serif", margin: 0 }}>
-                            {slide.title}
+                            {renderFormattedText(slide.title)}
                           </h1>
                           {renderVisualMediaCard(slide, scaleMultiplier)}
                           <p style={{ fontSize: `${Math.round(22 * scaleMultiplier)}px`, color: "#111827", lineHeight: 1.5, whiteSpace: "pre-line", fontFamily: "'Inter', sans-serif", margin: 0 }}>
-                            {slide.subtitle}
+                            {renderFormattedText(slide.subtitle)}
                           </p>
                         </div>
                       ) : (
                         <>
                           {slide.layout === "title-only" && (
                             <div style={{ width: "100%" }}>
-                              <h1 className="slide-title">{slide.title}</h1>
-                              <p className="slide-subtitle">{slide.subtitle}</p>
+                              <h1 className="slide-title">{renderFormattedText(slide.title)}</h1>
+                              <p className="slide-subtitle">{renderFormattedText(slide.subtitle)}</p>
                             </div>
                           )}
      
@@ -3030,7 +3131,7 @@ export function CarouselGeneratorClient() {
                               slide.imageLayout === "centered" ? (
                                 <div style={{ display: "flex", flexDirection: "column", gap: `${Math.round(24 * scaleMultiplier)}px`, width: "100%" }}>
                                   <h2 className="slide-title" style={{ fontSize: `${Math.round(38 * scaleMultiplier)}px`, textAlign: "left", marginBottom: "0px" }}>
-                                    {slide.title}
+                                    {renderFormattedText(slide.title)}
                                   </h2>
                                   {renderImageOrSvgMarkup(slide, "rounded-2xl border border-white/10", { width: "100%", height: `${Math.round(300 * scaleMultiplier)}px`, objectFit: "cover" }, `${Math.round(300 * scaleMultiplier)}px`)}
                                   <ul className="slide-bullets" style={{ marginTop: "0px" }}>
@@ -3051,7 +3152,7 @@ export function CarouselGeneratorClient() {
                                       </div>
                                       <div style={{ width: "60%", flexGrow: 1 }}>
                                         <h2 className="slide-title" style={{ fontSize: `${Math.round(36 * scaleMultiplier)}px`, textAlign: "left", marginBottom: `${Math.round(15 * scaleMultiplier)}px` }}>
-                                          {slide.title}
+                                          {renderFormattedText(slide.title)}
                                         </h2>
                                         <ul className="slide-bullets" style={{ marginTop: "0px" }}>
                                           {slide.bullets.map((bullet, bIdx) => (
@@ -3067,7 +3168,7 @@ export function CarouselGeneratorClient() {
                                     <>
                                       <div style={{ width: "60%", flexGrow: 1 }}>
                                         <h2 className="slide-title" style={{ fontSize: `${Math.round(36 * scaleMultiplier)}px`, textAlign: "left", marginBottom: `${Math.round(15 * scaleMultiplier)}px` }}>
-                                          {slide.title}
+                                          {renderFormattedText(slide.title)}
                                         </h2>
                                         <ul className="slide-bullets" style={{ marginTop: "0px" }}>
                                           {slide.bullets.map((bullet, bIdx) => (
@@ -3087,8 +3188,8 @@ export function CarouselGeneratorClient() {
                               )
                             ) : (
                               <div style={{ width: "100%" }}>
-                                <h2 className="slide-title" style={{ fontSize: `${Math.round(42 * scaleMultiplier)}px`, textAlign: "left" }}>{slide.title}</h2>
-                                <p className="slide-subtitle" style={{ fontSize: `${Math.round(22 * scaleMultiplier)}px`, textAlign: "left", opacity: 0.8, marginBottom: `${Math.round(30 * scaleMultiplier)}px` }}>{slide.subtitle}</p>
+                                <h2 className="slide-title" style={{ fontSize: `${Math.round(42 * scaleMultiplier)}px`, textAlign: "left" }}>{renderFormattedText(slide.title)}</h2>
+                                <p className="slide-subtitle" style={{ fontSize: `${Math.round(22 * scaleMultiplier)}px`, textAlign: "left", opacity: 0.8, marginBottom: `${Math.round(30 * scaleMultiplier)}px` }}>{renderFormattedText(slide.subtitle)}</p>
                                 <ul className="slide-bullets">
                                   {slide.bullets.map((bullet, bIdx) => (
                                     <li key={bIdx} className="slide-bullet-item" style={{ fontSize: `${Math.round(20 * scaleMultiplier)}px` }}>
@@ -3103,7 +3204,7 @@ export function CarouselGeneratorClient() {
      
                           {slide.layout === "quote" && (
                             <div className="slide-quote-box">
-                              <p className="slide-quote-text" style={{ fontSize: `${Math.round(32 * scaleMultiplier)}px` }}>"{slide.subtitle}"</p>
+                              <p className="slide-quote-text" style={{ fontSize: `${Math.round(32 * scaleMultiplier)}px` }}>"{renderFormattedText(slide.subtitle)}"</p>
                               <p className="slide-quote-author" style={{ fontSize: `${Math.round(20 * scaleMultiplier)}px` }}>— {slide.quoteAuthor || "Quote Author"}</p>
                             </div>
                           )}
@@ -3130,8 +3231,8 @@ export function CarouselGeneratorClient() {
                                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                                 </svg>
                               </div>
-                              <h1 className="slide-title" style={{ fontSize: `${Math.round(52 * scaleMultiplier)}px` }}>{slide.title}</h1>
-                              <p className="slide-subtitle" style={{ fontSize: `${Math.round(22 * scaleMultiplier)}px`, marginBottom: `${Math.round(40 * scaleMultiplier)}px` }}>{slide.subtitle}</p>
+                              <h1 className="slide-title" style={{ fontSize: `${Math.round(52 * scaleMultiplier)}px` }}>{renderFormattedText(slide.title)}</h1>
+                              <p className="slide-subtitle" style={{ fontSize: `${Math.round(22 * scaleMultiplier)}px`, marginBottom: `${Math.round(40 * scaleMultiplier)}px` }}>{renderFormattedText(slide.subtitle)}</p>
                               <div 
                                 style={{ 
                                   display: "inline-block", 
