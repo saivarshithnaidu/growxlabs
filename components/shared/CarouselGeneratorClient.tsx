@@ -1386,7 +1386,7 @@ export function CarouselGeneratorClient() {
     }
 
     const chartType = slide.visualMediaCardChartType || "none";
-    if (chartType === "none" && !slide.visualMediaCardTitle) return null;
+    if (chartType === "none" && !slide.visualMediaCardTitle && !mediaUrl) return null;
 
     const isPreview = scale < 0.8;
 
@@ -2761,9 +2761,11 @@ export function CarouselGeneratorClient() {
                       </div>
                     </div>
 
-                    <div className="w-full flex-1 flex flex-col justify-center items-center overflow-hidden min-h-0 my-1">
-                      {renderVisualMediaCard(activeSlide, liveScaleMultiplier)}
-                    </div>
+                    {renderVisualMediaCard(activeSlide, liveScaleMultiplier) && (
+                      <div className="w-full flex-1 flex flex-col justify-center items-center overflow-hidden min-h-0 my-1">
+                        {renderVisualMediaCard(activeSlide, liveScaleMultiplier)}
+                      </div>
+                    )}
 
                     <div 
                       className="w-full text-neutral-800 text-[10px] leading-snug font-sans whitespace-pre-line font-normal shrink-0 pt-0.5"
@@ -3264,7 +3266,7 @@ export function CarouselGeneratorClient() {
                           <h1 style={{ fontSize: `${Math.round(44 * scaleMultiplier)}px`, fontWeight: 900, color: "#000000", lineHeight: 1.08, letterSpacing: "-1px", fontFamily: "'Inter', sans-serif", margin: 0 }}>
                             {renderFormattedText(slide.title)}
                           </h1>
-                          {renderVisualMediaCard(slide, scaleMultiplier)}
+                          {renderVisualMediaCard(slide, scaleMultiplier) !== null && renderVisualMediaCard(slide, scaleMultiplier)}
                           <p style={{ fontSize: `${Math.round(22 * scaleMultiplier)}px`, color: "#111827", lineHeight: 1.5, whiteSpace: "pre-line", fontFamily: "'Inter', sans-serif", margin: 0 }}>
                             {renderFormattedText(slide.subtitle)}
                           </p>
