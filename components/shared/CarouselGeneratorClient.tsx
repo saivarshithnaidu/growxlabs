@@ -1338,8 +1338,10 @@ export function CarouselGeneratorClient() {
 
   const renderVisualMediaCard = (slide: Slide, scale = 1.0) => {
     const mediaUrl = slide.customVideo || slide.customImage;
-    const isPreview = scale < 0.8;
-    const cardMinHeight = isPreview ? "175px" : `${Math.round(420 * scale)}px`;
+    const isHighRes = scale > 1.5;
+    const cardMinHeight = isHighRes ? `${Math.round(420)}px` : `${Math.round(180)}px`;
+    const radiusStr = `${Math.round(12 * (isHighRes ? 2.7 : 1.0))}px`;
+    const marginStr = `${Math.round(8 * (isHighRes ? 2.7 : 1.0))}px auto`;
 
     if (mediaUrl) {
       const isVideo = isVideoMedia(mediaUrl);
@@ -1347,9 +1349,9 @@ export function CarouselGeneratorClient() {
         <div 
           className="w-full bg-[#050505] rounded-2xl border border-neutral-800 text-white my-2 flex flex-col justify-center items-center text-center overflow-hidden shrink-0 relative mx-auto"
           style={{
-            borderRadius: `${Math.round(18 * scale)}px`,
-            minHeight: cardMinHeight,
-            margin: `${Math.round(8 * scale)}px auto`
+            borderRadius: radiusStr,
+            height: cardMinHeight,
+            margin: marginStr
           }}
         >
           {isVideo ? (
@@ -1359,11 +1361,11 @@ export function CarouselGeneratorClient() {
               loop 
               muted 
               playsInline 
-              controls={!isPreview}
+              controls={scale < 1.5}
               className="max-w-full h-auto object-contain block rounded-2xl mx-auto self-center"
               style={{ 
-                maxHeight: isPreview ? "175px" : `${Math.round(420 * scale)}px`,
-                borderRadius: `${Math.round(18 * scale)}px`,
+                maxHeight: cardMinHeight,
+                borderRadius: radiusStr,
                 margin: "0 auto"
               }}
             />
@@ -1373,8 +1375,8 @@ export function CarouselGeneratorClient() {
               alt={stripHtmlTags(slide.title) || "Slide Media"}
               className="max-w-full h-auto object-contain block mx-auto self-center"
               style={{ 
-                maxHeight: isPreview ? "175px" : `${Math.round(420 * scale)}px`,
-                borderRadius: `${Math.round(18 * scale)}px`,
+                maxHeight: cardMinHeight,
+                borderRadius: radiusStr,
                 margin: "0 auto"
               }}
             />
@@ -1386,14 +1388,16 @@ export function CarouselGeneratorClient() {
     const chartType = slide.visualMediaCardChartType || "none";
     if (chartType === "none" && !slide.visualMediaCardTitle) return null;
 
+    const isPreview = scale < 0.8;
+
     return (
       <div 
         className="w-full bg-[#050505] rounded-2xl p-5 border border-neutral-800 text-white my-2 flex flex-col justify-center items-center overflow-hidden shrink-0 box-border"
         style={{
-          borderRadius: `${Math.round(18 * scale)}px`,
-          padding: `${Math.round(20 * scale)}px`,
+          borderRadius: radiusStr,
+          padding: `${Math.round(20 * (isHighRes ? 2.7 : 1.0))}px`,
           minHeight: cardMinHeight,
-          margin: `${Math.round(8 * scale)}px 0`
+          margin: `${Math.round(8 * (isHighRes ? 2.7 : 1.0))}px 0`
         }}
       >
         {chartType === "logo" && (
