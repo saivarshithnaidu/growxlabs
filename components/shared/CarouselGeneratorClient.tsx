@@ -102,34 +102,69 @@ const renderInteractiveElementMarkup = (slide: Slide, scale = 1.0, theme = "aine
     bgGradient = "rgba(251, 191, 36, 0.03)";
   }
 
+  if (theme === "ainews") {
+    accentColor = "#000000";
+    borderColor = "#e5e7eb";
+    bgGradient = "#f9fafb";
+  }
+
   if (slide.interactiveType === "button") {
+    const isAiNews = theme === "ainews";
     return (
-      <div 
-        style={{ 
-          marginTop: `${Math.round(16 * scale)}px`,
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: `${Math.round(6 * scale)}px`,
-          padding: `${Math.round(8 * scale)}px ${Math.round(18 * scale)}px`,
-          borderRadius: `${Math.round(10 * scale)}px`,
-          border: `1px solid ${accentColor}`,
-          background: bgGradient,
-          fontSize: `${Math.max(Math.round(11 * scale), 8.5)}px`,
-          fontWeight: 800,
-          textTransform: "uppercase",
-          letterSpacing: "1px",
-          cursor: "pointer",
-          transition: "all 0.2s ease-in-out"
-        }}
-      >
-        <span>{slide.interactiveLabel || "Learn More"}</span>
-        <span style={{ fontSize: `${Math.max(Math.round(10 * scale), 7.5)}px` }}>➔</span>
+      <div style={{ marginTop: `${Math.round(20 * scale)}px`, display: "flex", flexWrap: "wrap", gap: `${Math.round(10 * scale)}px` }}>
+        <div 
+          style={{ 
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: `${Math.round(6 * scale)}px ${Math.round(14 * scale)}px`,
+            borderRadius: `${Math.round(8 * scale)}px`,
+            border: isAiNews ? "none" : `1px solid ${accentColor}`,
+            background: isAiNews ? "#f3f4f6" : bgGradient,
+            color: isAiNews ? "#374151" : accentColor,
+            fontSize: `${Math.max(Math.round(11 * scale), 8.5)}px`,
+            fontWeight: 600,
+            fontFamily: isAiNews ? "'SF Mono', 'Fira Code', monospace" : "inherit",
+            cursor: "pointer",
+            boxShadow: isAiNews ? "none" : "0 1px 2px rgba(0, 0, 0, 0.05)"
+          }}
+        >
+          {slide.interactiveLabel || "Learn More"}
+        </div>
       </div>
     );
   }
 
   if (slide.interactiveType === "card") {
+    const isAiNews = theme === "ainews";
+    const labels = (slide.interactiveLabel || "").split(",").map(s => s.trim()).filter(Boolean);
+    
+    if (isAiNews && labels.length > 0) {
+      return (
+        <div style={{ marginTop: `${Math.round(20 * scale)}px`, display: "flex", flexWrap: "wrap", gap: `${Math.round(10 * scale)}px` }}>
+          {labels.map((lbl, idx) => (
+            <div 
+              key={idx}
+              style={{ 
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: `${Math.round(6 * scale)}px ${Math.round(14 * scale)}px`,
+                borderRadius: `${Math.round(8 * scale)}px`,
+                background: "#f3f4f6",
+                color: "#374151",
+                fontSize: `${Math.max(Math.round(11 * scale), 8.5)}px`,
+                fontWeight: 600,
+                fontFamily: "'SF Mono', 'Fira Code', monospace"
+              }}
+            >
+              {lbl}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
     return (
       <div 
         style={{ 
