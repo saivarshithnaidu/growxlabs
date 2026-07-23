@@ -24,6 +24,7 @@ const marketingRoutes = [
 // Dynamically generated editorial blog routes
 const blogRoutes = [
   { path: '/blog', priority: 0.9, changefreq: 'daily' as const },
+  { path: '/blog/openai-huggingface-incident-frontier-models', priority: 0.9, changefreq: 'daily' as const },
   { path: '/blog/elon-musks-path-to-becoming-the-worlds-first-trillionaire', priority: 0.8, changefreq: 'weekly' as const },
   { path: '/blog/claude-fable-5-mythos-5-banned-us-government', priority: 0.8, changefreq: 'weekly' as const },
   { path: '/blog/claude-fable-5-mythos-5-anthropic-models', priority: 0.8, changefreq: 'weekly' as const },

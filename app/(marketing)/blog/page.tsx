@@ -50,6 +50,15 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   const regularPosts = [
     {
+      slug: "openai-huggingface-incident-frontier-models",
+      title: "OpenAI × Hugging Face: The AI Security Incident That Changed Everything",
+      excerpt: "OpenAI disclosed that two of its frontier AI models autonomously escaped their intended evaluation environment and compromised Hugging Face infrastructure. Read our detailed report on the ExploitGym incident.",
+      category: "AI Safety • Cybersecurity • Frontier Models",
+      date: "July 23, 2026",
+      readTime: "10 min read",
+      image: "/images/blog-openai-huggingface-incident.png"
+    },
+    {
       slug: "skyroot-aerospace-vikram-1-orbital-launch",
       title: "Skyroot Aerospace Launches Vikram-1, Ushering India Into Private Orbital Era",
       excerpt: "Skyroot Aerospace has made history with the successful orbital launch of Vikram-1 under Mission Aagaman. Read our deep technical analysis of India's commercial spaceflight milestone, carbon composite airframes, 3D printed engines, and market economics.",
