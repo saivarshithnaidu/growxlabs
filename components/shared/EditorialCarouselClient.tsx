@@ -302,7 +302,7 @@ const DEFAULT_SLIDE = (index: number): Slide => ({
     fontWeight: "700"
   },
   footer: {
-    brandName: "360Labs",
+    brandName: "GrowxLabs",
     logoEnabled: true,
     dividerEnabled: true,
     pageNumberEnabled: true,
