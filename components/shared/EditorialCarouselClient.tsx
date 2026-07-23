@@ -1915,6 +1915,44 @@ export function EditorialCarouselClient() {
                   </div>
                 </div>
 
+                {/* Export Options Panel */}
+                <div className="space-y-3 pt-4 border-t">
+                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block pb-1">Export Deck</span>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => handleDownloadSlideRaster(activeIndex, "png")}
+                      className="w-full py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 border-none dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 cursor-pointer"
+                    >
+                      <Download size={12} /> Download Slide (PNG)
+                    </button>
+                    <button
+                      onClick={() => handleDownloadSlideRaster(activeIndex, "jpeg")}
+                      className="w-full py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 border-none dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700 cursor-pointer"
+                    >
+                      <Download size={12} /> Download Slide (JPEG)
+                    </button>
+                    <button
+                      onClick={() => handleDownloadSlideSvg(activeIndex)}
+                      className="w-full py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 border-none dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700 cursor-pointer"
+                    >
+                      <Download size={12} /> Download Slide (SVG)
+                    </button>
+                    <div className="h-px bg-neutral-100 my-1 dark:bg-neutral-800" />
+                    <button
+                      onClick={handleDownloadAllSlidesSvg}
+                      className="w-full py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 border-none dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700 cursor-pointer"
+                    >
+                      <Download size={12} /> Download All Slides (SVG)
+                    </button>
+                    <button
+                      onClick={handleDownloadPdf}
+                      className="w-full py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 border-none dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700 cursor-pointer"
+                    >
+                      <FileText size={12} /> Download Full Deck (PDF)
+                    </button>
+                  </div>
+                </div>
+
               </div>
             </div>
           )}
