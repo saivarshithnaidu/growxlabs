@@ -76,6 +76,102 @@ const renderFormattedText = (text?: string) => {
   return <span dangerouslySetInnerHTML={{ __html: text }} />;
 };
 
+const renderInteractiveElementMarkup = (slide: Slide, scale = 1.0, theme = "ainews") => {
+  if (!slide.interactiveType || slide.interactiveType === "none") return null;
+
+  // Accents & borders matching theme aesthetics
+  let accentColor = "#0075de";
+  let borderColor = "rgba(255, 255, 255, 0.12)";
+  let bgGradient = "rgba(255, 255, 255, 0.03)";
+  
+  if (theme === "cream") {
+    accentColor = "#78350f"; // Amber/brown accent for warm cream theme
+    borderColor = "rgba(0, 0, 0, 0.08)";
+    bgGradient = "rgba(0, 0, 0, 0.015)";
+  } else if (theme === "emerald") {
+    accentColor = "#10b981";
+    borderColor = "rgba(16, 185, 129, 0.15)";
+    bgGradient = "rgba(16, 185, 129, 0.02)";
+  } else if (theme === "cyberpunk") {
+    accentColor = "#facc15";
+    borderColor = "rgba(250, 204, 21, 0.2)";
+    bgGradient = "rgba(250, 204, 21, 0.03)";
+  } else if (theme === "gold") {
+    accentColor = "#fbbf24";
+    borderColor = "rgba(251, 191, 36, 0.2)";
+    bgGradient = "rgba(251, 191, 36, 0.03)";
+  }
+
+  if (slide.interactiveType === "button") {
+    return (
+      <div 
+        style={{ 
+          marginTop: `${Math.round(16 * scale)}px`,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: `${Math.round(6 * scale)}px`,
+          padding: `${Math.round(8 * scale)}px ${Math.round(18 * scale)}px`,
+          borderRadius: `${Math.round(10 * scale)}px`,
+          border: `1px solid ${accentColor}`,
+          background: bgGradient,
+          fontSize: `${Math.max(Math.round(11 * scale), 8.5)}px`,
+          fontWeight: 800,
+          textTransform: "uppercase",
+          letterSpacing: "1px",
+          cursor: "pointer",
+          transition: "all 0.2s ease-in-out"
+        }}
+      >
+        <span>{slide.interactiveLabel || "Learn More"}</span>
+        <span style={{ fontSize: `${Math.max(Math.round(10 * scale), 7.5)}px` }}>➔</span>
+      </div>
+    );
+  }
+
+  if (slide.interactiveType === "card") {
+    return (
+      <div 
+        style={{ 
+          marginTop: `${Math.round(16 * scale)}px`,
+          width: "100%",
+          textAlign: "left",
+          padding: `${Math.round(10 * scale)}px ${Math.round(12 * scale)}px`,
+          borderRadius: `${Math.round(12 * scale)}px`,
+          border: `1px solid ${borderColor}`,
+          background: bgGradient,
+          boxSizing: "border-box"
+        }}
+      >
+        <div 
+          style={{ 
+            fontSize: `${Math.max(Math.round(12 * scale), 9.5)}px`,
+            fontWeight: 800,
+            lineHeight: 1.2,
+            marginBottom: slide.interactiveSubtext ? `${Math.round(4 * scale)}px` : "0px"
+          }}
+        >
+          {slide.interactiveLabel || "Card Title"}
+        </div>
+        {slide.interactiveSubtext && (
+          <div 
+            style={{ 
+              fontSize: `${Math.max(Math.round(10 * scale), 8.5)}px`,
+              fontWeight: 500,
+              lineHeight: 1.3,
+              opacity: 0.8
+            }}
+          >
+            {slide.interactiveSubtext}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return null;
+};
+
 interface Slide {
   title: string;
   subtitle: string;
@@ -92,6 +188,9 @@ interface Slide {
   visualMediaCardTitle?: string;
   visualMediaCardSub?: string;
   visualMediaCardChartType?: "logo" | "leaderboard" | "cost" | "architecture" | "roofline" | "none";
+  interactiveType?: "none" | "button" | "card";
+  interactiveLabel?: string;
+  interactiveSubtext?: string;
 }
 
 const KIMI_K3_PRESET_SLIDES: Slide[] = [
@@ -1240,7 +1339,7 @@ export function CarouselGeneratorClient() {
   const renderVisualMediaCard = (slide: Slide, scale = 1.0) => {
     const mediaUrl = slide.customVideo || slide.customImage;
     const isPreview = scale < 0.8;
-    const cardMinHeight = isPreview ? "135px" : `${Math.round(320 * scale)}px`;
+    const cardMinHeight = isPreview ? "175px" : `${Math.round(420 * scale)}px`;
 
     if (mediaUrl) {
       const isVideo = isVideoMedia(mediaUrl);
@@ -1263,7 +1362,7 @@ export function CarouselGeneratorClient() {
               controls={!isPreview}
               className="max-w-full h-auto object-contain block rounded-2xl mx-auto self-center"
               style={{ 
-                maxHeight: isPreview ? "135px" : `${Math.round(320 * scale)}px`,
+                maxHeight: isPreview ? "175px" : `${Math.round(420 * scale)}px`,
                 borderRadius: `${Math.round(18 * scale)}px`,
                 margin: "0 auto"
               }}
@@ -1274,7 +1373,7 @@ export function CarouselGeneratorClient() {
               alt={stripHtmlTags(slide.title) || "Slide Media"}
               className="max-w-full h-auto object-contain block mx-auto self-center"
               style={{ 
-                maxHeight: isPreview ? "135px" : `${Math.round(320 * scale)}px`,
+                maxHeight: isPreview ? "175px" : `${Math.round(420 * scale)}px`,
                 borderRadius: `${Math.round(18 * scale)}px`,
                 margin: "0 auto"
               }}
@@ -2282,6 +2381,57 @@ export function CarouselGeneratorClient() {
                   )}
                 </div>
               )}
+              {/* Interactive Element Settings Section */}
+              <div className="border border-neutral-200 rounded-xl p-4 space-y-4 bg-neutral-50/50">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 flex items-center gap-1.5">
+                    <span>🎁</span> Interactive Element (Optional Button/Card)
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Element Type</label>
+                    <select
+                      value={activeSlide.interactiveType || "none"}
+                      onChange={(e) => updateActiveSlide({ interactiveType: e.target.value as any })}
+                      className="w-full h-10 bg-white border border-neutral-300 rounded-lg px-3 text-xs text-neutral-900 focus:outline-none focus:border-[#0075de]"
+                    >
+                      <option value="none">None (Clean Slide)</option>
+                      <option value="button">Bordered Button</option>
+                      <option value="card">Bordered Card</option>
+                    </select>
+                  </div>
+                  
+                  {activeSlide.interactiveType && activeSlide.interactiveType !== "none" && (
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                        {activeSlide.interactiveType === "button" ? "Button Label" : "Card Title"}
+                      </label>
+                      <input
+                        type="text"
+                        value={activeSlide.interactiveLabel || ""}
+                        onChange={(e) => updateActiveSlide({ interactiveLabel: e.target.value })}
+                        placeholder={activeSlide.interactiveType === "button" ? "e.g. Book a Call" : "e.g. Free Strategy Session"}
+                        className="w-full h-10 bg-white border border-neutral-300 rounded-lg px-3 text-xs text-neutral-900 focus:outline-none focus:border-[#0075de]"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {activeSlide.interactiveType === "card" && (
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Card Subtext / Description</label>
+                    <textarea
+                      value={activeSlide.interactiveSubtext || ""}
+                      onChange={(e) => updateActiveSlide({ interactiveSubtext: e.target.value })}
+                      placeholder="Enter card details..."
+                      rows={2}
+                      className="w-full bg-white border border-neutral-300 rounded-lg p-3 text-xs text-neutral-900 focus:outline-none focus:border-[#0075de] resize-none"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* AI Agent Loop Refinement */}
@@ -2617,11 +2767,12 @@ export function CarouselGeneratorClient() {
                     >
                       {renderFormattedText(activeSlide.subtitle)}
                     </div>
+                    {renderInteractiveElementMarkup(activeSlide, liveScaleMultiplier, theme)}
                   </div>
                 ) : (
                   <>
                     {activeSlide.layout === "title-only" && (
-                      <div className="w-full">
+                      <div className="w-full text-center">
                         <div style={{
                           color: styles.titleColor,
                           fontFamily: styles.titleFont,
@@ -2645,6 +2796,7 @@ export function CarouselGeneratorClient() {
                         }}>
                           {renderFormattedText(activeSlide.subtitle)}
                         </div>
+                        {renderInteractiveElementMarkup(activeSlide, liveScaleMultiplier, theme)}
                       </div>
                     )}
 
@@ -2669,7 +2821,7 @@ export function CarouselGeneratorClient() {
                               }}>
                                 {renderFormattedText(activeSlide.title)}
                               </div>
-                              {renderImageElement("rounded-lg border border-white/10 w-full object-cover", 100)}
+                              {renderImageElement("rounded-lg border border-white/10 w-full object-cover", 150)}
                               <ul style={{ display: "flex", flexDirection: "column", gap: `${Math.round(4 * scaleMultiplier)}px` }}>
                                 {activeSlide.bullets.map((bullet, index) => (
                                   <li 
@@ -2687,6 +2839,7 @@ export function CarouselGeneratorClient() {
                                   </li>
                                 ))}
                               </ul>
+                              {renderInteractiveElementMarkup(activeSlide, scaleMultiplier, theme)}
                             </div>
                           ) : (
                             <div 
@@ -2695,7 +2848,7 @@ export function CarouselGeneratorClient() {
                             >
                               <div className={activeSlide.imageLayout === "split-left" ? "col-span-5" : "col-span-7"}>
                                 {activeSlide.imageLayout === "split-left" ? (
-                                  renderImageElement("rounded-lg border border-white/10 w-full object-cover aspect-square", 130)
+                                  renderImageElement("rounded-lg border border-white/10 w-full object-cover aspect-square", 170)
                                 ) : (
                                   <div style={{ display: "flex", flexDirection: "column", gap: `${Math.round(8 * scaleMultiplier)}px` }}>
                                     <div style={{ 
@@ -2758,9 +2911,10 @@ export function CarouselGeneratorClient() {
                                     </ul>
                                   </div>
                                 ) : (
-                                  renderImageElement("rounded-lg border border-white/10 w-full object-cover aspect-square", 130)
+                                  renderImageElement("rounded-lg border border-white/10 w-full object-cover aspect-square", 170)
                                 )}
                               </div>
+                              {renderInteractiveElementMarkup(activeSlide, scaleMultiplier, theme)}
                             </div>
                           )
                         ) : (
@@ -2801,6 +2955,7 @@ export function CarouselGeneratorClient() {
                                 </li>
                               ))}
                             </ul>
+                            {renderInteractiveElementMarkup(activeSlide, scaleMultiplier, theme)}
                           </>
                         )}
                       </div>
@@ -2837,6 +2992,7 @@ export function CarouselGeneratorClient() {
                         }}>
                           — {activeSlide.quoteAuthor || "Quote Author"}
                         </div>
+                        {renderInteractiveElementMarkup(activeSlide, scaleMultiplier, theme)}
                       </div>
                     )}
 
@@ -2875,6 +3031,7 @@ export function CarouselGeneratorClient() {
                         }}>
                           {renderFormattedText(activeSlide.subtitle)}
                         </div>
+                        {renderInteractiveElementMarkup(activeSlide, scaleMultiplier, theme)}
                         <div>
                           <div 
                             className="font-black tracking-widest inline-block uppercase"
@@ -3107,6 +3264,7 @@ export function CarouselGeneratorClient() {
                           <p style={{ fontSize: `${Math.round(22 * scaleMultiplier)}px`, color: "#111827", lineHeight: 1.5, whiteSpace: "pre-line", fontFamily: "'Inter', sans-serif", margin: 0 }}>
                             {renderFormattedText(slide.subtitle)}
                           </p>
+                          {renderInteractiveElementMarkup(slide, scaleMultiplier, theme)}
                         </div>
                       ) : (
                         <>
@@ -3114,6 +3272,7 @@ export function CarouselGeneratorClient() {
                             <div style={{ width: "100%" }}>
                               <h1 className="slide-title">{renderFormattedText(slide.title)}</h1>
                               <p className="slide-subtitle">{renderFormattedText(slide.subtitle)}</p>
+                              {renderInteractiveElementMarkup(slide, scaleMultiplier, theme)}
                             </div>
                           )}
      
@@ -3133,6 +3292,7 @@ export function CarouselGeneratorClient() {
                                       </li>
                                     ))}
                                   </ul>
+                                  {renderInteractiveElementMarkup(slide, scaleMultiplier, theme)}
                                 </div>
                               ) : (
                                 <div style={{ display: "flex", gap: `${Math.round(30 * scaleMultiplier)}px`, alignItems: "center", width: "100%" }}>
@@ -3175,6 +3335,7 @@ export function CarouselGeneratorClient() {
                                       </div>
                                     </>
                                   )}
+                                  {renderInteractiveElementMarkup(slide, scaleMultiplier, theme)}
                                 </div>
                               )
                             ) : (
@@ -3189,6 +3350,7 @@ export function CarouselGeneratorClient() {
                                     </li>
                                   ))}
                                 </ul>
+                                {renderInteractiveElementMarkup(slide, scaleMultiplier, theme)}
                               </div>
                             )
                           )}
@@ -3197,6 +3359,7 @@ export function CarouselGeneratorClient() {
                             <div className="slide-quote-box">
                               <p className="slide-quote-text" style={{ fontSize: `${Math.round(32 * scaleMultiplier)}px` }}>"{renderFormattedText(slide.subtitle)}"</p>
                               <p className="slide-quote-author" style={{ fontSize: `${Math.round(20 * scaleMultiplier)}px` }}>— {slide.quoteAuthor || "Quote Author"}</p>
+                              {renderInteractiveElementMarkup(slide, scaleMultiplier, theme)}
                             </div>
                           )}
      
@@ -3224,6 +3387,7 @@ export function CarouselGeneratorClient() {
                               </div>
                               <h1 className="slide-title" style={{ fontSize: `${Math.round(52 * scaleMultiplier)}px` }}>{renderFormattedText(slide.title)}</h1>
                               <p className="slide-subtitle" style={{ fontSize: `${Math.round(22 * scaleMultiplier)}px`, marginBottom: `${Math.round(40 * scaleMultiplier)}px` }}>{renderFormattedText(slide.subtitle)}</p>
+                              {renderInteractiveElementMarkup(slide, scaleMultiplier, theme)}
                               <div 
                                 style={{ 
                                   display: "inline-block", 
