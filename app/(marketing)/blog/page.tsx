@@ -50,7 +50,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
 
   const regularPosts = [
     {
-      slug: "applied-intuition-dana-physical-ai",
+      slug: "applied-intuition-dana-physical-ai-platform",
       title: "Dana: Applied Intuition's Bold Bet on the Future of Physical AI",
       excerpt: "Applied Intuition has launched Dana, the first agentic platform for Physical AI. Discover how Dana bridges digital intelligence with physical systems, robotics, and vehicles.",
       category: "Physical AI • Robotics • Engineering",

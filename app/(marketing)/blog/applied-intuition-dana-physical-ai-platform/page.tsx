@@ -27,7 +27,7 @@ import { BlogShare } from "./InteractiveComponents";
 // ═══════════════════════════════════════════════════
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const path = "blog/applied-intuition-dana-physical-ai";
+  const path = "blog/applied-intuition-dana-physical-ai-platform";
 
   const languages: Record<string, string> = {
     'x-default': `https://growxlabs.tech/en-IN/${path}`,
@@ -107,7 +107,7 @@ export default async function AppliedIntuitionDanaBlogPage({ params }: { params:
     "@graph": [
       {
         "@type": "BlogPosting",
-        "@id": `https://growxlabs.tech/${locale}/blog/applied-intuition-dana-physical-ai/#article`,
+        "@id": `https://growxlabs.tech/${locale}/blog/applied-intuition-dana-physical-ai-platform/#article`,
         "headline": "Dana: Applied Intuition's Bold Bet on the Future of Physical AI",
         "description": "Applied Intuition has launched Dana, the first agentic platform for Physical AI. Discover how Dana bridges digital intelligence with physical systems, robotics, and vehicles.",
         "datePublished": "2026-07-23T00:00:00.000Z",
@@ -129,7 +129,7 @@ export default async function AppliedIntuitionDanaBlogPage({ params }: { params:
         },
         "mainEntityOfPage": {
           "@type": "WebPage",
-          "id": `https://growxlabs.tech/${locale}/blog/applied-intuition-dana-physical-ai`
+          "id": `https://growxlabs.tech/${locale}/blog/applied-intuition-dana-physical-ai-platform`
         }
       },
       {
@@ -151,7 +151,7 @@ export default async function AppliedIntuitionDanaBlogPage({ params }: { params:
             "@type": "ListItem",
             "position": 3,
             "name": "Applied Intuition Dana",
-            "item": `https://growxlabs.tech/${locale}/blog/applied-intuition-dana-physical-ai`
+            "item": `https://growxlabs.tech/${locale}/blog/applied-intuition-dana-physical-ai-platform`
           }
         ]
       }
@@ -300,7 +300,7 @@ export default async function AppliedIntuitionDanaBlogPage({ params }: { params:
           <article className="lg:col-span-9 space-y-12 text-foreground font-serif text-lg leading-relaxed">
             
             <NewsletterForwardBanner />
-            <BlogActionBar title="Dana: Applied Intuition's Bold Bet on the Future of Physical AI" slug="applied-intuition-dana-physical-ai" />
+            <BlogActionBar title="Dana: Applied Intuition's Bold Bet on the Future of Physical AI" slug="applied-intuition-dana-physical-ai-platform" />
 
             <TableOfContents headings={headings} />
 
@@ -507,7 +507,7 @@ export default async function AppliedIntuitionDanaBlogPage({ params }: { params:
             </section>
 
             {/* SHARE & ACTION BAR */}
-            <BlogShare title="Dana: Applied Intuition's Bold Bet on the Future of Physical AI" slug="applied-intuition-dana-physical-ai" />
+            <BlogShare title="Dana: Applied Intuition's Bold Bet on the Future of Physical AI" slug="applied-intuition-dana-physical-ai-platform" />
 
             {/* FAQ ACCORDION */}
             <section id="faq" className="space-y-6 font-sans border-t border-border pt-8">
