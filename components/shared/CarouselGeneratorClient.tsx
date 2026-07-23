@@ -66,23 +66,14 @@ const isVideoMedia = (url?: string) => {
   return url.startsWith("data:video/") || url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov") || url.endsWith(".ogg");
 };
 
+const stripHtmlTags = (text?: string) => {
+  if (!text) return "";
+  return text.replace(/<[^>]*>/g, "");
+};
+
 const renderFormattedText = (text?: string) => {
   if (!text) return "";
-  const regex = /(<strong>.*?<\/strong>|<em>.*?<\/em>|<u>.*?<\/u>)/gi;
-  const parts = text.split(regex);
-  return parts.map((part, index) => {
-    const partLower = part.toLowerCase();
-    if (partLower.startsWith("<strong>") && partLower.endsWith("</strong>")) {
-      return <strong key={index} className="font-extrabold" style={{ fontWeight: 900 }}>{part.slice(8, -9)}</strong>;
-    }
-    if (partLower.startsWith("<em>") && partLower.endsWith("</em>")) {
-      return <em key={index} className="italic" style={{ fontStyle: "italic" }}>{part.slice(4, -5)}</em>;
-    }
-    if (partLower.startsWith("<u>") && partLower.endsWith("</u>")) {
-      return <u key={index} className="underline" style={{ textDecoration: "underline" }}>{part.slice(3, -4)}</u>;
-    }
-    return part;
-  });
+  return <span dangerouslySetInnerHTML={{ __html: text }} />;
 };
 
 interface Slide {
@@ -601,7 +592,7 @@ export function CarouselGeneratorClient() {
 
   const handleGenerateAIImage = async () => {
     if (!activeSlide) return;
-    const prompt = activeSlide.imagePrompt || activeSlide.title || "Graphic";
+    const prompt = stripHtmlTags(activeSlide.imagePrompt || activeSlide.title || "Graphic");
     setIsGeneratingImage(true);
     const imageToast = toast.loading("Generating AI image from prompt...");
 
@@ -1280,7 +1271,7 @@ export function CarouselGeneratorClient() {
           ) : (
             <img 
               src={mediaUrl} 
-              alt={slide.title || "Slide Media"}
+              alt={stripHtmlTags(slide.title) || "Slide Media"}
               className="max-w-full h-auto object-contain block mx-auto self-center"
               style={{ 
                 maxHeight: isPreview ? "135px" : `${Math.round(320 * scale)}px`,
@@ -1478,7 +1469,7 @@ export function CarouselGeneratorClient() {
       );
     }
 
-    const src = `https://image.pollinations.ai/prompt/${encodeURIComponent(slide.imagePrompt || slide.title)}?width=500&height=500&nologo=true&model=flux`;
+    const src = `https://image.pollinations.ai/prompt/${encodeURIComponent(stripHtmlTags(slide.imagePrompt || slide.title))}?width=500&height=500&nologo=true&model=flux`;
     return (
       <div style={{ position: "relative", overflow: "hidden", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", margin: "0 auto" }}>
         <img 
