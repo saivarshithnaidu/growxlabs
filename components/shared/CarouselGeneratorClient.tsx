@@ -2725,7 +2725,7 @@ export function CarouselGeneratorClient() {
               {renderBgPatternMarkup()}
               
               {/* BRAND HEADER (Simulated inside live view) */}
-              {showHandle && (
+              {showHandle && theme !== "ainews" && (
                 <div 
                   className="flex items-center justify-between border-b w-full box-border"
                   style={{ 
@@ -2780,7 +2780,10 @@ export function CarouselGeneratorClient() {
                 }}
               >
                 {theme === "ainews" ? (
-                  <div className="w-full flex flex-col justify-between items-start text-left h-full overflow-hidden">
+                  <div 
+                    className="w-full text-left flex flex-col overflow-hidden"
+                    style={{ gap: `${Math.round(6 * scaleMultiplier)}px` }}
+                  >
                     <div className="w-full flex flex-col justify-start items-start space-y-1 shrink-0">
                       <div 
                         className="text-[10px] font-extrabold uppercase tracking-widest text-[#888888] font-sans"
@@ -2797,13 +2800,13 @@ export function CarouselGeneratorClient() {
                     </div>
 
                     {renderVisualMediaCard(activeSlide, liveScaleMultiplier) && (
-                      <div className="w-full flex-1 flex flex-col justify-center items-center overflow-hidden min-h-0 my-1">
+                      <div className="w-full overflow-hidden shrink-0 my-1">
                         {renderVisualMediaCard(activeSlide, liveScaleMultiplier)}
                       </div>
                     )}
 
                     <div 
-                      className="w-full text-neutral-800 text-[10px] leading-snug font-sans whitespace-pre-line font-normal shrink-0 pt-0.5"
+                      className="w-full text-neutral-800 text-[10px] leading-snug font-sans whitespace-pre-line font-normal shrink-0"
                       style={{ fontSize: `${Math.max(Math.round(10 * scaleMultiplier), 8)}px` }}
                     >
                       {renderFormattedText(activeSlide.subtitle)}
@@ -3261,7 +3264,7 @@ export function CarouselGeneratorClient() {
                     {renderBgPatternMarkup(String(sIdx), styles)}
                     
                     {/* Header Brand Overlay */}
-                    {showHandle && (
+                    {showHandle && theme !== "ainews" && (
                       <div className="slide-header" style={{ paddingBottom: `${Math.round(20 * scaleMultiplier)}px` }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                           <div 
