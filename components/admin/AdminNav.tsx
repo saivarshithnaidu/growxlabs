@@ -127,6 +127,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { name: "Marketing Hub", href: "/admin/marketing", icon: Megaphone },
       { name: "Carousel Creator", href: "/admin/instagram-carousel", icon: InstagramNavIcon },
+      { name: "Editorial Carousel", href: "/admin/editorial-carousel", icon: FileText },
       { name: "Reels Creator", href: "/admin/reels-creator", icon: Video },
     ]
   },
