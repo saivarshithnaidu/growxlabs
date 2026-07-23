@@ -8,8 +8,29 @@ const LEGACY_LOCALES = [
 
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+  const hostname = request.headers.get("host") || "";
 
-  // 1. Intercept legacy i18n locale paths (e.g. /en-IN/blog/slug, /en/services, /en-IN)
+  // 1. Subdomain routing for careers.growxlabs.tech
+  const isCareersSubdomain = hostname.startsWith("careers.growxlabs.tech") || hostname.startsWith("careers.localhost");
+  if (isCareersSubdomain) {
+    if (!pathname.startsWith("/careers") && !pathname.startsWith("/api") && !pathname.startsWith("/_next")) {
+      const cleanPath = `/careers${pathname === "/" ? "" : pathname}`;
+      const rewriteUrl = new URL(cleanPath + search, request.url);
+      const response = NextResponse.rewrite(rewriteUrl);
+      
+      const requestId = request.headers.get("x-request-id") || "req_" + Math.random().toString(36).substring(2, 10);
+      response.headers.set("x-request-id", requestId);
+      response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+      response.headers.set("X-Frame-Options", "DENY");
+      response.headers.set("X-Content-Type-Options", "nosniff");
+      response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+      response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+      response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;");
+      return response;
+    }
+  }
+
+  // 2. Intercept legacy i18n locale paths (e.g. /en-IN/blog/slug, /en/services, /en-IN)
   const segments = pathname.split("/");
   const firstSegment = segments[1];
 
