@@ -102,6 +102,56 @@ export function CareersContent() {
   const [uploading, setUploading] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState("");
 
+  const [jobsList, setJobsList] = useState<any[]>(JOB_POSTINGS);
+  const [loadingJobs, setLoadingJobs] = useState(true);
+
+  useEffect(() => {
+    async function loadJobs() {
+      try {
+        const res = await fetch("/api/careers/jobs");
+        const data = await res.json();
+        if (data.jobs && data.jobs.length > 0) {
+          const formatted = data.jobs.map((job: any) => {
+            const isVideo = job.title.toLowerCase().includes("video") || job.title.toLowerCase().includes("videographer") || job.title.toLowerCase().includes("content creator");
+            return {
+              slug: job.id || job.title.toLowerCase().replace(/\s+/g, "-"),
+              title: job.title,
+              department: isVideo ? "Creative & Content" : "Engineering & Design",
+              type: "Founding Role",
+              location: "Remote (India)",
+              compensation: job.salary_range || "Market Standard",
+              shortDesc: job.description || "",
+              about: "GrowX Labs is an AI-native software company building intelligent products, automation solutions, and custom software for startups and businesses.",
+              roleDesc: job.description || "",
+              whatYoullDo: Array.isArray(job.requirements) ? job.requirements : (job.requirements || "").split(",").map((r: string) => r.trim()).filter(Boolean),
+              whoCanApply: isVideo ? [
+                "Proficiency in video editing software (Premiere Pro, DaVinci Resolve, CapCut)",
+                "Experience shooting engaging video content for LinkedIn and YouTube",
+                "Self-motivated, proactive, and creative"
+              ] : [
+                "Self-motivated and proactive",
+                "Eager to learn and ship products quickly",
+                "Strong execution capabilities"
+              ],
+              whatYoullGain: [
+                "Work directly with the founding team",
+                "Ownership from day one",
+                "Mentorship and high growth opportunities"
+              ],
+              hiringProcess: ["Application Review", "Introductory Call", "Final Discussion"]
+            };
+          });
+          setJobsList(formatted);
+        }
+      } catch (err) {
+        console.error("Error loading careers jobs:", err);
+      } finally {
+        setLoadingJobs(false);
+      }
+    }
+    loadJobs();
+  }, []);
+
   const handleFileUpload = async (file: File) => {
     if (!file) return;
     setError("");
@@ -195,6 +245,8 @@ export function CareersContent() {
     motivation: "",
   });
 
+  const isVideoRole = (formData.role || "").toLowerCase().includes("video") || (formData.role || "").toLowerCase().includes("videographer") || (formData.role || "").toLowerCase().includes("content creator");
+
   // Selected tech stacks for Step 8
   const [selectedTech, setSelectedTech] = useState<string[]>([]);
 
@@ -234,10 +286,11 @@ export function CareersContent() {
       // Option selection via keyboard for specific steps
       if (step === 5) {
         // Role Selection
+        const activeRoles = jobsList.length > 0 ? jobsList.map(j => j.title) : ROLES;
         const num = parseInt(e.key);
-        if (num >= 1 && num <= ROLES.length) {
+        if (num >= 1 && num <= activeRoles.length) {
           e.preventDefault();
-          selectRole(ROLES[num - 1]);
+          selectRole(activeRoles[num - 1]);
         }
       } else if (step === 16) {
         // Notice Period Selection
@@ -309,7 +362,7 @@ export function CareersContent() {
         if (selectedTech.length === 0) return "Select at least one skill option.";
         break;
       case 9:
-        if (formData.github && !formData.github.startsWith("http")) return "Must be a valid URL starting with http:// or https://";
+        if (!isVideoRole && formData.github && !formData.github.startsWith("http")) return "Must be a valid URL starting with http:// or https://";
         break;
       case 10:
         if (formData.linkedin && !formData.linkedin.startsWith("http")) return "Must be a valid URL starting with http:// or https://";
@@ -399,10 +452,16 @@ export function CareersContent() {
     setError("");
 
     try {
+      const submitData = { ...formData };
+      if (isVideoRole) {
+        submitData.motivation = `[CAMERA & AUDIO GEAR]: ${formData.github || "None declared"}\n\n[MOTIVATION]: ${formData.motivation}`;
+        submitData.github = ""; // Clear github URL so it passes backend DB schema URL check
+      }
+
       const response = await fetch("/api/careers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -555,11 +614,11 @@ export function CareersContent() {
                     <div className="space-y-6 w-full">
                       <div className="border-b border-white/10 pb-2 mb-4">
                         <span className="text-[10px] font-mono font-bold tracking-widest text-zinc-500 uppercase">
-                          Active Listings ({JOB_POSTINGS.length})
+                          Active Listings ({jobsList.length})
                         </span>
                       </div>
                       
-                      {JOB_POSTINGS.map((job) => {
+                      {jobsList.map((job) => {
                         const isExpanded = expandedJob === job.slug;
                         return (
                           <div key={job.slug} className="w-full border border-white/10 hover:border-white/20 bg-zinc-950/20 backdrop-blur-sm rounded-2xl p-6 md:p-8 transition-all space-y-6">
@@ -622,7 +681,7 @@ export function CareersContent() {
                                   <div className="space-y-3">
                                     <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">// What You'll Do</h3>
                                     <ul className="space-y-2 text-zinc-400 font-sans">
-                                      {job.whatYoullDo.map((item, idx) => (
+                                      {job.whatYoullDo.map((item: string, idx: number) => (
                                         <li key={idx} className="leading-relaxed flex items-start gap-2">
                                           <span className="text-[#C0F0FB] shrink-0 font-mono mt-0.5">→</span>
                                           <span>{item}</span>
@@ -634,7 +693,7 @@ export function CareersContent() {
                                   <div className="space-y-3">
                                     <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">// Who Can Apply</h3>
                                     <ul className="space-y-2 text-zinc-400 font-sans">
-                                      {job.whoCanApply.map((item, idx) => (
+                                      {job.whoCanApply.map((item: string, idx: number) => (
                                         <li key={idx} className="leading-relaxed flex items-start gap-2">
                                           <span className="text-[#C0F0FB] shrink-0 font-mono mt-0.5">→</span>
                                           <span>{item}</span>
@@ -646,7 +705,7 @@ export function CareersContent() {
                                   <div className="space-y-3">
                                     <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">// What You'll Gain</h3>
                                     <ul className="space-y-2 text-zinc-400 font-sans">
-                                      {job.whatYoullGain.map((item, idx) => (
+                                      {job.whatYoullGain.map((item: string, idx: number) => (
                                         <li key={idx} className="leading-relaxed flex items-start gap-2">
                                           <span className="text-[#C0F0FB] shrink-0 font-mono mt-0.5">→</span>
                                           <span>{item}</span>
@@ -665,7 +724,7 @@ export function CareersContent() {
                                   <div className="space-y-3">
                                     <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">// Hiring Process</h3>
                                     <div className="flex flex-wrap gap-2 items-center">
-                                      {job.hiringProcess.map((step, idx) => (
+                                      {job.hiringProcess.map((step: string, idx: number) => (
                                         <span key={idx} className="flex items-center text-[9px] font-mono font-bold text-zinc-400 bg-white/5 border border-white/10 px-2.5 py-1.5 rounded">
                                           {idx + 1}. {step} {idx < job.hiringProcess.length - 1 && <span className="text-[#C0F0FB] ml-2 font-sans font-normal">➔</span>}
                                         </span>
@@ -784,7 +843,7 @@ export function CareersContent() {
                       What role are you applying for?
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                      {ROLES.map((role, idx) => (
+                      {(jobsList.length > 0 ? jobsList.map(j => j.title) : ROLES).map((role, idx) => (
                         <button
                           key={role}
                           onClick={() => selectRole(role)}
@@ -826,14 +885,14 @@ export function CareersContent() {
                 {step === 7 && (
                   <div className="w-full space-y-6">
                     <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your primary programming language or design tool?
+                      {isVideoRole ? "What is your primary video editing software?" : "What is your primary programming language or design tool?"}
                     </label>
                     <input
                       ref={inputRef as any}
                       type="text"
                       value={formData.techStack}
                       onChange={e => setFormData({ ...formData, techStack: e.target.value })}
-                      placeholder="TypeScript, Python, Figma, etc."
+                      placeholder={isVideoRole ? "Premiere Pro, DaVinci Resolve, CapCut, etc." : "TypeScript, Python, Figma, etc."}
                       className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
                     />
                   </div>
@@ -843,10 +902,19 @@ export function CareersContent() {
                 {step === 8 && (
                   <div className="w-full space-y-6">
                     <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight block mb-6">
-                      Select other libraries and tools you are highly confident in:
+                      {isVideoRole ? "Select other creative and editing tools you are confident in:" : "Select other libraries and tools you are highly confident in:"}
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 w-full">
-                      {TECH_OPTIONS.map((tech) => {
+                      {(isVideoRole ? [
+                        "Adobe Premiere Pro",
+                        "DaVinci Resolve",
+                        "Adobe After Effects",
+                        "Final Cut Pro",
+                        "CapCut",
+                        "Photoshop / Canva",
+                        "Sound Design / Mixing",
+                        "Color Grading"
+                      ] : TECH_OPTIONS).map((tech) => {
                         const isSelected = selectedTech.includes(tech);
                         return (
                           <button
@@ -880,14 +948,14 @@ export function CareersContent() {
                 {step === 9 && (
                   <div className="w-full space-y-6">
                     <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your GitHub profile URL? (Optional)
+                      {isVideoRole ? "What camera and audio equipment do you use? (Optional)" : "What is your GitHub profile URL? (Optional)"}
                     </label>
                     <input
                       ref={inputRef as any}
-                      type="url"
+                      type={isVideoRole ? "text" : "url"}
                       value={formData.github}
                       onChange={e => setFormData({ ...formData, github: e.target.value })}
-                      placeholder="https://github.com/yourusername"
+                      placeholder={isVideoRole ? "e.g. Sony A7III, iPhone 15 Pro, wireless microphone, lighting" : "https://github.com/yourusername"}
                       className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
                     />
                   </div>
@@ -914,14 +982,14 @@ export function CareersContent() {
                 {step === 11 && (
                   <div className="w-full space-y-6">
                     <label className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                      What is your portfolio or website URL? (Optional)
+                      {isVideoRole ? "Link to your showreel or best video edit (YouTube, Google Drive, Loom)" : "What is your portfolio or website URL? (Optional)"}
                     </label>
                     <input
                       ref={inputRef as any}
                       type="url"
                       value={formData.portfolio}
                       onChange={e => setFormData({ ...formData, portfolio: e.target.value })}
-                      placeholder="https://yourportfolio.com"
+                      placeholder={isVideoRole ? "e.g. https://youtube.com/watch?v=..." : "https://yourportfolio.com"}
                       className="border-b border-white/20 focus:border-white py-4 outline-none text-2xl md:text-3xl font-sans tracking-tight font-black bg-transparent w-full text-white transition-colors placeholder-zinc-700"
                     />
                   </div>
