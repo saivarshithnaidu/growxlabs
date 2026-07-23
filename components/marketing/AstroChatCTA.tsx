@@ -24,16 +24,13 @@ export function AstroChatCTA() {
   };
 
   return (
-    <section className="relative w-full max-w-[1400px] mx-auto flex flex-col items-center justify-start px-4 sm:px-6 pt-4 pb-16 select-none bg-[#000000] overflow-hidden">
+    <section className="relative w-full min-h-[480px] sm:min-h-[580px] md:min-h-[660px] flex flex-col items-center justify-center px-4 sm:px-6 py-20 select-none bg-[#000000] overflow-hidden">
       {/* 1. Cinematic Deep Space Particle Starfield (Background Hero Scene) */}
-      <div className="relative w-full max-w-[1100px] h-[400px] sm:h-[500px] md:h-[580px] flex items-center justify-center z-0">
+      <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         <DeepSpaceScene />
       </div>
 
-      {/* 2. Whitespace Spacing */}
-      <div className="h-6 sm:h-8 md:h-10" />
-
-      {/* 3. Floating Glassmorphism Prompt Input (Kept exactly in position above starfield) */}
+      {/* 2. Floating Glassmorphism Prompt Input (Kept exactly in position above starfield) */}
       <div 
         className="relative w-full max-w-[880px] p-5 sm:p-6 md:p-7 z-10 transition-all duration-300"
         style={{

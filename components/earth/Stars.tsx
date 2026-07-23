@@ -45,7 +45,7 @@ const StarFragmentShader = `
     }
 
     // Soft Gaussian radial glow falloff: bright center -> smooth transparent edge
-    float alpha = exp(-dist * dist * 18.0);
+    float alpha = exp(-dist * dist * 22.0);
 
     // Gentle organic twinkle for ~8% of stars
     float twinkle = 1.0;
@@ -100,9 +100,11 @@ function StarFieldLayer({ count, minSize, maxSize, speed, spreadX, spreadY, spre
       else if (randColor > 0.98) selectedColor = colorGold;
       else if (randColor > 0.95) selectedColor = colorBlue;
 
-      col[i * 3] = selectedColor.r;
-      col[i * 3 + 1] = selectedColor.g;
-      col[i * 3 + 2] = selectedColor.b;
+      // Realistic magnitude/brightness variation mimicking actual stellar luminosity
+      const brightness = 0.38 + 0.62 * Math.random();
+      col[i * 3] = selectedColor.r * brightness;
+      col[i * 3 + 1] = selectedColor.g * brightness;
+      col[i * 3 + 2] = selectedColor.b * brightness;
 
       sz[i] = Math.random() * (maxSize - minSize) + minSize;
       twk[i] = Math.random(); // Used in shader for 5-10% gentle twinkle selection
@@ -180,7 +182,7 @@ export function DeepSpaceStars() {
         speed={0.035}
         spreadX={360}
         spreadY={360}
-        spreadZ={360}
+        spreadZ={420}
       />
 
       {/* Layer 2: 5,000 medium stars (1.0px–2.0px, medium speed, subtle twinkle) */}
@@ -191,7 +193,7 @@ export function DeepSpaceStars() {
         speed={0.09}
         spreadX={280}
         spreadY={280}
-        spreadZ={300}
+        spreadZ={340}
       />
 
       {/* Layer 3: 300 larger foreground glowing stars (2.0px–4.0px, faster parallax) */}
@@ -202,7 +204,7 @@ export function DeepSpaceStars() {
         speed={0.20}
         spreadX={180}
         spreadY={180}
-        spreadZ={220}
+        spreadZ={250}
       />
     </group>
   );

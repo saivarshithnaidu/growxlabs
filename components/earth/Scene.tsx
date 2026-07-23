@@ -23,7 +23,7 @@ export function DeepSpaceScene() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full min-h-[480px] sm:min-h-[580px] md:min-h-[660px] select-none bg-[#000000]"
+      className="w-full h-full select-none bg-[#000000]"
     >
       <Canvas
         camera={{ position: [0, 0, 10], fov: 45 }}
