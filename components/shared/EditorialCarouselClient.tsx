@@ -771,10 +771,10 @@ export function EditorialCarouselClient() {
   // EXPORT ENGINE
   // ==========================================
 
-  const buildSvgString = (slide: Slide, index: number) => {
-    const fontsMarkup = DEFAULT_FONTS.map(f => 
+  const buildSvgString = (slide: Slide, index: number, includeFonts = true) => {
+    const fontsMarkup = includeFonts ? DEFAULT_FONTS.map(f => 
       `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');`
-    ).join("\n");
+    ).join("\n") : "";
 
     const renderTextMarkup = (el: ElementStyle & { text: string }) => {
       if (!el.visible) return "";
@@ -814,6 +814,7 @@ export function EditorialCarouselClient() {
       const shadowStyle = el.shadowEnabled ? "box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);" : "";
       
       const isVideoAsset = isVideo(el.mediaUrl);
+      const bgColor = el.color || "transparent";
 
       return `
         <div style="
@@ -827,7 +828,7 @@ export function EditorialCarouselClient() {
           transform: rotate(${el.rotation}deg);
           box-sizing: border-box;
           overflow: hidden;
-          background: #f3f4f6;
+          background: ${bgColor};
           z-index: ${el.zIndex || 1};
           ${borderStyle}
           ${shadowStyle}
@@ -1069,41 +1070,42 @@ export function EditorialCarouselClient() {
 
   const convertSvgToRaster = async (svgString: string, type: "png" | "jpeg"): Promise<string> => {
     return new Promise((resolve, reject) => {
-      const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-      const DOMURL = window.URL || window.webkitURL || window;
-      const url = DOMURL.createObjectURL(svgBlob);
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = CANVAS_WIDTH;
-        canvas.height = CANVAS_HEIGHT;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          if (type === "jpeg") {
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      try {
+        const base64Svg = window.btoa(unescape(encodeURIComponent(svgString)));
+        const dataURL = `data:image/svg+xml;base64,${base64Svg}`;
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = CANVAS_WIDTH;
+          canvas.height = CANVAS_HEIGHT;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            if (type === "jpeg") {
+              ctx.fillStyle = "#ffffff";
+              ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            }
+            ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            const dataUrl = canvas.toDataURL(`image/${type}`, 0.95);
+            resolve(dataUrl);
+          } else {
+            reject(new Error("Canvas context error"));
           }
-          ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-          const dataUrl = canvas.toDataURL(`image/${type}`, 0.95);
-          DOMURL.revokeObjectURL(url);
-          resolve(dataUrl);
-        } else {
-          DOMURL.revokeObjectURL(url);
-          reject(new Error("Canvas context error"));
-        }
-      };
-      img.onerror = (e) => {
-        DOMURL.revokeObjectURL(url);
-        reject(e);
-      };
-      img.src = url;
+        };
+        img.onerror = (e) => {
+          console.error("Raster image decode error event:", e);
+          reject(new Error("Image decoding failed"));
+        };
+        img.src = dataURL;
+      } catch (err) {
+        console.error("Base64 string convert error:", err);
+        reject(err);
+      }
     });
   };
 
   const handleDownloadSlideSvg = (idx: number) => {
     try {
-      const svgStr = buildSvgString(slides[idx], idx);
+      const svgStr = buildSvgString(slides[idx], idx, true); // Keep font styles inside SVG vector files
       const blob = new Blob([svgStr], { type: "image/svg+xml;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -1121,7 +1123,7 @@ export function EditorialCarouselClient() {
 
   const handleDownloadSlideRaster = async (idx: number, type: "png" | "jpeg") => {
     try {
-      const svgStr = buildSvgString(slides[idx], idx);
+      const svgStr = buildSvgString(slides[idx], idx, false); // Bypass CORS security policies by excluding @imports
       const dataUrl = await convertSvgToRaster(svgStr, type);
       const link = document.createElement("a");
       link.href = dataUrl;
@@ -1131,11 +1133,13 @@ export function EditorialCarouselClient() {
       document.body.removeChild(link);
       toast.success(`Exported Slide ${idx + 1} as ${type.toUpperCase()}!`);
     } catch (e) {
+      console.error(e);
       toast.error(`Failed to export slide as ${type.toUpperCase()}`);
     }
   };
 
   const handleDownloadPdf = async () => {
+    const downloadToast = toast.loading("Generating full carousel PDF...");
     try {
       const { jsPDF } = await import("jspdf");
       const doc = new jsPDF({
@@ -1146,15 +1150,16 @@ export function EditorialCarouselClient() {
 
       for (let i = 0; i < slides.length; i++) {
         if (i > 0) doc.addPage();
-        const svgStr = buildSvgString(slides[i], i);
+        const svgStr = buildSvgString(slides[i], i, false); // Bypass CORS security policies
         const dataUrl = await convertSvgToRaster(svgStr, "png");
         doc.addImage(dataUrl, "PNG", 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       }
 
       doc.save(`${projectName.toLowerCase().replace(/\s+/g, "-")}-carousel.pdf`);
-      toast.success("Exported full carousel as PDF!");
+      toast.success("Exported full carousel as PDF!", { id: downloadToast });
     } catch (e) {
-      toast.error("Failed to export PDF file");
+      console.error(e);
+      toast.error("Failed to export PDF file", { id: downloadToast });
     }
   };
 
@@ -1643,8 +1648,9 @@ export function EditorialCarouselClient() {
             {/* Featured Image */}
             {renderCanvasElement("featuredImage", (
               <div 
-                className="w-full h-full bg-[#fafafa] overflow-hidden"
+                className="w-full h-full overflow-hidden"
                 style={{
+                  background: activeSlide.featuredImage.color || "transparent",
                   borderRadius: `${activeSlide.featuredImage.borderRadius * zoomScale}px`,
                   border: activeSlide.featuredImage.borderWidth > 0 
                     ? `${activeSlide.featuredImage.borderWidth * zoomScale}px solid ${activeSlide.featuredImage.borderColor}`
@@ -2373,6 +2379,24 @@ export function EditorialCarouselClient() {
                         value={activeSlide.featuredImage.contrast}
                         onChange={(e) => updateSlideElement("featuredImage", { contrast: parseInt(e.target.value) || 100 })}
                         className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-semibold text-neutral-400">Card Background Color</span>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={activeSlide.featuredImage.color || "#000000"}
+                        onChange={(e) => updateSlideElement("featuredImage", { color: e.target.value })}
+                        className="w-9 h-9 border border-neutral-200 rounded-lg cursor-pointer shrink-0"
+                      />
+                      <input
+                        type="text"
+                        value={activeSlide.featuredImage.color || "transparent"}
+                        onChange={(e) => updateSlideElement("featuredImage", { color: e.target.value })}
+                        className="flex-1 h-9 px-2 border border-neutral-200 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
                       />
                     </div>
                   </div>
