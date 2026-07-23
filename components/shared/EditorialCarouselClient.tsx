@@ -47,9 +47,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-// ==========================================
-// UTILITY FUNCTIONS
-// ==========================================
+const isVideo = (url?: string) => {
+  if (!url) return false;
+  return url.match(/\.(mp4|webm|ogg|mov|m4v)($|\?)/i) !== null || url.startsWith("data:video/");
+};
 
 const stripHtmlTags = (str?: string) => {
   if (!str) return "";
@@ -516,8 +517,21 @@ export function EditorialCarouselClient() {
     if (historyIndex < history.length - 1) {
       setHistoryIndex(prev => prev + 1);
       setSlides(JSON.parse(JSON.stringify(history[historyIndex + 1])));
-      toast.success("Redo successful");
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result;
+      if (typeof result === "string") {
+        updateSlideElement("featuredImage", { mediaUrl: result });
+        toast.success("Successfully uploaded media file!");
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   // Initialize history
@@ -799,6 +813,8 @@ export function EditorialCarouselClient() {
       const borderStyle = el.borderWidth > 0 ? `border: ${el.borderWidth}px solid ${el.borderColor};` : "";
       const shadowStyle = el.shadowEnabled ? "box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);" : "";
       
+      const isVideoAsset = isVideo(el.mediaUrl);
+
       return `
         <div style="
           position: absolute;
@@ -816,9 +832,13 @@ export function EditorialCarouselClient() {
           ${borderStyle}
           ${shadowStyle}
         ">
-          ${el.mediaUrl ? `
-            <img src="${el.mediaUrl}" style="width: 100%; height: 100%; object-fit: ${el.objectFit}; filter: brightness(${el.brightness}%) contrast(${el.contrast}%);" />
-          ` : `
+          ${el.mediaUrl ? (
+            isVideoAsset ? `
+              <video src="${el.mediaUrl}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: ${el.objectFit}; filter: brightness(${el.brightness}%) contrast(${el.contrast}%);" />
+            ` : `
+              <img src="${el.mediaUrl}" style="width: 100%; height: 100%; object-fit: ${el.objectFit}; filter: brightness(${el.brightness}%) contrast(${el.contrast}%);" />
+            `
+          ) : `
             <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); display: flex; align-items: center; justify-content: center; color: #475569; font-family: sans-serif; font-weight: bold; font-size: 24px;">
               Featured Asset
             </div>
@@ -1632,15 +1652,30 @@ export function EditorialCarouselClient() {
                 }}
               >
                 {activeSlide.featuredImage.mediaUrl ? (
-                  <img 
-                    src={activeSlide.featuredImage.mediaUrl}
-                    alt="Featured Image Layout"
-                    className="w-full h-full"
-                    style={{
-                      objectFit: activeSlide.featuredImage.objectFit,
-                      filter: `brightness(${activeSlide.featuredImage.brightness}%) contrast(${activeSlide.featuredImage.contrast}%)`
-                    }}
-                  />
+                  isVideo(activeSlide.featuredImage.mediaUrl) ? (
+                    <video 
+                      src={activeSlide.featuredImage.mediaUrl}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full"
+                      style={{
+                        objectFit: activeSlide.featuredImage.objectFit,
+                        filter: `brightness(${activeSlide.featuredImage.brightness}%) contrast(${activeSlide.featuredImage.contrast}%)`
+                      }}
+                    />
+                  ) : (
+                    <img 
+                      src={activeSlide.featuredImage.mediaUrl}
+                      alt="Featured Image Layout"
+                      className="w-full h-full"
+                      style={{
+                        objectFit: activeSlide.featuredImage.objectFit,
+                        filter: `brightness(${activeSlide.featuredImage.brightness}%) contrast(${activeSlide.featuredImage.contrast}%)`
+                      }}
+                    />
+                  )
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-center p-6 text-neutral-400 bg-neutral-50/50 border border-neutral-100 rounded-2xl">
                     <span className="font-extrabold uppercase tracking-wider text-[11px] mb-1" style={{ fontSize: `${12 * zoomScale}px` }}>
@@ -1943,15 +1978,36 @@ export function EditorialCarouselClient() {
                 )}
 
                 {selectedElement === "featuredImage" && (
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-semibold text-neutral-400">Image Asset URL</span>
-                    <input
-                      type="text"
-                      placeholder="https://example.com/image.jpg"
-                      value={activeSlide.featuredImage.mediaUrl}
-                      onChange={(e) => updateSlideElement("featuredImage", { mediaUrl: e.target.value })}
-                      className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs font-semibold dark:bg-neutral-800 dark:border-neutral-700"
-                    />
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <span className="text-[9px] font-semibold text-neutral-400">Media File Upload</span>
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        className="hidden"
+                        id="featured-media-file"
+                        onChange={handleFileChange}
+                      />
+                      <label
+                        htmlFor="featured-media-file"
+                        className="flex flex-col items-center justify-center border border-dashed border-neutral-300 hover:border-neutral-900 rounded-xl p-5 cursor-pointer bg-white transition-all hover:bg-neutral-50 dark:bg-neutral-800 dark:border-neutral-700 dark:hover:border-white"
+                      >
+                        <Upload size={16} className="text-neutral-400 mb-1" />
+                        <span className="text-xs font-bold text-neutral-700 dark:text-neutral-200">Upload Image / Video</span>
+                        <span className="text-[9px] text-neutral-400 font-semibold mt-0.5">Supports PNG, JPG, MP4, WebM</span>
+                      </label>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-semibold text-neutral-400">Or Paste Asset URL</span>
+                      <input
+                        type="text"
+                        placeholder="https://example.com/image.jpg"
+                        value={activeSlide.featuredImage.mediaUrl}
+                        onChange={(e) => updateSlideElement("featuredImage", { mediaUrl: e.target.value })}
+                        className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs font-semibold dark:bg-neutral-800 dark:border-neutral-700"
+                      />
+                    </div>
                   </div>
                 )}
 
