@@ -473,6 +473,7 @@ export function EditorialCarouselClient() {
   const [slides, setSlides] = useState<Slide[]>([DEFAULT_SLIDE(0)]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedElement, setSelectedElement] = useState<ElementKey | null>(null);
+  const [isFooterSelected, setIsFooterSelected] = useState(false);
   const [editorMode, setEditorMode] = useState<"fixed" | "free">("fixed");
   
   // Viewport Control
@@ -695,6 +696,7 @@ export function EditorialCarouselClient() {
   const handleElementMouseDown = (e: React.MouseEvent, key: ElementKey) => {
     if (e.button !== 0) return;
     setSelectedElement(key);
+    setIsFooterSelected(false);
     
     if (editorMode === "fixed") return;
     
@@ -743,6 +745,7 @@ export function EditorialCarouselClient() {
     if (e.button !== 0) return;
     e.stopPropagation();
     setSelectedElement(key);
+    setIsFooterSelected(false);
 
     if (editorMode === "fixed") return;
     
@@ -1364,6 +1367,7 @@ export function EditorialCarouselClient() {
                     onClick={() => {
                       setActiveIndex(sIdx);
                       setSelectedElement(null);
+                      setIsFooterSelected(false);
                     }}
                     className={`relative p-3.5 rounded-2xl cursor-pointer border transition-all ${
                       activeIndex === sIdx 
@@ -1820,7 +1824,14 @@ export function EditorialCarouselClient() {
 
             {/* Footer Branding line */}
             <div 
-              className="absolute w-full flex items-center justify-between border-t border-neutral-100 pointer-events-none"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedElement(null);
+                setIsFooterSelected(true);
+              }}
+              className={`absolute flex items-center justify-between border-t border-neutral-100 cursor-pointer ${
+                isFooterSelected ? "ring-1.5 ring-neutral-900 ring-offset-1" : "hover:outline hover:outline-dashed hover:outline-neutral-300"
+              }`}
               style={{
                 bottom: `${SAFE_BOTTOM * zoomScale}px`,
                 left: `${SAFE_LEFT * zoomScale}px`,
@@ -1829,7 +1840,8 @@ export function EditorialCarouselClient() {
                 borderTop: activeSlide.footer.dividerEnabled ? `1.5px solid ${activeSlide.footer.color}20` : "none",
                 opacity: activeSlide.footer.opacity,
                 color: activeSlide.footer.color,
-                fontFamily: "'SF Mono', 'Fira Code', monospace"
+                fontFamily: "'SF Mono', 'Fira Code', monospace",
+                userSelect: "none"
               }}
             >
               <span className="font-extrabold uppercase" style={{ fontSize: `${16 * zoomScale}px` }}>
@@ -1851,7 +1863,7 @@ export function EditorialCarouselClient() {
         <aside className="w-[360px] border-l border-neutral-200/60 bg-white flex flex-col overflow-y-auto px-6 py-6 space-y-6 shrink-0 z-10 dark:bg-neutral-900 dark:border-neutral-800">
           
           {/* Document configuration (rendered when nothing is selected) */}
-          {!selectedElement && (
+          {!selectedElement && !isFooterSelected && (
             <div className="space-y-6">
               <div className="pb-3 border-b">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-400">Document Settings</h3>
@@ -1911,20 +1923,41 @@ export function EditorialCarouselClient() {
                       { id: "cta", label: "CTA Button" },
                       { id: "logo", label: "Logo Icon" },
                       { id: "divider", label: "Divider Line" },
-                      { id: "author", label: "Author profile" }
+                      { id: "author", label: "Author profile" },
+                      { id: "footer", label: "Footer / Brand" }
                     ].map(layer => (
                       <div 
-                        key={layer.id} 
-                        onClick={() => setSelectedElement(layer.id as ElementKey)}
-                        className="flex justify-between items-center px-3 py-2 bg-neutral-50 hover:bg-neutral-100 rounded-xl cursor-pointer transition-all dark:bg-neutral-800/50 dark:hover:bg-neutral-800"
+                        key={layer.id}
+                        onClick={() => {
+                          if (layer.id === "footer") {
+                            setSelectedElement(null);
+                            setIsFooterSelected(true);
+                          } else {
+                            setSelectedElement(layer.id as ElementKey);
+                            setIsFooterSelected(false);
+                          }
+                        }}
+                        className={`flex justify-between items-center px-3 py-2 bg-neutral-50 hover:bg-neutral-100 rounded-xl cursor-pointer transition-all dark:bg-neutral-800/50 dark:hover:bg-neutral-800 ${
+                          (layer.id === "footer" ? isFooterSelected : selectedElement === layer.id) ? "ring-1 ring-neutral-900 dark:ring-white" : ""
+                        }`}
                       >
                         <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">{layer.label}</span>
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={(e) => { e.stopPropagation(); updateSlideElement(layer.id as any, { visible: !activeSlide[layer.id as ElementKey].visible }); }}
+                            onClick={(e) => { 
+                              e.stopPropagation(); 
+                              if (layer.id === "footer") {
+                                updateSlideFooter({ opacity: activeSlide.footer.opacity > 0 ? 0 : 1 });
+                              } else {
+                                updateSlideElement(layer.id as ElementKey, { visible: !activeSlide[layer.id as ElementKey].visible }); 
+                              }
+                            }}
                             className="p-1 hover:bg-neutral-200 rounded dark:hover:bg-neutral-700"
                           >
-                            {activeSlide[layer.id as ElementKey].visible ? <Eye size={12} /> : <EyeOff size={12} className="text-red-500" />}
+                            {layer.id === "footer"
+                              ? (activeSlide.footer.opacity > 0 ? <Eye size={12} /> : <EyeOff size={12} className="text-red-500" />)
+                              : (activeSlide[layer.id as ElementKey].visible ? <Eye size={12} /> : <EyeOff size={12} className="text-red-500" />)
+                            }
                           </button>
                         </div>
                       </div>
@@ -2200,51 +2233,53 @@ export function EditorialCarouselClient() {
               </div>
 
               {/* Coordinates Box (Free layout mode only) */}
-              <div className="space-y-3.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block pb-1 border-b">Alignment & Size</span>
-                <div className="grid grid-cols-2 gap-3.5">
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-semibold text-neutral-400">Position X (px)</span>
-                    <input
-                      type="number"
-                      disabled={editorMode === "fixed" || activeSlide[selectedElement].locked}
-                      value={activeSlide[selectedElement].x}
-                      onChange={(e) => updateSlideElement(selectedElement, { x: parseInt(e.target.value) || 0 })}
-                      className="w-full h-9 px-3 bg-neutral-50 border border-neutral-200/80 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-semibold text-neutral-400">Position Y (px)</span>
-                    <input
-                      type="number"
-                      disabled={editorMode === "fixed" || activeSlide[selectedElement].locked}
-                      value={activeSlide[selectedElement].y}
-                      onChange={(e) => updateSlideElement(selectedElement, { y: parseInt(e.target.value) || 0 })}
-                      className="w-full h-9 px-3 bg-neutral-50 border border-neutral-200/80 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-semibold text-neutral-400">Width (px)</span>
-                    <input
-                      type="number"
-                      disabled={editorMode === "fixed" || activeSlide[selectedElement].locked}
-                      value={activeSlide[selectedElement].width}
-                      onChange={(e) => updateSlideElement(selectedElement, { width: parseInt(e.target.value) || 0 })}
-                      className="w-full h-9 px-3 bg-neutral-50 border border-neutral-200/80 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-semibold text-neutral-400">Height (px)</span>
-                    <input
-                      type="number"
-                      disabled={activeSlide[selectedElement].locked}
-                      value={activeSlide[selectedElement].height}
-                      onChange={(e) => updateSlideElement(selectedElement, { height: parseInt(e.target.value) || 0 })}
-                      className="w-full h-9 px-3 bg-neutral-50 border border-neutral-200/80 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
-                    />
+              {selectedElement && (
+                <div className="space-y-3.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block pb-1 border-b">Alignment & Size</span>
+                  <div className="grid grid-cols-2 gap-3.5">
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-semibold text-neutral-400">Position X (px)</span>
+                      <input
+                        type="number"
+                        disabled={editorMode === "fixed" || activeSlide[selectedElement].locked}
+                        value={activeSlide[selectedElement].x}
+                        onChange={(e) => updateSlideElement(selectedElement, { x: parseInt(e.target.value) || 0 })}
+                        className="w-full h-9 px-3 bg-neutral-50 border border-neutral-200/80 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-semibold text-neutral-400">Position Y (px)</span>
+                      <input
+                        type="number"
+                        disabled={editorMode === "fixed" || activeSlide[selectedElement].locked}
+                        value={activeSlide[selectedElement].y}
+                        onChange={(e) => updateSlideElement(selectedElement, { y: parseInt(e.target.value) || 0 })}
+                        className="w-full h-9 px-3 bg-neutral-50 border border-neutral-200/80 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-semibold text-neutral-400">Width (px)</span>
+                      <input
+                        type="number"
+                        disabled={editorMode === "fixed" || activeSlide[selectedElement].locked}
+                        value={activeSlide[selectedElement].width}
+                        onChange={(e) => updateSlideElement(selectedElement, { width: parseInt(e.target.value) || 0 })}
+                        className="w-full h-9 px-3 bg-neutral-50 border border-neutral-200/80 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-semibold text-neutral-400">Height (px)</span>
+                      <input
+                        type="number"
+                        disabled={activeSlide[selectedElement].locked}
+                        value={activeSlide[selectedElement].height}
+                        onChange={(e) => updateSlideElement(selectedElement, { height: parseInt(e.target.value) || 0 })}
+                        className="w-full h-9 px-3 bg-neutral-50 border border-neutral-200/80 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Typography inspector settings */}
               {selectedElement !== "featuredImage" && selectedElement !== "divider" && (
@@ -2584,7 +2619,95 @@ export function EditorialCarouselClient() {
 
               {/* Unselect layers button */}
               <button 
-                onClick={() => setSelectedElement(null)}
+                onClick={() => {
+                  setSelectedElement(null);
+                  setIsFooterSelected(false);
+                }}
+                className="w-full py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-[10px] font-bold rounded-xl uppercase tracking-wider transition-all dark:bg-neutral-800 dark:text-white"
+              >
+                Clear Selection
+              </button>
+
+            </div>
+          )}
+
+          {/* Footer/Brand Settings Panel */}
+          {isFooterSelected && (
+            <div className="space-y-6 animate-fade">
+              
+              {/* Header info */}
+              <div className="flex justify-between items-center pb-3 border-b">
+                <div className="flex flex-col text-left">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-neutral-900 dark:text-white">
+                    Footer / Brand
+                  </h3>
+                  <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-0.5">Properties</span>
+                </div>
+              </div>
+
+              {/* Edit Content Tab */}
+              <div className="space-y-4 pt-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block pb-1 border-b">Edit Content</span>
+                <div className="space-y-1">
+                  <span className="text-[9px] font-semibold text-neutral-400">Brand Name</span>
+                  <input
+                    type="text"
+                    value={activeSlide.footer.brandName}
+                    onChange={(e) => updateSlideFooter({ brandName: e.target.value })}
+                    className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs font-semibold dark:bg-neutral-800 dark:border-neutral-700"
+                  />
+                </div>
+              </div>
+
+              {/* Styling Options */}
+              <div className="space-y-4 pt-3 border-t">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block pb-1 border-b">Footer Styling</span>
+                
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">Show Divider</span>
+                  <input
+                    type="checkbox"
+                    checked={activeSlide.footer.dividerEnabled}
+                    onChange={(e) => updateSlideFooter({ dividerEnabled: e.target.checked })}
+                    className="h-4 w-4 text-neutral-900"
+                  />
+                </div>
+
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">Show Page Numbers</span>
+                  <input
+                    type="checkbox"
+                    checked={activeSlide.footer.pageNumberEnabled}
+                    onChange={(e) => updateSlideFooter({ pageNumberEnabled: e.target.checked })}
+                    className="h-4 w-4 text-neutral-900"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[9px] font-semibold text-neutral-400">Footer Text Color</span>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={activeSlide.footer.color}
+                      onChange={(e) => updateSlideFooter({ color: e.target.value })}
+                      className="w-9 h-9 border border-neutral-200 rounded-lg cursor-pointer shrink-0"
+                    />
+                    <input
+                      type="text"
+                      value={activeSlide.footer.color}
+                      onChange={(e) => updateSlideFooter({ color: e.target.value })}
+                      className="flex-1 h-9 px-2 border border-neutral-200 rounded-lg text-xs font-mono dark:bg-neutral-800 dark:border-neutral-700"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Unselect layers button */}
+              <button 
+                onClick={() => {
+                  setSelectedElement(null);
+                  setIsFooterSelected(false);
+                }}
                 className="w-full py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-[10px] font-bold rounded-xl uppercase tracking-wider transition-all dark:bg-neutral-800 dark:text-white"
               >
                 Clear Selection
