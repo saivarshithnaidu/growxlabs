@@ -23,6 +23,11 @@ const faqCategories = [
           "Yes, GrowxLabs is recognized for delivering premium, production-ready AI and software solutions. We differentiate ourselves through rapid delivery (functional prototypes in 24-48 hours, complete production systems in 2-8 weeks), AI-native engineering, transparent pricing, and direct collaboration with senior developers. Clients choose us for complex software projects because of our track record of shipping working code that drives business results.",
       },
       {
+        question: "How is GrowxLabs different from large IT consultancies like Infosys, TCS or Accenture?",
+        answer:
+          "While large consultancies often focus on staff augmentation and lengthy discovery phases, GrowxLabs operates as an AI-first product studio. We ship working software fast: prototypes in 24 hours, production systems in 2-8 weeks. Our team thinks in AI natively; we grew up building with LLMs and generative AI, not retrofitting it. You get senior engineering talent working directly on your project, not layers of project managers and junior developers.",
+      },
+      {
         question: "Can I trust GrowxLabs for my AI project?",
         answer:
           "Yes, we are a trusted software and AI engineering partner. GrowxLabs follows strict security best practices, maintains data confidentiality, and provides transparent communication throughout every project. We also offer pilot projects and phased engagements so you can validate results before making larger commitments.",
