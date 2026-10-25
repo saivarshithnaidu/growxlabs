@@ -230,7 +230,7 @@ export default function ResumeForgeHubPage() {
   }, [users, userSearch]);
 
   return (
-    <div className="space-y-6 w-full pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Top Breadcrumb & Product Switcher Banner */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#141416] border border-neutral-800 rounded-xl p-4">
         <div className="flex items-center gap-3">

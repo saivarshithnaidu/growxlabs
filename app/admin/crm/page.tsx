@@ -516,7 +516,7 @@ export default function AdminCRMPage() {
   };
 
   return (
-    <div className="space-y-6 w-full pb-8">
+    <div className="space-y-6 max-w-7xl mx-auto px-4 py-2">
       
       {/* Toast Notification */}
       {toast && (
@@ -723,7 +723,7 @@ export default function AdminCRMPage() {
 
         {/* --- CRM LEADS DATA TABLE --- */}
         <div className="overflow-x-auto relative">
-          <table className="w-full min-w-[1100px] text-left text-[13px] leading-5 whitespace-nowrap">
+          <table className="w-full min-w-[1540px] text-left text-[13px] leading-5 whitespace-nowrap table-fixed">
             <thead className="bg-[#f6f5f4]/45 border-b border-[#e6e6e6] sticky top-0 z-10">
               <tr className="divide-x divide-[#e6e6e6]/60">
                 <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-12 text-center">
@@ -734,8 +734,8 @@ export default function AdminCRMPage() {
                     className="rounded border-neutral-300 bg-white text-[#0075de] focus:ring-[#0075de]" 
                   />
                 </th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] min-w-[220px]">Company</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] min-w-[180px]">Contact</th>
+                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-[380px] min-w-[340px]">Company</th>
+                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-[280px] min-w-[240px]">Contact</th>
                 <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-28">Lead Score</th>
                 <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-32">Status</th>
                 <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-44">Owner</th>

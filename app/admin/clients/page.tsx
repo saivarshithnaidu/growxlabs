@@ -199,7 +199,7 @@ export default function ClientsPage() {
   ];
 
   return (
-    <div className="w-full text-[var(--text-primary,#0f172a)]">
+    <div className="max-w-[1560px] mx-auto text-[var(--text-primary,#0f172a)]">
       {/* ──────────── COMPACT HEADER ──────────── */}
       <div className="flex items-center justify-between gap-4 px-6 py-5 border-b border-[var(--border-subtle,#e2e8f0)]">
         <div className="min-w-0">
