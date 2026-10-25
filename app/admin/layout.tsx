@@ -333,7 +333,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                ? "h-[calc(100vh-3.5rem)] md:h-screen max-w-none overflow-hidden"
                : isCommandCenter
                ? "min-h-screen max-w-none p-0 overflow-y-auto"
-               : "p-4 sm:p-6 md:p-12 max-w-[1600px] space-y-6 sm:space-y-8 lg:space-y-10"
+               : "p-4 sm:p-6 md:p-8 max-w-[1600px] space-y-6"
            )}>
               {children}
            </div>

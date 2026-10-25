@@ -105,7 +105,7 @@ export default async function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6 pb-2">
       {/* Header with Executive Context and Quick Actions */}
       <Reveal y={-10}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[var(--border-subtle)] dark:border-[#262626]">
@@ -377,14 +377,83 @@ export default async function AdminDashboard() {
               </div>
             </div>
           </Reveal>
+                  {/* Department Pulse Quick Glance - Balanced 3-column horizontal row */}
+          <Reveal>
+            <div className="rounded-xl bg-[var(--card)] dark:bg-[#101010] border border-[var(--border-subtle)] dark:border-[#262626] p-5 shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] dark:text-neutral-400">
+                  Department Pulse
+                </h3>
+                <span className="text-[11px] text-[var(--text-tertiary)] dark:text-neutral-400">
+                  Cross-functional operations
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <Link
+                  href="/admin/solution-architectures"
+                  className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-[#121212] border border-slate-200 dark:border-[#262626] hover:bg-slate-100 dark:hover:bg-[#171717] transition-all"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Layers size={15} className="text-blue-500 shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-[var(--text-primary)] dark:text-white truncate">
+                        AI & Architecture
+                      </p>
+                      <p className="text-[10px] text-[var(--text-tertiary)] dark:text-neutral-400 truncate">
+                        {solutionsCount || 1} solution blueprint
+                      </p>
+                    </div>
+                  </div>
+                  <ArrowRight size={13} className="text-[var(--text-muted)] shrink-0 ml-1" />
+                </Link>
+
+                <Link
+                  href="/admin/people"
+                  className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-[#121212] border border-slate-200 dark:border-[#262626] hover:bg-slate-100 dark:hover:bg-[#171717] transition-all"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Users size={15} className="text-purple-500 shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-[var(--text-primary)] dark:text-white truncate">
+                        People & HRMS
+                      </p>
+                      <p className="text-[10px] text-[var(--text-tertiary)] dark:text-neutral-400 truncate">
+                        {teamCount || 5} active core team
+                      </p>
+                    </div>
+                  </div>
+                  <ArrowRight size={13} className="text-[var(--text-muted)] shrink-0 ml-1" />
+                </Link>
+
+                <Link
+                  href="/admin/academy"
+                  className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-[#121212] border border-slate-200 dark:border-[#262626] hover:bg-slate-100 dark:hover:bg-[#171717] transition-all"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Compass size={15} className="text-emerald-500 shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-[var(--text-primary)] dark:text-white truncate">
+                        Academy & Upskilling
+                      </p>
+                      <p className="text-[10px] text-[var(--text-tertiary)] dark:text-neutral-400 truncate">
+                        {academyUsersCount || 6} platform accounts
+                      </p>
+                    </div>
+                  </div>
+                  <ArrowRight size={13} className="text-[var(--text-muted)] shrink-0 ml-1" />
+                </Link>
+              </div>
+            </div>
+          </Reveal>
         </div>
 
-        {/* Right 1 Column: Real-Time Operations Activity Feed & Department Pulse */}
-        <div className="space-y-6">
+        {/* Right 1 Column: Real-Time Operations Activity Feed */}
+        <div>
           
           {/* Live Operations Feed */}
-          <Reveal>
-            <div className="rounded-xl bg-[var(--card)] dark:bg-[#101010] border border-[var(--border-subtle)] dark:border-[#262626] p-5 shadow-xs flex flex-col h-full">
+          <Reveal className="h-full">
+            <div className="rounded-xl bg-[var(--card)] dark:bg-[#101010] border border-[var(--border-subtle)] dark:border-[#262626] p-5 shadow-xs flex flex-col justify-between h-full">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-md bg-[#0075de]/10 text-[#0075de] dark:text-blue-400">
@@ -456,70 +525,7 @@ export default async function AdminDashboard() {
             </div>
           </Reveal>
 
-          {/* Department Pulse Quick Glance - Dark/Light mode unified */}
-          <Reveal>
-            <div className="rounded-xl bg-[var(--card)] dark:bg-[#101010] border border-[var(--border-subtle)] dark:border-[#262626] p-5 shadow-xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] dark:text-neutral-400">
-                Department Pulse
-              </h3>
-
-              <div className="space-y-2.5">
-                <Link
-                  href="/admin/solution-architectures"
-                  className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-[#121212] border border-slate-200 dark:border-[#262626] hover:bg-slate-100 dark:hover:bg-[#171717] transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Layers size={15} className="text-blue-500" />
-                    <div>
-                      <p className="text-xs font-semibold text-[var(--text-primary)] dark:text-white">
-                        AI & Architecture
-                      </p>
-                      <p className="text-[10px] text-[var(--text-tertiary)] dark:text-neutral-400">
-                        {solutionsCount || 1} solution blueprint active
-                      </p>
-                    </div>
-                  </div>
-                  <ArrowRight size={13} className="text-[var(--text-muted)]" />
-                </Link>
-
-                <Link
-                  href="/admin/people"
-                  className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-[#121212] border border-slate-200 dark:border-[#262626] hover:bg-slate-100 dark:hover:bg-[#171717] transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Users size={15} className="text-purple-500" />
-                    <div>
-                      <p className="text-xs font-semibold text-[var(--text-primary)] dark:text-white">
-                        People & HRMS
-                      </p>
-                      <p className="text-[10px] text-[var(--text-tertiary)] dark:text-neutral-400">
-                        {teamCount || 5} active core team members
-                      </p>
-                    </div>
-                  </div>
-                  <ArrowRight size={13} className="text-[var(--text-muted)]" />
-                </Link>
-
-                <Link
-                  href="/admin/academy"
-                  className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-[#121212] border border-slate-200 dark:border-[#262626] hover:bg-slate-100 dark:hover:bg-[#171717] transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Compass size={15} className="text-emerald-500" />
-                    <div>
-                      <p className="text-xs font-semibold text-[var(--text-primary)] dark:text-white">
-                        Academy & Upskilling
-                      </p>
-                      <p className="text-[10px] text-[var(--text-tertiary)] dark:text-neutral-400">
-                        {academyUsersCount || 6} platform accounts
-                      </p>
-                    </div>
-                  </div>
-                  <ArrowRight size={13} className="text-[var(--text-muted)]" />
-                </Link>
-              </div>
-            </div>
-          </Reveal>
+          
         </div>
 
       </div>
