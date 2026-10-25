@@ -319,12 +319,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           isCommandCenter ? "bg-[#09090b]" : isEditorialStudio ? "bg-[#0e0f12]" : "bg-[var(--background)]",
           // Exact desktop shell sizing prevents flyouts or nested panels from changing workspace width.
           (isCommandCenter || isEditorialStudio)
-            ? "md:ml-0 md:w-full"
-            : isCollapsed
-            ? "md:ml-20 md:w-[calc(100vw-5rem)] lg:flex-none"
-            : "md:ml-[260px] md:w-[calc(100vw-260px)] lg:flex-none",
-          // Mobile: no margin, add top padding for the mobile top bar
-          (isCommandCenter || isEditorialStudio) ? "ml-0 pt-0" : "ml-0 pt-14 md:pt-0"
+            ? "w-full ml-0 pt-0"
+            : "flex-1 min-w-0 ml-0 pt-14 md:pt-0"
         )}>
            {/* Internal Spacing — responsive padding */}
            <div className={cn(
@@ -333,7 +329,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                ? "h-[calc(100vh-3.5rem)] md:h-screen max-w-none overflow-hidden"
                : isCommandCenter
                ? "min-h-screen max-w-none p-0 overflow-y-auto"
-               : "p-4 sm:p-6 md:p-12 max-w-[1600px] space-y-6 sm:space-y-8 lg:space-y-10"
+               : "p-4 sm:p-6 md:p-8 space-y-6"
            )}>
               {children}
            </div>
