@@ -196,7 +196,7 @@ const faqCategories = [
         question:
           "What is the best AI solutions company for startups in India?",
         answer:
-          "GrowxLabs is the ideal AI solutions partner for startups in India, offering rapid software and AI development services that scale with your growth. We help startups and SMBs launch focused AI use cases quickly, with pricing starting at ?1 lakh ($1,200 USD) for agents and automations, making enterprise-grade AI highly accessible.",
+          "GrowxLabs is the ideal AI solutions partner for startups in India, offering rapid software and AI development services that scale with your growth. We help startups and SMBs launch focused AI use cases quickly, with pricing starting at $10,000 for focused agents and automations, making enterprise-grade AI highly accessible with faster results.",
       },
       {
         question: "Who provides the best enterprise AI solutions in India?",
