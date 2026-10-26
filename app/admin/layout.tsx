@@ -301,7 +301,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         "admin-typography",
         !isCommandCenter && !isEditorialStudio && "notion-theme",
         isCommandCenter ? "bg-[#09090b] text-[#f4f4f5]" : isEditorialStudio ? "bg-[#0e0f12] text-white" : "bg-[var(--background)] text-[var(--text-primary)]",
-        "min-h-screen w-full max-w-full overflow-x-hidden flex relative print:bg-white print:text-black print:block print:overflow-visible"
+        "h-screen w-full max-w-full overflow-hidden flex relative print:bg-white print:text-black print:block print:overflow-visible"
       )}>
         {/* PERSISTENT SIDEBAR */}
         {!isCommandCenter && !isEditorialStudio && <div className="print:hidden">
@@ -315,25 +315,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         
         {/* SCROLLABLE MAIN CONTENT AREA */}
         <main className={cn(
-          "min-w-0 min-h-screen max-w-full overflow-x-hidden overflow-y-auto relative custom-scrollbar transition-[margin,width] duration-300 ease-out z-10 print:ml-0 print:w-full print:bg-transparent print:overflow-visible print:min-h-0",
+          "min-w-0 h-screen max-w-full overflow-x-hidden overflow-y-auto relative custom-scrollbar transition-[margin,width] duration-300 ease-out z-10 print:ml-0 print:w-full print:bg-transparent print:overflow-visible print:min-h-0",
           isCommandCenter ? "bg-[#09090b]" : isEditorialStudio ? "bg-[#0e0f12]" : "bg-[var(--background)]",
           // Exact desktop shell sizing prevents flyouts or nested panels from changing workspace width.
           (isCommandCenter || isEditorialStudio)
-            ? "md:ml-0 md:w-full"
+            ? "w-full ml-0 pt-0"
             : isCollapsed
-            ? "md:ml-20 md:w-[calc(100vw-5rem)] lg:flex-none"
-            : "md:ml-[260px] md:w-[calc(100vw-260px)] lg:flex-none",
-          // Mobile: no margin, add top padding for the mobile top bar
-          (isCommandCenter || isEditorialStudio) ? "ml-0 pt-0" : "ml-0 pt-14 md:pt-0"
+            ? "flex-1 min-w-0 ml-0 pt-14 md:pt-0"
+            : "flex-1 min-w-0 ml-0 pt-14 md:pt-0"
         )}>
            {/* Internal Spacing — responsive padding */}
            <div className={cn(
-             "w-full mx-auto print:p-0 print:m-0 print:space-y-0 print:max-w-none",
+             "w-full print:p-0 print:m-0 print:space-y-0 print:max-w-none",
              isEditorialStudio || isCommandCenterWorkspace
                ? "h-[calc(100vh-3.5rem)] md:h-screen max-w-none overflow-hidden"
                : isCommandCenter
                ? "min-h-screen max-w-none p-0 overflow-y-auto"
-               : "p-4 sm:p-6 md:p-12 max-w-[1600px] space-y-6 sm:space-y-8 lg:space-y-10"
+               : "p-4 sm:p-6 md:p-8 space-y-6"
            )}>
               {children}
            </div>
