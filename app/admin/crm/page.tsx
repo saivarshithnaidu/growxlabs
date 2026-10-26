@@ -516,7 +516,7 @@ export default function AdminCRMPage() {
   };
 
   return (
-    <div className="space-y-6 w-full pb-8">
+    <div className="space-y-4 w-full">
       
       {/* Toast Notification */}
       {toast && (
@@ -528,7 +528,7 @@ export default function AdminCRMPage() {
 
       {/* --- HEADER TOOLBAR --- */}
       <Reveal y={-10}>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-3 border-b border-[var(--border-subtle)] bg-transparent">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-2 border-b border-[var(--border-subtle)] bg-transparent">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h1 className="text-[22px] font-semibold tracking-normal text-[var(--text-primary)]">Customer Management</h1>
@@ -568,7 +568,7 @@ export default function AdminCRMPage() {
           { label: "Conversion Rate", value: `${conversionRate}%` },
           { label: "Follow-ups Due", value: followupsDue },
         ].map((widget, i) => (
-          <div key={i} className="bg-[var(--card)] border border-[var(--border-subtle)] p-4 rounded-lg shadow-sm flex flex-col justify-between h-20 hover:border-[var(--border-hover)] transition-colors">
+          <div key={i} className="bg-[var(--card)] border border-[var(--border-subtle)] p-3 rounded-lg shadow-sm flex flex-col justify-between h-14 hover:border-[var(--border-hover)] transition-colors">
             <p className="admin-kpi-label text-xs font-semibold text-[var(--text-muted)] tracking-normal leading-none">{widget.label}</p>
             <p className="admin-kpi-value text-[var(--text-primary)] leading-none">{widget.value}</p>
           </div>
@@ -579,7 +579,7 @@ export default function AdminCRMPage() {
       <div className="bg-[var(--card)] border border-[var(--border-subtle)] rounded-xl shadow-sm overflow-hidden">
         
         {/* --- TOOLBAR ROW --- */}
-        <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--surface-2)]/30 space-y-3">
+        <div className="px-4 py-2.5 border-b border-[var(--border-subtle)] bg-[var(--surface-2)]/30 space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-3">
             
             <div className="flex flex-wrap items-center gap-2">
@@ -726,7 +726,7 @@ export default function AdminCRMPage() {
           <table className="w-full min-w-[1100px] text-left text-[13px] leading-5 whitespace-nowrap">
             <thead className="bg-[#f6f5f4]/45 border-b border-[#e6e6e6] sticky top-0 z-10">
               <tr className="divide-x divide-[#e6e6e6]/60">
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-12 text-center">
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-12 text-center">
                   <input 
                     type="checkbox" 
                     onChange={handleSelectAll}
@@ -734,15 +734,15 @@ export default function AdminCRMPage() {
                     className="rounded border-neutral-300 bg-white text-[#0075de] focus:ring-[#0075de]" 
                   />
                 </th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] min-w-[220px]">Company</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] min-w-[180px]">Contact</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-28">Lead Score</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-32">Status</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-44">Owner</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-36">Last Activity</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-36">Next Follow-up</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-32">Source</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-16 text-center">Actions</th>
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] min-w-[220px]">Company</th>
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] min-w-[180px]">Contact</th>
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-28">Lead Score</th>
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-32">Status</th>
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-44">Owner</th>
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-36">Last Activity</th>
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-36">Next Follow-up</th>
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-32">Source</th>
+                <th className="px-3.5 py-2 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-16 text-center">Actions</th>
               </tr>
             </thead>
             
@@ -797,7 +797,7 @@ export default function AdminCRMPage() {
                       activeLeadId === lead.id && "bg-[#f6f5f4]/80"
                     )}
                   >
-                    <td className="px-4 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-3.5 py-2 text-center" onClick={(e) => e.stopPropagation()}>
                       <input 
                         type="checkbox" 
                         checked={isSelected}
@@ -805,7 +805,7 @@ export default function AdminCRMPage() {
                         className="rounded border-neutral-300 bg-white text-[#0075de] focus:ring-[#0075de]" 
                       />
                     </td>
-                    <td className="admin-record-name px-4 py-3 font-semibold text-[13px] text-[var(--text-primary)]">
+                    <td className="admin-record-name px-3.5 py-2 font-semibold text-[13px] text-[var(--text-primary)]">
                       <div className="flex items-center gap-1">
                         <span className="truncate" title={lead.business_name}>{lead.business_name}</span>
                         {lead.website_url && (
@@ -816,7 +816,7 @@ export default function AdminCRMPage() {
                       </div>
                       <div className="text-xs font-normal text-[var(--text-secondary)] truncate mt-0.5" title={lead.city}>{lead.city || "No location"}</div>
                     </td>
-                    <td className="px-4 py-3 text-[13px]">
+                    <td className="px-3.5 py-2 text-[13px]">
                       <div className="truncate" title={lead.contact_name || lead.name}>{lead.contact_name || lead.name || "—"}</div>
                       <div className="text-xs font-normal text-[var(--text-secondary)] truncate mt-0.5" title={lead.email || lead.phone}>{lead.email || lead.phone || "—"}</div>
                     </td>
@@ -837,19 +837,19 @@ export default function AdminCRMPage() {
                         {lead.status.replace("_", " ")}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-[var(--text-secondary)] font-normal tracking-normal text-[13px] truncate" title={lead.assigned_to_member?.name || "Unassigned"}>
+                    <td className="px-3.5 py-2 text-[var(--text-secondary)] font-normal tracking-normal text-[13px] truncate" title={lead.assigned_to_member?.name || "Unassigned"}>
                       {lead.assigned_to_member?.name || "Unassigned"}
                     </td>
-                    <td className="px-4 py-3 text-xs text-[var(--text-secondary)]">
+                    <td className="px-3.5 py-2 text-xs text-[var(--text-secondary)]">
                       {lead.last_contacted_at ? new Date(lead.last_contacted_at).toLocaleDateString() : "—"}
                     </td>
-                    <td className="px-4 py-3 text-xs text-[var(--text-secondary)]">
+                    <td className="px-3.5 py-2 text-xs text-[var(--text-secondary)]">
                       {lead.next_followup_at ? new Date(lead.next_followup_at).toLocaleDateString() : "—"}
                     </td>
-                    <td className="px-4 py-3 text-xs text-[var(--text-secondary)] capitalize truncate" title={lead.source || "Organic"}>
+                    <td className="px-3.5 py-2 text-xs text-[var(--text-secondary)] capitalize truncate" title={lead.source || "Organic"}>
                       {lead.source || "Organic"}
                     </td>
-                    <td className="px-4 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-3.5 py-2 text-center" onClick={(e) => e.stopPropagation()}>
                       <div className="relative inline-block text-left">
                         <button
                           onClick={() => setActiveActionMenuId(activeActionMenuId === lead.id ? null : (lead.id || null))}
@@ -907,7 +907,7 @@ export default function AdminCRMPage() {
         </div>
 
         {/* --- PAGINATION BAR --- */}
-        <div className="px-4 py-3.5 border-t border-[#e6e6e6] flex items-center justify-between bg-[#f6f5f4]/15">
+        <div className="px-4 py-2.5 border-t border-[var(--border-subtle)] flex items-center justify-between bg-[var(--surface-2)]/20">
           <span className="text-xs text-[var(--text-secondary)]">
             Showing <span className="font-semibold text-[var(--text-primary)]">{filteredLeads.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> to <span className="font-semibold text-[var(--text-primary)]">{Math.min(currentPage * itemsPerPage, filteredLeads.length)}</span> of <span className="font-semibold text-[var(--text-primary)]">{filteredLeads.length}</span> leads
           </span>

@@ -324,12 +324,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         )}>
            {/* Internal Spacing — responsive padding */}
            <div className={cn(
-             "w-full mx-auto print:p-0 print:m-0 print:space-y-0 print:max-w-none",
+             "w-full print:p-0 print:m-0 print:space-y-0 print:max-w-none",
              isEditorialStudio || isCommandCenterWorkspace
                ? "h-[calc(100vh-3.5rem)] md:h-screen max-w-none overflow-hidden"
                : isCommandCenter
                ? "min-h-screen max-w-none p-0 overflow-y-auto"
-               : "p-4 sm:p-6 md:p-8 space-y-6"
+               : "p-4 sm:p-6 md:px-8 md:pt-6 md:pb-3 space-y-4"
            )}>
               {children}
            </div>
