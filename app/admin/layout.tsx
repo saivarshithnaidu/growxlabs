@@ -7,10 +7,11 @@ import "@/src/components/ui/tokens.css";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { AppShell, ToastViewport } from "@/src/components/ui";
 import { ADMIN_EXACT_HREFS, MODULES, stripLocale } from "@/lib/admin-nav";
-import { Loader2, ShieldAlert, ArrowLeft, LogOut, ExternalLink, ChevronRight, Settings } from "@/components/icons";
+import { Loader2, ShieldAlert, ArrowLeft, LogOut, ExternalLink, ChevronRight, Settings, Moon, Sun } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { AdminOperationsDock } from "@/components/admin/AdminOperationsDock";
@@ -20,6 +21,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const currentPath = usePathname();
   const { data: session, status } = useSession();
+  const { resolvedTheme, setTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -340,6 +343,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             role: ((session?.user as { role?: string } | undefined)?.role || "").replace("_", " ") || "Agent",
             avatarSrc: session?.user?.image,
             items: [
+              { label: isDark ? "Light mode" : "Dark mode", icon: isDark ? <Sun size={16} strokeWidth={1.5} /> : <Moon size={16} strokeWidth={1.5} />, onSelect: () => setTheme(isDark ? "light" : "dark") },
               { label: "Settings", icon: <Settings size={16} strokeWidth={1.5} />, href: "/admin/settings" },
               { label: "Sign out", icon: <LogOut size={16} strokeWidth={1.5} />, onSelect: () => signOut({ callbackUrl: "/login?callbackUrl=/admin" }), separated: true },
             ],
