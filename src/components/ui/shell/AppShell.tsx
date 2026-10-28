@@ -96,6 +96,7 @@ export function AppShell({ modules, pathname, exactHrefs, logo, user, commandIte
             active={m.id === activeModule.id}
             onMouseEnter={collapsed ? () => openFlyout(m.id) : undefined}
             onMouseLeave={collapsed ? closeFlyout : undefined}
+            hideTooltip={collapsed}
           />
         ))}
       </NavRail>

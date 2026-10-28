@@ -40,14 +40,16 @@ export interface NavRailItemProps {
   active?: boolean;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  /** Hide the hover tooltip (e.g. while a flyout already shows the module name). */
+  hideTooltip?: boolean;
   "data-force"?: "hover" | "focus";
 }
 
-export function NavRailItem({ label, icon: Icon, href, active = false, onMouseEnter, onMouseLeave, "data-force": force }: NavRailItemProps) {
+export function NavRailItem({ label, icon: Icon, href, active = false, onMouseEnter, onMouseLeave, hideTooltip = false, "data-force": force }: NavRailItemProps) {
   return (
     <div className="relative flex h-10 w-full shrink-0 justify-center" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {active && <span aria-hidden className="absolute left-0 top-2.5 h-5 w-0.5 rounded-r-[var(--radius-xs)] bg-[var(--accent)]" />}
-      <Tooltip content={label} side="right">
+      <Tooltip content={label} side="right" disabled={hideTooltip}>
         <Link
           href={href}
           aria-label={label}
