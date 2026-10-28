@@ -95,11 +95,15 @@ export default async function RootLayout({
                     name: "India",
                   },
 
+                  telephone: "+91-9381188153",
+
                   contactPoint: {
                     "@type": "ContactPoint",
+                    telephone: "+91-9381188153",
                     email: "svp@growxlabs.tech",
-                    contactType: "general inquiries",
-                    availableLanguage: ["English"],
+                    contactType: "customer service and sales",
+                    availableLanguage: ["English", "Telugu", "Hindi"],
+                    areaServed: "Worldwide",
                   },
 
                   areaServed: {
@@ -138,6 +142,8 @@ export default async function RootLayout({
                   name: "Sai Varshith Pujala",
 
                   jobTitle: "Founder & CEO",
+
+                  telephone: "+91-9381188153",
 
                   url: "https://www.linkedin.com/in/sai-varshith-pujala/",
 

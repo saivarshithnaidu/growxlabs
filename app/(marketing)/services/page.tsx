@@ -121,7 +121,7 @@ const services = [
     weight: "Scoped build",
     dimensions: "Architecture to production delivery",
     buttonText: "GET IN TOUCH",
-    buttonHref: "https://wa.me/918790907144?text=Hi%2C%20I%27m%20interested%20in%20a%20Custom%20Software%20Build%20at%20GrowxLabs.",
+    buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20a%20Custom%20Software%20Build%20at%20GrowxLabs.",
     // Earth #E9E7E1 + Midnight #22282C palette
     cardBg: "bg-[#E9E7E1]",
     borderBg: "bg-[#C2BFB7] hover:bg-[#93979B] focus-within:bg-[#93979B]",
@@ -161,7 +161,7 @@ const services = [
     weight: "Strategic",
     dimensions: "Architecture & technical leadership",
     buttonText: "GET IN TOUCH",
-    buttonHref: "https://wa.me/918790907144?text=Hi%2C%20I%27m%20interested%20in%20Fractional%20CTO%20services%20at%20GrowxLabs.",
+    buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20Fractional%20CTO%20services%20at%20GrowxLabs.",
     // Earth #E9E7E1 + Midnight #22282C palette
     cardBg: "bg-[#E9E7E1]",
     borderBg: "bg-[#C2BFB7] hover:bg-[#93979B] focus-within:bg-[#93979B]",
@@ -181,7 +181,7 @@ const services = [
     weight: "Deep partnership",
     dimensions: "Long-term aligned engineering",
     buttonText: "GET IN TOUCH",
-    buttonHref: "https://wa.me/918790907144?text=Hi%2C%20I%27m%20interested%20in%20a%20Technical%20Co-founder%20partnership%20at%20GrowxLabs.",
+    buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20a%20Technical%20Co-founder%20partnership%20at%20GrowxLabs.",
     // Earth #E9E7E1 + Midnight #22282C palette
     cardBg: "bg-[#E9E7E1]",
     borderBg: "bg-[#C2BFB7] hover:bg-[#93979B] focus-within:bg-[#93979B]",

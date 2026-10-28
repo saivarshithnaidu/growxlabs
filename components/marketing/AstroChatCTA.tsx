@@ -19,7 +19,7 @@ export function AstroChatCTA() {
 
   const handleSubmit = () => {
     if (!value || typeof value !== "string" || value.trim().length === 0) return;
-    const waUrl = `https://wa.me/918790907144?text=${encodeURIComponent(value)}`;
+    const waUrl = `https://wa.me/919381188153?text=${encodeURIComponent(value)}`;
     window.open(waUrl, "_blank");
   };
 

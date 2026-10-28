@@ -73,6 +73,17 @@ export function Footer() {
 
               <span className="hidden sm:inline text-[#4C575B]" aria-hidden="true">|</span>
 
+              {/* Direct phone / WhatsApp: 14px */}
+              <a 
+                href="tel:+919381188153" 
+                className={`flex items-center gap-2 text-[14px] font-normal transition-colors ${textColor} ${linkHoverColor}`}
+                title="Call or WhatsApp"
+              >
+                <span>+91 93811 88153</span>
+              </a>
+
+              <span className="hidden sm:inline text-[#4C575B]" aria-hidden="true">|</span>
+
               {/* Horizontal Social Icons: 18-20px */}
               <div className="flex items-center gap-4">
                 <a 

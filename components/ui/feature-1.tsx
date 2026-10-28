@@ -11,7 +11,7 @@ interface Feature1Props {
 
 export const Feature1 = ({
   buttonLabel = "Talk to us",
-  whatsappNumber = "918790907144",
+  whatsappNumber = "919381188153",
   whatsappMessage = "Hi, I'd like to discuss a project with GrowX Labs.",
 }: Feature1Props) => {
   const encodedMessage = encodeURIComponent(whatsappMessage);

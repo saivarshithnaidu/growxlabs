@@ -380,7 +380,7 @@ export function Navbar() {
               {/* Mobile No & WhatsApp */}
               <div className="flex items-center justify-between pt-1">
                 <a
-                  href="tel:+918790907144"
+                  href="tel:+919381188153"
                   className={cn(
                     "text-xs font-mono tracking-tight transition-colors truncate flex-1",
                     isAirForceTheme
@@ -391,10 +391,10 @@ export function Navbar() {
                   )}
                   title="Call directly"
                 >
-                  +91 87909 07144
+                  +91 93811 88153
                 </a>
                 <a
-                  href="https://wa.me/918790907144"
+                  href="https://wa.me/919381188153"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(

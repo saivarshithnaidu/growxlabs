@@ -150,6 +150,147 @@ async function handleVercelPeopleReferences(request: NextRequest, path: string[]
   return apiError(404, "NOT_FOUND", "People reference route not found.", requestId);
 }
 
+async function handleVercelPeopleDirectory(request: NextRequest, path: string[], requestId: string) {
+  if (path[0] === "identity" && path[1] === "roles" && path.length === 2 && request.method === "GET") {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return apiError(401, "UNAUTHENTICATED", "Your session has expired. Sign in again.", requestId);
+    const { data, error } = await supabaseAdmin.schema("identity").from("roles").select("*").order("name");
+    if (error) {
+      console.error(JSON.stringify({ request_id: requestId, route: request.nextUrl.pathname, code: error.code }));
+      return apiError(500, "ROLES_READ_FAILED", "Roles could not be loaded.", requestId);
+    }
+    return Response.json({ items: data || [] }, { headers: { "X-Request-Id": requestId, "Cache-Control": "no-store" } });
+  }
+
+  if (path[0] !== "people") return null;
+
+  if (path[1] === "documents") {
+    return Response.json({ items: [] }, { headers: { "X-Request-Id": requestId, "Cache-Control": "no-store" } });
+  }
+
+  if (path[1] === "me" && path[2] === "team") {
+    return Response.json({ items: [] }, { headers: { "X-Request-Id": requestId, "Cache-Control": "no-store" } });
+  }
+
+  if (path[1] !== "employees") return null;
+
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return apiError(401, "UNAUTHENTICATED", "Your session has expired. Sign in again.", requestId);
+  if (!["ADMIN", "CO_ADMIN", "HR"].includes(String(session.user.role).toUpperCase())) {
+    return apiError(403, "FORBIDDEN", "People administration access is required.", requestId);
+  }
+
+  const organisationId = CAREERS_ORGANISATION;
+
+  if (path.length === 4 && (path[3] === "history" || path[3] === "audit")) {
+    return Response.json({ items: [] }, { headers: { "X-Request-Id": requestId, "Cache-Control": "no-store" } });
+  }
+
+  if (request.method === "GET" && path.length === 2) {
+    const page = Math.max(1, Number(request.nextUrl.searchParams.get("page")) || 1);
+    const pageSize = Math.min(100, Math.max(1, Number(request.nextUrl.searchParams.get("pageSize")) || 20));
+    const search = request.nextUrl.searchParams.get("q")?.trim();
+    const departmentFilter = request.nextUrl.searchParams.get("department")?.trim();
+
+    let query = supabaseAdmin
+      .schema("people")
+      .from("employees")
+      .select("*, employment:employment_records!employment_records_employee_id_fkey(*, department:departments(name), designation:designations(name))", { count: "exact" })
+      .is("deleted_at", null)
+      .order("created_at", { ascending: true });
+
+    if (search) {
+      const sanitized = search.replace(/[%_,()]/g, "");
+      query = query.or(`first_name.ilike.%${sanitized}%,last_name.ilike.%${sanitized}%,employee_number.ilike.%${sanitized}%`);
+    }
+
+    const { data: emps, count, error } = await query;
+    if (error) {
+      console.error(JSON.stringify({ request_id: requestId, route: request.nextUrl.pathname, code: error.code, message: error.message }));
+      return apiError(500, "PEOPLE_EMPLOYEES_READ_FAILED", "Employees could not be loaded.", requestId);
+    }
+
+    const userIds = (emps || []).map((e: any) => e.user_id).filter(Boolean);
+    let userMap = new Map<string, string>();
+    if (userIds.length > 0) {
+      const { data: users } = await supabaseAdmin
+        .schema("identity")
+        .from("users")
+        .select("id, email")
+        .in("id", userIds);
+      userMap = new Map((users || []).map((u: any) => [u.id, u.email]));
+    }
+    const managerMap = new Map((emps || []).map((e: any) => [e.id, [e.first_name, e.last_name].filter(Boolean).join(" ")]));
+
+    let items = (emps || []).map((emp: any) => {
+      const activeEmployment = emp.employment?.find((e: any) => e.status === "active" && !e.valid_to) || emp.employment?.[0];
+      const rawType = activeEmployment?.employment_type || "Full-time";
+      const formattedType = rawType.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+      const rawStatus = activeEmployment?.status || "active";
+      const formattedStatus = rawStatus.toLowerCase() === "active" ? "Active" : rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1);
+      return {
+        id: emp.id,
+        employeeNumber: emp.employee_number || "—",
+        name: [emp.first_name, emp.last_name].filter(Boolean).join(" ") || "Employee",
+        email: userMap.get(emp.user_id) || "team@growxlabs.tech",
+        department: activeEmployment?.department?.name || "General",
+        designation: activeEmployment?.designation?.name || "Member",
+        manager: activeEmployment?.manager_employee_id ? (managerMap.get(activeEmployment.manager_employee_id) || "—") : "—",
+        employmentType: formattedType,
+        status: formattedStatus,
+        workLocation: activeEmployment?.work_location || "Office",
+      };
+    });
+
+    if (departmentFilter && departmentFilter !== "All departments") {
+      items = items.filter((item: any) => item.department.toLowerCase() === departmentFilter.toLowerCase());
+    }
+
+    const total = items.length;
+    const pagedItems = items.slice((page - 1) * pageSize, page * pageSize);
+    return Response.json(
+      { items: pagedItems, total, page, pageSize },
+      { headers: { "X-Request-Id": requestId, "Cache-Control": "no-store" } }
+    );
+  }
+
+  if (request.method === "POST" && path.length === 2) {
+    const body = await request.json().catch(() => null);
+    if (!body || !body.employeeNumber || !body.firstName) {
+      return apiError(400, "INVALID_EMPLOYEE", "Employee number and first name are required.", requestId);
+    }
+    const { data: newEmp, error: empErr } = await supabaseAdmin
+      .schema("people")
+      .from("employees")
+      .insert({
+        organisation_id: organisationId,
+        employee_number: String(body.employeeNumber).trim(),
+        first_name: String(body.firstName).trim(),
+        last_name: String(body.lastName || "").trim(),
+      })
+      .select("*")
+      .single();
+    if (empErr) {
+      const duplicate = empErr.code === "23505";
+      return apiError(duplicate ? 409 : 500, duplicate ? "EMPLOYEE_NUMBER_EXISTS" : "EMPLOYEE_CREATE_FAILED", duplicate ? "That employee number already exists." : "The employee could not be created.", requestId);
+    }
+    await supabaseAdmin
+      .schema("people")
+      .from("employment_records")
+      .insert({
+        organisation_id: organisationId,
+        employee_id: newEmp.id,
+        employment_type: String(body.employmentType || "full_time").toLowerCase().replace(/\s+/g, "_"),
+        work_location: String(body.workLocation || "Office"),
+        status: String(body.status || "active").toLowerCase(),
+        valid_from: body.joiningDate || new Date().toISOString().split("T")[0],
+      });
+    return Response.json(newEmp, { status: 201, headers: { "X-Request-Id": requestId } });
+  }
+
+  return null;
+}
+
 async function forward(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   const requestId = request.headers.get("x-request-id") || crypto.randomUUID();
   const { path } = await context.params;
@@ -157,6 +298,8 @@ async function forward(request: NextRequest, context: { params: Promise<{ path: 
   if (activationResponse) return activationResponse;
   const localPeopleResponse = await handleVercelPeopleReferences(request, path, requestId);
   if (localPeopleResponse) return localPeopleResponse;
+  const localPeopleDirectoryResponse = await handleVercelPeopleDirectory(request, path, requestId);
+  if (localPeopleDirectoryResponse) return localPeopleDirectoryResponse;
   const publicRequest = isPublicPath(path, request.method);
 
   let base: string;
