@@ -1,6 +1,7 @@
 /*
- * GrowX design tokens. Values come from DESIGN-notion.md (front matter + Elevation table).
- * Values marked "derived" are not in the doc and were chosen to fit it.
+ * GrowX design tokens — "executive" foundation.
+ * White page, cool neutral greys, one accent (GrowX blue #0075de), green/amber/red only for status.
+ * Space separates sections; borders are hairlines for tables and inputs only.
  *
  * `.ds-shell` is the app shell root; `.ds-portal` goes on every portaled surface
  * (modal, drawer, menu, tooltip, popover, toast) because those render outside the shell.
@@ -8,55 +9,65 @@
 .ds-shell,
 .ds-portal {
   /* Surfaces */
-  --bg-surface: #ffffff;          /* colors.surface */
-  --bg-canvas: #f6f5f4;           /* colors.canvas-soft */
-  --bg-hover: #f6f5f4;            /* colors.canvas-soft */
-  --bg-active: #eae9e8;           /* derived */
-  --bg-inverse: #000000;          /* colors.ink */
-  --overlay: rgba(0, 0, 0, 0.2);  /* derived */
+  --bg-page: #ffffff;             /* page background */
+  --bg-surface: #ffffff;          /* raised surfaces: menus, dialogs, tables, inputs */
+  --bg-canvas: #fafafa;           /* quiet fill: cards, tiles, table headers, chips */
+  --bg-hover: #f4f4f5;
+  --bg-active: #e4e4e7;
+  --bg-inverse: #09090b;
+  --overlay: rgba(9, 9, 11, 0.24);
 
   /* Lines */
-  --border: #e6e6e6;              /* colors.hairline */
-  --border-strong: #dddddd;       /* text-input border rgb(221,221,221) */
+  --border: #ebebed;
+  --border-strong: #d4d4d8;
 
   /* Text */
-  --text-primary: #000000;        /* colors.ink */
-  --text-secondary: #31302e;      /* colors.ink-secondary */
-  --text-muted: #615d59;          /* colors.ink-muted */
-  --text-disabled: #a39e98;       /* colors.ink-faint */
-  --text-inverse: #ffffff;        /* colors.on-primary */
+  --text-primary: #09090b;
+  --text-secondary: #3f3f46;
+  --text-muted: #71717a;
+  --text-disabled: #a1a1aa;
+  --text-inverse: #ffffff;
 
   /* Accent */
-  --accent: #0075de;              /* colors.primary */
-  --accent-active: #005bab;       /* colors.primary-active */
-  --accent-tint: rgba(0, 117, 222, 0.08);  /* derived */
-  --on-accent: #ffffff;           /* colors.on-primary */
+  --accent: #0075de;
+  --accent-active: #005bab;
+  --accent-tint: rgba(0, 117, 222, 0.08);
+  --on-accent: #ffffff;
 
-  /* Status. The doc defines no semantic ramp: green/orange come from the sticker palette, red is derived. */
+  /* Status */
   --info: var(--accent);
   --info-tint: var(--accent-tint);
-  --success: #1aae39;             /* colors.accent-green */
-  --success-tint: rgba(26, 174, 57, 0.1);   /* derived */
-  --warning: #dd5b00;             /* colors.accent-orange */
-  --warning-tint: rgba(221, 91, 0, 0.1);    /* derived */
-  --danger: #dc2626;              /* derived (matches --destructive in globals.css) */
-  --danger-active: #b91c1c;       /* derived */
-  --danger-tint: rgba(220, 38, 38, 0.08);   /* derived */
+  --success: #16a34a;
+  --success-tint: rgba(22, 163, 74, 0.1);
+  --warning: #d97706;
+  --warning-tint: rgba(217, 119, 6, 0.1);
+  --danger: #dc2626;
+  --danger-active: #b91c1c;
+  --danger-tint: rgba(220, 38, 38, 0.08);
 
-  /* Radius: rounded.* (sm is 6px per the shell spec; the doc has 5px) */
+  /* Data: accent ramp for series, grey for comparison, status colors only for status */
+  --chart-1: #0075de;
+  --chart-2: #5ea4ea;
+  --chart-3: #a8cdf3;
+  --chart-4: #16a34a;
+  --chart-compare: #a1a1aa;
+  --chart-grid: #f0f0f2;
+  --chart-area: rgba(0, 117, 222, 0.1);
+
+  /* Radius */
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-full: 9999px;
 
-  /* Elevation */
-  --shadow-flyout: rgba(0,0,0,0.01) 0 0.175px 1.041px, rgba(0,0,0,0.02) 0 0.8px 2.925px, rgba(0,0,0,0.027) 0 2.025px 7.847px, rgba(0,0,0,0.04) 0 4px 18px;
-  --shadow-modal: rgba(0,0,0,0.01) 0 0.175px 1.041px, rgba(0,0,0,0.02) 0 0.8px 2.925px, rgba(0,0,0,0.027) 0 2.025px 7.847px, rgba(0,0,0,0.04) 0 4px 18px, rgba(0,0,0,0.05) 0 23px 52px;
+  /* Elevation: floating layers only (menus, popovers, dialogs). Cards are flat. */
+  --shadow-flyout: 0 1px 2px rgba(9, 9, 11, 0.04), 0 8px 24px rgba(9, 9, 11, 0.08);
+  --shadow-modal: 0 2px 4px rgba(9, 9, 11, 0.04), 0 24px 56px rgba(9, 9, 11, 0.16);
   --focus-ring: 0 0 0 2px var(--bg-surface), 0 0 0 4px rgba(0, 117, 222, 0.45);
 
   /* Type */
-  --font-ui: var(--font-admin-geist, "Inter"), "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-ui: var(--font-admin-geist, "Geist"), "Geist", "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Motion */
@@ -64,8 +75,56 @@
 
   font-family: var(--font-ui);
   color: var(--text-primary);
-  /* The tokens are light-only; keep native controls (date pickers, scrollbars) light under html.dark. */
+  -webkit-font-smoothing: antialiased;
   color-scheme: light;
+}
+
+/* Dark theme: follows the app theme (next-themes puts `dark` on <html>). Same roles, zinc scale. */
+.dark .ds-shell,
+.dark .ds-portal {
+  --bg-page: #09090b;
+  --bg-surface: #111113;
+  --bg-canvas: #18181b;
+  --bg-hover: #1f1f23;
+  --bg-active: #27272a;
+  --bg-inverse: #fafafa;
+  --overlay: rgba(0, 0, 0, 0.6);
+
+  --border: #232327;
+  --border-strong: #3f3f46;
+
+  --text-primary: #fafafa;
+  --text-secondary: #d4d4d8;
+  --text-muted: #a1a1aa;
+  --text-disabled: #71717a;
+  --text-inverse: #09090b;
+
+  --accent: #3291ff;
+  --accent-active: #5aa7ff;
+  --accent-tint: rgba(50, 145, 255, 0.16);
+  --on-accent: #ffffff;
+
+  --success: #22c55e;
+  --success-tint: rgba(34, 197, 94, 0.15);
+  --warning: #f59e0b;
+  --warning-tint: rgba(245, 158, 11, 0.15);
+  --danger: #f87171;
+  --danger-active: #ef4444;
+  --danger-tint: rgba(248, 113, 113, 0.15);
+
+  --chart-1: #3291ff;
+  --chart-2: #2468c4;
+  --chart-3: #1c4a85;
+  --chart-4: #22c55e;
+  --chart-compare: #71717a;
+  --chart-grid: #1f1f23;
+  --chart-area: rgba(50, 145, 255, 0.16);
+
+  --shadow-flyout: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-modal: 0 2px 4px rgba(0, 0, 0, 0.4), 0 24px 56px rgba(0, 0, 0, 0.65);
+  --focus-ring: 0 0 0 2px var(--bg-surface), 0 0 0 4px rgba(50, 145, 255, 0.6);
+
+  color-scheme: dark;
 }
 
 /* globals.css paints every [role="dialog"] dark under html.dark (!important). Library overlays and
@@ -93,6 +152,7 @@
 .ds-t-title-sm.ds-t-title-sm.ds-t-title-sm.ds-t-title-sm { font-size: 14px !important; line-height: 20px !important; font-weight: 600 !important; letter-spacing: normal !important; }
 .ds-t-title-md.ds-t-title-md.ds-t-title-md.ds-t-title-md { font-size: 16px !important; line-height: 24px !important; font-weight: 600 !important; letter-spacing: -0.01em !important; }
 .ds-t-title.ds-t-title.ds-t-title.ds-t-title { font-size: 20px !important; line-height: 28px !important; font-weight: 600 !important; letter-spacing: -0.02em !important; margin: 0; }
+.ds-t-display.ds-t-display.ds-t-display.ds-t-display { font-size: 34px !important; line-height: 40px !important; font-weight: 600 !important; letter-spacing: -0.035em !important; font-variant-numeric: tabular-nums; }
 .ds-t-kpi.ds-t-kpi.ds-t-kpi.ds-t-kpi { font-size: 24px !important; line-height: 32px !important; font-weight: 600 !important; letter-spacing: -0.02em !important; font-variant-numeric: tabular-nums; }
 .ds-t-mono.ds-t-mono.ds-t-mono.ds-t-mono { font-family: var(--font-mono) !important; font-size: 11px !important; line-height: 16px !important; font-weight: 500 !important; letter-spacing: normal !important; }
 .ds-t-caption.ds-t-caption.ds-t-caption.ds-t-caption { font-size: 11px !important; line-height: 16px !important; font-weight: 600 !important; letter-spacing: normal !important; text-transform: none !important; }

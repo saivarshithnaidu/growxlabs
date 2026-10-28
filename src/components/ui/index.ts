@@ -20,6 +20,7 @@ export * from "./Alert";
 export * from "./CopyButton";
 export * from "./data/DataTable";
 export * from "./data/Display";
+export * from "./data/Charts";
 export * from "./shell/nav-match";
 export * from "./shell/Nav";
 export * from "./shell/Menus";

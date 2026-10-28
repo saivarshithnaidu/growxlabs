@@ -5,6 +5,9 @@ import { LoadingState } from "@/src/components/patterns";
 import { ActivityTimeline, FileUpload, LeadScore, LineItemsEditor, StageStepper, TotalsSummary, type LineItem, type LineItemField } from "@/src/components/business";
 import { Labeled, Row, Section } from "./Specimen";
 
+/** Fixed sample timestamps (render stays pure). */
+const SAMPLE_NOW_MINUS_3H = "2026-10-28T07:00:00.000Z";
+
 const PRODUCTS = [
   { value: "p1", label: "AI Ops Assessment (₹1,20,000)", price: 120000 },
   { value: "p2", label: "Automation Sprint (₹2,50,000)", price: 250000 },
@@ -39,7 +42,7 @@ export function FeedbackSection() {
         <Labeled label="CurrencyAmount"><CurrencyAmount value={420000} /></Labeled>
         <Labeled label="compact"><CurrencyAmount value={4820000} compact /></Labeled>
         <Labeled label="signed negative"><CurrencyAmount value={-12500} signed /></Labeled>
-        <Labeled label="RelativeTime"><RelativeTime value={new Date(Date.now() - 3 * 3600_000).toISOString()} /></Labeled>
+        <Labeled label="RelativeTime"><RelativeTime value={SAMPLE_NOW_MINUS_3H} /></Labeled>
         <Labeled label="empty"><RelativeTime value={null} /></Labeled>
       </Row>
       <Row label="LoadingState" stack>
@@ -63,9 +66,9 @@ export function BusinessSection() {
       <Row label="ActivityTimeline" stack>
         <div className="max-w-xl">
           <ActivityTimeline activities={[
-            { id: "1", type: "CALL", title: "Discovery call with COO", description: "Agreed to share current ops metrics by Friday.", created_at: new Date(Date.now() - 2 * 3600_000).toISOString(), performed_by_name: "Priya Raman" },
-            { id: "2", type: "EMAIL", title: "Proposal follow-up sent", created_at: new Date(Date.now() - 26 * 3600_000).toISOString(), performed_by_name: "Arjun Mehta" },
-            { id: "3", type: "MEETING", title: "Scoping workshop booked", created_at: new Date(Date.now() - 5 * 86400_000).toISOString() },
+            { id: "1", type: "CALL", title: "Discovery call with COO", description: "Agreed to share current ops metrics by Friday.", created_at: "2026-10-28T08:00:00.000Z", performed_by_name: "Priya Raman" },
+            { id: "2", type: "EMAIL", title: "Proposal follow-up sent", created_at: "2026-10-27T08:00:00.000Z", performed_by_name: "Arjun Mehta" },
+            { id: "3", type: "MEETING", title: "Scoping workshop booked", created_at: "2026-10-23T10:00:00.000Z" },
           ]} />
         </div>
       </Row>

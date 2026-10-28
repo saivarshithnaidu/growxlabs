@@ -108,7 +108,7 @@ export function FormPage({ header, onSubmit, children, footer, footerNote }: For
 
 export function FormSection({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
   return (
-    <section className="grid gap-4 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-surface)] p-4 md:grid-cols-[220px_minmax(0,1fr)] md:gap-6">
+    <section className="grid gap-4 rounded-[var(--radius-lg)] bg-[var(--bg-canvas)] p-5 md:grid-cols-[220px_minmax(0,1fr)] md:gap-6">
       <div>
         <h2 className="ds-t-title-sm text-[var(--text-primary)]">{title}</h2>
         {description && <p className="ds-t-meta mt-1 text-[var(--text-muted)]">{description}</p>}

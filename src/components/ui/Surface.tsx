@@ -12,7 +12,7 @@ export interface CardProps {
 
 export function Card({ children, padding = "md", elevated = false, className, as: Tag = "div" }: CardProps) {
   return (
-    <Tag className={cn("rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-surface)]", padding === "md" && "p-4", padding === "sm" && "p-3", elevated && "shadow-[var(--shadow-flyout)]", className)}>
+    <Tag className={cn("rounded-[var(--radius-lg)]", elevated ? "bg-[var(--bg-surface)] shadow-[var(--shadow-flyout)]" : "bg-[var(--bg-canvas)]", padding === "md" && "p-5", padding === "sm" && "p-3", className)}>
       {children}
     </Tag>
   );

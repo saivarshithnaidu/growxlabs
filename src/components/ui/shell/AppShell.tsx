@@ -77,7 +77,7 @@ export function AppShell({ modules, pathname, exactHrefs, logo, user, commandIte
   const flyoutModule = flyoutIndex >= 0 ? modules[flyoutIndex] : null;
 
   return (
-    <div className={cn("ds-shell flex w-full overflow-hidden bg-[var(--bg-canvas)]", embedded ? "h-full" : "h-screen")}>
+    <div className={cn("ds-shell flex w-full overflow-hidden bg-[var(--bg-page)]", embedded ? "h-full" : "h-screen")}>
       <NavRail
         logo={logo}
         footer={
@@ -112,7 +112,7 @@ export function AppShell({ modules, pathname, exactHrefs, logo, user, commandIte
         </Flyout>
       )}
 
-      <main className="relative h-full min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-[var(--bg-canvas)]">
+      <main className="relative h-full min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-[var(--bg-page)]">
         {collapsed && (
           <div className="absolute left-3 top-3 z-20">
             <IconButton label="Expand panel" variant="secondary" size={28} icon={<PanelLeft size={16} strokeWidth={1.5} />} onClick={toggle} />

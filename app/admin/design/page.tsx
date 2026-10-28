@@ -6,10 +6,11 @@ import { ButtonsSection, ChipsBadgesSection, InputsSection, OverlaysSection, Sur
 import { DataSection, NavigationSection } from "./_preview/DataShell";
 import { PatternsSection } from "./_preview/PatternsDemo";
 import { BusinessSection, FeedbackSection } from "./_preview/Business";
+import { InsightsSection } from "./_preview/Insights";
 
 const SECTIONS = [
   ["tokens", "Tokens"], ["button", "Buttons"], ["inputs", "Inputs"], ["badges", "Chips & badges"], ["overlays", "Overlays"],
-  ["surfaces", "Surfaces"], ["feedback", "Feedback"], ["data", "Data"], ["business", "Business"], ["navigation", "Navigation"], ["patterns", "Patterns"],
+  ["surfaces", "Surfaces"], ["feedback", "Feedback"], ["data", "Data"], ["insights", "Dashboard"], ["business", "Business"], ["navigation", "Navigation"], ["patterns", "Patterns"],
 ] as const;
 
 export default function DesignPreviewPage() {
@@ -37,6 +38,7 @@ export default function DesignPreviewPage() {
         <SurfacesSection />
         <FeedbackSection />
         <DataSection />
+        <InsightsSection />
         <BusinessSection />
         <NavigationSection />
         <PatternsSection />

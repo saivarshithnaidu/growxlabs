@@ -17,7 +17,7 @@ export interface KPIItemProps {
 export function KPIItem({ label, value, delta, hint, loading }: KPIItemProps) {
   const good = delta ? delta.good ?? delta.direction === "up" : false;
   return (
-    <div className="min-w-0 px-4 py-3">
+    <div className="min-w-0 rounded-[var(--radius-lg)] bg-[var(--bg-canvas)] px-4 py-3.5">
       <p className="ds-t-label truncate text-[var(--text-muted)]">{label}</p>
       {loading ? (
         <Skeleton height={32} width="60%" className="mt-1" />
@@ -41,7 +41,7 @@ export function KPIItem({ label, value, delta, hint, loading }: KPIItemProps) {
 /** One bordered strip, items separated by hairlines; wraps on narrow screens. */
 export function KPIStrip({ children }: { children: ReactNode }) {
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] divide-x divide-[var(--border)] overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-surface)]">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3">
       {children}
     </div>
   );
