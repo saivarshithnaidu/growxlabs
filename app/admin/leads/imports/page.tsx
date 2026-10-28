@@ -1,97 +1,84 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Upload } from "lucide-react";
+import { Alert, Button, DataTable, DataTableColumn, RelativeTime, StatusBadge } from "@/src/components/ui";
+import { EmptyState, ListPage } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
+
+type ImportBatch = {
+  id: string;
+  batch_reference: string;
+  source: string;
+  source_job_id: string;
+  received_count: number;
+  valid_count: number;
+  duplicate_count: number;
+  needs_review_count: number;
+  imported_count: number;
+  rejected_count?: number | null;
+  status: string;
+  created_at: string;
+};
+
+const columns: DataTableColumn<ImportBatch>[] = [
+  {
+    id: "source",
+    header: "Source",
+    sortValue: (b) => b.batch_reference,
+    cell: (b) => (
+      <span className="flex min-w-0 flex-col">
+        <Link href={`/admin/leads/imports/${b.id}`} className="ds-focus ds-t-body-strong truncate rounded-[var(--radius-xs)] text-[var(--text-primary)] hover:text-[var(--accent)]">{b.batch_reference}</Link>
+        <span className="ds-t-meta truncate text-[var(--text-muted)]">{b.source}</span>
+      </span>
+    ),
+  },
+  { id: "source_job_id", header: "Segment / Job" },
+  { id: "received_count", header: "Received", numeric: true, sortValue: (b) => b.received_count },
+  { id: "valid_count", header: "Ready", numeric: true, sortValue: (b) => b.valid_count },
+  { id: "duplicate_count", header: "Duplicates", numeric: true, sortValue: (b) => b.duplicate_count },
+  { id: "needs_review_count", header: "Review", numeric: true, sortValue: (b) => b.needs_review_count },
+  { id: "imported_count", header: "Imported", numeric: true, sortValue: (b) => b.imported_count },
+  { id: "rejected_count", header: "Rejected", numeric: true, sortValue: (b) => b.rejected_count || 0, cell: (b) => b.rejected_count || 0 },
+  { id: "status", header: "Status", sortValue: (b) => b.status, cell: (b) => <StatusBadge domain="import" status={b.status} /> },
+  { id: "created_at", header: "Created", sortValue: (b) => b.created_at, cell: (b) => <RelativeTime value={b.created_at} className="ds-t-meta text-[var(--text-muted)]" /> },
+];
 
 export default function LeadImportsPage() {
-  const [batches, setBatches] = useState<any[]>([]);
-  const [message, setMessage] = useState("");
+  const breadcrumb = useAdminBreadcrumb();
+  const [batches, setBatches] = useState<ImportBatch[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [message] = useState("");
   useEffect(() => {
     fetch("/api/admin/leads/imports")
       .then((r) => r.json())
-      .then((b) => setBatches(b.batches || []));
+      .then((b) => setBatches(b.batches || []))
+      .finally(() => setLoading(false));
   }, []);
+  const importAction = <Button asChild variant="primary"><Link href="/admin/leads">Import leads</Link></Button>;
   return (
-    <main className="space-y-8">
-      <header>
-        <p className="text-xs font-bold uppercase tracking-[.18em] text-[#0075de]">
-          Customer & Sales
-        </p>
-        <h1 className="mt-2 text-3xl font-extrabold">Lead Imports</h1>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">
-          Review GrowX Crawl prospects before they enter the canonical Lead
-          Pool.
-        </p>
-      </header>
-      {message && (
-        <p className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
-          {message}
-        </p>
-      )}
-      <section className="overflow-x-auto rounded-xl border border-[var(--border-subtle)] bg-[var(--card)]">
-        <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="bg-[var(--surface-2)] text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
-            <tr>
-              {[
-                "Source",
-                "Segment / Job",
-                "Received",
-                "Ready",
-                "Duplicates",
-                "Review",
-                "Imported",
-                "Rejected",
-                "Status",
-                "Created",
-              ].map((h) => (
-                <th key={h} className="px-4 py-3">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {batches.map((batch) => (
-              <tr
-                key={batch.id}
-                className="border-t border-[var(--border-subtle)]"
-              >
-                <td className="px-4 py-4 font-semibold">
-                  <Link
-                    href={`/admin/leads/imports/${batch.id}`}
-                    className="text-[#0075de] hover:underline"
-                  >
-                    {batch.batch_reference}
-                  </Link>
-                  <span className="mt-1 block text-xs text-[var(--text-secondary)]">
-                    {batch.source}
-                  </span>
-                </td>
-                <td className="px-4 py-4">{batch.source_job_id}</td>
-                <td className="px-4 py-4">{batch.received_count}</td>
-                <td className="px-4 py-4">{batch.valid_count}</td>
-                <td className="px-4 py-4">{batch.duplicate_count}</td>
-                <td className="px-4 py-4">{batch.needs_review_count}</td>
-                <td className="px-4 py-4">{batch.imported_count}</td>
-                <td className="px-4 py-4">{batch.rejected_count || 0}</td>
-                <td className="px-4 py-4 font-semibold">{batch.status}</td>
-                <td className="px-4 py-4 text-xs text-[var(--text-muted)]">
-                  {new Date(batch.created_at).toLocaleString()}
-                </td>
-              </tr>
-            ))}
-            {!batches.length && (
-              <tr>
-                <td
-                  colSpan={10}
-                  className="px-4 py-12 text-center text-[var(--text-secondary)]"
-                >
-                  No lead imports received yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
-    </main>
+    <ListPage
+      header={{
+        title: "Lead Imports",
+        breadcrumb,
+        info: "Review GrowX Crawl prospects before they enter the canonical Lead Pool.",
+        actions: (
+          <>
+            <Button asChild><Link href="/admin/leads"><Upload size={16} strokeWidth={1.5} />Upload CSV</Link></Button>
+            {importAction}
+          </>
+        ),
+      }}
+    >
+      {message && <Alert variant="success" className="mb-4">{message}</Alert>}
+      <DataTable
+        label="Lead import batches"
+        columns={columns}
+        rows={batches}
+        getRowId={(b) => b.id}
+        loading={loading}
+        emptyState={<EmptyState title="No imports yet" description="Imported prospects appear here for review." action={importAction} />}
+      />
+    </ListPage>
   );
 }

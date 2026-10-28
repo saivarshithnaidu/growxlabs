@@ -1,13 +1,33 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Alert, Badge, Button, DataTable, DataTableColumn, KPIItem, KPIStrip, StatusBadge } from "@/src/components/ui";
+import { DetailPage, LoadingState } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
+
+type Candidate = {
+  id: string;
+  match_status: string;
+  review_status: string;
+  promoted_lead_id?: string | null;
+  payload_snapshot: {
+    company_name?: string;
+    city?: string;
+    state?: string;
+    phone?: string;
+    email?: string;
+    score?: number | null;
+    priority?: string | null;
+    contact?: { name?: string; role?: string; phone?: string; email?: string };
+  };
+};
 
 export default function ImportDetailPage({
   params,
 }: {
   params: Promise<{ batchId: string }>;
 }) {
-  const [id, setId] = useState("");
+  const breadcrumb = useAdminBreadcrumb();
+  const [, setId] = useState("");
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -39,124 +59,56 @@ export default function ImportDetailPage({
       ),
     }));
   }
+
+  const columns: DataTableColumn<Candidate>[] = [
+    { id: "company", header: "Company", sortValue: (c) => c.payload_snapshot.company_name, cell: (c) => <span className="ds-t-body-strong text-[var(--text-primary)]">{c.payload_snapshot.company_name}</span> },
+    { id: "location", header: "Location", cell: (c) => [c.payload_snapshot.city, c.payload_snapshot.state].filter(Boolean).join(", ") || "—" },
+    { id: "phone", header: "Phone", cell: (c) => c.payload_snapshot.contact?.phone || c.payload_snapshot.phone || "—" },
+    { id: "email", header: "Email", cell: (c) => c.payload_snapshot.contact?.email || c.payload_snapshot.email || "—" },
+    { id: "decision_maker", header: "Decision maker", cell: (c) => [c.payload_snapshot.contact?.name, c.payload_snapshot.contact?.role].filter(Boolean).join(" · ") || "—" },
+    { id: "match_status", header: "Match", sortValue: (c) => c.match_status, cell: (c) => <Badge variant={c.match_status === "no_match" ? "neutral" : "warning"}>{c.match_status.replaceAll("_", " ")}</Badge> },
+    { id: "review_status", header: "Status", sortValue: (c) => c.review_status, cell: (c) => <StatusBadge domain="import" status={c.review_status} /> },
+    { id: "score", header: "Lead score", numeric: true, sortValue: (c) => c.payload_snapshot.score ?? null, cell: (c) => c.payload_snapshot.score ?? "—" },
+    { id: "priority", header: "Priority", cell: (c) => c.payload_snapshot.priority || "—" },
+    {
+      id: "action",
+      header: "Action",
+      cell: (c) =>
+        c.review_status === "pending" && c.match_status === "no_match" ? (
+          <Button size={28} variant="primary" onClick={() => void approve(c.id)}>Approve</Button>
+        ) : c.promoted_lead_id ? (
+          <Badge variant="success">Imported</Badge>
+        ) : (
+          <Badge variant="warning">Review required</Badge>
+        ),
+    },
+  ];
+
   if (error)
-    return (
-      <main className="p-8">
-        <p className="rounded border border-red-200 bg-red-50 p-4 text-red-800">
-          {error}
-        </p>
-      </main>
-    );
-  if (!data)
-    return (
-      <main className="p-8 text-sm text-[var(--text-secondary)]">
-        Loading import…
-      </main>
-    );
+    return <Alert variant="danger" title="Import could not be loaded">{error}</Alert>;
+  if (!data) return <LoadingState label="Loading import…" />;
+
+  const b = data.batch;
   return (
-    <main className="space-y-8">
-      <Link href="/admin/leads/imports" className="text-sm text-[#0075de]">
-        ← Lead Imports
-      </Link>
-      <header>
-        <p className="text-xs font-bold uppercase tracking-[.18em] text-[#0075de]">
-          {data.batch.source}
-        </p>
-        <h1 className="mt-2 text-3xl font-extrabold">
-          {data.batch.batch_reference}
-        </h1>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">
-          Job / segment: {data.batch.source_job_id} · Status:{" "}
-          {data.batch.status}
-        </p>
-        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded border bg-[var(--border-subtle)] sm:grid-cols-5">
-          {[
-            ["Received", data.batch.received_count],
-            ["Ready", data.batch.valid_count],
-            ["Duplicates", data.batch.duplicate_count],
-            ["Review", data.batch.needs_review_count],
-            ["Imported", data.batch.imported_count],
-            ["Rejected", data.batch.rejected_count || 0],
-          ].map(([label, value]) => (
-            <div key={String(label)} className="bg-[var(--card)] p-4">
-              <p className="admin-kpi-value ">{value}</p>
-              <p className="admin-kpi-label mt-1 text-[10px] uppercase text-[var(--text-muted)]">
-                {label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </header>
-      <section className="overflow-x-auto rounded-xl border border-[var(--border-subtle)]">
-        <table className="w-full min-w-[900px] text-left text-sm">
-          <thead className="bg-[var(--surface-2)] text-[10px] uppercase text-[var(--text-muted)]">
-            <tr>
-              {[
-                "Company",
-                "Location",
-                "Phone",
-                "Email",
-                "Decision maker",
-                "Match",
-                "Status",
-                "Lead score",
-                "Priority",
-                "Action",
-              ].map((h) => (
-                <th key={h} className="px-4 py-3">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.candidates.map((candidate: any) => {
-              const p = candidate.payload_snapshot;
-              return (
-                <tr
-                  key={candidate.id}
-                  className="border-t border-[var(--border-subtle)]"
-                >
-                  <td className="px-4 py-4 font-semibold">{p.company_name}</td>
-                  <td className="px-4 py-4">
-                    {[p.city, p.state].filter(Boolean).join(", ") || "—"}
-                  </td>
-                  <td className="px-4 py-4">
-                    {p.contact?.phone || p.phone || "—"}
-                  </td>
-                  <td className="px-4 py-4">
-                    {p.contact?.email || p.email || "—"}
-                  </td>
-                  <td className="px-4 py-4">
-                    {[p.contact?.name, p.contact?.role]
-                      .filter(Boolean)
-                      .join(" · ") || "—"}
-                  </td>
-                  <td className="px-4 py-4">{candidate.match_status}</td>
-                  <td className="px-4 py-4">{candidate.review_status}</td>
-                  <td className="px-4 py-4">{p.score ?? "—"}</td>
-                  <td className="px-4 py-4">{p.priority || "—"}</td>
-                  <td className="px-4 py-4">
-                    {candidate.review_status === "pending" &&
-                    candidate.match_status === "no_match" ? (
-                      <button
-                        onClick={() => void approve(candidate.id)}
-                        className="rounded bg-[#0075de] px-3 py-2 text-xs font-bold text-white"
-                      >
-                        Approve
-                      </button>
-                    ) : candidate.promoted_lead_id ? (
-                      <span className="text-emerald-700">Imported</span>
-                    ) : (
-                      <span className="text-amber-700">Review required</span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </section>
-    </main>
+    <DetailPage
+      header={{
+        title: b.batch_reference,
+        breadcrumb,
+        info: `${b.source} · Job / segment: ${b.source_job_id}`,
+        actions: <StatusBadge domain="import" status={b.status} />,
+      }}
+    >
+      <div className="flex flex-col gap-4">
+        <KPIStrip>
+          <KPIItem label="Received" value={b.received_count} />
+          <KPIItem label="Ready" value={b.valid_count} />
+          <KPIItem label="Duplicates" value={b.duplicate_count} />
+          <KPIItem label="Review" value={b.needs_review_count} />
+          <KPIItem label="Imported" value={b.imported_count} />
+          <KPIItem label="Rejected" value={b.rejected_count || 0} />
+        </KPIStrip>
+        <DataTable label="Import candidates" columns={columns} rows={data.candidates} getRowId={(c) => c.id} />
+      </div>
+    </DetailPage>
   );
 }

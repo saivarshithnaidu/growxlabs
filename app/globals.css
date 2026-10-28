@@ -1752,8 +1752,10 @@ html {
   opacity: 0.7;
 }
 
-/* Modals & Dialogs (if nested in theme container) */
-.dark [role="dialog"],
+/* Modals & Dialogs (if nested in theme container).
+   Library overlays (.ds-portal) and anything inside the admin shell (.ds-shell) are themed by
+   src/components/ui/tokens.css, so this legacy dark override must not reach them. */
+.dark [role="dialog"]:not(.ds-portal):not(.ds-shell [role="dialog"]),
 .dark .modal-content {
   background-color: var(--card) !important;
   color: var(--text-primary) !important;

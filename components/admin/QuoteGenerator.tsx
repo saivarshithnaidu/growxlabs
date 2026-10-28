@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Trash2, Check, FileText } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Card } from "@/components/ui/Card";
+import { ArrowLeft, Check } from "lucide-react";
+import { Button, Combobox, CurrencyAmount, Input } from "@/src/components/ui";
+import { FormField, FormPage, FormSection, type PageHeaderProps } from "@/src/components/patterns";
+import { LineItemsEditor, TotalsSummary, type LineItemField } from "@/src/components/business";
 
 interface Product {
   id: string;
@@ -26,9 +26,12 @@ interface QuoteGeneratorProps {
   deals: any[];
   companies: any[];
   onGenerate: (data: any) => Promise<void>;
+  /** Page header (breadcrumb, title); defaults to "Create quotation". */
+  header?: Partial<PageHeaderProps>;
+  onCancel?: () => void;
 }
 
-export function QuoteGenerator({ products, deals, companies, onGenerate }: QuoteGeneratorProps) {
+export function QuoteGenerator({ products, deals, companies, onGenerate, header, onCancel }: QuoteGeneratorProps) {
   const [dealId, setDealId] = useState("");
   const [companyId, setCompanyId] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -61,6 +64,12 @@ export function QuoteGenerator({ products, deals, companies, onGenerate }: Quote
 
   const handleFieldChange = (index: number, field: keyof QuoteItem, value: any) => {
     setItems(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item));
+  };
+
+  // Same parsing/clamping as the original inputs.
+  const handleRawFieldChange = (index: number, field: LineItemField, raw: string) => {
+    if (field === "quantity") handleFieldChange(index, "quantity", Math.max(1, parseInt(raw) || 1));
+    else handleFieldChange(index, field, Math.max(0, parseFloat(raw) || 0));
   };
 
   // Calculations
@@ -98,211 +107,57 @@ export function QuoteGenerator({ products, deals, companies, onGenerate }: Quote
   };
 
   return (
-    <Card className="p-6 border border-[var(--border-subtle)] bg-[var(--card)] text-[var(--text-primary)] rounded-xl shadow-sm space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        
-        {/* Card Header */}
-        <div className="flex items-center gap-2.5 border-b border-[var(--border-subtle)] pb-4">
-          <div className="p-2 bg-[#0075de]/10 rounded-lg text-[#0075de]">
-            <FileText size={18} />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-[var(--text-primary)]">
-              Create Quotation Document
-            </h3>
-            <p className="text-xs text-[var(--text-secondary)]">
-              Fill in customer details, add products, set discounts &amp; taxes.
-            </p>
-          </div>
+    <FormPage
+      header={{ title: "Create quotation", info: "Fill in customer details, add products, set discounts and taxes.", ...header }}
+      onSubmit={handleSubmit}
+      footerNote={<>Total <CurrencyAmount value={grandTotal} className="ds-t-body-bold text-[var(--text-primary)]" /></>}
+      footer={
+        <>
+          {onCancel && <Button variant="ghost" iconLeft={<ArrowLeft size={16} strokeWidth={1.5} />} onClick={onCancel}>Back to quotations</Button>}
+          <Button type="submit" variant="primary" loading={submitting} iconLeft={<Check size={16} strokeWidth={1.5} />}>Generate &amp; send quotation</Button>
+        </>
+      }
+    >
+      <FormSection title="Customer" description="Who the quotation is for.">
+        <div className="grid gap-4 md:grid-cols-2">
+          <FormField label="Target account" required>
+            {(f) => <Combobox id={f.id} aria-label="Target account" invalid={f.invalid} value={companyId || null} onValueChange={(v) => setCompanyId(v || "")} placeholder="Select company…" options={companies.map(c => ({ value: c.id, label: c.name }))} />}
+          </FormField>
+          <FormField label="Related deal" hint="Optional.">
+            {(f) => <Combobox id={f.id} aria-label="Related deal" value={dealId || null} onValueChange={(v) => setDealId(v || "")} placeholder="Select deal…" options={deals.map(d => ({ value: d.id, label: d.name }))} />}
+          </FormField>
         </div>
+      </FormSection>
 
-        {/* Account & Deal Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[var(--text-primary)]">
-              Target Account <span className="text-red-500">*</span>
-            </label>
-            <select
-              required
-              value={companyId}
-              onChange={(e) => setCompanyId(e.target.value)}
-              className="w-full h-10 bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg px-3 text-xs text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#0075de] transition-colors cursor-pointer"
-            >
-              <option value="">Select Company...</option>
-              {companies.map(c => (
-                <option key={c.id} value={c.id} className="bg-[var(--card)] text-[var(--text-primary)]">
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      <FormSection title="Line items" description="Products, quantities and GST per line.">
+        <LineItemsEditor
+          items={items}
+          productOptions={products.map(p => ({ value: p.id, label: `${p.name} (₹${Number(p.price).toLocaleString()})` }))}
+          onProductChange={handleProductChange}
+          onFieldChange={handleRawFieldChange}
+          onAdd={handleAddItem}
+          onRemove={handleRemoveItem}
+        />
+      </FormSection>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[var(--text-primary)]">
-              Related Deal <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
-            </label>
-            <select
-              value={dealId}
-              onChange={(e) => setDealId(e.target.value)}
-              className="w-full h-10 bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg px-3 text-xs text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#0075de] transition-colors cursor-pointer"
-            >
-              <option value="">Select Deal...</option>
-              {deals.map(d => (
-                <option key={d.id} value={d.id} className="bg-[var(--card)] text-[var(--text-primary)]">
-                  {d.name}
-                </option>
-              ))}
-            </select>
+      <FormSection title="Totals">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start">
+          <div className="w-full max-w-48">
+            <FormField label="Special discount (₹)">
+              {(f) => <Input {...f} type="number" min={0} value={discount} placeholder="0" onChange={(e) => setDiscount(Math.max(0, parseFloat(e.target.value) || 0))} />}
+            </FormField>
           </div>
+          <TotalsSummary
+            total={grandTotal}
+            totalLabel="Total price"
+            rows={[
+              { label: "Subtotal", value: subtotal },
+              { label: "Tax (GST)", value: taxTotal, sign: "+" },
+              ...(Number(discount) > 0 ? [{ label: "Discount", value: Number(discount), sign: "-" as const }] : []),
+            ]}
+          />
         </div>
-
-        {/* Line Items Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2.5">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-              Quotation Line Items
-            </h4>
-            <Button
-              type="button"
-              onClick={handleAddItem}
-              variant="outline"
-              size="sm"
-              className="h-8 text-xs font-bold text-[#0075de] border-[#0075de]/30 hover:bg-[#0075de]/10"
-            >
-              <Plus size={14} className="mr-1" /> Add Product
-            </Button>
-          </div>
-
-          <div className="space-y-3">
-            {items.map((item, idx) => (
-              <div 
-                key={idx} 
-                className="grid grid-cols-12 gap-3 items-end bg-[var(--surface-1)] p-4 rounded-xl border border-[var(--border-subtle)]"
-              >
-                {/* Product Select */}
-                <div className="col-span-12 sm:col-span-5 space-y-1">
-                  <label className="text-[11px] font-bold text-[var(--text-secondary)]">Product</label>
-                  <select
-                    value={item.product_id}
-                    onChange={(e) => handleProductChange(idx, e.target.value)}
-                    className="w-full h-9 bg-[var(--card)] border border-[var(--border-subtle)] rounded-md px-2.5 text-xs text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#0075de] transition-colors cursor-pointer"
-                  >
-                    <option value="">Choose item...</option>
-                    {products.map(p => (
-                      <option key={p.id} value={p.id} className="bg-[var(--card)] text-[var(--text-primary)]">
-                        {p.name} (₹{Number(p.price).toLocaleString()})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Quantity */}
-                <div className="col-span-4 sm:col-span-2 space-y-1">
-                  <label className="text-[11px] font-bold text-[var(--text-secondary)]">Qty</label>
-                  <Input
-                    type="number"
-                    min="1"
-                    value={item.quantity}
-                    onChange={(e) => handleFieldChange(idx, "quantity", Math.max(1, parseInt(e.target.value) || 1))}
-                    className="h-9 text-xs"
-                  />
-                </div>
-
-                {/* Unit Price */}
-                <div className="col-span-4 sm:col-span-2 space-y-1">
-                  <label className="text-[11px] font-bold text-[var(--text-secondary)]">Unit Price (₹)</label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={item.unit_price}
-                    onChange={(e) => handleFieldChange(idx, "unit_price", Math.max(0, parseFloat(e.target.value) || 0))}
-                    className="h-9 text-xs font-mono"
-                  />
-                </div>
-
-                {/* Tax % */}
-                <div className="col-span-3 sm:col-span-2 space-y-1">
-                  <label className="text-[11px] font-bold text-[var(--text-secondary)]">Tax (%)</label>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={item.tax_percentage}
-                    onChange={(e) => handleFieldChange(idx, "tax_percentage", Math.max(0, parseFloat(e.target.value) || 0))}
-                    className="h-9 text-xs font-mono"
-                  />
-                </div>
-
-                {/* Action Delete */}
-                <div className="col-span-1 flex justify-end pb-1">
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveItem(idx)}
-                    disabled={items.length <= 1}
-                    className="h-8 w-8 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    title="Remove Line Item"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Summary & Totals */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-[var(--border-subtle)] items-start">
-          <div className="space-y-1.5 max-w-xs">
-            <label className="text-xs font-bold text-[var(--text-primary)]">
-              Special Discount (₹)
-            </label>
-            <Input
-              type="number"
-              min="0"
-              value={discount}
-              onChange={(e) => setDiscount(Math.max(0, parseFloat(e.target.value) || 0))}
-              placeholder="0"
-              className="h-10 text-xs font-mono"
-            />
-          </div>
-
-          <div className="bg-[var(--surface-1)] border border-[var(--border-subtle)] p-4 rounded-xl space-y-2.5">
-            <div className="flex justify-between items-center text-xs text-[var(--text-secondary)]">
-              <span>Subtotal:</span>
-              <span className="font-mono font-bold text-[var(--text-primary)]">₹{subtotal.toLocaleString()}</span>
-            </div>
-
-            <div className="flex justify-between items-center text-xs text-[var(--text-secondary)]">
-              <span>Tax (GST):</span>
-              <span className="font-mono font-bold text-[var(--text-primary)]">+ ₹{taxTotal.toLocaleString()}</span>
-            </div>
-
-            {Number(discount) > 0 && (
-              <div className="flex justify-between items-center text-xs text-red-500">
-                <span>Discount Applied:</span>
-                <span className="font-mono font-bold">- ₹{Number(discount).toLocaleString()}</span>
-              </div>
-            )}
-
-            <div className="flex justify-between items-center text-sm font-black pt-2 border-t border-[var(--border-subtle)] text-[var(--text-primary)]">
-              <span>Total Price:</span>
-              <span className="font-mono text-base text-[#0075de]">₹{grandTotal.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="pt-2">
-          <Button
-            type="submit"
-            isLoading={submitting}
-            className="w-full h-11 bg-[#0075de] hover:bg-[#005bab] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
-          >
-            <Check size={16} className="mr-2" /> Generate &amp; Send Quotation
-          </Button>
-        </div>
-
-      </form>
-    </Card>
+      </FormSection>
+    </FormPage>
   );
 }

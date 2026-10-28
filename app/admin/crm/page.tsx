@@ -1,17 +1,39 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/Button";
-import { 
-  Users, TrendingUp, Download, Upload, Filter, Plus, FileDown, FileText, ArrowUpRight, Loader2,
-  Building2, X, Search, RefreshCw, SlidersHorizontal, Calendar, ChevronLeft, ChevronRight,
-  Mail, Phone, ExternalLink, Sparkles, Clock, StickyNote, MoreHorizontal, Check, AlertCircle
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { AlertCircle, ArrowUpRight, Check, Download, FileText, Mail, MessageSquare, MoreHorizontal, Phone, Plus, RefreshCw, Rows3, Sparkles, Trash2, Upload, UserPlus, Users, X } from "lucide-react";
 import Link from "next/link";
-import { Reveal } from "@/components/marketing/Reveal";
-import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  Avatar, Badge, Button, Card, CardHeader, DataTable, DataTableColumn, Drawer, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DueChip, FilterChip, FilterSelect, IconButton, Input, Kbd, KeyValueList, Modal, Monogram,
+  RelativeTime, SearchInput, Select, StageBar, StatusBadge, Tabs, TabsList, TabsTrigger, Textarea, Tooltip, formatCurrency, toast, useMediaQuery, type BadgeVariant,
+} from "@/src/components/ui";
+import { EmptyState, FormField, PageHeader, Toolbar } from "@/src/components/patterns";
+import { FileUpload, LeadScore } from "@/src/components/business";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
+
+const UNASSIGNED = "__unassigned";
+const STATUSES = ["new", "contacted", "engaged", "qualified", "disqualified"] as const;
+const STATUS_META: Record<string, { label: string; color: string; variant: BadgeVariant }> = {
+  new: { label: "New", color: "var(--chart-compare)", variant: "neutral" },
+  contacted: { label: "Contacted", color: "var(--chart-3)", variant: "info" },
+  engaged: { label: "Engaged", color: "var(--chart-2)", variant: "info" },
+  qualified: { label: "Qualified", color: "var(--chart-4)", variant: "success" },
+  disqualified: { label: "Lost", color: "var(--danger)", variant: "danger" },
+};
+const STATUS_BADGE_MAP = Object.fromEntries(Object.entries(STATUS_META).map(([k, v]) => [k, v.variant]));
+const OPTIONAL_COLUMNS = [
+  { id: "score", label: "Score" },
+  { id: "last_contacted_at", label: "Last activity" },
+  { id: "source", label: "Source" },
+];
+const SORT_OPTIONS = [
+  { field: "created_at", label: "Date added" },
+  { field: "score", label: "Lead score" },
+  { field: "deal_value", label: "Deal value" },
+  { field: "business_name", label: "Business name" },
+];
 
 interface Lead {
   id?: string;
@@ -49,31 +71,8 @@ interface Lead {
   };
 }
 
-function LeadScoreBar({ score }: { score: number }) {
-  const barsCount = 3;
-  const scoreOutOfTen = score > 10 ? score / 10 : score;
-  const filledBars = scoreOutOfTen >= 7 ? 3 : scoreOutOfTen >= 4 ? 2 : scoreOutOfTen >= 1 ? 1 : 0;
-  const colorClass = scoreOutOfTen >= 7 ? "bg-[#1aae39]" : scoreOutOfTen >= 4 ? "bg-[#dd5b00]" : "bg-[#615d59]";
-  
-  return (
-    <div className="flex items-center gap-1.5" title={`Opportunity Score: ${scoreOutOfTen.toFixed(1)}/10.0`}>
-      <span className="text-[13px] font-medium text-[var(--text-primary)] w-6 text-right">{scoreOutOfTen.toFixed(1)}</span>
-      <div className="flex gap-0.5">
-        {Array.from({ length: barsCount }).map((_, i) => (
-          <div 
-            key={i} 
-            className={cn(
-              "w-1 h-3 rounded-[1px] transition-colors", 
-              i < filledBars ? colorClass : "bg-slate-100"
-            )} 
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function AdminCRMPage() {
+  const breadcrumb = useAdminBreadcrumb();
   const { data: session } = useSession();
   const role = (session?.user as any)?.role;
   const roleUpper = String(role || "").toUpperCase();
@@ -83,7 +82,6 @@ export default function AdminCRMPage() {
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   // Modals & Panels
   const [showExport, setShowExport] = useState(false);
@@ -91,7 +89,6 @@ export default function AdminCRMPage() {
   const [showAddLead, setShowAddLead] = useState(false);
   const [activeLeadId, setActiveLeadId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [activeActionMenuId, setActiveActionMenuId] = useState<string | null>(null);
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState("");
@@ -100,14 +97,12 @@ export default function AdminCRMPage() {
   const [sortField, setSortField] = useState<string>("created_at");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  // Dropdown UI States
-  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-  const [showOwnerDropdown, setShowOwnerDropdown] = useState(false);
-  const [showSortDropdown, setShowSortDropdown] = useState(false);
-
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(25);
+
+  // Density
+  const [density, setDensity] = useState<"comfortable" | "compact">("comfortable");
 
   // Form States
   const [newLead, setNewLead] = useState({
@@ -119,14 +114,8 @@ export default function AdminCRMPage() {
     status: "new" as Lead['status'],
     assigned_to: ""
   });
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [noteInput, setNoteInput] = useState("");
-
-  const actionMenuRef = useRef<HTMLDivElement>(null);
-  const statusRef = useRef<HTMLDivElement>(null);
-  const ownerRef = useRef<HTMLDivElement>(null);
-  const sortRef = useRef<HTMLDivElement>(null);
 
   // Loaders & API Calls
   useEffect(() => {
@@ -134,35 +123,8 @@ export default function AdminCRMPage() {
     fetchTeamMembers();
   }, []);
 
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
-
-  // Click outside dropdown listeners
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target as Node)) {
-        setActiveActionMenuId(null);
-      }
-      if (statusRef.current && !statusRef.current.contains(event.target as Node)) {
-        setShowStatusDropdown(false);
-      }
-      if (ownerRef.current && !ownerRef.current.contains(event.target as Node)) {
-        setShowOwnerDropdown(false);
-      }
-      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
-        setShowSortDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    setToast({ message, type });
+    toast({ title: message, variant: type === "success" ? "success" : "danger" });
   };
 
   const fetchLeads = async () => {
@@ -325,13 +287,6 @@ export default function AdminCRMPage() {
     setShowExport(false);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-    }
-  };
-
   const handleImportCSV = async () => {
     if (!selectedFile) return;
 
@@ -409,24 +364,6 @@ export default function AdminCRMPage() {
     setNoteInput("");
   };
 
-  // Selection toggles
-  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      setSelectedIds(filteredLeads.map(l => l.id!).filter(Boolean));
-    } else {
-      setSelectedIds([]);
-    }
-  };
-
-  const handleSelectRow = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
-    e.stopPropagation();
-    if (e.target.checked) {
-      setSelectedIds(curr => [...curr, id]);
-    } else {
-      setSelectedIds(curr => curr.filter(item => item !== id));
-    }
-  };
-
   // Filter & Sort Pipeline logic
   const filteredLeads = leads.filter(lead => {
     const matchesSearch = 
@@ -469,7 +406,6 @@ export default function AdminCRMPage() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  const totalPages = Math.ceil(sortedLeads.length / itemsPerPage) || 1;
 
   // KPI calculations
   const totalLeads = leads.length;
@@ -482,21 +418,21 @@ export default function AdminCRMPage() {
   const conversionRate = totalLeads ? Math.round((closedWonCount / totalLeads) * 100) : 0;
   const followupsDue = leads.filter(l => l.status === 'new' || l.status === 'contacted').length;
 
-  const selectedLead = leads.find(l => l.id === activeLeadId);
+    const selectedLead = leads.find(l => l.id === activeLeadId);
 
   // Generate structured AI intelligence values based on lead completeness
   const getAIAnalysis = (lead: Lead) => {
     const score = lead.score || 0;
     const completeness = [lead.email, lead.phone, lead.website_url, lead.city].filter(Boolean).length;
-    
+
     let quality = "Low Profile Quality";
-    let scoreColor = "text-[var(--text-secondary)] bg-[#f6f5f4]";
+    let variant: BadgeVariant = "neutral";
     if (score >= 7 || completeness >= 3) {
       quality = "High Quality Account";
-      scoreColor = "text-[#1aae39] bg-[#1aae39]/10 border-[#1aae39]/20";
+      variant = "success";
     } else if (score >= 4 || completeness >= 2) {
       quality = "Medium Quality Profile";
-      scoreColor = "text-[#dd5b00] bg-[#dd5b00]/10 border-[#dd5b00]/20";
+      variant = "warning";
     }
 
     const missingFields = [];
@@ -512,835 +448,455 @@ export default function AdminCRMPage() {
 
     const confidence = Math.min(60 + completeness * 10 + (lead.has_website ? 10 : 0), 99);
 
-    return { quality, scoreColor, missingFields, risks, confidence };
+    return { quality, variant, missingFields, risks, confidence };
   };
 
-  return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 py-2">
-      
-      {/* Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-5 right-5 z-[200] bg-[var(--card)] border border-[var(--border-subtle)] shadow-lg rounded-md p-3.5 text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-5 duration-200">
-          <div className={cn("w-2 h-2 rounded-full", toast.type === 'success' ? "bg-[#1aae39]" : "bg-[#dd5b00]")} />
-          <span className="text-[var(--text-primary)]">{toast.message}</span>
-        </div>
-      )}
+    const [visibleCols, setVisibleCols] = useState<Record<string, boolean>>({ score: false, last_contacted_at: false, source: false });
+  const wide = useMediaQuery("(min-width: 1280px)");
 
-      {/* --- HEADER TOOLBAR --- */}
-      <Reveal y={-10}>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-3 border-b border-[var(--border-subtle)] bg-transparent">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-[22px] font-semibold tracking-normal text-[var(--text-primary)]">Customer Management</h1>
-              <span className="flex h-2.5 w-2.5 relative" title="Live Database Stream Connected">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </span>
-            </div>
-            <p className="admin-description text-[var(--text-muted)] text-xs">Manage customer accounts, monitor sales value, and review account activity.</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end shrink-0">
-            <Button onClick={() => setShowAddLead(true)} className="h-8 px-3 bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-semibold rounded-md shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0">
-              <Plus size={12} className="shrink-0" /> Add Lead
-            </Button>
-              <Button onClick={() => setShowImport(true)} variant="outline" className="h-8 px-3 bg-[var(--card)] border border-[var(--border-subtle)] hover:bg-[var(--surface-2)] text-[var(--text-secondary)] text-xs font-semibold rounded-md shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0">
-              <Upload size={12} className="shrink-0" /> Import spreadsheet
-            </Button>
-            {isAdminOrCoAdmin ? (
-              <Button onClick={() => setShowExport(true)} variant="outline" className="h-8 px-3 bg-[var(--card)] border border-[var(--border-subtle)] hover:bg-[var(--surface-2)] text-[var(--text-secondary)] text-xs font-semibold rounded-md shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0">
-                <Download size={12} className="shrink-0" /> Export Data
-              </Button>
-            ) : (
-              <div className="h-8 px-3 bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[var(--text-muted)] text-xs font-semibold rounded-md flex items-center justify-center whitespace-nowrap shrink-0 cursor-not-allowed select-none" title="Admin permissions required to export database data">
-                🔒 Export
-              </div>
-            )}
-          </div>
-        </div>
-      </Reveal>
+  // Keyboard: J / K move through the visible rows, Esc closes the detail pane.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable || t.closest("[role=dialog],[role=menu],[role=listbox]"))) return;
+      const ids = paginatedLeads.map((l) => l.id).filter(Boolean) as string[];
+      if (e.key === "Escape" && activeLeadId) { setActiveLeadId(null); return; }
+      if (!ids.length || (e.key !== "j" && e.key !== "k")) return;
+      e.preventDefault();
+      const i = activeLeadId ? ids.indexOf(activeLeadId) : -1;
+      const next = e.key === "j" ? Math.min(ids.length - 1, i + 1) : Math.max(0, i - 1);
+      setActiveLeadId(ids[next]);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
-      {/* --- KPI SECTION --- */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {[
-          { label: "Total Leads", value: totalLeads },
-          { label: "Qualified Leads", value: qualifiedCount },
-          { label: "Pipeline Value", value: `₹${(pipelineValue / 100000).toFixed(1)}L` },
-          { label: "Conversion Rate", value: `${conversionRate}%` },
-          { label: "Follow-ups Due", value: followupsDue },
-        ].map((widget, i) => (
-          <div key={i} className="bg-[var(--card)] border border-[var(--border-subtle)] p-4 rounded-lg shadow-sm flex flex-col justify-between h-20 hover:border-[var(--border-hover)] transition-colors">
-            <p className="admin-kpi-label text-xs font-semibold text-[var(--text-muted)] tracking-normal leading-none">{widget.label}</p>
-            <p className="admin-kpi-value text-[var(--text-primary)] leading-none">{widget.value}</p>
-          </div>
-        ))}
-      </div>
+  const statusCounts = STATUSES.reduce<Record<string, number>>((acc, s) => ({ ...acc, [s]: leads.filter((l) => l.status === s).length }), {});
+  const isDefaultSort = sortField === "created_at" && sortOrder === "desc";
+  const sortLabel = SORT_OPTIONS.find((o) => o.field === sortField)?.label;
+  const pickStatus = (s: string | null) => { setStatusFilter(s); setCurrentPage(1); };
+  const assignOwner = (lead: Lead, memberId: string) =>
+    handleUpdateLead(lead.id!, { assigned_to: memberId || undefined, assigned_employee_id: memberId || undefined } as any);
 
-      {/* --- MAIN CRM Area --- */}
-      <div className="bg-[var(--card)] border border-[var(--border-subtle)] rounded-xl shadow-sm overflow-hidden">
-        
-        {/* --- TOOLBAR ROW --- */}
-        <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--surface-2)]/30 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            
-            <div className="flex flex-wrap items-center gap-2">
-              
-              {/* Search */}
-              <div className="relative w-full sm:w-56">
-                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[var(--text-secondary)]" />
-                <input
-                  type="text"
-                  placeholder="Search leads..."
-                  value={searchQuery}
-                  onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                  className="w-full pl-8 pr-3 py-1.5 border border-[var(--border-subtle)] rounded-lg text-xs bg-[var(--surface-1)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-all"
-                />
-              </div>
-
-              {/* Status Filter */}
-              <div className="relative" ref={statusRef}>
-                <button
-                  onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                  className="h-8 px-2.5 border border-[var(--border-subtle)] rounded-lg text-xs bg-[var(--card)] text-[var(--text-secondary)] hover:bg-[var(--surface-2)] flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
-                >
-                  <Filter size={11} className="text-[var(--text-secondary)]" />
-                  <span>Status: {statusFilter ? statusFilter.replace("_", " ") : "All"}</span>
-                </button>
-                {showStatusDropdown && (
-                  <div className="absolute left-0 mt-1 w-40 bg-[var(--card)] border border-[var(--border-subtle)] rounded-lg shadow-lg py-1 z-50 text-left">
-                    <button onClick={() => { setStatusFilter(null); setShowStatusDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between cursor-pointer">
-                      <span>All</span>
-                      {!statusFilter && <Check size={11} className="text-[var(--primary)]" />}
-                    </button>
-                    {['new', 'contacted', 'engaged', 'qualified', 'disqualified'].map((st) => (
-                      <button key={st} onClick={() => { setStatusFilter(st); setShowStatusDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between text-xs tracking-normal cursor-pointer">
-                        <span>{st.replace("_", " ")}</span>
-                        {statusFilter === st && <Check size={11} className="text-[var(--primary)]" />}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Owner Filter */}
-              {isAdminOrCoAdmin && (
-                <div className="relative" ref={ownerRef}>
-                  <button
-                    onClick={() => setShowOwnerDropdown(!showOwnerDropdown)}
-                    className="h-8 px-2.5 border border-[var(--border-subtle)] rounded-lg text-xs bg-[var(--card)] text-[var(--text-secondary)] hover:bg-[var(--surface-2)] flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
-                  >
-                    <Users size={11} className="text-[var(--text-secondary)]" />
-                    <span>Owner: {ownerFilter ? (teamMembers.find(m => m.id === ownerFilter)?.name || "Agent") : "All"}</span>
-                  </button>
-                  {showOwnerDropdown && (
-                    <div className="absolute left-0 mt-1 w-44 bg-[var(--card)] border border-[var(--border-subtle)] rounded-lg shadow-lg py-1 z-50 text-left max-h-56 overflow-y-auto custom-scrollbar">
-                      <button onClick={() => { setOwnerFilter(null); setShowOwnerDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between cursor-pointer">
-                        <span>All Owners</span>
-                        {!ownerFilter && <Check size={11} className="text-[var(--primary)]" />}
-                      </button>
-                      {teamMembers.map((member) => (
-                        <button key={member.id} onClick={() => { setOwnerFilter(member.id); setShowOwnerDropdown(false); setCurrentPage(1); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between cursor-pointer">
-                          <span className="truncate">{member.name}</span>
-                          {ownerFilter === member.id && <Check size={11} className="text-[var(--primary)]" />}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+  const columns: DataTableColumn<Lead>[] = [
+    {
+      id: "business_name",
+      header: "Company",
+      width: "30%",
+      sortable: true,
+      cell: (lead) => (
+        <span className="flex min-w-0 items-center gap-3">
+          <Monogram name={lead.business_name || "?"} size={32} />
+          <span className="flex min-w-0 flex-col">
+            <span className="flex min-w-0 items-center gap-1">
+              <span className="ds-t-body-strong truncate text-[var(--text-primary)]" title={lead.business_name}>{lead.business_name}</span>
+              {lead.website_url && (
+                <a href={lead.website_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} aria-label={`Open ${lead.business_name} website`} className="ds-focus shrink-0 rounded-[var(--radius-xs)] text-[var(--text-muted)] opacity-0 transition-opacity hover:text-[var(--text-primary)] focus-visible:opacity-100 group-hover/row:opacity-100">
+                  <ArrowUpRight size={14} strokeWidth={1.5} />
+                </a>
               )}
-
-              {/* Sort Selection */}
-              <div className="relative" ref={sortRef}>
-                <button
-                  onClick={() => setShowSortDropdown(!showSortDropdown)}
-                  className="h-8 px-2.5 border border-[var(--border-subtle)] rounded-lg text-xs bg-[var(--card)] text-[var(--text-secondary)] hover:bg-[var(--surface-2)] flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
-                >
-                  <SlidersHorizontal size={11} className="text-[var(--text-secondary)]" />
-                  <span>Sort: {sortField === "created_at" ? "Date Added" : sortField === "score" ? "Lead Score" : sortField === "deal_value" ? "Deal Value" : "Business Name"}</span>
-                </button>
-                {showSortDropdown && (
-                  <div className="absolute left-0 mt-1 w-40 bg-[var(--card)] border border-[var(--border-subtle)] rounded-lg shadow-lg py-1 z-50 text-left">
-                    {[
-                      { field: "created_at", label: "Date Added" },
-                      { field: "score", label: "Lead Score" },
-                      { field: "deal_value", label: "Deal Value" },
-                      { field: "business_name", label: "Business Name" }
-                    ].map((opt) => (
-                      <button key={opt.field} onClick={() => { setSortField(opt.field); setSortOrder(curr => curr === "asc" ? "desc" : "asc"); setShowSortDropdown(false); }} className="w-full px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between cursor-pointer">
-                        <span>{opt.label}</span>
-                        {sortField === opt.field && <Check size={11} className="text-[var(--primary)]" />}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Refresh */}
-              <button 
-                onClick={fetchLeads} 
-                className="h-8 w-8 border border-[var(--border-subtle)] hover:bg-[var(--surface-2)] rounded-lg bg-[var(--card)] flex items-center justify-center text-[var(--text-secondary)] active:scale-95 transition-all shadow-sm cursor-pointer"
-                title="Refresh leads list"
-              >
-                <RefreshCw size={12} className={cn(loading && "animate-spin")} />
-              </button>
-
-            </div>
-
-            {/* Selected items count & Bulk operations */}
-            {selectedIds.length > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-[var(--text-secondary)]">{selectedIds.length} selected</span>
-                
-                {isAdminOrCoAdmin && (
-                  <>
-                    {/* Bulk Re-assign Agent */}
-                    <div className="relative group">
-                      <Button variant="outline" className="h-7 px-2 border border-[#e6e6e6] text-[var(--text-primary)] bg-white text-xs font-semibold rounded-lg flex items-center gap-1">
-                        Assign Agent
-                      </Button>
-                      <div className="absolute right-0 mt-1 hidden group-hover:block hover:block w-44 bg-white border border-[#e6e6e6] rounded-lg shadow-lg py-1 z-50 text-left">
-                        {teamMembers.map((member) => (
-                          <button key={member.id} onClick={() => handleBulkAssign(member.id)} className="w-full px-3 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[#f6f5f4] text-left">
-                            {member.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <Button
-                      onClick={handleBulkDelete}
-                      variant="outline"
-                      className="h-7 px-2.5 bg-red-50 border border-red-200 text-[#dd5b00] hover:bg-red-100/50 text-xs font-semibold rounded-lg"
-                    >
-                      Delete Selected
-                    </Button>
-                  </>
-                )}
-              </div>
-            )}
-
-          </div>
-        </div>
-
-        {/* --- CRM LEADS DATA TABLE --- */}
-        <div className="overflow-x-auto relative">
-          <table className="w-full min-w-[1540px] text-left text-[13px] leading-5 whitespace-nowrap table-fixed">
-            <thead className="bg-[#f6f5f4]/45 border-b border-[#e6e6e6] sticky top-0 z-10">
-              <tr className="divide-x divide-[#e6e6e6]/60">
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-12 text-center">
-                  <input 
-                    type="checkbox" 
-                    onChange={handleSelectAll}
-                    checked={filteredLeads.length > 0 && selectedIds.length === filteredLeads.length}
-                    className="rounded border-neutral-300 bg-white text-[#0075de] focus:ring-[#0075de]" 
-                  />
-                </th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-[380px] min-w-[340px]">Company</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-[280px] min-w-[240px]">Contact</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-28">Lead Score</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-32">Status</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-44">Owner</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-36">Last Activity</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-36">Next Follow-up</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-32">Source</th>
-                <th className="px-4 py-3 font-medium text-[11px] tracking-normal text-[var(--text-secondary)] w-16 text-center">Actions</th>
-              </tr>
-            </thead>
-            
-            <tbody className="divide-y divide-[#e6e6e6]">
-              {loading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td className="px-4 py-4 text-center"><div className="h-4 w-4 bg-slate-100 rounded mx-auto" /></td>
-                    <td className="px-4 py-4">
-                      <div className="h-3.5 w-32 bg-slate-100 rounded mb-1.5" />
-                      <div className="h-3 w-20 bg-slate-100/60 rounded" />
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="h-3.5 w-24 bg-slate-100 rounded mb-1.5" />
-                      <div className="h-3 w-32 bg-slate-100/60 rounded" />
-                    </td>
-                    <td className="px-4 py-4"><div className="h-3 w-12 bg-slate-100 rounded" /></td>
-                    <td className="px-4 py-4"><div className="h-5 w-16 bg-slate-100 rounded-full" /></td>
-                    <td className="px-4 py-4"><div className="h-3.5 w-20 bg-slate-100 rounded" /></td>
-                    <td className="px-4 py-4"><div className="h-3.5 w-24 bg-slate-100 rounded" /></td>
-                    <td className="px-4 py-4"><div className="h-3.5 w-24 bg-slate-100 rounded" /></td>
-                    <td className="px-4 py-4"><div className="h-3.5 w-16 bg-slate-100 rounded" /></td>
-                    <td className="px-4 py-4 text-center"><div className="h-4 w-4 bg-slate-100 rounded mx-auto" /></td>
-                  </tr>
-                ))
-              ) : paginatedLeads.length === 0 ? (
-                <tr>
-                  <td colSpan={10} className="px-6 py-16 text-center bg-[var(--surface-2)]/10">
-                    <div className="flex flex-col items-center justify-center space-y-4 max-w-md mx-auto">
-                      <div className="w-12 h-12 rounded-full bg-[#0075de]/5 border border-[#0075de]/10 flex items-center justify-center text-[#0075de] shadow-inner">
-                        <Users size={18} />
-                      </div>
-                      <div className="space-y-1">
-                        <h4 className="text-sm font-semibold text-[var(--text-primary)] tracking-normal">No CRM Leads Found</h4>
-                        <p className="text-xs text-[var(--text-muted)] font-medium leading-relaxed">No lead profiles match your search criteria or filters. Reset your filters or add a new manual lead record.</p>
-                      </div>
-                      <Button onClick={() => setShowAddLead(true)} className="h-8 px-3.5 bg-[#0075de] text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer">
-                        + Add Lead Record
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ) : paginatedLeads.map((lead) => {
-                const isSelected = selectedIds.includes(lead.id!);
-                return (
-                  <tr 
-                    key={lead.id} 
-                    onClick={() => setActiveLeadId(lead.id || null)}
-                    className={cn(
-                      "hover:bg-[#f6f5f4]/35 transition-colors cursor-pointer divide-x divide-[#e6e6e6]/30",
-                      isSelected && "bg-[#0075de]/5 hover:bg-[#0075de]/10",
-                      activeLeadId === lead.id && "bg-[#f6f5f4]/80"
-                    )}
-                  >
-                    <td className="px-4 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                      <input 
-                        type="checkbox" 
-                        checked={isSelected}
-                        onChange={(e) => handleSelectRow(e, lead.id!)}
-                        className="rounded border-neutral-300 bg-white text-[#0075de] focus:ring-[#0075de]" 
-                      />
-                    </td>
-                    <td className="admin-record-name px-4 py-3 font-semibold text-[13px] text-[var(--text-primary)]">
-                      <div className="flex items-center gap-1">
-                        <span className="truncate" title={lead.business_name}>{lead.business_name}</span>
-                        {lead.website_url && (
-                          <a href={lead.website_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-slate-400 hover:text-[var(--text-primary)]">
-                            <ExternalLink size={10} />
-                          </a>
-                        )}
-                      </div>
-                      <div className="text-xs font-normal text-[var(--text-secondary)] truncate mt-0.5" title={lead.city}>{lead.city || "No location"}</div>
-                    </td>
-                    <td className="px-4 py-3 text-[13px]">
-                      <div className="truncate" title={lead.contact_name || lead.name}>{lead.contact_name || lead.name || "—"}</div>
-                      <div className="text-xs font-normal text-[var(--text-secondary)] truncate mt-0.5" title={lead.email || lead.phone}>{lead.email || lead.phone || "—"}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <LeadScoreBar score={lead.score || 0} />
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={cn(
-                        "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize border",
-                        {
-                          new: "text-blue-700 bg-blue-50 border-blue-100",
-                          contacted: "text-emerald-700 bg-emerald-50 border-emerald-100",
-                          engaged: "text-purple-700 bg-purple-50 border-purple-100",
-                          qualified: "text-green-700 bg-green-50 border-green-100",
-                          disqualified: "text-red-700 bg-red-50 border-red-100"
-                        }[lead.status] || "text-neutral-700 bg-neutral-50 border-neutral-100"
-                      )}>
-                        {lead.status.replace("_", " ")}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-[var(--text-secondary)] font-normal tracking-normal text-[13px] truncate" title={lead.assigned_to_member?.name || "Unassigned"}>
-                      {lead.assigned_to_member?.name || "Unassigned"}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-[var(--text-secondary)]">
-                      {lead.last_contacted_at ? new Date(lead.last_contacted_at).toLocaleDateString() : "—"}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-[var(--text-secondary)]">
-                      {lead.next_followup_at ? new Date(lead.next_followup_at).toLocaleDateString() : "—"}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-[var(--text-secondary)] capitalize truncate" title={lead.source || "Organic"}>
-                      {lead.source || "Organic"}
-                    </td>
-                    <td className="px-4 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                      <div className="relative inline-block text-left">
-                        <button
-                          onClick={() => setActiveActionMenuId(activeActionMenuId === lead.id ? null : (lead.id || null))}
-                          className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-[var(--text-primary)] transition-colors"
-                        >
-                          <MoreHorizontal size={14} />
-                        </button>
-                        
-                        {activeActionMenuId === lead.id && (
-                          <div 
-                            ref={actionMenuRef}
-                            className="absolute right-0 mt-1 w-36 bg-white border border-[#e6e6e6] rounded-lg shadow-lg py-1 z-[120] text-left"
-                          >
-                            <button 
-                              onClick={() => { setActiveLeadId(lead.id || null); setActiveActionMenuId(null); }}
-                              className="w-full text-left px-3 py-1.5 text-xs text-[var(--text-primary)] hover:bg-slate-50 font-medium"
-                            >
-                              View Details
-                            </button>
-                            <button
-                              onClick={() => { window.location.href = `/admin/leads/${lead.id}`; }}
-                              className="w-full text-left px-3 py-1.5 text-xs text-[#0075de] hover:bg-slate-50 font-semibold"
-                            >
-                              Edit Lead Details
-                            </button>
-                            <button 
-                              onClick={() => { handleUpdateLead(lead.id!, { status: 'contacted' }); setActiveActionMenuId(null); }}
-                              className="w-full text-left px-3 py-1.5 text-xs text-[#2563EB] hover:bg-slate-50 font-medium"
-                            >
-                              Mark Contacted
-                            </button>
-                            <button 
-                              onClick={() => { handleUpdateLead(lead.id!, { status: 'qualified' }); setActiveActionMenuId(null); }}
-                              className="w-full text-left px-3 py-1.5 text-xs text-[var(--text-primary)] hover:bg-slate-50 font-medium"
-                            >
-                              Send Proposal
-                            </button>
-                            {isAdminOrCoAdmin && (
-                              <button 
-                                onClick={() => { handleDeleteLead(lead.id!); setActiveActionMenuId(null); }}
-                                className="w-full text-left px-3 py-1.5 text-xs text-[#dd5b00] hover:bg-red-50 font-semibold border-t border-[#e6e6e6]"
-                              >
-                                Delete
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* --- PAGINATION BAR --- */}
-        <div className="px-4 py-3.5 border-t border-[#e6e6e6] flex items-center justify-between bg-[#f6f5f4]/15">
-          <span className="text-xs text-[var(--text-secondary)]">
-            Showing <span className="font-semibold text-[var(--text-primary)]">{filteredLeads.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> to <span className="font-semibold text-[var(--text-primary)]">{Math.min(currentPage * itemsPerPage, filteredLeads.length)}</span> of <span className="font-semibold text-[var(--text-primary)]">{filteredLeads.length}</span> leads
+            </span>
+            <span className="ds-t-meta truncate text-[var(--text-muted)]">{lead.city || lead.source || "—"}</span>
           </span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setCurrentPage(curr => Math.max(curr - 1, 1))}
-              disabled={currentPage === 1 || loading}
-              className="h-8 w-8 border border-[#e6e6e6] bg-white rounded-lg hover:bg-[#f6f5f4] flex items-center justify-center text-slate-500 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
-            >
-              <ChevronLeft size={14} />
-            </button>
-            <span className="text-xs font-semibold px-3 text-[var(--text-primary)]">Page {currentPage} of {totalPages}</span>
-            <button
-              onClick={() => setCurrentPage(curr => Math.min(curr + 1, totalPages))}
-              disabled={currentPage === totalPages || loading}
-              className="h-8 w-8 border border-[#e6e6e6] bg-white rounded-lg hover:bg-[#f6f5f4] flex items-center justify-center text-slate-500 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
-            >
-              <ChevronRight size={14} />
-            </button>
-          </div>
+        </span>
+      ),
+    },
+    {
+      id: "contact",
+      header: "Contact",
+      cell: (lead) => (
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate text-[var(--text-primary)]" title={lead.contact_name || lead.name}>{lead.contact_name || lead.name || "—"}</span>
+          <span className="ds-t-meta truncate text-[var(--text-muted)]" title={lead.email || lead.phone}>{lead.email || lead.phone || "—"}</span>
+        </span>
+      ),
+    },
+    { id: "status", header: "Stage", sortable: true, cell: (lead) => <StatusBadge domain="lead" status={lead.status} map={STATUS_BADGE_MAP} label={STATUS_META[lead.status]?.label} /> },
+    {
+      id: "assigned_to_member",
+      header: "Owner",
+      sortable: true,
+      cell: (lead) =>
+        lead.assigned_to_member?.name ? (
+          <span className="flex min-w-0 items-center gap-2"><Avatar name={lead.assigned_to_member.name} size={24} /><span className="truncate text-[var(--text-primary)]">{lead.assigned_to_member.name}</span></span>
+        ) : <span className="text-[var(--text-disabled)]">Unassigned</span>,
+    },
+    { id: "next_followup_at", header: "Next step", sortable: true, cell: (lead) => <DueChip value={lead.next_followup_at} /> },
+    ...(visibleCols.score ? [{ id: "score", header: "Score", numeric: true, sortable: true, cell: (lead: Lead) => <LeadScore score={lead.score} tone="quality" /> }] : []),
+    ...(visibleCols.last_contacted_at ? [{ id: "last_contacted_at", header: "Last activity", sortable: true, cell: (lead: Lead) => <RelativeTime value={lead.last_contacted_at} className="text-[var(--text-muted)]" /> }] : []),
+    ...(visibleCols.source ? [{ id: "source", header: "Source", sortable: true, cell: (lead: Lead) => <span className="capitalize text-[var(--text-muted)]">{lead.source || "Organic"}</span> }] : []),
+  ];
+
+  const rowActions = (lead: Lead) => (
+    <>
+      {lead.phone && (
+        <Tooltip content="Call"><Button asChild iconOnly variant="ghost" size={28}><a href={`tel:${lead.phone}`} aria-label={`Call ${lead.business_name}`}><Phone size={14} strokeWidth={1.5} /></a></Button></Tooltip>
+      )}
+      {lead.email && (
+        <Tooltip content="Email"><Button asChild iconOnly variant="ghost" size={28}><a href={`mailto:${lead.email}`} aria-label={`Email ${lead.business_name}`}><Mail size={14} strokeWidth={1.5} /></a></Button></Tooltip>
+      )}
+      {isAdminOrCoAdmin && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild><IconButton size={28} label={`Assign ${lead.business_name}`} icon={<UserPlus size={14} strokeWidth={1.5} />} /></DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Assign owner</DropdownMenuLabel>
+            {teamMembers.map((m) => <DropdownMenuItem key={m.id} onSelect={() => assignOwner(lead, m.id)}>{m.name}</DropdownMenuItem>)}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <IconButton size={28} label={`More actions for ${lead.business_name}`} icon={<MoreHorizontal size={14} strokeWidth={1.5} />} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onSelect={() => setActiveLeadId(lead.id || null)}>View details</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => { window.location.href = `/admin/leads/${lead.id}`; }}>Edit</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => handleUpdateLead(lead.id!, { status: 'contacted' })}>Mark contacted</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => handleUpdateLead(lead.id!, { status: 'qualified' })}>Mark qualified</DropdownMenuItem>
+          {isAdminOrCoAdmin && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem danger icon={<Trash2 size={16} strokeWidth={1.5} />} onSelect={() => handleDeleteLead(lead.id!)}>Delete</DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+
+  const ownerOptions = [{ value: UNASSIGNED, label: "Unassigned" }, ...teamMembers.map((m) => ({ value: m.id, label: m.name }))];
+  const ai = selectedLead ? getAIAnalysis(selectedLead) : null;
+  const paneOpen = !!selectedLead && wide;
+
+  /* ── Detail panel parts (shared by the side pane and the narrow-screen drawer) ── */
+  const panelActions = selectedLead && (
+    <div className="flex flex-wrap gap-2">
+      {selectedLead.phone && <Button asChild size={28}><a href={`tel:${selectedLead.phone}`}><Phone size={14} strokeWidth={1.5} />Call</a></Button>}
+      {selectedLead.email && <Button asChild size={28}><a href={`mailto:${selectedLead.email}`}><Mail size={14} strokeWidth={1.5} />Email</a></Button>}
+      {selectedLead.phone && <Button asChild size={28}><a href={`https://wa.me/${selectedLead.phone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer"><MessageSquare size={14} strokeWidth={1.5} />WhatsApp</a></Button>}
+      <Button asChild size={28} variant="ghost"><Link href={`/admin/leads/${selectedLead.id}`}>Open record<ArrowUpRight size={14} strokeWidth={1.5} /></Link></Button>
+    </div>
+  );
+
+  const panelBody = selectedLead && ai && (
+    <div className="flex flex-col gap-3">
+      <Card>
+        <CardHeader title="Calculated quality" actions={<Badge variant={ai.variant}>{ai.quality}</Badge>} />
+        <LeadScore score={selectedLead.score} variant="meter" tone="quality" />
+      </Card>
+
+      <Card>
+        <div className="grid grid-cols-2 gap-3">
+          <FormField label="Stage">
+            {(f) => <Select {...f} value={selectedLead.status} onValueChange={(v) => handleUpdateLead(selectedLead.id!, { status: v as Lead["status"] })} options={STATUSES.map((s) => ({ value: s, label: STATUS_META[s].label }))} />}
+          </FormField>
+          <FormField label="Owner">
+            {(f) => (
+              <Select
+                {...f}
+                value={selectedLead.assigned_employee_id || selectedLead.assigned_to || UNASSIGNED}
+                disabled={!isAdminOrCoAdmin && Boolean(role)}
+                onValueChange={(raw) => {
+                  const val = raw === UNASSIGNED ? "" : raw;
+                  handleUpdateLead(selectedLead.id!, {
+                    assigned_to: val || undefined,
+                    assigned_employee_id: val || undefined
+                  } as any);
+                }}
+                options={ownerOptions}
+              />
+            )}
+          </FormField>
         </div>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="ds-t-meta text-[var(--text-muted)]">Next step</span>
+          <DueChip value={selectedLead.next_followup_at} />
+        </div>
+      </Card>
 
-      </div>
+      <Card>
+        <CardHeader title="Contact" />
+        <KeyValueList items={[
+          { label: "Person", value: selectedLead.contact_name || selectedLead.name || "—" },
+          { label: "Phone", value: selectedLead.phone ? <a href={`tel:${selectedLead.phone}`} className="ds-focus rounded-[var(--radius-xs)] text-[var(--accent)]">{selectedLead.phone}</a> : "—" },
+          { label: "Email", value: selectedLead.email ? <a href={`mailto:${selectedLead.email}`} className="ds-focus break-all rounded-[var(--radius-xs)] text-[var(--accent)]">{selectedLead.email}</a> : "—" },
+          { label: "Location", value: selectedLead.city || "—" },
+          { label: "Source", value: <span className="capitalize">{selectedLead.source || "Organic"}</span> },
+        ]} />
+      </Card>
 
-      {/* --- HUBSPOT-STYLE DETAILS SIDE DRAWER --- */}
-      <AnimatePresence>
-        {selectedLead && (
-          <div className="fixed inset-0 z-[110] flex justify-end">
-            
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActiveLeadId(null)}
-              className="absolute inset-0 bg-[#000000]/10 backdrop-blur-[1px]"
-            />
-
-            {/* Drawer Container */}
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 26, stiffness: 220 }}
-              className="relative w-full max-w-[440px] bg-white border-l border-[#e6e6e6] shadow-2xl flex flex-col h-full z-10"
-            >
-              
-              {/* Header */}
-              <div className="p-4 border-b border-[#e6e6e6] flex items-center justify-between bg-[#f6f5f4]/60">
-                <div className="flex items-center gap-2 truncate">
-                  <Building2 size={16} className="text-[var(--text-secondary)]" />
-                  <div className="truncate">
-                    <h2 className="text-sm font-semibold text-[var(--text-primary)] leading-none truncate max-w-[280px]" title={selectedLead.business_name}>
-                      {selectedLead.business_name}
-                    </h2>
-                    <p className="text-xs font-semibold text-[var(--text-secondary)] tracking-normal mt-1.5">Lead Intelligence Profile</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setActiveLeadId(null)}
-                  className="p-1.5 hover:bg-[#f6f5f4] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                >
-                  <X size={15} />
-                </button>
-              </div>
-
-              {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-5 bg-[#f6f5f4]/35 custom-scrollbar text-xs">
-                
-                {/* Section 1: Lead score overview */}
-                <div className="bg-white border border-[#e6e6e6] p-4 rounded-xl shadow-sm">
-                  <p className="admin-kpi-label text-xs font-semibold text-[var(--text-secondary)] tracking-normal mb-2">Calculated Quality</p>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="admin-kpi-value text-[var(--text-primary)] leading-none">{(selectedLead.score || 0).toFixed(1)}</span>
-                    <span className="text-slate-400 font-semibold">/ 10.0 Opportunity Score</span>
-                  </div>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full mt-3 overflow-hidden">
-                    <div 
-                      className={cn(
-                        "h-full rounded-full transition-all duration-500",
-                        (selectedLead.score || 0) >= 7 ? "bg-[#1aae39]" : (selectedLead.score || 0) >= 4 ? "bg-[#dd5b00]" : "bg-[#615d59]"
-                      )}
-                      style={{ width: `${(selectedLead.score || 0) * 10}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Section 2: Quick Inline Updates */}
-                <div className="bg-white border border-[#e6e6e6] p-4 rounded-xl shadow-sm space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-[var(--text-secondary)] tracking-normal">Status</label>
-                      <select 
-                        value={selectedLead.status}
-                        onChange={(e) => handleUpdateLead(selectedLead.id!, { status: e.target.value as any })}
-                        className="w-full h-8 px-2 border border-[#e6e6e6] rounded-md bg-white text-[var(--text-primary)] text-xs focus:outline-none focus:border-[#0075de]"
-                      >
-                        <option value="new">New</option>
-                        <option value="contacted">Contacted</option>
-                        <option value="engaged">Engaged</option>
-                        <option value="qualified">Qualified</option>
-                        <option value="disqualified">Disqualified</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-[var(--text-secondary)] tracking-normal">Assigned Owner</label>
-                      <select 
-                        value={selectedLead.assigned_employee_id || selectedLead.assigned_to || ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          handleUpdateLead(selectedLead.id!, { 
-                            assigned_to: val || undefined,
-                            assigned_employee_id: val || undefined 
-                          } as any);
-                        }}
-                        disabled={!isAdminOrCoAdmin && Boolean(role)}
-                        className="w-full h-8 px-2 border border-[#e6e6e6] rounded-md bg-white text-[var(--text-primary)] text-xs focus:outline-none focus:border-[#0075de] disabled:bg-slate-50 disabled:text-slate-400"
-                      >
-                        <option value="">Unassigned</option>
-                        {teamMembers.map(m => (
-                          <option key={m.id} value={m.id}>{m.name}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 3: Contact Details */}
-                <div className="bg-white border border-[#e6e6e6] rounded-xl shadow-sm overflow-hidden">
-                  <div className="px-4 py-2 bg-[#f6f5f4] border-b border-[#e6e6e6]">
-                    <p className="text-xs font-semibold text-[var(--text-secondary)] tracking-normal">Contact Cards</p>
-                  </div>
-                  <div className="p-4 space-y-3 font-medium text-[var(--text-primary)]">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--text-secondary)] font-normal">Contact Person</span>
-                      <span>{selectedLead.contact_name || selectedLead.name || "—"}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--text-secondary)] font-normal">Phone</span>
-                      {selectedLead.phone ? (
-                        <a href={`tel:${selectedLead.phone}`} className="text-[#0075de] hover:underline flex items-center gap-1 font-semibold">
-                          <Phone size={10} /> {selectedLead.phone}
-                        </a>
-                      ) : "—"}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--text-secondary)] font-normal">Email</span>
-                      {selectedLead.email ? (
-                        <a href={`mailto:${selectedLead.email}`} className="text-[#0075de] hover:underline flex items-center gap-1 font-semibold">
-                          <Mail size={10} /> {selectedLead.email}
-                        </a>
-                      ) : "—"}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--text-secondary)] font-normal">Location</span>
-                      <span>{selectedLead.city || "—"}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--text-secondary)] font-normal">Source</span>
-                      <span className="capitalize">{selectedLead.source || "Organic"}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 4: AI Insights Business Intelligence */}
-                {(() => {
-                  const ai = getAIAnalysis(selectedLead);
-                  return (
-                    <div className="bg-white border border-[#e6e6e6] rounded-xl shadow-sm overflow-hidden">
-                      <div className="px-4 py-2 bg-[#f6f5f4] border-b border-[#e6e6e6] flex items-center justify-between">
-                        <p className="text-xs font-semibold text-[var(--text-secondary)] tracking-normal">AI Account Insights</p>
-                        <Sparkles size={11} className="text-[#0075de]" />
-                      </div>
-                      
-                      <div className="p-4 space-y-4">
-                        
-                        <div className="flex items-center justify-between">
-                          <span className="text-[var(--text-secondary)] font-medium">Quality Rating:</span>
-                          <span className={cn("px-2 py-0.5 rounded text-xs font-semibold border", ai.scoreColor)}>
-                            {ai.quality}
-                          </span>
-                        </div>
-
-                        {/* Opportunity Bullet Points */}
-                        <div className="space-y-1">
-                          <span className="text-[var(--text-secondary)] font-medium block">Opportunity Analysis:</span>
-                          <ul className="list-disc pl-4 space-y-1 text-[var(--text-primary)] text-xs font-medium leading-relaxed">
-                            <li>Business profile calculated at {ai.confidence}% matching score index.</li>
-                            {selectedLead.has_website && <li>Valid website domain detected with organic leads presence.</li>}
-                            {selectedLead.deal_value && <li>Pipeline value is estimated at ₹{Number(selectedLead.deal_value).toLocaleString()}.</li>}
-                            <li>Recommended target outreach is via direct phone / LinkedIn.</li>
-                          </ul>
-                        </div>
-
-                        {/* Warnings / Missing Info */}
-                        {ai.missingFields.length > 0 && (
-                          <div className="space-y-1">
-                            <span className="text-[#dd5b00] font-semibold block flex items-center gap-1 text-xs">
-                              <AlertCircle size={10} /> Missing Information Profile:
-                            </span>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {ai.missingFields.map((f, idx) => (
-                                <span key={idx} className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs font-semibold">
-                                  {f}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Risks */}
-                        {ai.risks.length > 0 && (
-                          <div className="space-y-1">
-                            <span className="text-[#dd5b00] font-semibold block text-xs">Risk Indicators:</span>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {ai.risks.map((r, idx) => (
-                                <span key={idx} className="bg-red-50 border border-red-100 text-[#dd5b00] px-1.5 py-0.5 rounded text-xs font-semibold">
-                                  {r}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* Section 5: Notes & Timeline */}
-                <div className="bg-white border border-[#e6e6e6] p-4 rounded-xl shadow-sm space-y-3">
-                  <p className="text-xs font-semibold text-[var(--text-secondary)] tracking-normal">Account Notes</p>
-                  
-                  <div className="space-y-2">
-                    <textarea
-                      placeholder="Add a new timeline note..."
-                      value={noteInput}
-                      onChange={(e) => setNoteInput(e.target.value)}
-                      className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md p-2 text-xs text-[var(--text-primary)] placeholder-[#615d59] focus:outline-none focus:border-[#0075de] focus:bg-white transition-all h-16 resize-none"
-                    />
-                    <Button onClick={handleAddNote} className="h-7 px-3 bg-[#0075de] text-white text-xs font-semibold rounded-lg shadow-sm w-full">
-                      Save Note Entry
-                    </Button>
-                  </div>
-
-                  {selectedLead.notes && (
-                    <div className="border-t border-[#e6e6e6]/60 pt-3 space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
-                      {selectedLead.notes.split("\n").filter(Boolean).reverse().map((note, idx) => (
-                        <div key={idx} className="bg-slate-50 border border-[#e6e6e6]/60 p-2 rounded-lg text-xs font-medium leading-relaxed text-[var(--text-primary)]">
-                          {note}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                </div>
-
-              </div>
-
-              {/* Drawer Footer Actions */}
-              <div className="p-4 border-t border-[#e6e6e6] bg-[#f6f5f4]/60 flex gap-2">
-                <Button 
-                  onClick={() => handleUpdateLead(selectedLead.id!, { status: 'qualified' })}
-                  className="flex-1 h-9 bg-[#1aae39] hover:bg-[#1aae39]/90 text-white text-xs font-semibold tracking-normal rounded-lg shadow-sm"
-                >
-                  Mark Won
-                </Button>
-                <Button 
-                  onClick={() => handleUpdateLead(selectedLead.id!, { status: 'disqualified' })}
-                  className="flex-1 h-9 bg-white border border-[#e6e6e6] hover:bg-slate-50 text-[var(--text-primary)] text-xs font-semibold tracking-normal rounded-lg shadow-sm"
-                >
-                  Mark Lost
-                </Button>
-              </div>
-
-            </motion.div>
+      <Card>
+        <CardHeader title={<span className="inline-flex items-center gap-1.5"><Sparkles size={16} strokeWidth={1.5} className="text-[var(--accent)]" />AI insights</span>} actions={<span className="ds-t-meta ds-num text-[var(--text-muted)]">{ai.confidence}% match</span>} />
+        <ul className="ds-t-body flex list-disc flex-col gap-1 pl-5 text-[var(--text-secondary)]">
+          {selectedLead.has_website && <li>Valid website domain detected with organic leads presence.</li>}
+          {selectedLead.deal_value && <li>Pipeline value is estimated at ₹{Number(selectedLead.deal_value).toLocaleString()}.</li>}
+          <li>Recommended target outreach is via direct phone / LinkedIn.</li>
+        </ul>
+        {ai.missingFields.length > 0 && (
+          <div className="mt-4">
+            <p className="ds-t-meta-strong mb-2 inline-flex items-center gap-1 text-[var(--warning)]"><AlertCircle size={14} strokeWidth={1.5} />Missing</p>
+            <div className="flex flex-wrap gap-1">{ai.missingFields.map((f) => <Badge key={f} variant="neutral" noDot>{f}</Badge>)}</div>
           </div>
         )}
-      </AnimatePresence>
-
-      {/* --- EXPORT DATA MODAL --- */}
-      {showExport && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-[#000000]/40 backdrop-blur-sm">
-          <div className="bg-white border border-[#e6e6e6] rounded-xl w-full max-w-sm p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-            <h2 className="text-base font-semibold text-[var(--text-primary)] tracking-normal mb-1.5">Export Lead Profiles</h2>
-            <p className="text-[var(--text-secondary)] text-xs mb-4">Export all active pipeline records to your desktop.</p>
-            <div className="grid grid-cols-1 gap-2">
-              <Button onClick={() => handleExport('csv')} variant="outline" className="h-12 justify-start bg-white border border-[#e6e6e6] hover:border-[#0075de]/30 hover:bg-[#0075de]/5 rounded-lg px-3 transition-colors">
-                <FileText className="w-4 h-4 mr-2.5 text-[#0075de]" /> 
-                <div className="text-left">
-                  <div className="text-xs font-semibold text-[var(--text-primary)] leading-none mb-0.5">Export as CSV</div>
-                  <div className="text-xs text-[var(--text-secondary)]">Open in Microsoft Excel or Google Sheets</div>
-                </div>
-              </Button>
-            </div>
-            <div className="mt-6 flex justify-end">
-              <Button onClick={() => setShowExport(false)} variant="ghost" className="text-xs font-semibold tracking-normal text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Cancel</Button>
-            </div>
+        {ai.risks.length > 0 && (
+          <div className="mt-3">
+            <p className="ds-t-meta-strong mb-2 text-[var(--warning)]">Risks</p>
+            <div className="flex flex-wrap gap-1">{ai.risks.map((r) => <Badge key={r} variant="danger">{r}</Badge>)}</div>
           </div>
-        </div>
-      )}
+        )}
+      </Card>
 
-      {/* --- IMPORT DATA MODAL --- */}
-      {showImport && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-[#000000]/40 backdrop-blur-sm">
-          <div className="bg-white border border-[#e6e6e6] rounded-xl w-full max-w-sm p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-            <h2 className="text-base font-semibold text-[var(--text-primary)] tracking-normal mb-1.5">Import Lead Records</h2>
-            <p className="text-[var(--text-secondary)] text-xs mb-4">Select a CSV spreadsheet matching column headers.</p>
-            
-            <div className={cn(
-              "relative border border-dashed rounded-xl p-6 text-center bg-[#f6f5f4]/40 mb-4 hover:border-[#0075de]/30 hover:bg-[#0075de]/5 transition-colors cursor-pointer",
-              selectedFile ? "border-[#0075de]/45 bg-[#0075de]/5" : "border-[#e6e6e6]"
-            )}>
-               <input 
-                 type="file" 
-                 onChange={handleFileChange}
-                 accept=".csv"
-                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-               />
-               <Upload className={cn("w-6 h-6 mx-auto mb-2.5", selectedFile ? "text-[#0075de]" : "text-slate-400")} />
-               <div className="text-xs font-semibold text-[var(--text-primary)]">
-                 {selectedFile ? selectedFile.name : "Click to select CSV file"}
-               </div>
-               <div className="text-xs font-semibold tracking-normal text-[var(--text-secondary)] mt-1.5">
-                 {selectedFile ? `${(selectedFile.size / 1024).toFixed(2)} KB` : "Maximum file size 5MB"}
-               </div>
-            </div>
-            <div className="mt-6 flex justify-end gap-2">
-              <Button onClick={() => { setShowImport(false); setSelectedFile(null); }} variant="ghost" className="text-xs font-semibold tracking-normal text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Cancel</Button>
-              <Button 
-                onClick={handleImportCSV}
-                disabled={!selectedFile || isSubmitting}
-                className="bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-semibold tracking-normal h-9 px-5 rounded-md shadow-sm"
-              >
-                {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Import Spreadsheet"}
-              </Button>
-            </div>
-          </div>
+      <Card>
+        <CardHeader title="Notes" />
+        <div className="flex flex-col gap-2">
+          <Textarea aria-label="New timeline note" placeholder="Add a note…" value={noteInput} onChange={(e) => setNoteInput(e.target.value)} rows={3} />
+          <div className="flex justify-end"><Button size={28} variant="primary" onClick={handleAddNote}>Save note</Button></div>
         </div>
-      )}
+        {selectedLead.notes && (
+          <ul className="mt-3 flex max-h-48 flex-col gap-2 overflow-y-auto border-t border-[var(--border)] pt-3">
+            {selectedLead.notes.split("\n").filter(Boolean).reverse().map((note, idx) => (
+              <li key={idx} className="ds-t-body rounded-[var(--radius-sm)] bg-[var(--bg-surface)] p-2 text-[var(--text-primary)]">{note}</li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </div>
+  );
 
-      {/* --- ADD NEW LEAD MODAL --- */}
-      {showAddLead && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-[#000000]/40 backdrop-blur-sm">
-          <div className="bg-white border border-[#e6e6e6] rounded-xl w-full max-w-sm p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-            <h2 className="text-base font-semibold text-[var(--text-primary)] tracking-normal mb-1.5">Add Manual Lead</h2>
-            <p className="text-[var(--text-secondary)] text-xs mb-4">Enter profile fields to create a new pipeline account.</p>
-            
-            <form onSubmit={handleAddLead} className="space-y-3 text-xs">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold tracking-normal text-[var(--text-secondary)]">Business Name</label>
-                <input 
-                  required
-                  value={newLead.business_name}
-                  onChange={(e) => setNewLead({...newLead, business_name: e.target.value})}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md h-9 px-3 text-[var(--text-primary)] focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-xs"
-                  placeholder="Company name..."
+  const panelFooter = selectedLead && (
+    <>
+      <Button onClick={() => handleUpdateLead(selectedLead.id!, { status: 'disqualified' })}>Mark lost</Button>
+      <Button variant="primary" onClick={() => handleUpdateLead(selectedLead.id!, { status: 'qualified' })}>Mark won</Button>
+    </>
+  );
+
+  return (
+    <div className="mx-auto max-w-[1440px]">
+      <PageHeader
+        title="CRM Hub"
+        breadcrumb={breadcrumb}
+        info="The canonical lead pipeline. Click a row (or press J / K) to open a lead beside the list."
+        actions={
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild><IconButton variant="secondary" label="More actions" icon={<MoreHorizontal size={16} strokeWidth={1.5} />} /></DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem icon={<Upload size={16} strokeWidth={1.5} />} onSelect={() => setShowImport(true)}>Import CSV</DropdownMenuItem>
+                <DropdownMenuItem icon={<Download size={16} strokeWidth={1.5} />} disabled={!isAdminOrCoAdmin} onSelect={() => setShowExport(true)}>{isAdminOrCoAdmin ? "Export" : "Export (admins only)"}</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem icon={<RefreshCw size={16} strokeWidth={1.5} />} onSelect={fetchLeads}>Refresh</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button variant="primary" iconLeft={<Plus size={16} strokeWidth={1.5} />} onClick={() => setShowAddLead(true)}>New lead</Button>
+          </>
+        }
+      />
+
+      {/* Pipeline hero */}
+      <section aria-label="Pipeline summary" className="mb-8 mt-6 grid items-end gap-8 lg:grid-cols-[auto_minmax(0,1fr)]">
+        <div>
+          <p className="ds-t-meta-strong text-[var(--text-muted)]">Pipeline value</p>
+          <p className="ds-t-hero mt-1 text-[var(--text-primary)]">{loading ? "—" : formatCurrency(pipelineValue, { compact: true })}</p>
+          <p className="ds-t-meta ds-num mt-2 text-[var(--text-muted)]">
+            <span className="text-[var(--text-primary)]">{totalLeads}</span> leads · <span className="text-[var(--text-primary)]">{conversionRate}%</span> conversion · <span className="text-[var(--text-primary)]">{followupsDue}</span> need follow-up
+          </p>
+        </div>
+        <StageBar
+          label="Leads by stage"
+          active={statusFilter}
+          onSelect={(key) => pickStatus(statusFilter === key ? null : key)}
+          stages={STATUSES.map((s) => ({ key: s, label: STATUS_META[s].label, count: statusCounts[s], color: STATUS_META[s].color }))}
+        />
+      </section>
+
+      <div className={paneOpen ? "grid grid-cols-[minmax(0,1fr)_400px] gap-6" : undefined}>
+        <div className="min-w-0">
+          {/* Stage views */}
+          <Tabs value={statusFilter ?? "all"} onValueChange={(v) => pickStatus(v === "all" ? null : v)}>
+            <TabsList aria-label="Lead stages" className="mb-4">
+              <TabsTrigger value="all" count={totalLeads}>All</TabsTrigger>
+              {STATUSES.map((s) => <TabsTrigger key={s} value={s} count={statusCounts[s]}>{STATUS_META[s].label}</TabsTrigger>)}
+            </TabsList>
+          </Tabs>
+
+          <Toolbar
+            search={<SearchInput value={searchQuery} onValueChange={(v) => { setSearchQuery(v); setCurrentPage(1); }} placeholder="Search leads" shortcut="/" />}
+            filters={isAdminOrCoAdmin ? <FilterSelect label="Owner" allLabel="All owners" value={ownerFilter} options={teamMembers.map((m) => ({ value: m.id, label: m.name }))} onChange={(v) => { setOwnerFilter(v); setCurrentPage(1); }} /> : undefined}
+            actions={
+              <>
+                <FilterChip
+                  label={isDefaultSort ? "Newest first" : "Sort"}
+                  value={isDefaultSort ? undefined : `${sortLabel} ${sortOrder === "asc" ? "↑" : "↓"}`}
+                  onRemove={isDefaultSort ? undefined : () => { setSortField("created_at"); setSortOrder("desc"); }}
+                  menuContent={
+                    <DropdownMenuContent align="end" minWidth={176}>
+                      {SORT_OPTIONS.map((opt) => (
+                        <DropdownMenuItem key={opt.field} onSelect={() => { setSortField(opt.field); setSortOrder(curr => curr === "asc" ? "desc" : "asc"); }} icon={<Check size={16} strokeWidth={1.5} className={sortField === opt.field ? "text-[var(--accent)]" : "opacity-0"} />}>{opt.label}</DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  }
                 />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold tracking-normal text-[var(--text-secondary)]">Contact Person</label>
-                <input 
-                  required
-                  value={newLead.contact_name}
-                  onChange={(e) => setNewLead({...newLead, contact_name: e.target.value})}
-                  className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md h-9 px-3 text-[var(--text-primary)] focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-xs"
-                  placeholder="Contact name..."
+                <FilterChip
+                  label="View"
+                  icon={<Rows3 size={14} strokeWidth={1.5} />}
+                  menuContent={
+                    <DropdownMenuContent align="end" minWidth={192}>
+                      <DropdownMenuLabel>Density</DropdownMenuLabel>
+                      <DropdownMenuCheckboxItem checked={density === "comfortable"} onCheckedChange={() => setDensity("comfortable")}>Comfortable</DropdownMenuCheckboxItem>
+                      <DropdownMenuCheckboxItem checked={density === "compact"} onCheckedChange={() => setDensity("compact")}>Compact</DropdownMenuCheckboxItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Columns</DropdownMenuLabel>
+                      {OPTIONAL_COLUMNS.map((c) => (
+                        <DropdownMenuCheckboxItem key={c.id} checked={!!visibleCols[c.id]} onCheckedChange={(v) => setVisibleCols((p) => ({ ...p, [c.id]: v }))}>{c.label}</DropdownMenuCheckboxItem>
+                      ))}
+                    </DropdownMenuContent>
+                  }
                 />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold tracking-normal text-[var(--text-secondary)]">Email</label>
-                  <input 
-                    type="email"
-                    value={newLead.email}
-                    onChange={(e) => setNewLead({...newLead, email: e.target.value})}
-                    className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md h-9 px-3 text-[var(--text-primary)] focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-xs"
-                    placeholder="email@example.com"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold tracking-normal text-[var(--text-secondary)]">Phone</label>
-                  <input 
-                    value={newLead.phone}
-                    onChange={(e) => setNewLead({...newLead, phone: e.target.value})}
-                    className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md h-9 px-3 text-[var(--text-primary)] focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-xs"
-                    placeholder="Contact number..."
-                  />
-                </div>
-              </div>
+              </>
+            }
+          />
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold tracking-normal text-[var(--text-secondary)]">City Location</label>
-                  <input 
-                    value={newLead.city}
-                    onChange={(e) => setNewLead({...newLead, city: e.target.value})}
-                    className="w-full bg-[#f6f5f4] border border-[#e6e6e6] rounded-md h-9 px-3 text-[var(--text-primary)] focus:outline-none focus:border-[#0075de] focus:bg-white transition-all text-xs"
-                    placeholder="City..."
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold tracking-normal text-[var(--text-secondary)]">Assigned Owner</label>
-                  <select 
-                    value={newLead.assigned_to}
-                    onChange={(e) => setNewLead({...newLead, assigned_to: e.target.value})}
-                    className="w-full h-9 px-2 border border-[#e6e6e6] rounded-md bg-[#f6f5f4] text-[var(--text-primary)] text-xs focus:outline-none focus:border-[#0075de] focus:bg-white"
-                  >
-                    <option value="">Unassigned</option>
-                    {teamMembers.map(m => (
-                      <option key={m.id} value={m.id}>{m.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end gap-2 pt-3 border-t border-[#e6e6e6]">
-                <Button type="button" onClick={() => setShowAddLead(false)} variant="ghost" className="text-xs font-semibold tracking-normal text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Cancel</Button>
-                <Button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-semibold tracking-normal h-9 px-5 rounded-md shadow-sm"
-                >
-                  {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Save Profile"}
-                </Button>
-              </div>
-            </form>
-          </div>
+          <DataTable
+            label="CRM leads"
+            columns={columns}
+            rows={paginatedLeads}
+            getRowId={(l) => l.id || l.business_name}
+            loading={loading}
+            skeletonRows={8}
+            onRowClick={(l) => setActiveLeadId(activeLeadId === l.id ? null : l.id || null)}
+            activeRowId={activeLeadId}
+            rowActions={rowActions}
+            selectable
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+            bulkBarPlacement="floating"
+            bulkActions={() => isAdminOrCoAdmin && (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild><Button size={28} loading={isSubmitting} iconLeft={<Users size={14} strokeWidth={1.5} />}>Assign</Button></DropdownMenuTrigger>
+                  <DropdownMenuContent align="center" side="top">
+                    {teamMembers.map((member) => <DropdownMenuItem key={member.id} onSelect={() => handleBulkAssign(member.id)}>{member.name}</DropdownMenuItem>)}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button size={28} variant="danger" iconLeft={<Trash2 size={14} strokeWidth={1.5} />} onClick={handleBulkDelete}>Delete</Button>
+              </>
+            )}
+            sort={{ columnId: sortField, direction: sortOrder }}
+            onSortChange={(s) => { setSortField(s?.columnId || "created_at"); setSortOrder(s?.direction || "desc"); }}
+            density={density}
+            onDensityChange={setDensity}
+            pagination={{ page: currentPage, pageSize: itemsPerPage, total: sortedLeads.length, onPageChange: setCurrentPage, pageSizeOptions: [25, 50, 100], onPageSizeChange: (n) => { setItemsPerPage(n); setCurrentPage(1); } }}
+            emptyState={<EmptyState icon={<Users size={24} strokeWidth={1.5} />} title="No leads here" description="Try another stage, owner or search." action={<Button variant="primary" onClick={() => setShowAddLead(true)}>New lead</Button>} />}
+          />
         </div>
-      )}
 
+        {/* Side detail pane (wide screens) */}
+        {paneOpen && selectedLead && (
+          <aside
+            key={selectedLead.id}
+            aria-label={`${selectedLead.business_name} details`}
+            className="ds-anim-pane sticky top-0 flex max-h-[calc(100vh-48px)] flex-col self-start overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--shadow-flyout),var(--edge)]"
+          >
+            <div className="flex items-start gap-3 border-b border-[var(--border)] p-4">
+              <Monogram name={selectedLead.business_name || "?"} size={40} />
+              <div className="min-w-0 flex-1">
+                <h2 className="ds-t-title-md truncate text-[var(--text-primary)]">{selectedLead.business_name}</h2>
+                <div className="mt-1 flex items-center gap-2">
+                  <StatusBadge domain="lead" status={selectedLead.status} map={STATUS_BADGE_MAP} label={STATUS_META[selectedLead.status]?.label} />
+                  {selectedLead.city && <span className="ds-t-meta truncate text-[var(--text-muted)]">{selectedLead.city}</span>}
+                </div>
+              </div>
+              <IconButton size={28} label="Close (Esc)" icon={<X size={16} strokeWidth={1.5} />} onClick={() => setActiveLeadId(null)} />
+            </div>
+            <div className="border-b border-[var(--border)] px-4 py-3">{panelActions}</div>
+            <div className="flex-1 overflow-y-auto p-3">{panelBody}</div>
+            <div className="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3">
+              <span className="ds-t-meta mr-auto inline-flex items-center gap-1 text-[var(--text-muted)]"><Kbd>J</Kbd><Kbd>K</Kbd> to move</span>
+              {panelFooter}
+            </div>
+          </aside>
+        )}
+      </div>
+
+      {/* Narrow screens: same details in a drawer */}
+      <Drawer
+        open={!!selectedLead && !wide}
+        onOpenChange={(open) => { if (!open) setActiveLeadId(null); }}
+        title={selectedLead?.business_name || "Lead"}
+        description={selectedLead?.city || "Lead details"}
+        footer={panelFooter}
+      >
+        <div className="flex flex-col gap-3">{panelActions}{panelBody}</div>
+      </Drawer>
+
+      {/* Export */}
+      <Modal open={showExport} onOpenChange={setShowExport} title="Export lead profiles" description="Export all active pipeline records to your desktop." size="sm" footer={<Button variant="ghost" onClick={() => setShowExport(false)}>Cancel</Button>}>
+        <button type="button" onClick={() => handleExport('csv')} className="ds-focus flex w-full items-center gap-3 rounded-[var(--radius-md)] border border-[var(--border)] p-3 text-left transition-colors hover:bg-[var(--bg-hover)]">
+          <FileText size={16} strokeWidth={1.5} className="shrink-0 text-[var(--accent)]" />
+          <span className="flex flex-col">
+            <span className="ds-t-body-strong text-[var(--text-primary)]">Export as CSV</span>
+            <span className="ds-t-meta text-[var(--text-muted)]">Open in Microsoft Excel or Google Sheets</span>
+          </span>
+        </button>
+      </Modal>
+
+      {/* Import */}
+      <Modal
+        open={showImport}
+        onOpenChange={(open) => { setShowImport(open); if (!open) setSelectedFile(null); }}
+        title="Import lead records"
+        description="Select a CSV spreadsheet matching column headers."
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => { setShowImport(false); setSelectedFile(null); }}>Cancel</Button>
+            <Button variant="primary" onClick={handleImportCSV} disabled={!selectedFile} loading={isSubmitting}>Import spreadsheet</Button>
+          </>
+        }
+      >
+        <FileUpload file={selectedFile} onFileChange={setSelectedFile} accept=".csv" label="Click to select CSV file" hint="Maximum file size 5MB" />
+      </Modal>
+
+      {/* Add lead */}
+      <Modal
+        open={showAddLead}
+        onOpenChange={setShowAddLead}
+        title="Add manual lead"
+        description="Enter profile fields to create a new pipeline account."
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowAddLead(false)}>Cancel</Button>
+            <Button type="submit" form="crm-lead-form" variant="primary" loading={isSubmitting}>Save profile</Button>
+          </>
+        }
+      >
+        <form id="crm-lead-form" onSubmit={handleAddLead} className="flex flex-col gap-4">
+          <FormField label="Business name" required>
+            {(f) => <Input {...f} required placeholder="Company name…" value={newLead.business_name} onChange={(e) => setNewLead({ ...newLead, business_name: e.target.value })} />}
+          </FormField>
+          <FormField label="Contact person" required>
+            {(f) => <Input {...f} required placeholder="Contact name…" value={newLead.contact_name} onChange={(e) => setNewLead({ ...newLead, contact_name: e.target.value })} />}
+          </FormField>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Email">
+              {(f) => <Input {...f} type="email" placeholder="email@example.com" value={newLead.email} onChange={(e) => setNewLead({ ...newLead, email: e.target.value })} />}
+            </FormField>
+            <FormField label="Phone">
+              {(f) => <Input {...f} placeholder="Contact number…" value={newLead.phone} onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })} />}
+            </FormField>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="City">
+              {(f) => <Input {...f} placeholder="City…" value={newLead.city} onChange={(e) => setNewLead({ ...newLead, city: e.target.value })} />}
+            </FormField>
+            <FormField label="Assigned owner">
+              {(f) => <Select {...f} value={newLead.assigned_to || UNASSIGNED} onValueChange={(v) => setNewLead({ ...newLead, assigned_to: v === UNASSIGNED ? "" : v })} options={ownerOptions} />}
+            </FormField>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

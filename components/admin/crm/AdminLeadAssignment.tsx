@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UserCheck, Check, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
+import { Badge, Button, Card, CardHeader, Select } from "@/src/components/ui";
+
+const UNASSIGNED = "__unassigned";
 
 export function AdminLeadAssignment({ leadId }: { leadId: string }) {
   const [employees, setEmployees] = useState<{ id: string; name: string }[]>([]);
@@ -61,45 +63,23 @@ export function AdminLeadAssignment({ leadId }: { leadId: string }) {
   }
 
   return (
-    <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] p-4 shadow-sm">
-      <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2">
-          <UserCheck size={14} className="text-[var(--text-secondary)]" /> Lead Owner
-        </h3>
-        {statusMessage && (
-          <span
-            className={cn(
-              "text-[11px] font-medium",
-              statusMessage.type === "success" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
-            )}
-          >
-            {statusMessage.text}
-          </span>
-        )}
+    <Card>
+      <CardHeader
+        title="Lead owner"
+        actions={statusMessage && <Badge variant={statusMessage.type === "success" ? "success" : "danger"}>{statusMessage.text}</Badge>}
+      />
+      <div className="flex gap-2">
+        <div className="min-w-0 flex-1">
+          <Select
+            aria-label="Lead owner"
+            disabled={loading || saving}
+            value={value || UNASSIGNED}
+            onValueChange={(v) => setValue(v === UNASSIGNED ? "" : v)}
+            options={[{ value: UNASSIGNED, label: "Unassigned" }, ...employees.map((e) => ({ value: e.id, label: e.name }))]}
+          />
+        </div>
+        <Button variant="primary" loading={saving} disabled={loading} iconLeft={<Check size={16} strokeWidth={1.5} />} onClick={() => void assign()}>Save</Button>
       </div>
-      <div className="mt-3 flex gap-2">
-        <select
-          value={value}
-          disabled={loading || saving}
-          onChange={(e) => setValue(e.target.value)}
-          className="h-8 min-w-0 flex-1 rounded-md border border-[var(--border-subtle)] bg-[var(--surface-1)] px-2.5 text-xs text-[var(--text-primary)] outline-none focus:border-[#0075de] transition-colors disabled:opacity-50"
-        >
-          <option value="">Unassigned</option>
-          {employees.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.name}
-            </option>
-          ))}
-        </select>
-        <button
-          disabled={loading || saving}
-          onClick={() => void assign()}
-          className="h-8 rounded-md bg-[#0075de] hover:bg-[#005bab] px-3 text-xs font-semibold text-white transition-colors disabled:opacity-50 flex items-center gap-1 cursor-pointer shrink-0"
-        >
-          {saving ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
-          Save
-        </button>
-      </div>
-    </div>
+    </Card>
   );
 }

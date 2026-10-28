@@ -1,143 +1,36 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
-  MessageSquare, Zap, Target, MapPin, Star, X, Copy, Loader2,
-  CheckCircle, AlertCircle, Phone, Mail, Users, RefreshCw, Send,
-  Info, Plus, Upload, Download, Trash2, Search, MoreHorizontal,
-  Globe, Building2, ExternalLink, Sparkles, Check, ChevronDown
+  AlertTriangle, Building2, CheckCircle2, Globe, Mail, MoreHorizontal, Phone, Plus, Sparkles, Trash2, Upload,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Textarea } from "@/components/ui/Textarea";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
+import {
+  Badge, Button, Card, CardHeader, DataTable, DataTableColumn, Drawer, DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger, FilterSelect, IconButton, Input, KPIItem, KPIStrip, KeyValueList, Modal,
+  SearchInput, StatusBadge, Timeline, toast,
+} from "@/src/components/ui";
+import { EmptyState, FormField, ListPage, Toolbar } from "@/src/components/patterns";
+import { FileUpload, LeadScore } from "@/src/components/business";
 import { Lead } from "@/types";
 import { useSession } from "next-auth/react";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
 
-// --- LEAD SCORE BARS (Linear style) ---
-const LeadScoreBar = ({ score }: { score: number }) => {
-  const filledBars = score >= 8 ? 3 : score >= 5 ? 2 : score >= 2 ? 1 : 0;
-  const barColors = score >= 8 ? "bg-[#DC2626]" : score >= 5 ? "bg-[#F59E0B]" : "bg-[#6B7280]";
-  
-  return (
-    <div className="flex items-center gap-1.5" title={`Score: ${score}/10`}>
-      <span className="text-xs font-semibold text-[var(--text-primary)] w-6">{score.toFixed(1)}</span>
-      <div className="flex gap-0.5">
-        {[1, 2, 3].map((bar) => (
-          <div
-            key={bar}
-            className={cn(
-              "w-1 h-3 rounded-full",
-              bar <= filledBars ? barColors : "bg-[var(--border-subtle)]"
-            )}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
+const STATUS_OPTIONS = [
+  { label: "New", value: "new" },
+  { label: "Qualified", value: "qualified" },
+  { label: "Outreach", value: "outreach" },
+  { label: "Contacted", value: "contacted" },
+  { label: "Client", value: "client" },
+];
+const INDUSTRY_OPTIONS = ["Retail", "Creative", "Technology", "Healthcare", "Hospitality", "Services"].map((v) => ({ label: v, value: v }));
 
-// --- STATUS PILL CHIPS ---
-const StatusChip = ({ status }: { status: Lead['status'] }) => {
-  const configs: Record<string, { label: string, color: string }> = {
-    new: { label: "New", color: "bg-[#F1F5F9] text-[#475569] border-[#E2E8F0] dark:bg-white/5 dark:text-neutral-400 dark:border-white/10" },
-    qualified: { label: "Qualified", color: "bg-[#EFF6FF] text-[#1D4ED8] border-[#DBEAFE] dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20" },
-    outreach: { label: "Outreach", color: "bg-[#FFFBEB] text-[#B45309] border-[#FEF3C7] dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20" },
-    contacted: { label: "Contacted", color: "bg-[#F0FDF4] text-[#16A34A] border-[#DCFCE7] dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20" },
-    warm: { label: "Warm", color: "bg-[#FFFBEB] text-[#D97706] border-[#FEF3C7] dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20" },
-    cold: { label: "Cold", color: "bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0] dark:bg-white/5 dark:text-neutral-400 dark:border-white/10" },
-    client: { label: "Client", color: "bg-[#F0FDF4] text-[#15803D] border-[#DCFCE7] dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20" },
-  };
-
-  const config = configs[status] || configs.new;
-
-  return (
-    <span className={cn("inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold border uppercase tracking-wider leading-none shadow-sm", config.color)}>
-      {config.label}
-    </span>
-  );
-};
-
-// --- CUSTOM SUBTLE DROPDOWN FILTER ---
-interface DropdownOption {
-  label: string;
-  value: string;
+function websiteHref(url: string) {
+  return url.startsWith("http") ? url : `https://${url}`;
 }
-
-interface DropdownFilterProps {
-  label: string;
-  value: string | null;
-  options: DropdownOption[];
-  onChange: (value: string | null) => void;
-}
-
-const DropdownFilter = ({ label, value, options, onChange }: DropdownFilterProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const activeOption = options.find(o => o.value === value);
-
-  return (
-    <div className="relative inline-block text-left" ref={containerRef}>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "inline-flex items-center gap-1.5 px-3 py-1.5 border border-[var(--border-subtle)] bg-[var(--surface-1)] hover:bg-[var(--surface-2)] text-[var(--text-secondary)] text-xs font-semibold rounded-lg transition-all cursor-pointer",
-          isOpen && "border-[var(--primary)]/45 bg-[var(--card)] text-[var(--primary)] ring-1 ring-[var(--primary)]/10 shadow-sm"
-        )}
-      >
-        <span className="text-[var(--text-muted)] font-normal">{label}:</span>
-        <span className="text-[var(--text-primary)]">{activeOption ? activeOption.label : "All"}</span>
-        <ChevronDown size={12} className={cn("text-[var(--text-muted)] transition-transform duration-200", isOpen && "rotate-180")} />
-      </button>
-
-      {isOpen && (
-        <div className="absolute left-0 mt-1 w-44 bg-[var(--card)] border border-[var(--border-subtle)] rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.15)] py-1 z-[120] animate-in fade-in-50 slide-in-from-top-1 duration-150">
-          <button
-            type="button"
-            onClick={() => { onChange(null); setIsOpen(false); }}
-            className={cn(
-              "w-full text-left px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between transition-colors cursor-pointer",
-              !value && "bg-[var(--primary)]/15 text-[var(--primary)] font-bold"
-            )}
-          >
-            <span>All</span>
-            {!value && <Check size={12} />}
-          </button>
-          {options.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => { onChange(opt.value); setIsOpen(false); }}
-              className={cn(
-                "w-full text-left px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium flex items-center justify-between transition-colors cursor-pointer",
-                value === opt.value && "bg-[var(--primary)]/15 text-[var(--primary)] font-bold"
-              )}
-            >
-              <span>{opt.label}</span>
-              {value === opt.value && <Check size={12} />}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
 
 export default function LeadsAdminPage() {
+  const breadcrumb = useAdminBreadcrumb();
   const router = useRouter();
   const { data: session } = useSession();
   const role = session?.user?.role;
@@ -154,15 +47,11 @@ export default function LeadsAdminPage() {
   const [locationFilter, setLocationFilter] = useState<string | null>(null);
   const [industryFilter, setIndustryFilter] = useState<string | null>(null);
   const [selectedLeadIds, setSelectedLeadIds] = useState<string[]>([]);
-  const [activeActionMenuId, setActiveActionMenuId] = useState<string | null>(null);
 
-  // AI Outreach Drawer state inside details drawer
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [activeTab, setActiveTab] = useState<'whatsapp' | 'email' | 'call'>('whatsapp');
-  const [generatedContent, setGeneratedContent] = useState<{ whatsapp: string, email: string, call: string } | null>(null);
+  // AI Outreach state
+  const [, setIsGenerating] = useState(false);
+  const [, setGeneratedContent] = useState<{ whatsapp: string, email: string, call: string } | null>(null);
 
-  // Toast State
-  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const [invitation, setInvitation] = useState<{ status: "loading" | "not_invited" | "sent" | "accepted" | "expired" | "revoked"; email?: string | null; expiresAt?: string | null }>({ status: "not_invited" });
   const [inviting, setInviting] = useState(false);
 
@@ -180,7 +69,10 @@ export default function LeadsAdminPage() {
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const actionMenuRef = useRef<HTMLDivElement>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    toast({ title: message, variant: type === "success" ? "success" : "danger" });
+  };
 
   const fetchLeads = useCallback(async () => {
     try {
@@ -214,28 +106,6 @@ export default function LeadsAdminPage() {
     return () => { cancelled = true; };
   }, [activeLeadId]);
 
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
-
-  // Click outside listener for Action Menu Dropdown
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target as Node)) {
-        setActiveActionMenuId(null);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    setToast({ message, type });
-  };
-
   const updateStatus = async (id: string | undefined, status: Lead['status'], extraData: Partial<Lead> = {}) => {
     if (!id) return;
 
@@ -254,7 +124,7 @@ export default function LeadsAdminPage() {
         const errorData = await res.json();
         throw new Error(errorData.error || "Failed to update status");
       }
-      
+
       showToast("Lead updated successfully");
       await fetchLeads();
     } catch (e: unknown) {
@@ -380,7 +250,7 @@ export default function LeadsAdminPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create lead");
-      
+
       showToast("Lead added successfully");
       setShowAddLead(false);
       setNewLead({ business_name: "", name: "", email: "", phone: "", city: "", status: "new" });
@@ -389,17 +259,6 @@ export default function LeadsAdminPage() {
       showToast(e instanceof Error ? e.message : "Unable to create lead", "error");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleExportCSV = () => {
-    window.location.href = "/api/crm/export?format=csv";
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
     }
   };
 
@@ -457,7 +316,7 @@ export default function LeadsAdminPage() {
 
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Import failed");
-      
+
       showToast(`Success: ${result.count} leads imported`);
       setShowImportLead(false);
       setSelectedFile(null);
@@ -512,721 +371,248 @@ export default function LeadsAdminPage() {
 
   const selectedLead = leads.find(l => l.id === activeLeadId) || null;
 
+  const columns: DataTableColumn<Lead>[] = [
+    {
+      id: "company",
+      header: "Company",
+      width: 320,
+      sortValue: (l) => l.business_name,
+      cell: (lead) => (
+        <span className="flex min-w-0 flex-col">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <span className="ds-t-body-strong truncate text-[var(--text-primary)]" title={lead.business_name}>{lead.business_name}</span>
+            {lead.source === "Book a Discovery Call" && <Badge variant="info" noDot>Discovery call</Badge>}
+          </span>
+          {lead.name && lead.name !== lead.business_name && <span className="ds-t-meta truncate text-[var(--text-muted)]">{lead.name}</span>}
+        </span>
+      ),
+    },
+    { id: "status", header: "Status", sortValue: (l) => l.status, cell: (l) => <StatusBadge domain="lead" status={l.status} /> },
+    { id: "city", header: "Location", sortValue: (l) => l.city || "", cell: (l) => l.city || "—" },
+    { id: "industry", header: "Industry", sortValue: (l) => getMockIndustry(l.business_name), cell: (l) => getMockIndustry(l.business_name) },
+    {
+      id: "website",
+      header: "Website",
+      cell: (l) =>
+        l.website_url ? (
+          <a href={websiteHref(l.website_url)} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="ds-focus inline-flex max-w-36 items-center gap-1 rounded-[var(--radius-xs)] text-[var(--accent)] hover:text-[var(--accent-active)]">
+            <Globe size={14} strokeWidth={1.5} className="shrink-0" />
+            <span className="truncate">{l.website_url.replace(/(https?:\/\/)?(www\.)?/, "")}</span>
+          </a>
+        ) : <span className="text-[var(--text-disabled)]">No website</span>,
+    },
+    { id: "email", header: "Email", sortValue: (l) => l.email || "", cell: (l) => l.email || "—" },
+    { id: "phone", header: "Phone", cell: (l) => l.phone || "—" },
+    { id: "score", header: "Lead score", sortValue: (l) => l.lead_score || 0, cell: (l) => <LeadScore score={l.lead_score} /> },
+    { id: "assigned", header: "Assigned", sortValue: (l) => l.assigned_to_member?.name || "", cell: (l) => l.assigned_to_member?.name || "Unassigned" },
+    { id: "created_at", header: "Date added", sortValue: (l) => l.created_at || "", cell: (l) => (l.created_at ? new Date(l.created_at).toLocaleDateString() : "—") },
+  ];
+
+  const rowActions = (lead: Lead) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <IconButton size={28} label={`Actions for ${lead.business_name}`} icon={<MoreHorizontal size={16} strokeWidth={1.5} />} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem onSelect={() => setActiveLeadId(lead.id || null)}>View details</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => handleOpenOutreach(lead)}>Start outreach</DropdownMenuItem>
+        {lead.status === "qualified"
+          ? <DropdownMenuItem onSelect={() => inviteQualifiedClient(lead)}>Invite client</DropdownMenuItem>
+          : <DropdownMenuItem onSelect={() => updateStatus(lead.id, 'qualified')}>Mark qualified</DropdownMenuItem>}
+        {isAdminOrCoAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem danger icon={<Trash2 size={16} strokeWidth={1.5} />} onSelect={() => handleDeleteLead(lead.id!)}>Delete</DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  const invitationText = invitation.status === "loading" ? "Checking…" : invitation.status === "accepted" ? "Accepted" : invitation.status === "sent" ? `Sent${invitation.email ? ` to ${invitation.email}` : ""}${invitation.expiresAt ? ` · expires ${new Date(invitation.expiresAt).toLocaleString()}` : ""}` : invitation.status === "expired" ? "Expired — resend required" : invitation.status === "revoked" ? "Revoked" : "Not invited";
+
   return (
-    <div className="relative min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-sans antialiased -m-6 p-6">
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: -20, x: "-50%" }}
-            className={cn(
-              "fixed top-6 left-1/2 z-[150] px-4 py-2.5 rounded-lg shadow-md border flex items-center gap-2 min-w-[280px]",
-              toast.type === 'success' ? "bg-[var(--card)] border-[var(--border-subtle)] text-[var(--text-primary)]" : "bg-red-500/10 border-red-500/20 text-red-400"
-            )}
-          >
-            {toast.type === 'success' ? <CheckCircle size={15} className="text-emerald-500" /> : <AlertCircle size={15} />}
-            <span className="text-xs font-semibold">{toast.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="space-y-6">
-        {/* --- PAGE HEADER TOOLBAR --- */}
-        <div className="bg-[var(--card)] border border-[var(--border-subtle)] rounded-xl p-5 shadow-sm space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-[var(--text-primary)] tracking-tight leading-none">Leads</h1>
-                <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse mt-0.5" />
-              </div>
-              <p className="admin-description text-[var(--text-muted)] text-xs mt-1">Sales Pipeline & CRM Hub</p>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-2 md:gap-3">
-              {/* Search */}
-              <div className="relative w-full sm:w-60">
-                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[var(--text-muted)]" />
-                <input
-                  type="text"
-                  placeholder="Search leads..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 border border-[var(--border-subtle)] rounded-lg text-xs bg-[var(--surface-1)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-all"
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end shrink-0">
-                <Button onClick={() => setShowImportLead(true)} variant="outline" className="h-8 px-3 bg-[var(--card)] border border-[var(--border-subtle)] hover:bg-[var(--surface-2)] text-[var(--text-secondary)] text-xs font-semibold rounded-lg shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer">
-                  <Upload size={12} className="shrink-0" /> Import CSV
-                </Button>
-                <Button onClick={() => setShowAddLead(true)} className="h-8 px-3 bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-semibold rounded-lg shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer">
-                  <Plus size={12} className="shrink-0" /> Add Lead
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Filters Row */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--border-subtle)]">
-            <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mr-1">Filters:</span>
-            
-            {/* Status Dropdown */}
-            <DropdownFilter
-              label="Status"
-              value={statusFilter}
-              options={[
-                { label: "New", value: "new" },
-                { label: "Qualified", value: "qualified" },
-                { label: "Outreach", value: "outreach" },
-                { label: "Contacted", value: "contacted" },
-                { label: "Client", value: "client" }
-              ]}
-              onChange={setStatusFilter}
-            />
-
-            {/* Location Dropdown */}
-            <DropdownFilter
-              label="Location"
-              value={locationFilter}
-              options={Array.from(new Set(leads.map(l => l.city).filter(Boolean))).map(city => ({
-                label: city!,
-                value: city!
-              }))}
-              onChange={setLocationFilter}
-            />
-
-            {/* Industry Dropdown */}
-            <DropdownFilter
-              label="Industry"
-              value={industryFilter}
-              options={[
-                { label: "Retail", value: "Retail" },
-                { label: "Creative", value: "Creative" },
-                { label: "Technology", value: "Technology" },
-                { label: "Healthcare", value: "Healthcare" },
-                { label: "Hospitality", value: "Hospitality" },
-                { label: "Services", value: "Services" }
-              ]}
-              onChange={setIndustryFilter}
-            />
-
-            {/* Clear Filters Button */}
-            {(statusFilter || locationFilter || industryFilter) && (
-              <button
-                onClick={() => {
-                  setStatusFilter(null);
-                  setLocationFilter(null);
-                  setIndustryFilter(null);
-                }}
-                className="text-xs font-semibold text-[#2563EB] hover:text-blue-700 ml-2"
-              >
-                Clear Filters
-              </button>
-            )}
-
-            {/* Bulk actions */}
-            {selectedLeadIds.length > 0 && (
-              <div className="flex items-center gap-2 ml-auto">
-                <span className="text-xs font-semibold text-[var(--text-muted)]">{selectedLeadIds.length} selected</span>
-                {isAdminOrCoAdmin && (
-                  <Button
-                    onClick={handleDeleteSelectedLeads}
-                    variant="outline"
-                    className="h-7 px-2.5 bg-red-50 border border-red-200 text-[#DC2626] hover:bg-red-100/50 text-[10px] font-bold rounded-lg"
-                  >
-                    Delete Selected
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* --- SUMMARY METRICS --- */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            { label: "Total Leads", value: totalLeads },
-            { label: "Qualified", value: qualifiedCount },
-            { label: "New", value: newCount },
-            { label: "Hot", value: hotLeadsCount },
-            { label: "Conversion", value: `${conversionRate}%` },
-            { label: "Revenue", value: `₹${(revenueValue / 100000).toFixed(1)}L` },
-          ].map((widget, i) => (
-            <div key={i} className="bg-[var(--card)] border border-[var(--border-subtle)] p-4 rounded-xl shadow-sm flex flex-col justify-between h-20 hover:border-[var(--border-hover)] transition-colors">
-              <p className="admin-kpi-label text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider leading-none">{widget.label}</p>
-              <p className="admin-kpi-value text-[var(--text-primary)] leading-none">{widget.value}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* --- MAIN DATA TABLE --- */}
-        <div className="bg-[var(--card)] border border-[var(--border-subtle)] rounded-xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[1720px] text-left text-[13px] leading-5 whitespace-nowrap table-fixed">
-              <thead className="bg-[var(--surface-2)]/30 border-b border-[var(--border-subtle)] text-[var(--text-secondary)] font-semibold sticky top-0 z-10">
-                <tr>
-                  <th className="px-4 py-3 w-10 text-center">
-                    <input
-                      type="checkbox"
-                      checked={leads.length > 0 && selectedLeadIds.length === leads.length}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedLeadIds(leads.map(l => l.id).filter(Boolean) as string[]);
-                        } else {
-                          setSelectedLeadIds([]);
-                        }
-                      }}
-                      className="rounded border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--primary)] focus:ring-[var(--primary)] h-3.5 w-3.5"
-                    />
-                  </th>
-                  <th className="px-5 py-3 w-[360px] min-w-[320px] font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Company</th>
-                  <th className="px-4 py-3 w-28 font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Status</th>
-                  <th className="px-4 py-3 w-32 font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Location</th>
-                  <th className="px-4 py-3 w-28 font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Industry</th>
-                  <th className="px-4 py-3 w-36 font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Website</th>
-                  <th className="px-4 py-3 w-52 font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Email</th>
-                  <th className="px-4 py-3 w-32 font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Phone</th>
-                  <th className="px-4 py-3 w-32 font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Lead Score</th>
-                  <th className="px-4 py-3 w-40 font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Assigned</th>
-                  <th className="px-4 py-3 w-32 font-medium text-[11px] text-[var(--text-secondary)] tracking-normal">Date Added</th>
-                  <th className="px-4 py-3 w-16 text-center font-medium text-[11px] text-[var(--text-secondary)] tracking-normal"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border-subtle)] bg-[var(--card)]">
-                {loading ? (
-                  <tr>
-                    <td colSpan={12} className="px-6 py-20 text-center text-[var(--text-muted)]">
-                      <div className="flex items-center justify-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin text-[var(--primary)]" />
-                        Loading lead intelligence...
-                      </div>
-                    </td>
-                  </tr>
-                ) : filteredLeads.length === 0 ? (
-                  <tr>
-                    <td colSpan={12} className="px-6 py-20 text-center bg-[var(--surface-2)]/10">
-                      <div className="flex flex-col items-center justify-center space-y-4 max-w-sm mx-auto">
-                        <div className="w-12 h-12 rounded-full bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center text-[var(--primary)]">
-                          <Building2 size={20} />
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-bold text-[var(--text-primary)]">No leads matching criteria</h4>
-                          <p className="text-xs text-[var(--text-muted)] mt-1">Try adjusting your filters or search terms to locate leads.</p>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                ) : filteredLeads.map((lead) => {
-                  const isChecked = selectedLeadIds.includes(lead.id || "");
-                  const isCurrentActive = activeLeadId === lead.id;
-                  const industry = getMockIndustry(lead.business_name);
- 
-                  return (
-                    <tr 
-                      key={lead.id} 
-                      className={cn(
-                        "h-14 bg-[var(--card)] hover:bg-[var(--surface-2)]/60 border-b border-[var(--border-subtle)] transition-all cursor-pointer", 
-                        isCurrentActive && "bg-[var(--primary)]/15 hover:bg-[var(--primary)]/20"
-                      )}
-                      onClick={() => setActiveLeadId(lead.id || null)}
-                    >
-                      <td className="px-4 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedLeadIds(curr => [...curr, lead.id || ""]);
-                            } else {
-                              setSelectedLeadIds(curr => curr.filter(id => id !== lead.id));
-                            }
-                          }}
-                          className="rounded border-[var(--border-subtle)] text-[var(--primary)] focus:ring-[var(--primary)] h-3.5 w-3.5"
-                        />
-                      </td>
-                      <td className="px-5 py-3 font-semibold text-[var(--text-primary)]">
-                        <div className="admin-record-name truncate flex items-center gap-1.5" title={lead.business_name}>
-                          <span>{lead.business_name}</span>
-                          {lead.source === "Book a Discovery Call" && (
-                            <span className="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-mono font-normal uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                              Discovery Call
-                            </span>
-                          )}
-                        </div>
-                        {lead.name && lead.name !== lead.business_name && (
-                          <div className="text-[11px] text-[var(--text-muted)] font-normal truncate">
-                            {lead.name}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusChip status={lead.status} />
-                      </td>
-                      <td className="px-4 py-3 text-[var(--text-secondary)]">
-                        <div className="truncate" title={lead.city}>
-                          {lead.city || "—"}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-[var(--text-secondary)] font-medium">
-                        {industry}
-                      </td>
-                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                        {lead.website_url ? (
-                          <a 
-                            href={lead.website_url.startsWith("http") ? lead.website_url : `https://${lead.website_url}`}
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="inline-flex items-center gap-1 text-[var(--primary)] hover:underline font-medium cursor-pointer"
-                          >
-                            <Globe size={11} className="shrink-0" />
-                            <span className="truncate max-w-[120px]">{lead.website_url.replace(/(https?:\/\/)?(www\.)?/, "")}</span>
-                            <ExternalLink size={10} className="shrink-0 text-[var(--text-muted)]" />
-                          </a>
-                        ) : (
-                          <span className="text-[var(--text-muted)] font-normal italic">No website</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-[var(--text-secondary)] font-normal truncate" title={lead.email}>
-                        {lead.email || "—"}
-                      </td>
-                      <td className="px-4 py-3 text-[var(--text-secondary)] font-medium">
-                        {lead.phone || "—"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <LeadScoreBar score={lead.lead_score || 0} />
-                      </td>
-                      <td className="px-4 py-3 text-[var(--text-secondary)] font-semibold uppercase tracking-wider text-[9px]">
-                        {lead.assigned_to_member?.name || "Unassigned"}
-                      </td>
-                      <td className="px-4 py-3 text-[var(--text-secondary)]">
-                        {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : "—"}
-                      </td>
-                      <td className="px-4 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className="relative inline-block text-left">
-                          <button
-                            onClick={() => setActiveActionMenuId(activeActionMenuId === lead.id ? null : (lead.id || null))}
-                            className="p-1.5 hover:bg-[var(--surface-2)] rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
-                          >
-                            <MoreHorizontal size={14} />
-                          </button>
-                          
-                          {/* Dropdown Options */}
-                          {activeActionMenuId === lead.id && (
-                            <div 
-                              ref={actionMenuRef}
-                              className="absolute right-0 mt-1 w-36 bg-[var(--card)] border border-[var(--border-subtle)] rounded-lg shadow-lg py-1 z-[120] text-left"
-                            >
-                              <button 
-                                onClick={() => { setActiveLeadId(lead.id || null); setActiveActionMenuId(null); }}
-                                className="w-full text-left px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium cursor-pointer"
-                              >
-                                View Details
-                              </button>
-                              <button 
-                                onClick={() => { handleOpenOutreach(lead); setActiveActionMenuId(null); }}
-                                className="w-full text-left px-3 py-1.5 text-xs text-[var(--primary)] hover:bg-[var(--surface-2)] font-medium cursor-pointer"
-                              >
-                                Start Outreach
-                              </button>
-                              {lead.status === "qualified" ? <button
-                                onClick={() => { inviteQualifiedClient(lead); setActiveActionMenuId(null); }}
-                                className="w-full text-left px-3 py-1.5 text-xs text-emerald-700 hover:bg-emerald-50 font-semibold cursor-pointer"
-                              >Invite Client</button> : <button
-                                onClick={() => { updateStatus(lead.id, 'qualified'); setActiveActionMenuId(null); }}
-                                className="w-full text-left px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--surface-2)] font-medium cursor-pointer"
-                              >Mark Qualified</button>}
-                              {isAdminOrCoAdmin && (
-                                <button 
-                                  onClick={() => { handleDeleteLead(lead.id!); setActiveActionMenuId(null); }}
-                                  className="w-full text-left px-3 py-1.5 text-xs text-red-400 hover:bg-red-500/10 font-semibold border-t border-[var(--border-subtle)] cursor-pointer"
-                                >
-                                  Delete
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* --- HUBSPOT-STYLE SLIDE-OUT DRAWER --- */}
-      <AnimatePresence>
-        {selectedLead && (
-          <div className="fixed inset-0 z-[110] flex justify-end">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActiveLeadId(null)}
-              className="absolute inset-0 bg-black/10 backdrop-blur-[1px]"
-            />
-            {/* Drawer Panel */}
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 26, stiffness: 220 }}
-              className="relative w-full max-w-[420px] bg-[var(--card)] border-l border-[var(--border-subtle)] text-[var(--text-primary)] shadow-2xl flex flex-col h-full z-10"
-            >
-              {/* Header */}
-              <div className="p-5 border-b border-[var(--border-subtle)] flex items-center justify-between bg-[var(--surface-2)]/60">
-                <div className="flex items-center gap-2">
-                  <Building2 size={16} className="text-[var(--text-muted)]" />
-                  <div>
-                    <h2 className="text-sm font-bold text-[var(--text-primary)] leading-none truncate max-w-[280px]" title={selectedLead.business_name}>
-                      {selectedLead.business_name}
-                    </h2>
-                    <p className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mt-1">
-                      {selectedLead.source ? `Source: ${selectedLead.source}` : "Lead Intelligence Profile"}
-                    </p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setActiveLeadId(null)}
-                  className="p-1.5 hover:bg-[var(--surface-2)] rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
-                >
-                  <X size={15} />
-                </button>
-              </div>
-
-              {/* Content Panel Scrollable */}
-              <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar bg-[var(--background)]">
-                
-                {/* Section 1: Lead Score Widget */}
-                <div className="bg-[var(--card)] border border-[var(--border-subtle)] p-4 rounded-xl shadow-sm">
-                  <p className="admin-kpi-label text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Opportunity Score</p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="admin-kpi-value text-[var(--text-primary)] leading-none">{(selectedLead.lead_score || 0).toFixed(1)}</span>
-                    <span className="text-xs font-semibold text-[var(--text-muted)]">/ 10.0 Calculated Quality</span>
-                  </div>
-                  <div className="w-full bg-[var(--border-subtle)] h-1.5 rounded-full mt-3 overflow-hidden">
-                    <div 
-                      className={cn(
-                        "h-full rounded-full transition-all duration-500",
-                        (selectedLead.lead_score || 0) >= 7 ? "bg-[#DC2626]" : (selectedLead.lead_score || 0) >= 4 ? "bg-[#F59E0B]" : "bg-[#6B7280]"
-                      )}
-                      style={{ width: `${(selectedLead.lead_score || 0) * 10}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Section 2: Contact Details */}
-                <div className="bg-[var(--card)] border border-[var(--border-subtle)] rounded-xl shadow-sm overflow-hidden">
-                  <div className="px-4 py-2.5 bg-[var(--surface-2)]/60 border-b border-[var(--border-subtle)]">
-                    <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Contact Details</p>
-                  </div>
-                  <div className="p-4 space-y-3.5 text-xs text-[var(--text-primary)] font-medium">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--text-muted)] font-normal">Contact Person</span>
-                      <span>{selectedLead.name || "—"}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--text-muted)] font-normal">Phone</span>
-                      <a href={`tel:${selectedLead.phone}`} className="text-[#2563EB] hover:underline flex items-center gap-1">
-                        <Phone size={11} /> {selectedLead.phone || "—"}
-                      </a>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--text-muted)] font-normal">Email</span>
-                      <a href={`mailto:${selectedLead.email}`} className="text-[#2563EB] hover:underline flex items-center gap-1">
-                        <Mail size={11} /> {selectedLead.email || "—"}
-                      </a>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--text-muted)] font-normal">Website</span>
-                      {selectedLead.website_url ? (
-                        <a 
-                          href={selectedLead.website_url.startsWith("http") ? selectedLead.website_url : `https://${selectedLead.website_url}`}
-                          target="_blank" 
-                          rel="noreferrer"
-                          className="text-[#2563EB] hover:underline flex items-center gap-1"
-                        >
-                          <Globe size={11} /> {selectedLead.website_url}
-                        </a>
-                      ) : "—"}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 3: AI Analysis Card (HubSpot style) */}
-                <div className="bg-[var(--card)] border border-[var(--border-subtle)] rounded-xl shadow-sm overflow-hidden">
-                  <div className="px-4 py-2.5 bg-[var(--surface-2)]/60 border-b border-[var(--border-subtle)] flex items-center justify-between">
-                    <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider flex items-center gap-1.5">
-                      <Sparkles size={12} className="text-[#2563EB]" /> AI Analysis
-                    </p>
-                    <span className="inline-flex px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 text-[9px] font-bold uppercase tracking-wider">
-                      Verified
-                    </span>
-                  </div>
-                  <div className="p-4 space-y-4 text-xs text-[var(--text-primary)]">
-                    {/* Critical Issues */}
-                    <div>
-                      <h4 className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider mb-2">Critical issues</h4>
-                      <ul className="space-y-1.5 text-[var(--text-secondary)] pl-1 list-none">
-                        {!selectedLead.has_website ? (
-                          <li className="flex items-start gap-2">
-                            <span className="text-[#DC2626] shrink-0 mt-0.5">⚠️</span>
-                            <span>No operational website detected.</span>
-                          </li>
-                        ) : null}
-                        {!(selectedLead.google_rating) ? (
-                          <li className="flex items-start gap-2">
-                            <span className="text-[#DC2626] shrink-0 mt-0.5">⚠️</span>
-                            <span>No Google Business profile rating listed.</span>
-                          </li>
-                        ) : null}
-                        {selectedLead.instagram_followers && selectedLead.instagram_followers < 500 ? (
-                          <li className="flex items-start gap-2">
-                            <span className="text-[#DC2626] shrink-0 mt-0.5">⚠️</span>
-                            <span>Weak online presence on Instagram ({selectedLead.instagram_followers} followers).</span>
-                          </li>
-                        ) : null}
-                        {selectedLead.has_website && selectedLead.google_rating ? (
-                          <li className="flex items-start gap-2">
-                            <span className="text-[#16A34A] shrink-0 mt-0.5">✓</span>
-                            <span>Digital channels verified and indexed.</span>
-                          </li>
-                        ) : null}
-                      </ul>
-                    </div>
-
-                    {/* Recommended Action Checklist */}
-                    <div className="pt-3 border-t border-[var(--border-subtle)]">
-                      <h4 className="text-[10px] font-bold text-[var(--text-primary)] uppercase tracking-wider mb-2">Recommended action</h4>
-                      <ul className="space-y-1.5 text-[var(--text-secondary)] pl-1 list-none">
-                        {!selectedLead.has_website ? (
-                          <>
-                            <li className="flex items-center gap-2">
-                              <span className="text-[#2563EB] text-base shrink-0 leading-none">●</span>
-                              <span>Call founder and offer website build audit</span>
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <span className="text-[#2563EB] text-base shrink-0 leading-none">●</span>
-                              <span>Pitch custom landing page design</span>
-                            </li>
-                          </>
-                        ) : (
-                          <li className="flex items-center gap-2">
-                            <span className="text-[#2563EB] text-base shrink-0 leading-none">●</span>
-                            <span>Pitch localized SEO optimization campaign</span>
-                          </li>
-                        )}
-                        {!(selectedLead.google_rating) && (
-                          <li className="flex items-center gap-2">
-                            <span className="text-[#2563EB] text-base shrink-0 leading-none">●</span>
-                            <span>Offer Google Profile listing configuration</span>
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 4: Notes / Booking Brief */}
-                <div className="bg-[var(--card)] border border-[var(--border-subtle)] p-4 rounded-xl shadow-sm space-y-2">
-                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider border-b border-[var(--border-subtle)] pb-2">
-                    {selectedLead.source === "Book a Discovery Call" ? "📅 Discovery Call Booking Details" : "Notes & Brief"}
-                  </p>
-                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed pt-1 whitespace-pre-line font-mono">
-                    {(selectedLead.notes || selectedLead.message)
-                      ? (selectedLead.notes || selectedLead.message)?.replace(/\[Source:.*\]/, "").replace(/\[Created By:.*\]/, "").trim()
-                      : "No custom notes recorded for this pipeline lead."}
-                  </p>
-                </div>
-
-                {/* Section 5: Timeline / Recent Activity */}
-                <div className="bg-[var(--card)] border border-[var(--border-subtle)] p-4 rounded-xl shadow-sm space-y-3">
-                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider border-b border-[var(--border-subtle)] pb-2">Timeline & Logs</p>
-                  <div className="space-y-3 pt-1">
-                    <div className="flex gap-2.5 items-start">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                      <div>
-                        <p className="text-xs font-semibold text-[var(--text-primary)]">Lead Created</p>
-                        <p className="text-[10px] text-[var(--text-muted)]">
-                          {selectedLead.created_at ? new Date(selectedLead.created_at).toLocaleString() : "Recently"} • Pipeline Registered
-                        </p>
-                      </div>
-                    </div>
-                    {selectedLead.outreach_sent && (
-                      <div className="flex gap-2.5 items-start">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#2563EB] mt-1.5 shrink-0" />
-                        <div>
-                          <p className="text-xs font-semibold text-[var(--text-primary)]">Outreach Delivered</p>
-                          <p className="text-[10px] text-[var(--text-muted)]">Status switched to Contacted</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Drawer Actions Footer */}
-              <div className="p-5 border-t border-[var(--border-subtle)] bg-[var(--surface-2)]/60 flex flex-col gap-2">
-                <Button onClick={() => router.push(`/admin/leads/${selectedLead.id}`)} className="w-full h-8.5 bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[var(--text-primary)] hover:bg-[var(--surface-2)] text-[9px] font-semibold tracking-wide rounded-md shadow-sm cursor-pointer">
-                  Edit Lead Details
-                </Button>
-                {selectedLead.status === "qualified" && <div className="mb-1 rounded-lg border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 text-[10px] text-[var(--text-muted)]"><span className="font-bold uppercase tracking-wider text-[var(--text-primary)]">Client invitation: </span>{invitation.status === "loading" ? "Checking…" : invitation.status === "accepted" ? "Accepted" : invitation.status === "sent" ? `Sent${invitation.email ? ` to ${invitation.email}` : ""}${invitation.expiresAt ? ` · expires ${new Date(invitation.expiresAt).toLocaleString()}` : ""}` : invitation.status === "expired" ? "Expired — resend required" : invitation.status === "revoked" ? "Revoked" : "Not invited"}</div>}
-                <div className="flex gap-2">
-                  {selectedLead.status === "qualified" ? <Button
-                    onClick={() => inviteQualifiedClient(selectedLead)}
-                    isLoading={inviting || invitation.status === "loading"}
-                    disabled={invitation.status === "accepted"}
-                    className="flex-1 h-8.5 bg-emerald-600 border border-emerald-700 text-white hover:bg-emerald-700 text-[9px] font-semibold tracking-wide rounded-md shadow-sm disabled:bg-emerald-100 disabled:text-emerald-800 cursor-pointer"
-                  >{invitation.status === "accepted" ? "Invitation Accepted" : invitation.status === "sent" ? "Resend Invitation" : "Invite Client"}</Button> : <Button
-                    onClick={() => updateStatus(selectedLead.id, 'qualified')}
-                    isLoading={updatingId === selectedLead.id}
-                    className="flex-1 h-8.5 bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--surface-2)] text-[9px] font-semibold tracking-wide rounded-md shadow-sm cursor-pointer"
-                  >Mark Qualified</Button>}
-                  <Button 
-                    onClick={() => {
-                      generateAIOutreach(selectedLead);
-                      showToast("Outreach generator active");
-                    }}
-                    className="flex-1 h-8.5 bg-[#2563EB] hover:bg-blue-700 text-white text-[9px] font-semibold tracking-wide rounded-md shadow-sm cursor-pointer"
-                  >
-                    Start Outreach
-                  </Button>
-                </div>
-                <Button 
-                  onClick={() => alert("Proposal generator active for company.")}
-                  variant="outline"
-                  className="w-full h-8.5 bg-[var(--surface-1)] border border-[var(--border-subtle)] hover:bg-[var(--surface-2)] text-[var(--text-secondary)] text-[9px] font-semibold tracking-wide rounded-md shadow-sm cursor-pointer"
-                >
-                  Generate Proposal
-                </Button>
-              </div>
-
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* --- ADD LEAD MODAL --- */}
-      {showAddLead && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm">
-          <div className="bg-[var(--card)] border border-[var(--border-subtle)] w-full max-w-md p-8 shadow-2xl rounded-xl animate-in zoom-in-95 duration-200">
-            <h2 className="text-lg font-bold text-[var(--text-primary)] tracking-tight mb-1">Add New Lead</h2>
-            <p className="text-[var(--text-muted)] text-xs mb-6">Manually register a business lead in the sales pipeline.</p>
-            
-            <form onSubmit={handleAddLead} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">Business Name</label>
-                <input 
-                  required
-                  value={newLead.business_name}
-                  onChange={(e) => setNewLead({...newLead, business_name: e.target.value})}
-                  className="w-full bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg h-10 px-3.5 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:bg-[var(--card)] transition-all"
-                  placeholder="Company name..."
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">Contact Person</label>
-                <input 
-                  value={newLead.name}
-                  onChange={(e) => setNewLead({...newLead, name: e.target.value})}
-                  className="w-full bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg h-10 px-3.5 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:bg-[var(--card)] transition-all"
-                  placeholder="Founder or manager name..."
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">Email</label>
-                  <input 
-                     type="email"
-                     value={newLead.email}
-                     onChange={(e) => setNewLead({...newLead, email: e.target.value})}
-                     className="w-full bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg h-10 px-3.5 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:bg-[var(--card)] transition-all"
-                     placeholder="email@example.com"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">Phone</label>
-                  <input 
-                    value={newLead.phone}
-                    onChange={(e) => setNewLead({...newLead, phone: e.target.value})}
-                    className="w-full bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg h-10 px-3.5 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:bg-[var(--card)] transition-all"
-                    placeholder="+91 98..."
-                  />
-                </div>
-              </div>
-
-              <div className="mt-8 flex justify-end gap-2 pt-4 border-t border-[var(--border-subtle)]">
-                <Button type="button" onClick={() => setShowAddLead(false)} variant="ghost" className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--text-primary)] h-9 px-4 rounded-lg cursor-pointer">Cancel</Button>
-                <Button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#0075de] hover:bg-[#005bab] text-white text-[10px] font-bold uppercase tracking-wider h-9 px-5 rounded-lg shadow-sm min-w-[100px] cursor-pointer"
-                >
-                  {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Save Lead"}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* --- IMPORT LEAD MODAL --- */}
-      {showImportLead && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm">
-          <div className="bg-[var(--card)] border border-[var(--border-subtle)] w-full max-w-md p-8 shadow-2xl rounded-xl animate-in zoom-in-95 duration-200">
-            <h2 className="text-lg font-bold text-[var(--text-primary)] tracking-tight mb-1">Import Leads</h2>
-            <p className="text-[var(--text-muted)] text-xs mb-6">Bulk upload business leads from a CSV spreadsheet.</p>
-            
-            <div 
-              className={cn(
-                "relative border border-dashed rounded-lg p-10 text-center transition-all cursor-pointer",
-                selectedFile ? "border-emerald-500/20 bg-emerald-500/5" : "border-[var(--border-subtle)] bg-[var(--surface-1)] hover:bg-[var(--surface-2)]"
+    <ListPage
+      header={{
+        title: "Leads",
+        breadcrumb,
+        info: "Sales pipeline & CRM hub. Click a row to open the lead profile.",
+        actions: (
+          <>
+            <Button iconLeft={<Upload size={16} strokeWidth={1.5} />} onClick={() => setShowImportLead(true)}>Import CSV</Button>
+            <Button variant="primary" iconLeft={<Plus size={16} strokeWidth={1.5} />} onClick={() => setShowAddLead(true)}>Add lead</Button>
+          </>
+        ),
+      }}
+      kpis={
+        <KPIStrip>
+          <KPIItem label="Total leads" value={totalLeads} loading={loading} />
+          <KPIItem label="Qualified" value={qualifiedCount} loading={loading} />
+          <KPIItem label="New" value={newCount} loading={loading} />
+          <KPIItem label="Hot" value={hotLeadsCount} loading={loading} />
+          <KPIItem label="Conversion" value={`${conversionRate}%`} loading={loading} />
+          <KPIItem label="Revenue" value={`₹${(revenueValue / 100000).toFixed(1)}L`} loading={loading} />
+        </KPIStrip>
+      }
+      toolbar={
+        <Toolbar
+          search={<SearchInput value={searchQuery} onValueChange={setSearchQuery} placeholder="Search leads" />}
+          filters={
+            <>
+              <FilterSelect label="Status" value={statusFilter} options={STATUS_OPTIONS} onChange={setStatusFilter} />
+              <FilterSelect label="Location" value={locationFilter} options={Array.from(new Set(leads.map(l => l.city).filter(Boolean))).map(city => ({ label: city!, value: city! }))} onChange={setLocationFilter} />
+              <FilterSelect label="Industry" value={industryFilter} options={INDUSTRY_OPTIONS} onChange={setIndustryFilter} />
+              {(statusFilter || locationFilter || industryFilter) && (
+                <Button size={28} variant="ghost" onClick={() => { setStatusFilter(null); setLocationFilter(null); setIndustryFilter(null); }}>Clear filters</Button>
               )}
-            >
-              <input 
-                type="file" 
-                onChange={handleFileChange}
-                accept=".csv"
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-              />
-              <Upload size={24} className={cn("mx-auto mb-2.5", selectedFile ? "text-emerald-500" : "text-[var(--text-muted)]")} />
-              <p className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wide">
-                {selectedFile ? selectedFile.name : "Select CSV File"}
-              </p>
-              <p className="text-[10px] text-[var(--text-muted)] mt-1">
-                {selectedFile ? `${(selectedFile.size / 1024).toFixed(2)} KB` : "Maximum file size 5MB"}
-              </p>
-            </div>
+            </>
+          }
+        />
+      }
+    >
+      <DataTable
+        label="Leads"
+        columns={columns}
+        rows={filteredLeads}
+        getRowId={(l) => l.id || l.business_name}
+        loading={loading}
+        onRowClick={(l) => setActiveLeadId(l.id || null)}
+        rowActions={rowActions}
+        selectable
+        selectedIds={selectedLeadIds}
+        onSelectionChange={setSelectedLeadIds}
+        bulkActions={() => isAdminOrCoAdmin && (
+          <Button size={28} variant="danger" loading={isSubmitting} iconLeft={<Trash2 size={14} strokeWidth={1.5} />} onClick={handleDeleteSelectedLeads}>Delete selected</Button>
+        )}
+        emptyState={<EmptyState icon={<Building2 size={24} strokeWidth={1.5} />} title="No leads matching criteria" description="Try adjusting your filters or search terms to locate leads." />}
+      />
 
-            <div className="mt-6 flex justify-end gap-2 border-t border-[var(--border-subtle)] pt-4">
-              <Button 
-                type="button" 
-                onClick={() => {
-                  setShowImportLead(false);
-                  setSelectedFile(null);
-                }} 
-                variant="ghost"
-                className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--text-primary)] h-9 px-4 rounded-lg cursor-pointer"
-              >
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleImportCSV}
-                disabled={!selectedFile || isSubmitting}
-                className="bg-[#0075de] hover:bg-[#005bab] text-white text-[10px] font-bold uppercase tracking-wider h-9 px-5 rounded-lg shadow-sm min-w-[100px] cursor-pointer"
-              >
-                {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Process Import"}
-              </Button>
+      {/* Lead profile drawer */}
+      <Drawer
+        open={!!selectedLead}
+        onOpenChange={(open) => { if (!open) setActiveLeadId(null); }}
+        title={selectedLead?.business_name || "Lead"}
+        description={selectedLead?.source ? `Source: ${selectedLead.source}` : "Lead intelligence profile"}
+        footer={selectedLead && (
+          <div className="flex w-full flex-col gap-2">
+            {selectedLead.status === "qualified" && <p className="ds-t-meta text-[var(--text-muted)]"><span className="ds-t-meta-strong text-[var(--text-primary)]">Client invitation: </span>{invitationText}</p>}
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button onClick={() => alert("Proposal generator active for company.")}>Generate proposal</Button>
+              <Button onClick={() => router.push(`/admin/leads/${selectedLead.id}`)}>Edit lead details</Button>
+              {selectedLead.status === "qualified"
+                ? <Button variant="primary" onClick={() => inviteQualifiedClient(selectedLead)} loading={inviting || invitation.status === "loading"} disabled={invitation.status === "accepted"}>{invitation.status === "accepted" ? "Invitation accepted" : invitation.status === "sent" ? "Resend invitation" : "Invite client"}</Button>
+                : <Button onClick={() => updateStatus(selectedLead.id, 'qualified')} loading={updatingId === selectedLead.id}>Mark qualified</Button>}
+              <Button variant="primary" onClick={() => { generateAIOutreach(selectedLead); showToast("Outreach generator active"); }}>Start outreach</Button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      >
+        {selectedLead && (
+          <div className="flex flex-col gap-4">
+            <Card>
+              <CardHeader title="Opportunity score" />
+              <LeadScore score={selectedLead.lead_score} variant="meter" />
+            </Card>
+
+            <Card>
+              <CardHeader title="Contact details" />
+              <KeyValueList items={[
+                { label: "Contact person", value: selectedLead.name || "—" },
+                { label: "Phone", value: selectedLead.phone ? <a href={`tel:${selectedLead.phone}`} className="ds-focus inline-flex items-center gap-1 rounded-[var(--radius-xs)] text-[var(--accent)]"><Phone size={14} strokeWidth={1.5} />{selectedLead.phone}</a> : "—" },
+                { label: "Email", value: selectedLead.email ? <a href={`mailto:${selectedLead.email}`} className="ds-focus inline-flex items-center gap-1 rounded-[var(--radius-xs)] text-[var(--accent)]"><Mail size={14} strokeWidth={1.5} />{selectedLead.email}</a> : "—" },
+                { label: "Website", value: selectedLead.website_url ? <a href={websiteHref(selectedLead.website_url)} target="_blank" rel="noreferrer" className="ds-focus inline-flex items-center gap-1 rounded-[var(--radius-xs)] text-[var(--accent)]"><Globe size={14} strokeWidth={1.5} />{selectedLead.website_url}</a> : "—" },
+              ]} />
+            </Card>
+
+            <Card>
+              <CardHeader title={<span className="inline-flex items-center gap-1.5"><Sparkles size={16} strokeWidth={1.5} className="text-[var(--accent)]" />AI analysis</span>} actions={<Badge variant="success">Verified</Badge>} />
+              <p className="ds-t-label mb-2 text-[var(--text-muted)]">Critical issues</p>
+              <ul className="ds-t-body mb-4 flex flex-col gap-1.5 text-[var(--text-secondary)]">
+                {!selectedLead.has_website && <li className="flex items-start gap-2"><AlertTriangle size={16} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[var(--danger)]" />No operational website detected.</li>}
+                {!selectedLead.google_rating && <li className="flex items-start gap-2"><AlertTriangle size={16} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[var(--danger)]" />No Google Business profile rating listed.</li>}
+                {selectedLead.instagram_followers && selectedLead.instagram_followers < 500 ? <li className="flex items-start gap-2"><AlertTriangle size={16} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[var(--danger)]" />Weak online presence on Instagram ({selectedLead.instagram_followers} followers).</li> : null}
+                {selectedLead.has_website && selectedLead.google_rating ? <li className="flex items-start gap-2"><CheckCircle2 size={16} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[var(--success)]" />Digital channels verified and indexed.</li> : null}
+              </ul>
+              <p className="ds-t-label mb-2 text-[var(--text-muted)]">Recommended action</p>
+              <ul className="ds-t-body flex list-disc flex-col gap-1.5 pl-5 text-[var(--text-secondary)] marker:text-[var(--accent)]">
+                {!selectedLead.has_website ? (
+                  <>
+                    <li>Call founder and offer website build audit</li>
+                    <li>Pitch custom landing page design</li>
+                  </>
+                ) : <li>Pitch localized SEO optimization campaign</li>}
+                {!selectedLead.google_rating && <li>Offer Google Profile listing configuration</li>}
+              </ul>
+            </Card>
+
+            <Card>
+              <CardHeader title={selectedLead.source === "Book a Discovery Call" ? "Discovery call booking details" : "Notes & brief"} />
+              <p className="ds-t-body whitespace-pre-line text-[var(--text-secondary)]">
+                {(selectedLead.notes || selectedLead.message)
+                  ? (selectedLead.notes || selectedLead.message)?.replace(/\[Source:.*\]/, "").replace(/\[Created By:.*\]/, "").trim()
+                  : "No custom notes recorded for this pipeline lead."}
+              </p>
+            </Card>
+
+            <Card>
+              <CardHeader title="Timeline & logs" />
+              <Timeline label="Lead timeline" items={[
+                { id: "created", title: "Lead created", meta: "Pipeline registered", time: selectedLead.created_at ? new Date(selectedLead.created_at).toLocaleString() : "Recently", tone: "success" },
+                ...(selectedLead.outreach_sent ? [{ id: "outreach", title: "Outreach delivered", meta: "Status switched to Contacted", time: "", tone: "accent" as const }] : []),
+              ]} />
+            </Card>
+          </div>
+        )}
+      </Drawer>
+
+      {/* Add lead */}
+      <Modal
+        open={showAddLead}
+        onOpenChange={setShowAddLead}
+        title="Add new lead"
+        description="Manually register a business lead in the sales pipeline."
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowAddLead(false)}>Cancel</Button>
+            <Button type="submit" form="lead-form" variant="primary" loading={isSubmitting}>Save lead</Button>
+          </>
+        }
+      >
+        <form id="lead-form" onSubmit={handleAddLead} className="flex flex-col gap-4">
+          <FormField label="Business name" required>
+            {(f) => <Input {...f} required placeholder="Company name…" value={newLead.business_name} onChange={(e) => setNewLead({ ...newLead, business_name: e.target.value })} />}
+          </FormField>
+          <FormField label="Contact person">
+            {(f) => <Input {...f} placeholder="Founder or manager name…" value={newLead.name} onChange={(e) => setNewLead({ ...newLead, name: e.target.value })} />}
+          </FormField>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Email">
+              {(f) => <Input {...f} type="email" placeholder="email@example.com" value={newLead.email} onChange={(e) => setNewLead({ ...newLead, email: e.target.value })} />}
+            </FormField>
+            <FormField label="Phone">
+              {(f) => <Input {...f} placeholder="+91 98…" value={newLead.phone} onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })} />}
+            </FormField>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Import CSV */}
+      <Modal
+        open={showImportLead}
+        onOpenChange={(open) => { setShowImportLead(open); if (!open) setSelectedFile(null); }}
+        title="Import leads"
+        description="Bulk upload business leads from a CSV spreadsheet."
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => { setShowImportLead(false); setSelectedFile(null); }}>Cancel</Button>
+            <Button variant="primary" onClick={handleImportCSV} disabled={!selectedFile} loading={isSubmitting}>Process import</Button>
+          </>
+        }
+      >
+        <FileUpload file={selectedFile} onFileChange={setSelectedFile} accept=".csv" label="Select CSV file" hint="Maximum file size 5MB" />
+      </Modal>
+    </ListPage>
   );
 }

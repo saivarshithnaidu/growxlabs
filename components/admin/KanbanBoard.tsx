@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { DollarSign, User, TrendingUp, Calendar, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { Calendar } from "lucide-react";
+import { CurrencyAmount } from "@/src/components/ui";
+import { KanbanBoard as Board, KanbanCard, KanbanColumn } from "@/src/components/patterns";
 
 interface Stage {
   id: string;
@@ -29,6 +29,7 @@ interface KanbanBoardProps {
   onStageChange: (dealId: string, newStageId: string) => Promise<void>;
 }
 
+/** Deals pipeline: drag a card to another stage (optimistic, rolls back on failure). */
 export function KanbanBoard({ initialDeals, stages, onStageChange }: KanbanBoardProps) {
   const [deals, setDeals] = useState<Deal[]>(initialDeals);
   const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -70,81 +71,46 @@ export function KanbanBoard({ initialDeals, stages, onStageChange }: KanbanBoard
   };
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin select-none h-[calc(100vh-14rem)] min-h-[500px]">
+    <Board label="Deals by stage">
       {stages.map((stage) => {
         const stageDeals = deals.filter(d => d.stage_id === stage.id);
         const { count, totalValue } = getStageStats(stage.id);
 
         return (
-          <div
+          <KanbanColumn
             key={stage.id}
+            title={stage.name}
+            count={count}
+            meta={<CurrencyAmount value={totalValue} compact />}
+            tone="accent"
+            emptyText="Drag deals here"
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, stage.id)}
-            className="flex-shrink-0 w-80 flex flex-col bg-[#f6f5f4] border border-[#e6e6e6] rounded-lg p-3.5"
+            footer={<span className="ds-t-meta text-[var(--text-muted)]">{stage.probability}% probability</span>}
           >
-            {/* Stage Header */}
-            <div className="flex items-start justify-between mb-3.5">
-              <div>
-                <h3 className="text-[14px] font-semibold text-neutral-900 leading-none mb-1">{stage.name}</h3>
-                <span className="text-[11px] font-medium text-neutral-500">{stage.probability}% Probability</span>
-              </div>
-              <span className="text-[11px] font-medium bg-white text-[#0075de] border border-[#e6e6e6] px-2 py-0.5 rounded-full">
-                {count}
-              </span>
-            </div>
-
-            {/* Total Stage Value */}
-            <div className="bg-white border border-[#e6e6e6] px-3.5 py-2.5 rounded-md mb-4 flex items-center justify-between shadow-sm">
-              <span className="text-[11px] font-medium text-neutral-500">Total Value</span>
-              <span className="text-[13px] font-semibold text-neutral-900 tabular-nums">₹{totalValue.toLocaleString()}</span>
-            </div>
-
-            {/* Cards List container */}
-            <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar pb-6">
-              {stageDeals.length === 0 ? (
-                <div className="h-28 border border-dashed border-[#e6e6e6] rounded-md flex items-center justify-center text-center p-4">
-                  <span className="text-[12px] font-normal text-neutral-400">Drag deals here</span>
-                </div>
-              ) : (
-                stageDeals.map((deal) => {
-                  const dateStr = deal.expected_close_date 
-                    ? new Date(deal.expected_close_date).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })
-                    : "No close date";
-
-                  return (
-                    <div
-                      key={deal.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, deal.id)}
-                      className={cn(
-                        "bg-white border border-[#e6e6e6] p-4 rounded-md shadow-sm cursor-grab active:cursor-grabbing transition-all duration-200 hover:border-[#0075de]/30 hover:shadow-md",
-                        draggedId === deal.id && "opacity-40"
-                      )}
-                    >
-                      <h4 className="text-[13px] font-semibold text-neutral-900 leading-snug mb-1 group-hover:text-[#0075de] transition-colors">{deal.name}</h4>
-                      
-                      {deal.company && (
-                        <p className="text-[12px] font-normal text-neutral-500 mb-2.5">{deal.company.name}</p>
-                      )}
-
-                      <div className="border-t border-[#e6e6e6]/60 pt-2.5 flex items-center justify-between text-[12px] font-normal text-neutral-500">
-                        <div className="flex items-center gap-1">
-                          <TrendingUp size={11} className="text-[#1aae39]" />
-                          <span className="font-semibold text-neutral-900 tabular-nums">₹{Number(deal.value).toLocaleString()}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-[11px] tabular-nums">
-                          <Calendar size={11} className="text-neutral-400" />
-                          <span>{dateStr}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
+            {stageDeals.map((deal) => (
+              <KanbanCard
+                key={deal.id}
+                title={deal.name}
+                meta={deal.company?.name}
+                draggable
+                dragging={draggedId === deal.id}
+                onDragStart={(e) => handleDragStart(e, deal.id)}
+                onDragEnd={() => setDraggedId(null)}
+                footnote={
+                  <span className="inline-flex items-center gap-1">
+                    <Calendar size={12} strokeWidth={1.5} aria-hidden />
+                    {deal.expected_close_date
+                      ? new Date(deal.expected_close_date).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })
+                      : "No close date"}
+                  </span>
+                }
+                assignee={<CurrencyAmount value={deal.value} className="ds-t-body-strong text-[var(--text-primary)]" />}
+              />
+            ))}
+          </KanbanColumn>
         );
       })}
-    </div>
+    </Board>
   );
 }

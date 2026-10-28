@@ -2,12 +2,16 @@
 
 import { adminGeist } from "@/components/admin/typography";
 import "./admin-typography.css";
+import "@/src/components/ui/tokens.css";
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { AdminNav } from "@/components/admin/AdminNav";
-import { Loader2, ShieldAlert, ArrowLeft, LogOut, ExternalLink, ChevronRight } from "@/components/icons";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { AppShell, ToastViewport } from "@/src/components/ui";
+import { ADMIN_EXACT_HREFS, MODULES, stripLocale } from "@/lib/admin-nav";
+import { Loader2, ShieldAlert, ArrowLeft, LogOut, ExternalLink, ChevronRight, Settings, Moon, Sun } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { AdminOperationsDock } from "@/components/admin/AdminOperationsDock";
@@ -17,6 +21,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const currentPath = usePathname();
   const { data: session, status } = useSession();
+  const { resolvedTheme, setTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -294,49 +300,59 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
+  // Command Center / Editorial Studio: no shell chrome at all
+  if (isCommandCenter || isEditorialStudio) {
+    return (
+      <SettingsModalProvider>
+        <div className={cn(
+          adminGeist.variable,
+          "admin-typography",
+          isCommandCenter ? "bg-[#09090b] text-[#f4f4f5]" : "bg-[#0e0f12] text-white",
+          "h-screen w-full max-w-full overflow-hidden flex relative"
+        )}>
+          <main className={cn(
+            "min-w-0 h-screen max-w-full overflow-x-hidden overflow-y-auto relative custom-scrollbar w-full ml-0 pt-0",
+            isCommandCenter ? "bg-[#09090b]" : "bg-[#0e0f12]"
+          )}>
+            <div className={cn(
+              "w-full",
+              isEditorialStudio || isCommandCenterWorkspace
+                ? "h-[calc(100vh-3.5rem)] md:h-screen max-w-none overflow-hidden"
+                : "min-h-screen max-w-none p-0 overflow-y-auto"
+            )}>
+              {children}
+            </div>
+          </main>
+        </div>
+      </SettingsModalProvider>
+    );
+  }
+
   return (
     <SettingsModalProvider>
-      <div className={cn(
-        adminGeist.variable,
-        "admin-typography",
-        !isCommandCenter && !isEditorialStudio && "notion-theme",
-        isCommandCenter ? "bg-[#09090b] text-[#f4f4f5]" : isEditorialStudio ? "bg-[#0e0f12] text-white" : "bg-[var(--background)] text-[var(--text-primary)]",
-        "h-screen w-full max-w-full overflow-hidden flex relative print:bg-white print:text-black print:block print:overflow-visible"
-      )}>
-        {/* PERSISTENT SIDEBAR */}
-        {!isCommandCenter && !isEditorialStudio && <div className="print:hidden">
-          <AdminNav
-            isCollapsed={isCollapsed}
-            onToggle={() => setIsCollapsed(!isCollapsed)}
-            isMobileOpen={isMobileOpen}
-            onMobileToggle={() => setIsMobileOpen(!isMobileOpen)}
-          />
-        </div>}
-        
-        {/* SCROLLABLE MAIN CONTENT AREA */}
-        <main className={cn(
-          "min-w-0 h-screen max-w-full overflow-x-hidden overflow-y-auto relative custom-scrollbar transition-[margin,width] duration-300 ease-out z-10 print:ml-0 print:w-full print:bg-transparent print:overflow-visible print:min-h-0",
-          isCommandCenter ? "bg-[#09090b]" : isEditorialStudio ? "bg-[#0e0f12]" : "bg-[var(--background)]",
-          // Exact desktop shell sizing prevents flyouts or nested panels from changing workspace width.
-          (isCommandCenter || isEditorialStudio)
-            ? "w-full ml-0 pt-0"
-            : isCollapsed
-            ? "flex-1 min-w-0 ml-0 pt-14 md:pt-0"
-            : "flex-1 min-w-0 ml-0 pt-14 md:pt-0"
-        )}>
-           {/* Internal Spacing — responsive padding */}
-           <div className={cn(
-             "w-full print:p-0 print:m-0 print:space-y-0 print:max-w-none",
-             isEditorialStudio || isCommandCenterWorkspace
-               ? "h-[calc(100vh-3.5rem)] md:h-screen max-w-none overflow-hidden"
-               : isCommandCenter
-               ? "min-h-screen max-w-none p-0 overflow-y-auto"
-               : "p-4 sm:p-6 md:p-8 space-y-6"
-           )}>
-              {children}
-           </div>
-        </main>
-        {!isCommandCenter && !isEditorialStudio && !currentPath?.includes("/print") && !currentPath?.includes("/preview") && <AdminOperationsDock />}
+      <div className={cn(adminGeist.variable, "admin-typography")}>
+        <AppShell
+          modules={MODULES}
+          pathname={stripLocale(currentPath || "")}
+          exactHrefs={ADMIN_EXACT_HREFS}
+          collapsed={isCollapsed}
+          onCollapsedChange={setIsCollapsed}
+          logo={<Link href="/admin" aria-label="Home" className="ds-focus ds-t-body-bold flex h-8 w-8 items-center justify-center rounded-[var(--radius-md)] bg-[var(--bg-inverse)] text-[var(--text-inverse)]">G</Link>}
+          user={{
+            name: session?.user?.name || "User",
+            role: ((session?.user as { role?: string } | undefined)?.role || "").replace("_", " ") || "Agent",
+            avatarSrc: session?.user?.image,
+            items: [
+              { label: isDark ? "Light mode" : "Dark mode", icon: isDark ? <Sun size={16} strokeWidth={1.5} /> : <Moon size={16} strokeWidth={1.5} />, onSelect: () => setTheme(isDark ? "light" : "dark") },
+              { label: "Settings", icon: <Settings size={16} strokeWidth={1.5} />, href: "/admin/settings" },
+              { label: "Sign out", icon: <LogOut size={16} strokeWidth={1.5} />, onSelect: () => signOut({ callbackUrl: "/login?callbackUrl=/admin" }), separated: true },
+            ],
+          }}
+        >
+          {children}
+        </AppShell>
+        <ToastViewport />
+        {!currentPath?.includes("/print") && !currentPath?.includes("/preview") && <AdminOperationsDock />}
       </div>
     </SettingsModalProvider>
   );
