@@ -282,3 +282,38 @@ export function CompactFeed({ items, label }: { items: { id: string; label: Reac
     </ul>
   );
 }
+
+/* ── Stage bar (compact pipeline distribution) ─────────────────────── */
+
+export interface StageBarItem { key: string; label: string; count: number; color: string }
+
+/** Thin distribution bar with an inline legend. Clicking a stage calls onSelect (e.g. to filter). */
+export function StageBar({ stages, active, onSelect, label }: { stages: StageBarItem[]; active?: string | null; onSelect?: (key: string) => void; label: string }) {
+  const total = stages.reduce((s, x) => s + x.count, 0);
+  return (
+    <div className="min-w-0">
+      <div role="img" aria-label={label} className="flex h-2 gap-0.5 overflow-hidden rounded-[var(--radius-full)] bg-[var(--bg-active)]">
+        {total > 0 && stages.filter((s) => s.count > 0).map((s) => (
+          <div key={s.key} title={`${s.label}: ${s.count}`} className={cn("transition-opacity", active && active !== s.key && "opacity-30")} style={{ flexGrow: s.count, background: s.color }} />
+        ))}
+      </div>
+      <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+        {stages.map((s) => (
+          <li key={s.key}>
+            <button
+              type="button"
+              disabled={!onSelect}
+              aria-pressed={onSelect ? active === s.key : undefined}
+              onClick={() => onSelect?.(s.key)}
+              className={cn("ds-focus ds-t-meta inline-flex items-center gap-1.5 rounded-[var(--radius-xs)] transition-colors", active === s.key ? "text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-primary)]", !onSelect && "cursor-default")}
+            >
+              <span aria-hidden className="h-2 w-2 rounded-[var(--radius-full)]" style={{ background: s.color }} />
+              {s.label}
+              <span className="ds-t-meta-strong ds-num text-[var(--text-primary)]">{s.count}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

@@ -18,6 +18,7 @@ export * from "./Pagination";
 export * from "./Format";
 export * from "./Alert";
 export * from "./CopyButton";
+export * from "./hooks";
 export * from "./data/DataTable";
 export * from "./data/Display";
 export * from "./data/Charts";

@@ -58,3 +58,30 @@ export function AvatarGroup({ people, max = 4, size = 24 }: AvatarGroupProps) {
     </span>
   );
 }
+
+const TINTS = 6;
+function tintIndex(name: string) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return (h % TINTS) + 1;
+}
+
+export interface MonogramProps {
+  name: string;
+  size?: 24 | 28 | 32 | 40;
+  className?: string;
+}
+
+/** Square company mark: initials on a soft tint chosen from the name (stable per company). */
+export function Monogram({ name, size = 28, className }: MonogramProps) {
+  const t = tintIndex(name || "?");
+  return (
+    <span
+      aria-hidden
+      className={cn("inline-flex shrink-0 items-center justify-center rounded-[var(--radius-md)]", sizeClass[size], size >= 32 ? "ds-t-meta-strong" : "ds-t-caption", className)}
+      style={{ background: `var(--tint-${t}-bg)`, color: `var(--tint-${t}-fg)` }}
+    >
+      {initials(name || "?")}
+    </span>
+  );
+}

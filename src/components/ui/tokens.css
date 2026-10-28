@@ -54,6 +54,17 @@
   --chart-grid: #f0f0f2;
   --chart-area: rgba(0, 117, 222, 0.1);
 
+  /* Monogram tints (company marks): soft fill + readable ink */
+  --tint-1-bg: #e8f1fc; --tint-1-fg: #0b5cad;
+  --tint-2-bg: #eaf6ee; --tint-2-fg: #13703a;
+  --tint-3-bg: #fdf0e3; --tint-3-fg: #9a4a07;
+  --tint-4-bg: #f1ecfb; --tint-4-fg: #5b3aa8;
+  --tint-5-bg: #fbe9f0; --tint-5-fg: #a1305d;
+  --tint-6-bg: #e7f5f6; --tint-6-fg: #0e6b72;
+
+  /* Raised panels: lit top edge (only visible in dark) */
+  --edge: inset 0 1px 0 rgba(255, 255, 255, 0);
+
   /* Radius */
   --radius-xs: 4px;
   --radius-sm: 6px;
@@ -120,6 +131,15 @@
   --chart-grid: #1f1f23;
   --chart-area: rgba(50, 145, 255, 0.16);
 
+  --tint-1-bg: rgba(50, 145, 255, 0.16); --tint-1-fg: #8cc2ff;
+  --tint-2-bg: rgba(34, 197, 94, 0.14); --tint-2-fg: #7ee2a3;
+  --tint-3-bg: rgba(245, 158, 11, 0.14); --tint-3-fg: #fbc56b;
+  --tint-4-bg: rgba(167, 139, 250, 0.16); --tint-4-fg: #c4b5fd;
+  --tint-5-bg: rgba(244, 114, 182, 0.14); --tint-5-fg: #f9a8d4;
+  --tint-6-bg: rgba(45, 212, 191, 0.14); --tint-6-fg: #7fe3d6;
+
+  --edge: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
   --shadow-flyout: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-modal: 0 2px 4px rgba(0, 0, 0, 0.4), 0 24px 56px rgba(0, 0, 0, 0.65);
   --focus-ring: 0 0 0 2px var(--bg-surface), 0 0 0 4px rgba(50, 145, 255, 0.6);
@@ -152,6 +172,7 @@
 .ds-t-title-sm.ds-t-title-sm.ds-t-title-sm.ds-t-title-sm { font-size: 14px !important; line-height: 20px !important; font-weight: 600 !important; letter-spacing: normal !important; }
 .ds-t-title-md.ds-t-title-md.ds-t-title-md.ds-t-title-md { font-size: 16px !important; line-height: 24px !important; font-weight: 600 !important; letter-spacing: -0.01em !important; }
 .ds-t-title.ds-t-title.ds-t-title.ds-t-title { font-size: 20px !important; line-height: 28px !important; font-weight: 600 !important; letter-spacing: -0.02em !important; margin: 0; }
+.ds-t-hero.ds-t-hero.ds-t-hero.ds-t-hero { font-size: 44px !important; line-height: 48px !important; font-weight: 600 !important; letter-spacing: -0.045em !important; font-variant-numeric: tabular-nums; }
 .ds-t-display.ds-t-display.ds-t-display.ds-t-display { font-size: 34px !important; line-height: 40px !important; font-weight: 600 !important; letter-spacing: -0.035em !important; font-variant-numeric: tabular-nums; }
 .ds-t-kpi.ds-t-kpi.ds-t-kpi.ds-t-kpi { font-size: 24px !important; line-height: 32px !important; font-weight: 600 !important; letter-spacing: -0.02em !important; font-variant-numeric: tabular-nums; }
 .ds-t-mono.ds-t-mono.ds-t-mono.ds-t-mono { font-family: var(--font-mono) !important; font-size: 11px !important; line-height: 16px !important; font-weight: 500 !important; letter-spacing: normal !important; }
@@ -162,3 +183,10 @@
 @keyframes ds-pulse { 50% { opacity: 0.5; } }
 .ds-skeleton { animation: ds-pulse 1.6s ease-in-out infinite; background: var(--bg-active); }
 @media (prefers-reduced-motion: reduce) { .ds-skeleton { animation: none; } }
+
+/* Motion: quiet entrances for panes and floating bars */
+@keyframes ds-slide-in-right { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+@keyframes ds-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.ds-anim-pane { animation: ds-slide-in-right 180ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.ds-anim-rise { animation: ds-rise 200ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+@media (prefers-reduced-motion: reduce) { .ds-anim-pane, .ds-anim-rise { animation: none; } }

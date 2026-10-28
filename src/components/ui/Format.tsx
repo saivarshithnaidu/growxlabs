@@ -63,3 +63,38 @@ export function CurrencyAmount({ value, currency = "INR", compact, decimals, sig
     </span>
   );
 }
+
+/* ── Due dates ────────────────────────────────────────────────────── */
+
+export type DueTone = "danger" | "warning" | "neutral" | "muted";
+
+/** Human label + tone for a follow-up date: "Overdue 2d", "Today", "Tomorrow", "In 4d", "12 Nov". */
+export function dueInfo(value: string | number | Date | null | undefined, now = Date.now()): { label: string; tone: DueTone } {
+  if (value == null || value === "") return { label: "No follow-up", tone: "muted" };
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return { label: "—", tone: "muted" };
+  const startOf = (t: number) => { const x = new Date(t); x.setHours(0, 0, 0, 0); return x.getTime(); };
+  const days = Math.round((startOf(d.getTime()) - startOf(now)) / 86_400_000);
+  if (days < 0) return { label: `Overdue ${-days}d`, tone: "danger" };
+  if (days === 0) return { label: "Today", tone: "warning" };
+  if (days === 1) return { label: "Tomorrow", tone: "neutral" };
+  if (days < 7) return { label: `In ${days}d`, tone: "neutral" };
+  return { label: d.toLocaleDateString(undefined, { day: "numeric", month: "short" }), tone: "neutral" };
+}
+
+const dueTone: Record<DueTone, string> = {
+  danger: "bg-[var(--danger-tint)] text-[var(--danger)]",
+  warning: "bg-[var(--warning-tint)] text-[var(--warning)]",
+  neutral: "bg-[var(--bg-canvas)] text-[var(--text-secondary)]",
+  muted: "text-[var(--text-disabled)]",
+};
+
+/** Follow-up chip for tables and panels. */
+export function DueChip({ value, className }: { value: string | number | Date | null | undefined; className?: string }) {
+  const { label, tone } = dueInfo(value);
+  return (
+    <span title={value ? new Date(value).toLocaleString() : undefined} className={cn("ds-t-meta-strong ds-num inline-flex h-6 items-center whitespace-nowrap rounded-[var(--radius-sm)]", tone === "muted" ? "" : "px-2", dueTone[tone], className)}>
+      {label}
+    </span>
+  );
+}

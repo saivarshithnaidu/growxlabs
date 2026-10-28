@@ -1,19 +1,33 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AlertCircle, Check, Download, ExternalLink, FileText, Mail, MoreHorizontal, Phone, Plus, RefreshCw, SlidersHorizontal, Sparkles, Trash2, Upload, Users } from "lucide-react";
+import { AlertCircle, ArrowUpRight, Check, Download, FileText, Mail, MessageSquare, MoreHorizontal, Phone, Plus, RefreshCw, Rows3, Sparkles, Trash2, Upload, UserPlus, Users, X } from "lucide-react";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
-  Avatar, Badge, Button, Card, CardHeader, DataTable, DataTableColumn, Drawer, DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuSeparator, DropdownMenuTrigger, FilterChip, FilterSelect, IconButton, Input, KPIItem, KPIStrip, KeyValueList, Modal,
-  RelativeTime, SearchInput, Select, StatusBadge, Textarea, Tooltip, toast, type BadgeVariant,
+  Avatar, Badge, Button, Card, CardHeader, DataTable, DataTableColumn, Drawer, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DueChip, FilterChip, FilterSelect, IconButton, Input, Kbd, KeyValueList, Modal, Monogram,
+  RelativeTime, SearchInput, Select, StageBar, StatusBadge, Tabs, TabsList, TabsTrigger, Textarea, Tooltip, formatCurrency, toast, useMediaQuery, type BadgeVariant,
 } from "@/src/components/ui";
-import { EmptyState, FormField, ListPage, Toolbar } from "@/src/components/patterns";
+import { EmptyState, FormField, PageHeader, Toolbar } from "@/src/components/patterns";
 import { FileUpload, LeadScore } from "@/src/components/business";
 import { useAdminBreadcrumb } from "@/lib/admin-nav";
 
 const UNASSIGNED = "__unassigned";
 const STATUSES = ["new", "contacted", "engaged", "qualified", "disqualified"] as const;
+const STATUS_META: Record<string, { label: string; color: string; variant: BadgeVariant }> = {
+  new: { label: "New", color: "var(--chart-compare)", variant: "neutral" },
+  contacted: { label: "Contacted", color: "var(--chart-3)", variant: "info" },
+  engaged: { label: "Engaged", color: "var(--chart-2)", variant: "info" },
+  qualified: { label: "Qualified", color: "var(--chart-4)", variant: "success" },
+  disqualified: { label: "Lost", color: "var(--danger)", variant: "danger" },
+};
+const STATUS_BADGE_MAP = Object.fromEntries(Object.entries(STATUS_META).map(([k, v]) => [k, v.variant]));
+const OPTIONAL_COLUMNS = [
+  { id: "score", label: "Score" },
+  { id: "last_contacted_at", label: "Last activity" },
+  { id: "source", label: "Source" },
+];
 const SORT_OPTIONS = [
   { field: "created_at", label: "Date added" },
   { field: "score", label: "Lead score" },
@@ -437,28 +451,53 @@ export default function AdminCRMPage() {
     return { quality, variant, missingFields, risks, confidence };
   };
 
-  const scoreVariant = (score: number): BadgeVariant => (score >= 70 ? "success" : score >= 40 ? "warning" : "neutral");
+    const [visibleCols, setVisibleCols] = useState<Record<string, boolean>>({ score: false, last_contacted_at: false, source: false });
+  const wide = useMediaQuery("(min-width: 1280px)");
+
+  // Keyboard: J / K move through the visible rows, Esc closes the detail pane.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable || t.closest("[role=dialog],[role=menu],[role=listbox]"))) return;
+      const ids = paginatedLeads.map((l) => l.id).filter(Boolean) as string[];
+      if (e.key === "Escape" && activeLeadId) { setActiveLeadId(null); return; }
+      if (!ids.length || (e.key !== "j" && e.key !== "k")) return;
+      e.preventDefault();
+      const i = activeLeadId ? ids.indexOf(activeLeadId) : -1;
+      const next = e.key === "j" ? Math.min(ids.length - 1, i + 1) : Math.max(0, i - 1);
+      setActiveLeadId(ids[next]);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
+  const statusCounts = STATUSES.reduce<Record<string, number>>((acc, s) => ({ ...acc, [s]: leads.filter((l) => l.status === s).length }), {});
+  const isDefaultSort = sortField === "created_at" && sortOrder === "desc";
   const sortLabel = SORT_OPTIONS.find((o) => o.field === sortField)?.label;
+  const pickStatus = (s: string | null) => { setStatusFilter(s); setCurrentPage(1); };
+  const assignOwner = (lead: Lead, memberId: string) =>
+    handleUpdateLead(lead.id!, { assigned_to: memberId || undefined, assigned_employee_id: memberId || undefined } as any);
 
   const columns: DataTableColumn<Lead>[] = [
     {
       id: "business_name",
       header: "Company",
-      width: 300,
+      width: "30%",
       sortable: true,
       cell: (lead) => (
-        <span className="flex min-w-0 items-center gap-2.5">
-          <Avatar name={lead.business_name || "?"} size={24} />
+        <span className="flex min-w-0 items-center gap-3">
+          <Monogram name={lead.business_name || "?"} size={32} />
           <span className="flex min-w-0 flex-col">
             <span className="flex min-w-0 items-center gap-1">
               <span className="ds-t-body-strong truncate text-[var(--text-primary)]" title={lead.business_name}>{lead.business_name}</span>
               {lead.website_url && (
-                <a href={lead.website_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} aria-label={`Open ${lead.business_name} website`} className="ds-focus shrink-0 rounded-[var(--radius-xs)] text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-                  <ExternalLink size={12} strokeWidth={1.5} />
+                <a href={lead.website_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} aria-label={`Open ${lead.business_name} website`} className="ds-focus shrink-0 rounded-[var(--radius-xs)] text-[var(--text-muted)] opacity-0 transition-opacity hover:text-[var(--text-primary)] focus-visible:opacity-100 group-hover/row:opacity-100">
+                  <ArrowUpRight size={14} strokeWidth={1.5} />
                 </a>
               )}
             </span>
-            <span className="ds-t-meta truncate text-[var(--text-muted)]">{lead.city || "—"}</span>
+            <span className="ds-t-meta truncate text-[var(--text-muted)]">{lead.city || lead.source || "—"}</span>
           </span>
         </span>
       ),
@@ -473,232 +512,322 @@ export default function AdminCRMPage() {
         </span>
       ),
     },
-    {
-      id: "score",
-      header: "Score",
-      numeric: true,
-      sortable: true,
-      cell: (lead) => { const score = Math.round((lead.score || 0) * 10); return <Badge variant={scoreVariant(score)} noDot>{score}</Badge>; },
-    },
-    { id: "status", header: "Status", sortable: true, cell: (lead) => <StatusBadge domain="lead" status={lead.status} map={{ engaged: "info", contacted: "info" }} /> },
+    { id: "status", header: "Stage", sortable: true, cell: (lead) => <StatusBadge domain="lead" status={lead.status} map={STATUS_BADGE_MAP} label={STATUS_META[lead.status]?.label} /> },
     {
       id: "assigned_to_member",
       header: "Owner",
       sortable: true,
       cell: (lead) =>
         lead.assigned_to_member?.name ? (
-          <span className="flex min-w-0 items-center gap-2"><Avatar name={lead.assigned_to_member.name} size={20} /><span className="truncate text-[var(--text-primary)]">{lead.assigned_to_member.name}</span></span>
+          <span className="flex min-w-0 items-center gap-2"><Avatar name={lead.assigned_to_member.name} size={24} /><span className="truncate text-[var(--text-primary)]">{lead.assigned_to_member.name}</span></span>
         ) : <span className="text-[var(--text-disabled)]">Unassigned</span>,
     },
-    { id: "last_contacted_at", header: "Last activity", sortable: true, cell: (lead) => <RelativeTime value={lead.last_contacted_at} className="text-[var(--text-muted)]" /> },
-    { id: "next_followup_at", header: "Next follow-up", sortable: true, cell: (lead) => (lead.next_followup_at ? new Date(lead.next_followup_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : "—") },
-    { id: "source", header: "Source", sortable: true, cell: (lead) => <span className="capitalize" title={lead.source || "Organic"}>{lead.source || "Organic"}</span> },
+    { id: "next_followup_at", header: "Next step", sortable: true, cell: (lead) => <DueChip value={lead.next_followup_at} /> },
+    ...(visibleCols.score ? [{ id: "score", header: "Score", numeric: true, sortable: true, cell: (lead: Lead) => <LeadScore score={lead.score} tone="quality" /> }] : []),
+    ...(visibleCols.last_contacted_at ? [{ id: "last_contacted_at", header: "Last activity", sortable: true, cell: (lead: Lead) => <RelativeTime value={lead.last_contacted_at} className="text-[var(--text-muted)]" /> }] : []),
+    ...(visibleCols.source ? [{ id: "source", header: "Source", sortable: true, cell: (lead: Lead) => <span className="capitalize text-[var(--text-muted)]">{lead.source || "Organic"}</span> }] : []),
   ];
 
   const rowActions = (lead: Lead) => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <IconButton size={28} label={`Actions for ${lead.business_name}`} icon={<MoreHorizontal size={16} strokeWidth={1.5} />} />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem onSelect={() => setActiveLeadId(lead.id || null)}>View details</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => { window.location.href = `/admin/leads/${lead.id}`; }}>Edit</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => handleUpdateLead(lead.id!, { status: 'contacted' })}>Mark contacted</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => handleUpdateLead(lead.id!, { status: 'qualified' })}>Mark qualified</DropdownMenuItem>
-        {isAdminOrCoAdmin && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem danger icon={<Trash2 size={16} strokeWidth={1.5} />} onSelect={() => handleDeleteLead(lead.id!)}>Delete</DropdownMenuItem>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      {lead.phone && (
+        <Tooltip content="Call"><Button asChild iconOnly variant="ghost" size={28}><a href={`tel:${lead.phone}`} aria-label={`Call ${lead.business_name}`}><Phone size={14} strokeWidth={1.5} /></a></Button></Tooltip>
+      )}
+      {lead.email && (
+        <Tooltip content="Email"><Button asChild iconOnly variant="ghost" size={28}><a href={`mailto:${lead.email}`} aria-label={`Email ${lead.business_name}`}><Mail size={14} strokeWidth={1.5} /></a></Button></Tooltip>
+      )}
+      {isAdminOrCoAdmin && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild><IconButton size={28} label={`Assign ${lead.business_name}`} icon={<UserPlus size={14} strokeWidth={1.5} />} /></DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Assign owner</DropdownMenuLabel>
+            {teamMembers.map((m) => <DropdownMenuItem key={m.id} onSelect={() => assignOwner(lead, m.id)}>{m.name}</DropdownMenuItem>)}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <IconButton size={28} label={`More actions for ${lead.business_name}`} icon={<MoreHorizontal size={14} strokeWidth={1.5} />} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onSelect={() => setActiveLeadId(lead.id || null)}>View details</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => { window.location.href = `/admin/leads/${lead.id}`; }}>Edit</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => handleUpdateLead(lead.id!, { status: 'contacted' })}>Mark contacted</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => handleUpdateLead(lead.id!, { status: 'qualified' })}>Mark qualified</DropdownMenuItem>
+          {isAdminOrCoAdmin && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem danger icon={<Trash2 size={16} strokeWidth={1.5} />} onSelect={() => handleDeleteLead(lead.id!)}>Delete</DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 
   const ownerOptions = [{ value: UNASSIGNED, label: "Unassigned" }, ...teamMembers.map((m) => ({ value: m.id, label: m.name }))];
   const ai = selectedLead ? getAIAnalysis(selectedLead) : null;
+  const paneOpen = !!selectedLead && wide;
 
-  return (
-    <ListPage
-      header={{
-        title: "CRM Hub",
-        breadcrumb,
-        info: `${totalLeads} leads in the canonical pipeline.`,
-        actions: (
-          <>
-            <Button variant="ghost" iconLeft={<Upload size={16} strokeWidth={1.5} />} onClick={() => setShowImport(true)}>Import</Button>
-            {isAdminOrCoAdmin ? (
-              <Button variant="ghost" iconLeft={<Download size={16} strokeWidth={1.5} />} onClick={() => setShowExport(true)}>Export</Button>
-            ) : (
-              <Tooltip content="Admin permissions required"><span tabIndex={0}><Button variant="ghost" disabled iconLeft={<Download size={16} strokeWidth={1.5} />}>Export</Button></span></Tooltip>
-            )}
-            <Button variant="primary" iconLeft={<Plus size={16} strokeWidth={1.5} />} onClick={() => setShowAddLead(true)}>New lead</Button>
-          </>
-        ),
-      }}
-      kpis={
-        <KPIStrip>
-          <KPIItem label="Total leads" value={String(totalLeads)} hint="All accounts in pipeline" loading={loading} />
-          <KPIItem label="Qualified" value={String(qualifiedCount)} hint="Engaged + qualified" loading={loading} />
-          <KPIItem label="Pipeline value" value={`₹${(pipelineValue / 100000).toFixed(1)}L`} hint="Forecasted revenue" loading={loading} />
-          <KPIItem label="Conversion" value={`${conversionRate}%`} hint="Won vs. total" loading={loading} />
-          <KPIItem label="Follow-ups due" value={String(followupsDue)} hint="Action required" loading={loading} />
-        </KPIStrip>
-      }
-      toolbar={
-        <Toolbar
-          search={<SearchInput value={searchQuery} onValueChange={(v) => { setSearchQuery(v); setCurrentPage(1); }} placeholder="Search leads" />}
-          filters={
-            <>
-              <FilterSelect label="Status" value={statusFilter} options={STATUSES.map((s) => ({ value: s, label: s[0].toUpperCase() + s.slice(1) }))} onChange={(v) => { setStatusFilter(v); setCurrentPage(1); }} />
-              {isAdminOrCoAdmin && (
-                <FilterSelect label="Owner" allLabel="All owners" value={ownerFilter} options={teamMembers.map((m) => ({ value: m.id, label: m.name }))} onChange={(v) => { setOwnerFilter(v); setCurrentPage(1); }} />
-              )}
-              <FilterChip
-                label="Sort"
-                value={sortLabel ? `${sortLabel} ${sortOrder === "asc" ? "↑" : "↓"}` : undefined}
-                icon={<SlidersHorizontal size={14} strokeWidth={1.5} />}
-                menuContent={
-                  <DropdownMenuContent align="start" minWidth={176}>
-                    {SORT_OPTIONS.map((opt) => (
-                      <DropdownMenuItem key={opt.field} onSelect={() => { setSortField(opt.field); setSortOrder(curr => curr === "asc" ? "desc" : "asc"); }} icon={<Check size={16} strokeWidth={1.5} className={sortField === opt.field ? "text-[var(--accent)]" : "opacity-0"} />}>{opt.label}</DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                }
+  /* ── Detail panel parts (shared by the side pane and the narrow-screen drawer) ── */
+  const panelActions = selectedLead && (
+    <div className="flex flex-wrap gap-2">
+      {selectedLead.phone && <Button asChild size={28}><a href={`tel:${selectedLead.phone}`}><Phone size={14} strokeWidth={1.5} />Call</a></Button>}
+      {selectedLead.email && <Button asChild size={28}><a href={`mailto:${selectedLead.email}`}><Mail size={14} strokeWidth={1.5} />Email</a></Button>}
+      {selectedLead.phone && <Button asChild size={28}><a href={`https://wa.me/${selectedLead.phone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer"><MessageSquare size={14} strokeWidth={1.5} />WhatsApp</a></Button>}
+      <Button asChild size={28} variant="ghost"><Link href={`/admin/leads/${selectedLead.id}`}>Open record<ArrowUpRight size={14} strokeWidth={1.5} /></Link></Button>
+    </div>
+  );
+
+  const panelBody = selectedLead && ai && (
+    <div className="flex flex-col gap-3">
+      <Card>
+        <CardHeader title="Calculated quality" actions={<Badge variant={ai.variant}>{ai.quality}</Badge>} />
+        <LeadScore score={selectedLead.score} variant="meter" tone="quality" />
+      </Card>
+
+      <Card>
+        <div className="grid grid-cols-2 gap-3">
+          <FormField label="Stage">
+            {(f) => <Select {...f} value={selectedLead.status} onValueChange={(v) => handleUpdateLead(selectedLead.id!, { status: v as Lead["status"] })} options={STATUSES.map((s) => ({ value: s, label: STATUS_META[s].label }))} />}
+          </FormField>
+          <FormField label="Owner">
+            {(f) => (
+              <Select
+                {...f}
+                value={selectedLead.assigned_employee_id || selectedLead.assigned_to || UNASSIGNED}
+                disabled={!isAdminOrCoAdmin && Boolean(role)}
+                onValueChange={(raw) => {
+                  const val = raw === UNASSIGNED ? "" : raw;
+                  handleUpdateLead(selectedLead.id!, {
+                    assigned_to: val || undefined,
+                    assigned_employee_id: val || undefined
+                  } as any);
+                }}
+                options={ownerOptions}
               />
-            </>
-          }
-          actions={<IconButton variant="secondary" label="Refresh" icon={<RefreshCw size={16} strokeWidth={1.5} className={loading ? "animate-spin" : undefined} />} onClick={fetchLeads} />}
-        />
-      }
-    >
-      <DataTable
-        label="CRM leads"
-        columns={columns}
-        rows={paginatedLeads}
-        getRowId={(l) => l.id || l.business_name}
-        loading={loading}
-        skeletonRows={8}
-        onRowClick={(l) => setActiveLeadId(l.id || null)}
-        rowActions={rowActions}
-        selectable
-        selectedIds={selectedIds}
-        onSelectionChange={setSelectedIds}
-        bulkActions={() => isAdminOrCoAdmin && (
-          <>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild><Button size={28} loading={isSubmitting} iconLeft={<Users size={14} strokeWidth={1.5} />}>Assign owner</Button></DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                {teamMembers.map((member) => <DropdownMenuItem key={member.id} onSelect={() => handleBulkAssign(member.id)}>{member.name}</DropdownMenuItem>)}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button size={28} variant="danger" iconLeft={<Trash2 size={14} strokeWidth={1.5} />} onClick={handleBulkDelete}>Delete</Button>
-          </>
-        )}
-        sort={{ columnId: sortField, direction: sortOrder }}
-        onSortChange={(s) => { setSortField(s?.columnId || "created_at"); setSortOrder(s?.direction || "desc"); }}
-        density={density}
-        onDensityChange={setDensity}
-        showDensityToggle
-        pagination={{ page: currentPage, pageSize: itemsPerPage, total: sortedLeads.length, onPageChange: setCurrentPage, pageSizeOptions: [25, 50, 100], onPageSizeChange: (n) => { setItemsPerPage(n); setCurrentPage(1); } }}
-        emptyState={<EmptyState icon={<Users size={24} strokeWidth={1.5} />} title="No leads found" description="Try adjusting your filters or add a new lead." action={<Button variant="primary" onClick={() => setShowAddLead(true)}>New lead</Button>} />}
-      />
+            )}
+          </FormField>
+        </div>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="ds-t-meta text-[var(--text-muted)]">Next step</span>
+          <DueChip value={selectedLead.next_followup_at} />
+        </div>
+      </Card>
 
-      {/* Lead intelligence drawer */}
-      <Drawer
-        open={!!selectedLead}
-        onOpenChange={(open) => { if (!open) setActiveLeadId(null); }}
-        title={selectedLead?.business_name || "Lead"}
-        description="Lead intelligence profile"
-        footer={selectedLead && (
-          <>
-            <Button onClick={() => handleUpdateLead(selectedLead.id!, { status: 'disqualified' })}>Mark lost</Button>
-            <Button variant="primary" onClick={() => handleUpdateLead(selectedLead.id!, { status: 'qualified' })}>Mark won</Button>
-          </>
-        )}
-      >
-        {selectedLead && ai && (
-          <div className="flex flex-col gap-4">
-            <Card>
-              <CardHeader title="Calculated quality" />
-              <LeadScore score={selectedLead.score} variant="meter" tone="quality" />
-            </Card>
+      <Card>
+        <CardHeader title="Contact" />
+        <KeyValueList items={[
+          { label: "Person", value: selectedLead.contact_name || selectedLead.name || "—" },
+          { label: "Phone", value: selectedLead.phone ? <a href={`tel:${selectedLead.phone}`} className="ds-focus rounded-[var(--radius-xs)] text-[var(--accent)]">{selectedLead.phone}</a> : "—" },
+          { label: "Email", value: selectedLead.email ? <a href={`mailto:${selectedLead.email}`} className="ds-focus break-all rounded-[var(--radius-xs)] text-[var(--accent)]">{selectedLead.email}</a> : "—" },
+          { label: "Location", value: selectedLead.city || "—" },
+          { label: "Source", value: <span className="capitalize">{selectedLead.source || "Organic"}</span> },
+        ]} />
+      </Card>
 
-            <Card>
-              <div className="grid grid-cols-2 gap-3">
-                <FormField label="Status">
-                  {(f) => <Select {...f} value={selectedLead.status} onValueChange={(v) => handleUpdateLead(selectedLead.id!, { status: v as Lead["status"] })} options={STATUSES.map((s) => ({ value: s, label: s[0].toUpperCase() + s.slice(1) }))} />}
-                </FormField>
-                <FormField label="Assigned owner">
-                  {(f) => (
-                    <Select
-                      {...f}
-                      value={selectedLead.assigned_employee_id || selectedLead.assigned_to || UNASSIGNED}
-                      disabled={!isAdminOrCoAdmin && Boolean(role)}
-                      onValueChange={(raw) => {
-                        const val = raw === UNASSIGNED ? "" : raw;
-                        handleUpdateLead(selectedLead.id!, {
-                          assigned_to: val || undefined,
-                          assigned_employee_id: val || undefined
-                        } as any);
-                      }}
-                      options={ownerOptions}
-                    />
-                  )}
-                </FormField>
-              </div>
-            </Card>
-
-            <Card>
-              <CardHeader title="Contact" />
-              <KeyValueList items={[
-                { label: "Contact person", value: selectedLead.contact_name || selectedLead.name || "—" },
-                { label: "Phone", value: selectedLead.phone ? <a href={`tel:${selectedLead.phone}`} className="ds-focus inline-flex items-center gap-1 rounded-[var(--radius-xs)] text-[var(--accent)]"><Phone size={14} strokeWidth={1.5} />{selectedLead.phone}</a> : "—" },
-                { label: "Email", value: selectedLead.email ? <a href={`mailto:${selectedLead.email}`} className="ds-focus inline-flex items-center gap-1 rounded-[var(--radius-xs)] text-[var(--accent)]"><Mail size={14} strokeWidth={1.5} />{selectedLead.email}</a> : "—" },
-                { label: "Location", value: selectedLead.city || "—" },
-                { label: "Source", value: <span className="capitalize">{selectedLead.source || "Organic"}</span> },
-              ]} />
-            </Card>
-
-            <Card>
-              <CardHeader title={<span className="inline-flex items-center gap-1.5"><Sparkles size={16} strokeWidth={1.5} className="text-[var(--accent)]" />AI account insights</span>} actions={<Badge variant={ai.variant}>{ai.quality}</Badge>} />
-              <p className="ds-t-label mb-2 text-[var(--text-muted)]">Opportunity analysis</p>
-              <ul className="ds-t-body mb-4 flex list-disc flex-col gap-1 pl-5 text-[var(--text-secondary)]">
-                <li>Business profile calculated at {ai.confidence}% matching score index.</li>
-                {selectedLead.has_website && <li>Valid website domain detected with organic leads presence.</li>}
-                {selectedLead.deal_value && <li>Pipeline value is estimated at ₹{Number(selectedLead.deal_value).toLocaleString()}.</li>}
-                <li>Recommended target outreach is via direct phone / LinkedIn.</li>
-              </ul>
-              {ai.missingFields.length > 0 && (
-                <div className="mb-4">
-                  <p className="ds-t-label mb-2 inline-flex items-center gap-1 text-[var(--warning)]"><AlertCircle size={14} strokeWidth={1.5} />Missing information</p>
-                  <div className="flex flex-wrap gap-1">{ai.missingFields.map((f) => <Badge key={f} variant="neutral" noDot>{f}</Badge>)}</div>
-                </div>
-              )}
-              {ai.risks.length > 0 && (
-                <div>
-                  <p className="ds-t-label mb-2 text-[var(--warning)]">Risk indicators</p>
-                  <div className="flex flex-wrap gap-1">{ai.risks.map((r) => <Badge key={r} variant="danger">{r}</Badge>)}</div>
-                </div>
-              )}
-            </Card>
-
-            <Card>
-              <CardHeader title="Account notes" />
-              <div className="flex flex-col gap-2">
-                <Textarea aria-label="New timeline note" placeholder="Add a new timeline note…" value={noteInput} onChange={(e) => setNoteInput(e.target.value)} rows={3} />
-                <Button variant="primary" onClick={handleAddNote}>Save note entry</Button>
-              </div>
-              {selectedLead.notes && (
-                <ul className="mt-3 flex max-h-40 flex-col gap-2 overflow-y-auto border-t border-[var(--border)] pt-3">
-                  {selectedLead.notes.split("\n").filter(Boolean).reverse().map((note, idx) => (
-                    <li key={idx} className="ds-t-body rounded-[var(--radius-sm)] bg-[var(--bg-canvas)] p-2 text-[var(--text-primary)]">{note}</li>
-                  ))}
-                </ul>
-              )}
-            </Card>
+      <Card>
+        <CardHeader title={<span className="inline-flex items-center gap-1.5"><Sparkles size={16} strokeWidth={1.5} className="text-[var(--accent)]" />AI insights</span>} actions={<span className="ds-t-meta ds-num text-[var(--text-muted)]">{ai.confidence}% match</span>} />
+        <ul className="ds-t-body flex list-disc flex-col gap-1 pl-5 text-[var(--text-secondary)]">
+          {selectedLead.has_website && <li>Valid website domain detected with organic leads presence.</li>}
+          {selectedLead.deal_value && <li>Pipeline value is estimated at ₹{Number(selectedLead.deal_value).toLocaleString()}.</li>}
+          <li>Recommended target outreach is via direct phone / LinkedIn.</li>
+        </ul>
+        {ai.missingFields.length > 0 && (
+          <div className="mt-4">
+            <p className="ds-t-meta-strong mb-2 inline-flex items-center gap-1 text-[var(--warning)]"><AlertCircle size={14} strokeWidth={1.5} />Missing</p>
+            <div className="flex flex-wrap gap-1">{ai.missingFields.map((f) => <Badge key={f} variant="neutral" noDot>{f}</Badge>)}</div>
           </div>
         )}
+        {ai.risks.length > 0 && (
+          <div className="mt-3">
+            <p className="ds-t-meta-strong mb-2 text-[var(--warning)]">Risks</p>
+            <div className="flex flex-wrap gap-1">{ai.risks.map((r) => <Badge key={r} variant="danger">{r}</Badge>)}</div>
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <CardHeader title="Notes" />
+        <div className="flex flex-col gap-2">
+          <Textarea aria-label="New timeline note" placeholder="Add a note…" value={noteInput} onChange={(e) => setNoteInput(e.target.value)} rows={3} />
+          <div className="flex justify-end"><Button size={28} variant="primary" onClick={handleAddNote}>Save note</Button></div>
+        </div>
+        {selectedLead.notes && (
+          <ul className="mt-3 flex max-h-48 flex-col gap-2 overflow-y-auto border-t border-[var(--border)] pt-3">
+            {selectedLead.notes.split("\n").filter(Boolean).reverse().map((note, idx) => (
+              <li key={idx} className="ds-t-body rounded-[var(--radius-sm)] bg-[var(--bg-surface)] p-2 text-[var(--text-primary)]">{note}</li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </div>
+  );
+
+  const panelFooter = selectedLead && (
+    <>
+      <Button onClick={() => handleUpdateLead(selectedLead.id!, { status: 'disqualified' })}>Mark lost</Button>
+      <Button variant="primary" onClick={() => handleUpdateLead(selectedLead.id!, { status: 'qualified' })}>Mark won</Button>
+    </>
+  );
+
+  return (
+    <div className="mx-auto max-w-[1440px]">
+      <PageHeader
+        title="CRM Hub"
+        breadcrumb={breadcrumb}
+        info="The canonical lead pipeline. Click a row (or press J / K) to open a lead beside the list."
+        actions={
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild><IconButton variant="secondary" label="More actions" icon={<MoreHorizontal size={16} strokeWidth={1.5} />} /></DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem icon={<Upload size={16} strokeWidth={1.5} />} onSelect={() => setShowImport(true)}>Import CSV</DropdownMenuItem>
+                <DropdownMenuItem icon={<Download size={16} strokeWidth={1.5} />} disabled={!isAdminOrCoAdmin} onSelect={() => setShowExport(true)}>{isAdminOrCoAdmin ? "Export" : "Export (admins only)"}</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem icon={<RefreshCw size={16} strokeWidth={1.5} />} onSelect={fetchLeads}>Refresh</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button variant="primary" iconLeft={<Plus size={16} strokeWidth={1.5} />} onClick={() => setShowAddLead(true)}>New lead</Button>
+          </>
+        }
+      />
+
+      {/* Pipeline hero */}
+      <section aria-label="Pipeline summary" className="mb-8 mt-6 grid items-end gap-8 lg:grid-cols-[auto_minmax(0,1fr)]">
+        <div>
+          <p className="ds-t-meta-strong text-[var(--text-muted)]">Pipeline value</p>
+          <p className="ds-t-hero mt-1 text-[var(--text-primary)]">{loading ? "—" : formatCurrency(pipelineValue, { compact: true })}</p>
+          <p className="ds-t-meta ds-num mt-2 text-[var(--text-muted)]">
+            <span className="text-[var(--text-primary)]">{totalLeads}</span> leads · <span className="text-[var(--text-primary)]">{conversionRate}%</span> conversion · <span className="text-[var(--text-primary)]">{followupsDue}</span> need follow-up
+          </p>
+        </div>
+        <StageBar
+          label="Leads by stage"
+          active={statusFilter}
+          onSelect={(key) => pickStatus(statusFilter === key ? null : key)}
+          stages={STATUSES.map((s) => ({ key: s, label: STATUS_META[s].label, count: statusCounts[s], color: STATUS_META[s].color }))}
+        />
+      </section>
+
+      <div className={paneOpen ? "grid grid-cols-[minmax(0,1fr)_400px] gap-6" : undefined}>
+        <div className="min-w-0">
+          {/* Stage views */}
+          <Tabs value={statusFilter ?? "all"} onValueChange={(v) => pickStatus(v === "all" ? null : v)}>
+            <TabsList aria-label="Lead stages" className="mb-4">
+              <TabsTrigger value="all" count={totalLeads}>All</TabsTrigger>
+              {STATUSES.map((s) => <TabsTrigger key={s} value={s} count={statusCounts[s]}>{STATUS_META[s].label}</TabsTrigger>)}
+            </TabsList>
+          </Tabs>
+
+          <Toolbar
+            search={<SearchInput value={searchQuery} onValueChange={(v) => { setSearchQuery(v); setCurrentPage(1); }} placeholder="Search leads" shortcut="/" />}
+            filters={isAdminOrCoAdmin ? <FilterSelect label="Owner" allLabel="All owners" value={ownerFilter} options={teamMembers.map((m) => ({ value: m.id, label: m.name }))} onChange={(v) => { setOwnerFilter(v); setCurrentPage(1); }} /> : undefined}
+            actions={
+              <>
+                <FilterChip
+                  label={isDefaultSort ? "Newest first" : "Sort"}
+                  value={isDefaultSort ? undefined : `${sortLabel} ${sortOrder === "asc" ? "↑" : "↓"}`}
+                  onRemove={isDefaultSort ? undefined : () => { setSortField("created_at"); setSortOrder("desc"); }}
+                  menuContent={
+                    <DropdownMenuContent align="end" minWidth={176}>
+                      {SORT_OPTIONS.map((opt) => (
+                        <DropdownMenuItem key={opt.field} onSelect={() => { setSortField(opt.field); setSortOrder(curr => curr === "asc" ? "desc" : "asc"); }} icon={<Check size={16} strokeWidth={1.5} className={sortField === opt.field ? "text-[var(--accent)]" : "opacity-0"} />}>{opt.label}</DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  }
+                />
+                <FilterChip
+                  label="View"
+                  icon={<Rows3 size={14} strokeWidth={1.5} />}
+                  menuContent={
+                    <DropdownMenuContent align="end" minWidth={192}>
+                      <DropdownMenuLabel>Density</DropdownMenuLabel>
+                      <DropdownMenuCheckboxItem checked={density === "comfortable"} onCheckedChange={() => setDensity("comfortable")}>Comfortable</DropdownMenuCheckboxItem>
+                      <DropdownMenuCheckboxItem checked={density === "compact"} onCheckedChange={() => setDensity("compact")}>Compact</DropdownMenuCheckboxItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Columns</DropdownMenuLabel>
+                      {OPTIONAL_COLUMNS.map((c) => (
+                        <DropdownMenuCheckboxItem key={c.id} checked={!!visibleCols[c.id]} onCheckedChange={(v) => setVisibleCols((p) => ({ ...p, [c.id]: v }))}>{c.label}</DropdownMenuCheckboxItem>
+                      ))}
+                    </DropdownMenuContent>
+                  }
+                />
+              </>
+            }
+          />
+
+          <DataTable
+            label="CRM leads"
+            columns={columns}
+            rows={paginatedLeads}
+            getRowId={(l) => l.id || l.business_name}
+            loading={loading}
+            skeletonRows={8}
+            onRowClick={(l) => setActiveLeadId(activeLeadId === l.id ? null : l.id || null)}
+            activeRowId={activeLeadId}
+            rowActions={rowActions}
+            selectable
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+            bulkBarPlacement="floating"
+            bulkActions={() => isAdminOrCoAdmin && (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild><Button size={28} loading={isSubmitting} iconLeft={<Users size={14} strokeWidth={1.5} />}>Assign</Button></DropdownMenuTrigger>
+                  <DropdownMenuContent align="center" side="top">
+                    {teamMembers.map((member) => <DropdownMenuItem key={member.id} onSelect={() => handleBulkAssign(member.id)}>{member.name}</DropdownMenuItem>)}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button size={28} variant="danger" iconLeft={<Trash2 size={14} strokeWidth={1.5} />} onClick={handleBulkDelete}>Delete</Button>
+              </>
+            )}
+            sort={{ columnId: sortField, direction: sortOrder }}
+            onSortChange={(s) => { setSortField(s?.columnId || "created_at"); setSortOrder(s?.direction || "desc"); }}
+            density={density}
+            onDensityChange={setDensity}
+            pagination={{ page: currentPage, pageSize: itemsPerPage, total: sortedLeads.length, onPageChange: setCurrentPage, pageSizeOptions: [25, 50, 100], onPageSizeChange: (n) => { setItemsPerPage(n); setCurrentPage(1); } }}
+            emptyState={<EmptyState icon={<Users size={24} strokeWidth={1.5} />} title="No leads here" description="Try another stage, owner or search." action={<Button variant="primary" onClick={() => setShowAddLead(true)}>New lead</Button>} />}
+          />
+        </div>
+
+        {/* Side detail pane (wide screens) */}
+        {paneOpen && selectedLead && (
+          <aside
+            key={selectedLead.id}
+            aria-label={`${selectedLead.business_name} details`}
+            className="ds-anim-pane sticky top-0 flex max-h-[calc(100vh-48px)] flex-col self-start overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--shadow-flyout),var(--edge)]"
+          >
+            <div className="flex items-start gap-3 border-b border-[var(--border)] p-4">
+              <Monogram name={selectedLead.business_name || "?"} size={40} />
+              <div className="min-w-0 flex-1">
+                <h2 className="ds-t-title-md truncate text-[var(--text-primary)]">{selectedLead.business_name}</h2>
+                <div className="mt-1 flex items-center gap-2">
+                  <StatusBadge domain="lead" status={selectedLead.status} map={STATUS_BADGE_MAP} label={STATUS_META[selectedLead.status]?.label} />
+                  {selectedLead.city && <span className="ds-t-meta truncate text-[var(--text-muted)]">{selectedLead.city}</span>}
+                </div>
+              </div>
+              <IconButton size={28} label="Close (Esc)" icon={<X size={16} strokeWidth={1.5} />} onClick={() => setActiveLeadId(null)} />
+            </div>
+            <div className="border-b border-[var(--border)] px-4 py-3">{panelActions}</div>
+            <div className="flex-1 overflow-y-auto p-3">{panelBody}</div>
+            <div className="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3">
+              <span className="ds-t-meta mr-auto inline-flex items-center gap-1 text-[var(--text-muted)]"><Kbd>J</Kbd><Kbd>K</Kbd> to move</span>
+              {panelFooter}
+            </div>
+          </aside>
+        )}
+      </div>
+
+      {/* Narrow screens: same details in a drawer */}
+      <Drawer
+        open={!!selectedLead && !wide}
+        onOpenChange={(open) => { if (!open) setActiveLeadId(null); }}
+        title={selectedLead?.business_name || "Lead"}
+        description={selectedLead?.city || "Lead details"}
+        footer={panelFooter}
+      >
+        <div className="flex flex-col gap-3">{panelActions}{panelBody}</div>
       </Drawer>
 
       {/* Export */}
@@ -768,6 +897,6 @@ export default function AdminCRMPage() {
           </div>
         </form>
       </Modal>
-    </ListPage>
+    </div>
   );
 }

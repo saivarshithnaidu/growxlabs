@@ -57,6 +57,12 @@ export interface DataTableProps<T> {
 
   /** Max height of the scroll area; the header sticks within it. */
   maxHeight?: number | string;
+  /** Row shown as "open" (e.g. its detail pane is visible). */
+  activeRowId?: string | null;
+  /** "inline" (default) puts bulk actions above the table; "floating" docks a bar at the bottom of the screen. */
+  bulkBarPlacement?: "inline" | "floating";
+  /** Hide the header row band that holds the density toggle (use when density lives elsewhere). */
+  hideToolbar?: boolean;
   pagination?: { page: number; pageSize: number; total: number; onPageChange: (page: number) => void; pageSizeOptions?: number[]; onPageSizeChange?: (size: number) => void };
   skeletonRows?: number;
 }
@@ -76,7 +82,7 @@ export function DataTable<T>({
   columns, rows, getRowId, label, loading = false, emptyState, onRowClick, rowActions,
   selectable = false, selectedIds, onSelectionChange, bulkActions,
   sort: sortProp, onSortChange, density: densityProp, onDensityChange, showDensityToggle = false,
-  maxHeight, pagination, skeletonRows = 6,
+  maxHeight, pagination, skeletonRows = 6, activeRowId, bulkBarPlacement = "inline", hideToolbar = false,
 }: DataTableProps<T>) {
   const [innerSort, setInnerSort] = useState<SortState>(null);
   const [innerDensity, setInnerDensity] = useState<Density>("comfortable");
@@ -110,11 +116,15 @@ export function DataTable<T>({
 
   const colCount = columns.length + (selectable ? 1 : 0) + (rowActions ? 1 : 0);
   const cellPad = "px-3 first:pl-4 last:pr-4";
-  const showBar = selectable && selected.length > 0;
+  const showBar = selectable && selected.length > 0 && bulkBarPlacement === "inline";
+  const showFloating = selectable && selected.length > 0 && bulkBarPlacement === "floating";
 
   return (
     <div className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-surface)]">
-      {(showBar || showDensityToggle) && (
+      {showFloating && (
+        <BulkBar count={selected.length} onClear={() => setSelected([])}>{bulkActions?.(selected)}</BulkBar>
+      )}
+      {!hideToolbar && (showBar || showDensityToggle) && (
         <div className={cn("flex h-11 items-center gap-2 border-b border-[var(--border)] px-4", showBar && "bg-[var(--accent-tint)]")}>
           {showBar ? (
             <>
@@ -194,7 +204,7 @@ export function DataTable<T>({
                   className={cn(
                     "group/row border-b border-[var(--border)] last:border-b-0 transition-colors",
                     rowHeight[density],
-                    isSelected ? "bg-[var(--accent-tint)]" : "hover:bg-[var(--bg-hover)] focus-within:bg-[var(--bg-hover)]",
+                    isSelected ? "bg-[var(--accent-tint)]" : activeRowId === id ? "bg-[var(--bg-active)]" : "hover:bg-[var(--bg-hover)] focus-within:bg-[var(--bg-hover)]",
                     onRowClick && "cursor-pointer",
                   )}
                 >
@@ -225,6 +235,20 @@ export function DataTable<T>({
           <Pagination {...pagination} />
         </div>
       )}
+    </div>
+  );
+}
+
+/** Floating selection bar, docked bottom-center. Actions go in children. */
+export function BulkBar({ count, onClear, children }: { count: number; onClear: () => void; children?: ReactNode }) {
+  return (
+    <div role="region" aria-label="Bulk actions" className="ds-portal ds-anim-rise fixed bottom-6 left-1/2 z-[300] flex -translate-x-1/2 items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-surface)] py-2 pl-4 pr-2 shadow-[var(--shadow-modal),var(--edge)]">
+      <span className="ds-t-body-strong ds-num whitespace-nowrap text-[var(--text-primary)]" aria-live="polite">{count} selected</span>
+      <span aria-hidden className="h-5 w-px bg-[var(--border)]" />
+      <div className="flex items-center gap-2">{children}</div>
+      <button type="button" onClick={onClear} aria-label="Clear selection" className="ds-focus flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]">
+        <X size={14} strokeWidth={1.5} />
+      </button>
     </div>
   );
 }
