@@ -1,7 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FileText, Loader2, Plus, RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { FileText, Plus, RefreshCw } from "lucide-react";
+import { Alert, Button, Card, DataTable, DataTableColumn, FilterChip, RelativeTime, Select, StatusBadge } from "@/src/components/ui";
+import { EmptyState, FormField, ListPage, Toolbar } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
 
 type Proposal = {
   id: string;
@@ -45,11 +49,30 @@ function label(status: string) {
   return statusLabels[status] ?? status.replaceAll("_", " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
-}
+const columns: DataTableColumn<Proposal>[] = [
+  {
+    id: "proposal_number",
+    header: "Proposal",
+    sortValue: (p) => p.proposal_number,
+    cell: (p) => <Link href={`/admin/proposals/${p.id}`} className="ds-focus ds-t-body-strong rounded-[var(--radius-xs)] text-[var(--text-primary)] hover:text-[var(--accent)]">{p.proposal_number}</Link>,
+  },
+  { id: "status", header: "Status", sortValue: (p) => p.status, cell: (p) => <StatusBadge domain="proposal" status={p.status} label={label(p.status)} /> },
+  { id: "version", header: "Version", numeric: true, sortValue: (p) => p.version, cell: (p) => `v${p.version}` },
+  {
+    id: "client",
+    header: "Client / deal",
+    cell: (p) => (
+      <span className="flex flex-col">
+        <span className="ds-t-meta truncate text-[var(--text-secondary)]">{p.client_id || "—"}</span>
+        <span className="ds-t-meta truncate text-[var(--text-muted)]">{p.deal_id || "No linked deal"}</span>
+      </span>
+    ),
+  },
+  { id: "updated_at", header: "Last updated", sortValue: (p) => p.updated_at, cell: (p) => <RelativeTime value={p.updated_at} className="ds-t-meta text-[var(--text-muted)]" /> },
+];
 
 export default function AdminProposalsPage() {
+  const breadcrumb = useAdminBreadcrumb();
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [scopes, setScopes] = useState<Scope[]>([]);
   const [status, setStatus] = useState("all");
@@ -110,62 +133,63 @@ export default function AdminProposalsPage() {
     }
   }
 
-  return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">Consulting workflow</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Commercial proposals</h1>
-          <p className="mt-2 text-sm text-slate-500">Create and manage client-ready proposals generated from approved scopes of work.</p>
-        </div>
-        <div className="flex gap-2">
-          <button type="button" onClick={() => void load()} className="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50">
-            <RefreshCw size={15} /> Refresh
-          </button>
-          <button type="button" onClick={() => setShowCreate((value) => !value)} className="inline-flex h-10 items-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700">
-            <Plus size={16} /> New proposal
-          </button>
-        </div>
-      </div>
+  const statuses = Array.from(new Set(proposals.map((proposal) => proposal.status)));
 
+  return (
+    <ListPage
+      header={{
+        title: "Commercial proposals",
+        breadcrumb,
+        info: "Create and manage client-ready proposals generated from approved scopes of work.",
+        actions: (
+          <>
+            <Button iconLeft={<RefreshCw size={16} strokeWidth={1.5} />} onClick={() => void load()}>Refresh</Button>
+            <Button variant="primary" iconLeft={<Plus size={16} strokeWidth={1.5} />} aria-expanded={showCreate} onClick={() => setShowCreate((value) => !value)}>New proposal</Button>
+          </>
+        ),
+      }}
+      toolbar={
+        <Toolbar
+          filters={
+            <>
+              <FilterChip label="All proposals" selected={status === "all"} onClick={() => setStatus("all")} />
+              {statuses.map((value) => <FilterChip key={value} label={label(value)} selected={status === value} onClick={() => setStatus(value)} />)}
+            </>
+          }
+        />
+      }
+    >
       {showCreate && (
-        <form onSubmit={createProposal} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            <label className="flex-1 text-sm font-medium text-slate-700">
-              Approved scope of work
-              <select value={scopeId} onChange={(event) => setScopeId(event.target.value)} required className="mt-2 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900">
-                <option value="">Select a scope...</option>
-                {scopes.filter((scope) => scope.status !== "archived").map((scope) => (
-                  <option key={scope.id} value={scope.id}>{scope.scope_number} · {label(scope.status)}</option>
-                ))}
-              </select>
-            </label>
-            <button disabled={creating || !scopeId} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 text-sm font-semibold text-white disabled:opacity-50">
-              {creating && <Loader2 size={15} className="animate-spin" />} Create draft
-            </button>
-          </div>
-          <p className="mt-3 text-xs text-slate-500">A proposal can only be created after its Scope of Work has reached an approved workflow status.</p>
-        </form>
+        <Card as="section" className="mb-4">
+          <form onSubmit={createProposal} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div className="flex-1">
+              <FormField label="Approved scope of work" required hint="A proposal can only be created after its Scope of Work has reached an approved workflow status.">
+                {(f) => (
+                  <Select
+                    {...f}
+                    value={scopeId || undefined}
+                    onValueChange={setScopeId}
+                    placeholder="Select a scope…"
+                    options={scopes.filter((scope) => scope.status !== "archived").map((scope) => ({ value: scope.id, label: `${scope.scope_number} · ${label(scope.status)}` }))}
+                  />
+                )}
+              </FormField>
+            </div>
+            <Button type="submit" variant="primary" loading={creating} disabled={!scopeId} className="sm:mb-6">Create draft</Button>
+          </form>
+        </Card>
       )}
 
-      {error && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
+      {error && <Alert variant="danger" className="mb-4">{error}</Alert>}
 
-      <div className="flex flex-wrap gap-2">
-        {["all", ...Array.from(new Set(proposals.map((proposal) => proposal.status)))].map((value) => (
-          <button key={value} type="button" onClick={() => setStatus(value)} className={`rounded-full px-3 py-1.5 text-xs font-semibold ${status === value ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
-            {value === "all" ? "All proposals" : label(value)}
-          </button>
-        ))}
-      </div>
-
-      {!loading && filtered.length > 0 && <div className="flex flex-wrap gap-2">{filtered.map((proposal)=><a key={proposal.id} href={`/admin/proposals/${proposal.id}`} className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-800">Open {proposal.proposal_number}</a>)}</div>}
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        {loading ? <div className="flex h-56 items-center justify-center text-slate-500"><Loader2 className="animate-spin" /></div> : filtered.length === 0 ? (
-          <div className="flex h-56 flex-col items-center justify-center gap-2 text-center"><FileText className="text-slate-300" size={30} /><p className="font-medium text-slate-700">No commercial proposals found</p><p className="text-sm text-slate-500">Create one from an approved Scope of Work.</p></div>
-        ) : (
-          <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500"><tr><th className="px-5 py-3">Proposal</th><th className="px-5 py-3">Status</th><th className="px-5 py-3">Version</th><th className="px-5 py-3">Client / deal</th><th className="px-5 py-3">Last updated</th></tr></thead><tbody className="divide-y divide-slate-100">{filtered.map((proposal) => <tr key={proposal.id} className="hover:bg-slate-50"><td className="px-5 py-4 font-semibold text-slate-900">{proposal.proposal_number}</td><td className="px-5 py-4"><span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">{label(proposal.status)}</span></td><td className="px-5 py-4 text-slate-600">v{proposal.version}</td><td className="px-5 py-4 text-xs text-slate-500">{proposal.client_id || "—"}<br />{proposal.deal_id || "No linked deal"}</td><td className="px-5 py-4 text-slate-600">{formatDate(proposal.updated_at)}</td></tr>)}</tbody></table></div>
-        )}
-      </div>
-    </div>
+      <DataTable
+        label="Commercial proposals"
+        columns={columns}
+        rows={filtered}
+        getRowId={(p) => p.id}
+        loading={loading}
+        emptyState={<EmptyState icon={<FileText size={24} strokeWidth={1.5} />} title="No commercial proposals found" description="Create one from an approved Scope of Work." />}
+      />
+    </ListPage>
   );
 }

@@ -1,0 +1,104 @@
+/*
+ * GrowX design tokens. Values come from DESIGN-notion.md (front matter + Elevation table).
+ * Values marked "derived" are not in the doc and were chosen to fit it.
+ *
+ * `.ds-shell` is the app shell root; `.ds-portal` goes on every portaled surface
+ * (modal, drawer, menu, tooltip, popover, toast) because those render outside the shell.
+ */
+.ds-shell,
+.ds-portal {
+  /* Surfaces */
+  --bg-surface: #ffffff;          /* colors.surface */
+  --bg-canvas: #f6f5f4;           /* colors.canvas-soft */
+  --bg-hover: #f6f5f4;            /* colors.canvas-soft */
+  --bg-active: #eae9e8;           /* derived */
+  --bg-inverse: #000000;          /* colors.ink */
+  --overlay: rgba(0, 0, 0, 0.2);  /* derived */
+
+  /* Lines */
+  --border: #e6e6e6;              /* colors.hairline */
+  --border-strong: #dddddd;       /* text-input border rgb(221,221,221) */
+
+  /* Text */
+  --text-primary: #000000;        /* colors.ink */
+  --text-secondary: #31302e;      /* colors.ink-secondary */
+  --text-muted: #615d59;          /* colors.ink-muted */
+  --text-disabled: #a39e98;       /* colors.ink-faint */
+  --text-inverse: #ffffff;        /* colors.on-primary */
+
+  /* Accent */
+  --accent: #0075de;              /* colors.primary */
+  --accent-active: #005bab;       /* colors.primary-active */
+  --accent-tint: rgba(0, 117, 222, 0.08);  /* derived */
+  --on-accent: #ffffff;           /* colors.on-primary */
+
+  /* Status. The doc defines no semantic ramp: green/orange come from the sticker palette, red is derived. */
+  --info: var(--accent);
+  --info-tint: var(--accent-tint);
+  --success: #1aae39;             /* colors.accent-green */
+  --success-tint: rgba(26, 174, 57, 0.1);   /* derived */
+  --warning: #dd5b00;             /* colors.accent-orange */
+  --warning-tint: rgba(221, 91, 0, 0.1);    /* derived */
+  --danger: #dc2626;              /* derived (matches --destructive in globals.css) */
+  --danger-active: #b91c1c;       /* derived */
+  --danger-tint: rgba(220, 38, 38, 0.08);   /* derived */
+
+  /* Radius: rounded.* (sm is 6px per the shell spec; the doc has 5px) */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Elevation */
+  --shadow-flyout: rgba(0,0,0,0.01) 0 0.175px 1.041px, rgba(0,0,0,0.02) 0 0.8px 2.925px, rgba(0,0,0,0.027) 0 2.025px 7.847px, rgba(0,0,0,0.04) 0 4px 18px;
+  --shadow-modal: rgba(0,0,0,0.01) 0 0.175px 1.041px, rgba(0,0,0,0.02) 0 0.8px 2.925px, rgba(0,0,0,0.027) 0 2.025px 7.847px, rgba(0,0,0,0.04) 0 4px 18px, rgba(0,0,0,0.05) 0 23px 52px;
+  --focus-ring: 0 0 0 2px var(--bg-surface), 0 0 0 4px rgba(0, 117, 222, 0.45);
+
+  /* Type */
+  --font-ui: var(--font-admin-geist, "Inter"), "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Motion */
+  --motion-fast: 150ms;
+
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  /* The tokens are light-only; keep native controls (date pickers, scrollbars) light under html.dark. */
+  color-scheme: light;
+}
+
+/* globals.css paints every [role="dialog"] dark under html.dark (!important). Library overlays and
+   dialogs inside the shell use light tokens, so restore their surface (higher specificity wins). */
+.dark .ds-portal.ds-portal[role="dialog"],
+.dark .ds-shell [role="dialog"][role="dialog"] {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+
+/* Focus ring shared by all interactive primitives. */
+.ds-focus:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/*
+ * Type scale. Each class is repeated 4x so it outranks the legacy admin overrides
+ * in app/admin/admin-typography.css (those use !important inside @scope).
+ */
+.ds-t-label.ds-t-label.ds-t-label.ds-t-label { font-size: 11px !important; line-height: 16px !important; font-weight: 500 !important; text-transform: uppercase !important; letter-spacing: 0.04em !important; }
+.ds-t-meta.ds-t-meta.ds-t-meta.ds-t-meta { font-size: 12px !important; line-height: 16px !important; font-weight: 400 !important; letter-spacing: normal !important; }
+.ds-t-meta-strong.ds-t-meta-strong.ds-t-meta-strong.ds-t-meta-strong { font-size: 12px !important; line-height: 16px !important; font-weight: 500 !important; letter-spacing: normal !important; }
+.ds-t-body.ds-t-body.ds-t-body.ds-t-body { font-size: 13px !important; line-height: 20px !important; font-weight: 400 !important; letter-spacing: normal !important; }
+.ds-t-body-strong.ds-t-body-strong.ds-t-body-strong.ds-t-body-strong { font-size: 13px !important; line-height: 20px !important; font-weight: 500 !important; letter-spacing: normal !important; }
+.ds-t-body-bold.ds-t-body-bold.ds-t-body-bold.ds-t-body-bold { font-size: 13px !important; line-height: 20px !important; font-weight: 600 !important; letter-spacing: normal !important; }
+.ds-t-title-sm.ds-t-title-sm.ds-t-title-sm.ds-t-title-sm { font-size: 14px !important; line-height: 20px !important; font-weight: 600 !important; letter-spacing: normal !important; }
+.ds-t-title-md.ds-t-title-md.ds-t-title-md.ds-t-title-md { font-size: 16px !important; line-height: 24px !important; font-weight: 600 !important; letter-spacing: -0.01em !important; }
+.ds-t-title.ds-t-title.ds-t-title.ds-t-title { font-size: 20px !important; line-height: 28px !important; font-weight: 600 !important; letter-spacing: -0.02em !important; margin: 0; }
+.ds-t-kpi.ds-t-kpi.ds-t-kpi.ds-t-kpi { font-size: 24px !important; line-height: 32px !important; font-weight: 600 !important; letter-spacing: -0.02em !important; font-variant-numeric: tabular-nums; }
+.ds-t-mono.ds-t-mono.ds-t-mono.ds-t-mono { font-family: var(--font-mono) !important; font-size: 11px !important; line-height: 16px !important; font-weight: 500 !important; letter-spacing: normal !important; }
+.ds-t-caption.ds-t-caption.ds-t-caption.ds-t-caption { font-size: 11px !important; line-height: 16px !important; font-weight: 600 !important; letter-spacing: normal !important; text-transform: none !important; }
+.ds-num { font-variant-numeric: tabular-nums; }
+
+/* Skeleton shimmer */
+@keyframes ds-pulse { 50% { opacity: 0.5; } }
+.ds-skeleton { animation: ds-pulse 1.6s ease-in-out infinite; background: var(--bg-active); }
+@media (prefers-reduced-motion: reduce) { .ds-skeleton { animation: none; } }

@@ -2,7 +2,11 @@
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Eye, Pencil, Plus } from "lucide-react";
 import { ProposalDocument } from "@/components/proposal/ProposalDocument";
+import { Alert, Button, Card, CardHeader, CurrencyAmount, Input, KeyValueList, StatusBadge, Textarea, Timeline } from "@/src/components/ui";
+import { DetailPage, ErrorState, FormField, FormSection, LoadingState } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
 const split = (v: any) =>
   Array.isArray(v)
     ? v.map((x) => (typeof x === "string" ? x : x?.content || x?.title || x?.name || "")).join("\n")
@@ -33,6 +37,7 @@ const normalizeLegacyDraft = (draft: any) => ({
   }),
 });
 export default function AdminProposalWorkspace() {
+  const breadcrumb = useAdminBreadcrumb();
   const { proposalId } = useParams<{ proposalId: string }>(), router = useRouter(),
     q = useQuery({
       queryKey: ["admin", "proposal", proposalId],
@@ -131,8 +136,8 @@ export default function AdminProposalWorkspace() {
       setMessage(cause instanceof Error ? cause.message : "Unable to compile Service Agreement.");
     } finally { setBusy(false); }
   }
-  if (q.isPending || !form) return <p>Loading proposal workspace…</p>;
-  if (q.error) return <p className="text-red-700">{q.error.message}</p>;
+    if (q.isPending || !form) return <LoadingState label="Loading proposal workspace…" />;
+  if (q.error) return <ErrorState size="page" description={q.error.message} onRetry={() => void q.refetch()} />;
   const liveCommercials = previewCommercials(form),
     p = q.data.proposal,
     refs = q.data.references || {},
@@ -160,342 +165,151 @@ export default function AdminProposalWorkspace() {
       paymentSchedule: form.paymentMilestones,
       validUntil: form.validUntil,
     };
+  const setPricing = (i: number, patch: any) => { const a = [...form.pricing]; a[i] = { ...form.pricing[i], ...patch }; setForm({ ...form, pricing: a }); };
+  const setMilestone = (i: number, patch: any) => { const a = [...form.paymentMilestones]; a[i] = { ...form.paymentMilestones[i], ...patch }; setForm({ ...form, paymentMilestones: a }); };
   return (
-    <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-widest text-blue-700">Commercial Proposal</p>
-          <h1 className="mt-2 text-3xl font-bold">{p.proposal_number}</h1>
-          <p className="mt-2 capitalize text-slate-600">
-            Version {p.version} · {p.status.replaceAll("_", " ")}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => setPreview(!preview)} className="rounded border px-4 py-2">
-            {preview ? "Edit" : "Preview as Client"}
-          </button>
-          {p.status === "draft" && (
-            <button
-              disabled={busy}
-              onClick={() => action("submit_review")}
-              className="rounded bg-slate-900 px-4 py-2 text-white"
-            >
-              Submit for Internal Review
-            </button>
-          )}
-          {p.status === "internal_review" && (
-            <>
-              <button
-                disabled={busy}
-                onClick={() =>
-                  action("return", {
-                    comment: prompt("Required return reason") || "",
-                  })
-                }
-                className="rounded border px-4 py-2"
-              >
-                Return for Changes
-              </button>
-              <button
-                disabled={busy}
-                onClick={() => action("approve")}
-                className="rounded bg-emerald-700 px-4 py-2 text-white"
-              >
-                Approve
-              </button>
-            </>
-          )}
-          {p.status === "ready_for_client" && (
-            <button
-              disabled={busy}
-              onClick={() =>
-                confirm(`Send ${p.proposal_number} to the linked client?`) && action("send")
-              }
-              className="rounded bg-blue-700 px-4 py-2 text-white"
-            >
-              Send Proposal
-            </button>
-          )}
-          {p.status === "request_changes" && (
-            <button
-              disabled={busy}
-              onClick={() => action("create_revision")}
-              className="rounded bg-blue-700 px-4 py-2 text-white"
-            >
-              Create Revision
-            </button>
-          )}
-        </div>
-      </header>
-      {message && <p className={`fixed right-6 top-24 z-50 max-w-xl rounded border p-4 text-sm shadow-lg ${message === "Proposal updated." ? "border-emerald-300 bg-emerald-50 text-emerald-900" : "border-red-300 bg-red-50 text-red-800"}`}>{message}</p>}
-      {editable && !preview && <p className="rounded border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">Changes are automatically preserved in this browser. Use Save Draft to validate and save them permanently.</p>}
-      {preview ? (
-        <ProposalDocument snapshot={snapshot} status={p.status} />
-      ) : (
+    <DetailPage
+      header={{
+        title: p.proposal_number,
+        breadcrumb,
+        info: `Commercial proposal · Version ${p.version}`,
+        actions: (
+          <>
+            <StatusBadge domain="proposal" status={p.status} />
+            <Button iconLeft={preview ? <Pencil size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />} onClick={() => setPreview(!preview)}>
+              {preview ? "Edit" : "Preview as client"}
+            </Button>
+            {p.status === "draft" && (
+              <Button variant="primary" disabled={busy} onClick={() => action("submit_review")}>Submit for internal review</Button>
+            )}
+            {p.status === "internal_review" && (
+              <>
+                <Button disabled={busy} onClick={() => action("return", { comment: prompt("Required return reason") || "" })}>Return for changes</Button>
+                <Button variant="primary" disabled={busy} onClick={() => action("approve")}>Approve</Button>
+              </>
+            )}
+            {p.status === "ready_for_client" && (
+              <Button variant="primary" disabled={busy} onClick={() => confirm(`Send ${p.proposal_number} to the linked client?`) && action("send")}>Send proposal</Button>
+            )}
+            {p.status === "request_changes" && (
+              <Button variant="primary" disabled={busy} onClick={() => action("create_revision")}>Create revision</Button>
+            )}
+          </>
+        ),
+      }}
+      side={
         <>
-          <section className="grid gap-3 rounded border bg-white p-5 md:grid-cols-4">
-            <Meta l="Client" v={refs.client} />
-            <Meta l="Company" v={refs.company} />
-            <Meta l="Assessment" v={refs.assessment} />
-            <Meta l="Deal" v={refs.deal} />
-            <Meta l="Solution Architecture" v={refs.architecture} />
-            <Meta l="Scope of Work" v={refs.scope} />
-            <Meta l="Created" v={new Date(p.created_at).toLocaleString()} />
-            <Meta l="Last Updated" v={new Date(p.updated_at).toLocaleString()} />
-          </section>
-          <section className="space-y-5 rounded border bg-white p-6">
-            {[
-              ["01 Executive Summary", "executiveSummary"],
-              ["02 Scope", "scope"],
-              ["03 Deliverables", "deliverables"],
-              ["04 Timeline & Milestones", "timeline"],
-              ["05 Assumptions", "assumptions"],
-              ["06 Exclusions", "exclusions"],
-              ["10 Terms & Conditions", "terms"],
-              ["12 Client Notes / Next Steps", "nextSteps"],
-            ].map(([label, key]) => (
-              <label key={key} className="block text-sm font-bold">
-                {label}
-                <textarea
-                  disabled={!editable}
-                  value={form[key]}
-                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="mt-2 min-h-28 w-full rounded border p-3 font-normal disabled:bg-slate-50"
-                />
-              </label>
-            ))}
-            <h2 className="text-lg font-bold">07 Commercial Pricing</h2>
-            <p className="text-sm text-slate-600">Enter the agreed price. Discount is a currency amount, not the final total.</p>
-            <div className="hidden grid-cols-7 gap-2 text-[11px] font-bold uppercase tracking-wide text-slate-500 md:grid"><span className="md:col-span-2">Description</span><span>Quantity</span><span>Unit</span><span>Unit Price</span><span>Discount (₹)</span><span>Subtotal (₹)</span></div>
-            {form.pricing.map((x: any, i: number) => (
-              <div key={i} className="grid gap-2 md:grid-cols-7">
-                <FieldInput label="Description" span value={x.description}
-                  disabled={!editable}
-                  onChange={(e) => {
-                    const a = [...form.pricing];
-                    a[i] = { ...x, description: e.target.value };
-                    setForm({ ...form, pricing: a });
-                  }}
-                />
-                <FieldInput label="Quantity" type="number"
-                  disabled={!editable}
-                  value={x.quantity}
-                  onChange={(e) => {
-                    const a = [...form.pricing];
-                    a[i] = { ...x, quantity: Number(e.target.value) };
-                    setForm({ ...form, pricing: a });
-                  }}
-                />
-                <FieldInput label="Unit"
-                  disabled={!editable}
-                  value={x.unit}
-                  onChange={(e) => {
-                    const a = [...form.pricing];
-                    a[i] = { ...x, unit: e.target.value };
-                    setForm({ ...form, pricing: a });
-                  }}
-                />
-                <FieldInput label="Unit Price" type="number"
-                  disabled={!editable}
-                  value={x.unitPrice}
-                  onChange={(e) => {
-                    const a = [...form.pricing];
-                    a[i] = { ...x, unitPrice: Number(e.target.value) };
-                    setForm({ ...form, pricing: a });
-                  }}
-                />
-                <FieldInput label="Discount Amount" type="number"
-                  disabled={!editable}
-                  value={x.discount}
-                  onChange={(e) => {
-                    const a = [...form.pricing];
-                    a[i] = { ...x, discount: Number(e.target.value) };
-                    setForm({ ...form, pricing: a });
-                  }}
-                />
-                <div className="rounded border border-slate-200 bg-slate-50 p-2 text-base text-slate-900"><span className="mb-1 block text-xs font-bold text-slate-600 md:hidden">Subtotal (₹)</span>{(Number(x.quantity || 0) * Number(x.unitPrice || 0) - Number(x.discount || 0)).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</div>
-              </div>
-            ))}
-            {editable && (
-              <button
-                onClick={() =>
-                  setForm({
-                    ...form,
-                    pricing: [
-                      ...form.pricing,
-                      {
-                        description: "",
-                        quantity: 1,
-                        unit: "item",
-                        unitPrice: 0,
-                        discount: 0,
-                      },
-                    ],
-                  })
-                }
-                className="rounded border px-3 py-2"
-              >
-                Add pricing item
-              </button>
-            )}
-            <div className="grid gap-4 md:grid-cols-4">
-              <Field
-                label="Currency"
-                value={form.currency}
-                set={(v: any) => setForm({ ...form, currency: v })}
-              />
-              <Field
-                label="Tax Type"
-                value={form.taxType}
-                set={(v: any) => setForm({ ...form, taxType: v })}
-              />
-              <Field
-                label="Tax Rate %"
-                value={form.taxRate}
-                set={(v: any) => setForm({ ...form, taxRate: Number(v) })}
-                type="number"
-              />
-              <Field
-                label="11 Valid Until"
-                value={form.validUntil}
-                set={(v: any) => setForm({ ...form, validUntil: v })}
-                type="date"
-              />
-            </div>
-            <h2 className="text-lg font-bold">09 Payment Schedule</h2>
-            <p className="text-sm text-slate-600">Use percentages only; all payment percentages must total 100%. Payment amounts are calculated from the grand total.</p>
-            {form.paymentMilestones.map((x: any, i: number) => (
-              <div key={i} className="grid gap-2 md:grid-cols-3">
-                <FieldInput label="Milestone Name"
-                  value={x.name}
-                  onChange={(e) => {
-                    const a = [...form.paymentMilestones];
-                    a[i] = { ...x, name: e.target.value };
-                    setForm({ ...form, paymentMilestones: a });
-                  }}
-                />
-                <FieldInput label="Percentage" type="number"
-                  value={x.percentage}
-                  onChange={(e) => {
-                    const a = [...form.paymentMilestones];
-                    a[i] = { ...x, percentage: Number(e.target.value) };
-                    setForm({ ...form, paymentMilestones: a });
-                  }}
-                />
-                <FieldInput label="Payment Trigger"
-                  value={x.trigger}
-                  onChange={(e) => {
-                    const a = [...form.paymentMilestones];
-                    a[i] = { ...x, trigger: e.target.value };
-                    setForm({ ...form, paymentMilestones: a });
-                  }}
-                />
-              </div>
-            ))}
-            {editable && (
-              <button
-                onClick={() =>
-                  setForm({
-                    ...form,
-                    paymentMilestones: [
-                      ...form.paymentMilestones,
-                      { name: "", percentage: 0, trigger: "" },
-                    ],
-                  })
-                }
-                className="rounded border px-3 py-2"
-              >
-                Add payment milestone
-              </button>
-            )}
-            <label className="block border-t pt-5 text-sm font-bold text-amber-900">
-              Internal Notes — never client visible
-              <textarea
-                disabled={!editable}
-                value={form.internalNotes}
-                onChange={(e) => setForm({ ...form, internalNotes: e.target.value })}
-                className="mt-2 min-h-24 w-full rounded border border-amber-300 bg-amber-50 p-3 font-normal"
-              />
-            </label>
-            {editable && (
-              <button
-                disabled={busy}
-                onClick={() => action("save")}
-                className="rounded bg-blue-700 px-5 py-3 font-semibold text-white"
-              >
-                {busy ? "Saving Draft…" : "Save Draft"}
-              </button>
-            )}
-          </section>
+          {p.status === "accepted" && (
+            <Card>
+              <CardHeader title="Service Agreement stage ready" description={`Compile a draft from the accepted Version ${p.version} snapshot and linked Scope of Work. It stays in the Admin Suite for internal review.`} />
+              <Button variant="primary" loading={busy} onClick={() => void compileAgreement()}>Generate Service Agreement draft</Button>
+            </Card>
+          )}
+          <Card>
+            <CardHeader title="References" />
+            <KeyValueList items={[
+              { label: "Client", value: refs.client },
+              { label: "Company", value: refs.company },
+              { label: "Assessment", value: refs.assessment },
+              { label: "Deal", value: refs.deal },
+              { label: "Architecture", value: refs.architecture },
+              { label: "Scope of work", value: refs.scope },
+              { label: "Created", value: new Date(p.created_at).toLocaleString() },
+              { label: "Last updated", value: new Date(p.updated_at).toLocaleString() },
+            ]} />
+          </Card>
+          {q.data.changeRequests?.length > 0 && (
+            <Card>
+              <CardHeader title="Client feedback" />
+              <Timeline label="Client feedback" items={q.data.changeRequests.map((x: any) => ({ id: x.id, title: `${x.category} · Version reference`, body: x.feedback, meta: x.requested_by_name, time: new Date(x.requested_at).toLocaleString(), tone: "warning" as const }))} />
+            </Card>
+          )}
+          <Card>
+            <CardHeader title="Activity" />
+            <Timeline label="Proposal activity" items={q.data.activity.map((x: any) => ({ id: x.id, title: x.event_type.replaceAll("_", " "), meta: `${x.actor_type} · Version ${x.proposal_version_id ? "recorded" : "working"}`, time: new Date(x.created_at).toLocaleString() }))} />
+          </Card>
         </>
-      )}
-      {q.data.changeRequests?.length > 0 && (
-        <section className="rounded border bg-white p-6">
-          <h2 className="text-xl font-bold">Client Feedback</h2>
-          {q.data.changeRequests.map((x: any) => (
-            <div key={x.id} className="mt-4 border-t pt-4">
-              <strong>{x.category} · Version reference</strong>
-              <p className="mt-2">{x.feedback}</p>
-              <small>
-                {x.requested_by_name} · {new Date(x.requested_at).toLocaleString()}
-              </small>
-            </div>
-          ))}
-        </section>
-      )}
-      <section className="rounded border bg-white p-6">
-        <h2 className="text-xl font-bold">Activity</h2>
-        <div className="mt-4 divide-y">
-          {q.data.activity.map((x: any) => (
-            <div key={x.id} className="py-3 text-sm">
-              <strong>{x.event_type.replaceAll("_", " ")}</strong>
-              <span className="ml-3 text-slate-500">
-                {new Date(x.created_at).toLocaleString()} · {x.actor_type} · Version{" "}
-                {x.proposal_version_id ? "recorded" : "working"}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-      {p.status === "accepted" && (
-        <section className="rounded border border-emerald-300 bg-emerald-50 p-5 text-emerald-900">
-          <p className="font-bold">Accepted proposal — Service Agreement stage ready.</p>
-          <p className="mt-2 text-sm">Compile a draft from the accepted immutable Version {p.version} snapshot and linked Scope of Work. The draft will remain in the Admin Suite for internal review.</p>
-          <button disabled={busy} onClick={() => void compileAgreement()} className="mt-4 rounded bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{busy ? "Compiling…" : "Generate Service Agreement draft"}</button>
-        </section>
-      )}
-    </div>
-  );
-}
-function Meta({ l, v }: { l: string; v: any }) {
-  return (
-    <div>
-      <div className="text-[10px] font-bold uppercase text-slate-500">{l}</div>
-      <div className="mt-1 break-all text-sm">{v || "—"}</div>
-    </div>
-  );
-}
-function FieldInput({label,value,onChange,type="text",span=false,disabled=false}:{label:string;value:any;onChange:(event:React.ChangeEvent<HTMLInputElement>)=>void;type?:string;span?:boolean;disabled?:boolean}){return <label className={`text-xs font-bold text-slate-600 ${span?"md:col-span-2":""}`}>{label}<input disabled={disabled} type={type} value={value} onChange={onChange} className="mt-1 w-full rounded border p-2 text-base font-normal text-slate-900 disabled:cursor-not-allowed disabled:bg-slate-100"/></label>}
-function Field({
-  label,
-  value,
-  set,
-  type = "text",
-}: {
-  label: string;
-  value: any;
-  set: (v: string) => void;
-  type?: string;
-}) {
-  return (
-    <label className="text-sm font-bold">
-      {label}
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => set(e.target.value)}
-        className="mt-2 w-full rounded border p-2 font-normal"
-      />
-    </label>
+      }
+    >
+      <div className="flex flex-col gap-4">
+        {message && <Alert variant={message === "Proposal updated." ? "success" : "danger"}>{message}</Alert>}
+        {editable && !preview && <Alert variant="info">Changes are automatically preserved in this browser. Use Save draft to validate and save them permanently.</Alert>}
+        {preview ? (
+          <ProposalDocument snapshot={snapshot} status={p.status} />
+        ) : (
+          <>
+            <FormSection title="Client content">
+              {[
+                ["01 Executive Summary", "executiveSummary"],
+                ["02 Scope", "scope"],
+                ["03 Deliverables", "deliverables"],
+                ["04 Timeline & Milestones", "timeline"],
+                ["05 Assumptions", "assumptions"],
+                ["06 Exclusions", "exclusions"],
+                ["10 Terms & Conditions", "terms"],
+                ["12 Client Notes / Next Steps", "nextSteps"],
+              ].map(([label, key]) => (
+                <FormField key={key} label={label} hint={key === "executiveSummary" ? undefined : "One item per line."}>
+                  {(f) => <Textarea {...f} disabled={!editable} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} rows={4} />}
+                </FormField>
+              ))}
+            </FormSection>
+
+            <FormSection title="07 Commercial pricing" description="Enter the agreed price. Discount is a currency amount, not the final total.">
+              {form.pricing.map((x: any, i: number) => (
+                <div key={i} className="grid gap-3 border-b border-[var(--border)] pb-4 last:border-b-0 md:grid-cols-6">
+                  <div className="md:col-span-2"><FormField label="Description">{(f) => <Input {...f} disabled={!editable} value={x.description} onChange={(e) => setPricing(i, { description: e.target.value })} />}</FormField></div>
+                  <FormField label="Quantity">{(f) => <Input {...f} type="number" disabled={!editable} value={x.quantity} onChange={(e) => setPricing(i, { quantity: Number(e.target.value) })} />}</FormField>
+                  <FormField label="Unit">{(f) => <Input {...f} disabled={!editable} value={x.unit} onChange={(e) => setPricing(i, { unit: e.target.value })} />}</FormField>
+                  <FormField label="Unit price">{(f) => <Input {...f} type="number" disabled={!editable} value={x.unitPrice} onChange={(e) => setPricing(i, { unitPrice: Number(e.target.value) })} />}</FormField>
+                  <FormField label="Discount (₹)">{(f) => <Input {...f} type="number" disabled={!editable} value={x.discount} onChange={(e) => setPricing(i, { discount: Number(e.target.value) })} />}</FormField>
+                  <p className="ds-t-meta text-[var(--text-muted)] md:col-span-6">
+                    Subtotal <CurrencyAmount value={Number(x.quantity || 0) * Number(x.unitPrice || 0) - Number(x.discount || 0)} decimals={2} className="ds-t-body-strong text-[var(--text-primary)]" />
+                  </p>
+                </div>
+              ))}
+              {editable && (
+                <div>
+                  <Button size={28} variant="ghost" iconLeft={<Plus size={14} strokeWidth={1.5} />} onClick={() => setForm({ ...form, pricing: [...form.pricing, { description: "", quantity: 1, unit: "item", unitPrice: 0, discount: 0 }] })}>Add pricing item</Button>
+                </div>
+              )}
+              <div className="grid gap-4 md:grid-cols-4">
+                <FormField label="Currency">{(f) => <Input {...f} value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })} />}</FormField>
+                <FormField label="Tax type">{(f) => <Input {...f} value={form.taxType} onChange={(e) => setForm({ ...form, taxType: e.target.value })} />}</FormField>
+                <FormField label="Tax rate %">{(f) => <Input {...f} type="number" value={form.taxRate} onChange={(e) => setForm({ ...form, taxRate: Number(e.target.value) })} />}</FormField>
+                <FormField label="11 Valid until">{(f) => <Input {...f} type="date" value={form.validUntil} onChange={(e) => setForm({ ...form, validUntil: e.target.value })} />}</FormField>
+              </div>
+            </FormSection>
+
+            <FormSection title="09 Payment schedule" description="Use percentages only; all payment percentages must total 100%. Payment amounts are calculated from the grand total.">
+              {form.paymentMilestones.map((x: any, i: number) => (
+                <div key={i} className="grid gap-3 md:grid-cols-3">
+                  <FormField label="Milestone name">{(f) => <Input {...f} value={x.name} onChange={(e) => setMilestone(i, { name: e.target.value })} />}</FormField>
+                  <FormField label="Percentage">{(f) => <Input {...f} type="number" value={x.percentage} onChange={(e) => setMilestone(i, { percentage: Number(e.target.value) })} />}</FormField>
+                  <FormField label="Payment trigger">{(f) => <Input {...f} value={x.trigger} onChange={(e) => setMilestone(i, { trigger: e.target.value })} />}</FormField>
+                </div>
+              ))}
+              {editable && (
+                <div>
+                  <Button size={28} variant="ghost" iconLeft={<Plus size={14} strokeWidth={1.5} />} onClick={() => setForm({ ...form, paymentMilestones: [...form.paymentMilestones, { name: "", percentage: 0, trigger: "" }] })}>Add payment milestone</Button>
+                </div>
+              )}
+            </FormSection>
+
+            <FormSection title="Internal notes" description="Never visible to the client.">
+              <FormField label="Internal notes">
+                {(f) => <Textarea {...f} disabled={!editable} value={form.internalNotes} onChange={(e) => setForm({ ...form, internalNotes: e.target.value })} rows={4} />}
+              </FormField>
+            </FormSection>
+
+            {editable && (
+              <div className="flex justify-end">
+                <Button variant="primary" loading={busy} onClick={() => action("save")}>{busy ? "Saving draft…" : "Save draft"}</Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </DetailPage>
   );
 }
