@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
+import styles from "./GrowxSection.module.css";
 
 interface StatementItem {
   letter: string;
@@ -14,7 +15,7 @@ const STATEMENTS: StatementItem[] = [
     letter: "G",
     label: null,
     statement: (
-      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans text-balance break-words min-w-0">
         India&apos;s AI-native software Company,<br />
         product studio and AI Engineering Lab
       </h2>
@@ -22,36 +23,36 @@ const STATEMENTS: StatementItem[] = [
   },
   {
     letter: "R",
-    label: "WHO WE ARE",
+    label: "Who we are",
     statement: (
-      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans text-balance break-words min-w-0">
         A group of builders, engineers and product minds obsessed with software, AI and execution.
       </h2>
     ),
   },
   {
     letter: "O",
-    label: "OUR VISION",
+    label: "Our vision",
     statement: (
-      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans text-balance break-words min-w-0">
         We turn ideas into software, AI agents and scalable products.
       </h2>
     ),
   },
   {
     letter: "W",
-    label: "OUR PHILOSOPHY",
+    label: "Our philosophy",
     statement: (
-      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans text-balance break-words min-w-0">
         Not as vendors, but as product partners and technical co-founders.
       </h2>
     ),
   },
   {
     letter: "X",
-    label: "GET IN TOUCH",
+    label: "Get in touch",
     statement: (
-      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans text-balance break-words min-w-0">
         We help legacy enterprises become <span className="whitespace-nowrap">AI-native.</span>
       </h2>
     ),
@@ -62,8 +63,6 @@ const TOTAL_STEPS = STATEMENTS.length - 1; // 4 transitions between 5 statements
 
 // Fixed height of the statement slot in pixels
 const STATEMENT_SLOT_HEIGHT = 280;
-// Fixed height of the right rail label slot in pixels
-const LABEL_SLOT_HEIGHT = 28;
 
 /**
  * Computes an eased continuous track value from raw scroll progress:
@@ -92,6 +91,16 @@ function computeEasedTrack(rawTrack: number): number {
 export function GrowxSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [rawTrack, setRawTrack] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  // Reduced motion: statements swap in place instead of sliding through the reel
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReduceMotion(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
 
   const updateScroll = useCallback(() => {
     if (!containerRef.current) return;
@@ -148,7 +157,7 @@ export function GrowxSection() {
     window.scrollTo({ top: targetOffset, behavior: "smooth" });
   };
 
-  const easedTrack = computeEasedTrack(rawTrack);
+  const easedTrack = reduceMotion ? Math.round(computeEasedTrack(rawTrack)) : computeEasedTrack(rawTrack);
   const activeIndex = Math.min(Math.max(Math.round(easedTrack), 0), TOTAL_STEPS);
   const activeLabel = STATEMENTS[activeIndex]?.label;
 
@@ -163,15 +172,17 @@ export function GrowxSection() {
       <div
         role="region"
         aria-label="GROWX Presentation Stage"
-        className="sticky top-0 w-full h-screen min-h-dvh bg-black flex flex-col justify-between pt-24 sm:pt-28 pb-8 px-6 md:px-10 xl:px-16 2xl:px-24 overflow-hidden z-20"
+        className="sticky top-0 w-full h-dvh bg-black flex flex-col justify-between pt-24 sm:pt-28 pb-8 px-6 md:px-10 xl:px-16 2xl:px-24 overflow-hidden z-20"
       >
         {/* Center Stage Container */}
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto w-full relative flex-grow flex items-center justify-center">
           
-          {/* ═══ LEFT RAIL — GROWX Indicator (Desktop) ═══ */}
+          {/* ═══ LEFT RAIL — GROWX Indicator (Desktop) ═══
+              The active letter carries its section's label as a nav label (it used to sit
+              alone on the right, announcing the statement). 44px targets at the same 44px pitch. */}
           <nav
             aria-label="GROWX Navigation"
-            className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 flex-col items-center gap-4 font-mono text-xs select-none z-30"
+            className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 flex-col items-center text-xs select-none z-30"
           >
             {STATEMENTS.map((item, idx) => {
               const isActive = activeIndex === idx;
@@ -182,36 +193,39 @@ export function GrowxSection() {
                   onClick={() => scrollToStatement(idx)}
                   aria-current={isActive ? "step" : undefined}
                   className={cn(
-                    "grid h-7 w-7 shrink-0 place-items-center leading-none transition-all duration-200 cursor-pointer bg-transparent border-0",
+                    "relative grid h-11 w-11 shrink-0 place-items-center leading-none rounded-md transition-colors duration-200 cursor-pointer bg-transparent border-0 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:text-foreground/70",
                     isActive
-                      ? "text-foreground font-bold"
+                      ? "text-foreground font-semibold"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {isActive ? `[${item.letter}]` : item.letter}
+                  {isActive && item.label && (
+                    <span className="hidden lg:inline absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap font-normal text-muted-foreground">
+                      {item.label}
+                    </span>
+                  )}
                 </button>
               );
             })}
           </nav>
 
-          {/* ═══ CENTER STATEMENT REEL — Vertical Section Reel (No Text Overlaying) ═══ */}
+          {/* ═══ CENTER STATEMENT REEL — Vertical Section Reel (No Text Overlaying) ═══
+              The window's edges fade (styles.reel) so moving text never shows a hard cut. */}
           <div
-            className="w-full max-w-4xl px-4 sm:px-12 overflow-hidden relative z-10 select-text"
+            className={cn("w-full max-w-4xl px-4 sm:px-12 overflow-hidden relative z-10 select-text", styles.reel)}
             style={{ height: `${STATEMENT_SLOT_HEIGHT}px` }}
           >
             <div
               data-growx-track="true"
-              className="w-full will-change-transform"
-              style={{
-                transform: `translate3d(0, -${easedTrack * STATEMENT_SLOT_HEIGHT}px, 0)`,
-                transition: "transform 0.05s linear",
-              }}
+              className={cn("w-full will-change-transform", styles.track)}
+              style={{ transform: `translate3d(0, -${easedTrack * STATEMENT_SLOT_HEIGHT}px, 0)` }}
             >
               {STATEMENTS.map((item, idx) => {
                 const isCurrent = activeIndex === idx;
                 const distance = Math.abs(easedTrack - idx);
-                // Subtle opacity fade on leaving/entering slots (never double-overlaying)
-                const opacity = Math.max(0.15, Math.min(1, 1 - (distance - 0.2) / 0.8));
+                // Fade leaving/entering statements fully out before they reach the masked window edge
+                const opacity = Math.max(0, Math.min(1, 1 - (distance - 0.2) / 0.6));
 
                 return (
                   <div
@@ -230,63 +244,40 @@ export function GrowxSection() {
             </div>
           </div>
 
-          {/* ═══ RIGHT RAIL — Vertical Label Reel (Desktop) ═══ */}
-          <div
-            className="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 w-48 overflow-hidden z-30 pointer-events-none"
-            style={{ height: `${LABEL_SLOT_HEIGHT}px` }}
-          >
-            <div
-              data-growx-track="true"
-              className="w-full will-change-transform"
-              style={{
-                transform: `translate3d(0, -${easedTrack * LABEL_SLOT_HEIGHT}px, 0)`,
-                transition: "transform 0.05s linear",
-              }}
-            >
-              {STATEMENTS.map((item) => (
-                <div
-                  key={item.letter}
-                  className="w-full flex items-center justify-end font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase"
-                  style={{ height: `${LABEL_SLOT_HEIGHT}px` }}
-                >
-                  {item.label || ""}
-                </div>
-              ))}
-            </div>
-          </div>
-
         </div>
 
         {/* ═══ Desktop Footer ═══ */}
-        <div className="hidden sm:flex max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto w-full items-center justify-between font-mono text-[9px] sm:text-[10px] tracking-[0.22em] text-muted-foreground uppercase select-none pt-4">
-          <span>SOFTWARE STUDIO</span>
-          <span className="text-foreground font-bold">{`{ GROWXLABS }`}</span>
-          <span>AI LAB</span>
+        <div className="hidden sm:flex max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto w-full items-center justify-between text-xs text-muted-foreground select-none pt-4">
+          <span>Software studio</span>
+          <span className="text-foreground font-semibold">GrowxLabs</span>
+          <span>AI lab</span>
         </div>
 
-        {/* ═══ Mobile Footer (State G: Studio / GrowxLabs / AI Lab) ═══ */}
+        {/* ═══ Mobile Footers: both share one grid cell so they crossfade in place ═══ */}
+        <div className="grid sm:hidden w-full pt-4">
+        {/* State G: Studio / GrowxLabs / AI Lab */}
         <div
-          className="flex sm:hidden w-full items-center justify-between font-mono text-[9px] tracking-[0.22em] text-muted-foreground uppercase select-none pt-4 transition-opacity duration-200"
+          className="col-start-1 row-start-1 flex w-full items-center justify-between text-xs text-muted-foreground select-none transition-opacity duration-200"
           style={{
             opacity: Math.max(0, 1 - easedTrack * 2),
             pointerEvents: easedTrack < 0.5 ? "auto" : "none",
           }}
         >
-          <span>SOFTWARE STUDIO</span>
-          <span className="text-foreground font-bold">{`{ GROWXLABS }`}</span>
-          <span>AI LAB</span>
+          <span>Software studio</span>
+          <span className="text-foreground font-semibold">GrowxLabs</span>
+          <span>AI lab</span>
         </div>
 
-        {/* ═══ Mobile Footer (States R, O, W, X: Label on Left, Synchronized Letters on Right) ═══ */}
+        {/* States R, O, W, X: Label on Left, Synchronized Letters on Right */}
         <div
-          className="flex sm:hidden w-full items-center justify-between font-mono text-[9px] tracking-[0.18em] text-muted-foreground uppercase select-none pt-4 transition-opacity duration-200"
+          className="col-start-1 row-start-1 flex w-full items-center justify-between text-xs text-muted-foreground select-none transition-opacity duration-200"
           style={{
             opacity: Math.min(1, Math.max(0, (easedTrack - 0.5) * 2)),
             pointerEvents: easedTrack >= 0.5 ? "auto" : "none",
           }}
         >
           <span>{activeLabel || ""}</span>
-          <span className="flex items-center gap-2">
+          <span className="flex items-center">
             {STATEMENTS.map((item, idx) => {
               const isActive = activeIndex === idx;
 
@@ -295,9 +286,10 @@ export function GrowxSection() {
                   key={item.letter}
                   type="button"
                   onClick={() => scrollToStatement(idx)}
+                  aria-current={isActive ? "step" : undefined}
                   className={cn(
-                    "transition-all duration-200 bg-transparent border-0 p-0 cursor-pointer",
-                    isActive ? "text-foreground font-bold" : "text-muted-foreground"
+                    "inline-grid min-h-11 min-w-8 place-items-center rounded-md transition-colors duration-200 bg-transparent border-0 px-1 cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:text-foreground/70",
+                    isActive ? "text-foreground font-semibold" : "text-muted-foreground"
                   )}
                 >
                   {isActive ? `[${item.letter}]` : item.letter}
@@ -305,6 +297,7 @@ export function GrowxSection() {
               );
             })}
           </span>
+        </div>
         </div>
 
       </div>

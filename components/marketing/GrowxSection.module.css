@@ -1,0 +1,23 @@
+/* Hallmark · checked: 2026-10-30 · genre: modern-minimal (inferred) · scope: component (GrowxSection.tsx)
+ * floor: 0 FAIL · fixed: 7 (10a, 26a, 27, 54, 67, 64, 75) · structural: 3 printed (66, 6b, 79)
+ * finish-review: subagent · 5 findings · 2 resolved (mobile footer crossfade, outgoing-statement leftovers) · 3 to the owner (bracket device, copy casing, statement scale)
+ * built: the project · redesign: polish · v2.0.0 */
+/* Hallmark · waive 26b · buttons only, no form control, no aria-disabled anywhere · each GROWX letter only jumps the scroll story to its statement, so a letter can never be disabled */
+
+/* The statement reel: a soft fade at the window's top and bottom edges, so text
+   leaving or entering the 280px window dissolves instead of being sliced through
+   its letters. currentColor is only the mask's opaque stop (any opaque value works). */
+.reel {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, currentColor 16%, currentColor 84%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, currentColor 16%, currentColor 84%, transparent);
+}
+
+.track {
+  transition: transform 0.05s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    transition: none;
+  }
+}
