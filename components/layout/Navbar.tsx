@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { GrowxMenu, X } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
-import { Button, LiquidButton } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { usePathname } from "@/navigation-client";
 import { Link } from "@/navigation-client";
 import { useSession, signOut } from "next-auth/react";
@@ -60,6 +60,25 @@ export function Navbar() {
     { name: "Contact", href: "/contact" },
   ];
 
+  const centerLinks = topLinks.filter((link) =>
+    ["/portfolio", "/research", "/faq"].includes(link.href)
+  );
+
+  // Header links resolve cross-subdomain URLs the same way the drawer does
+  const renderNavLink = (
+    href: string,
+    className: string,
+    children: React.ReactNode,
+    extra: Record<string, string> = {}
+  ) => {
+    const resolvedHref = getAbsoluteUrl(href);
+    const isExternal = resolvedHref.startsWith("http") && isMounted;
+    if (isExternal) {
+      return <a href={resolvedHref} className={className} {...extra}>{children}</a>;
+    }
+    return <Link href={href} className={className} {...extra}>{children}</Link>;
+  };
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -99,68 +118,65 @@ export function Navbar() {
     <>
       <nav
         className={cn(
-          "fixed top-0 w-full z-50 transition-all duration-500 py-3.5 sm:py-5",
+          "fixed top-0 w-full z-50 transition-all duration-500",
           navBg
         )}
       >
-        <div className="w-full px-4 sm:px-6 md:px-10">
-          <div className="flex justify-between items-center relative h-9 sm:h-10">
-            {/* Left Hamburger Button (Standard on Desktop & Mobile) */}
-            <div className="flex items-center z-10">
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen(true)}
-                className={cn(
-                  "transition-colors p-1.5 -ml-1.5 cursor-pointer bg-transparent border-0 rounded-md",
-                  isLightThemePage ? "text-[#1A1A1A] hover:text-[#111111]" : "text-zinc-400 hover:text-white"
+        {/* Mobile: flex row (center links hidden). Desktop (900px+): 1fr auto 1fr grid so links sit on true center. */}
+        <div className="h-16 px-5 flex items-center justify-between min-[900px]:h-[88px] min-[900px]:px-12 min-[900px]:grid min-[900px]:grid-cols-[1fr_auto_1fr]">
+          {/* Left: Menu icon + Logo */}
+          <div className="flex items-center gap-6 justify-self-start">
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(true)}
+              className={cn(
+                "transition-colors p-1.5 -m-1.5 cursor-pointer bg-transparent border-0 rounded-md",
+                isLightThemePage ? "text-[#1A1A1A] hover:text-[#111111]" : "text-zinc-400 hover:text-white"
+              )}
+              aria-label="Open menu"
+            >
+              <GrowxMenu size={22} className="sm:w-6 sm:h-6" />
+            </button>
+            {renderNavLink(
+              "/",
+              "flex items-center group notranslate",
+              <div className="flex items-center text-xl min-[900px]:text-2xl font-serif font-bold tracking-tight transition-transform group-hover:scale-[1.02] duration-300 whitespace-nowrap">
+                <span className={logoColor1}>GrowxLabs</span>
+                <span className={logoColor2}>.tech</span>
+              </div>,
+              { translate: "no", "aria-label": "GrowxLabs home" }
+            )}
+          </div>
+
+          {/* Center: Primary links (desktop only; mobile uses the side menu) */}
+          <div className="hidden min-[900px]:flex items-center gap-10">
+            {centerLinks.map((link) => (
+              <span key={link.href} className="contents">
+                {renderNavLink(
+                  link.href,
+                  cn(
+                    "text-[15px] transition-colors duration-200 whitespace-nowrap",
+                    isLightThemePage ? "text-[#1A1A1A] hover:text-[#65625D]" : "text-white hover:text-[#C0F0FB]"
+                  ),
+                  link.name
                 )}
-                aria-label="Open menu"
-              >
-                <GrowxMenu size={22} className="sm:w-6 sm:h-6" />
-              </button>
-            </div>
+              </span>
+            ))}
+          </div>
 
-            {/* Centered Serif Logo (True absolute mathematical center on all devices) */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto flex items-center justify-center">
-              {(() => {
-                const resolvedHref = getAbsoluteUrl("/");
-                const isExternal = resolvedHref.startsWith("http") && isMounted;
-                if (isExternal) {
-                  return (
-                    <a href={resolvedHref} className="flex items-center group notranslate" translate="no" aria-label="GrowxLabs home">
-                      <div className="flex items-center text-base sm:text-xl md:text-2xl font-serif font-bold tracking-tight transition-transform group-hover:scale-[1.02] duration-300 whitespace-nowrap">
-                        <span className={logoColor1}>GrowxLabs</span>
-                        <span className={logoColor2}>.tech</span>
-                      </div>
-                    </a>
-                  );
-                }
-                return (
-                  <Link href="/" className="flex items-center group notranslate" translate="no" aria-label="GrowxLabs home">
-                    <div className="flex items-center text-base sm:text-xl md:text-2xl font-serif font-bold tracking-tight transition-transform group-hover:scale-[1.02] duration-300 whitespace-nowrap">
-                      <span className={logoColor1}>GrowxLabs</span>
-                      <span className={logoColor2}>.tech</span>
-                    </div>
-                  </Link>
-                );
-              })()}
-            </div>
-
-            {/* Right: Bordered Contact Button with Liquid Water Fill Effect */}
-            <div className="flex items-center justify-end z-10">
-              {(() => {
-                const resolvedHref = getAbsoluteUrl("/contact");
-                return (
-                  <LiquidButton
-                    href={resolvedHref}
-                    variant={isLightThemePage ? "dark" : "cyan"}
-                    size="default"
-                  >
-                    Contact
-                  </LiquidButton>
-                );
-              })()}
-            </div>
+          {/* Right: Solid Contact button */}
+          <div className="flex items-center justify-self-end">
+            {renderNavLink(
+              "/contact",
+              cn(
+                "inline-flex items-center justify-center rounded-md font-medium whitespace-nowrap transition-colors duration-200",
+                "text-sm px-4 py-2.5 min-[900px]:text-[15px] min-[900px]:px-6 min-[900px]:py-3 min-[900px]:min-h-11",
+                isLightThemePage
+                  ? "bg-[#111111] text-white hover:bg-[#C0F0FB] hover:text-black"
+                  : "bg-white text-black hover:bg-[#C0F0FB]"
+              ),
+              "Contact"
+            )}
           </div>
         </div>
       </nav>
