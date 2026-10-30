@@ -1982,3 +1982,11 @@ html {
 }
 
 
+/* Service pixel illustrations (components/marketing/ServicePixelArt): panel, connector and structure blue-greys */
+:root {
+  --px-off: #0e1418;
+  --px-1: #2e4250;
+  --px-2: #546b7a;
+  --px-1-lit: #4a6372;
+  --px-2-lit: #8aa1af;
+}

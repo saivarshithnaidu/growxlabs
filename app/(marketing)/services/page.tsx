@@ -4,103 +4,7 @@ import { locales, Link } from "@/navigation";
 import { DynamicSchema } from "@/components/marketing/DynamicSchema";
 import { PageHero } from "@/components/marketing/PageHero";
 import { Button } from "@/components/ui/Button";
-
-function PixelGrid({ type }: { type: string }) {
-  // grids of 16 columns by 10 rows
-  let cells: number[][] = [];
-  
-  if (type === "software") {
-    cells = [
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
-      [0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0],
-      [0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
-      [0,1,0,0,0,1,1,0,1,1,0,0,0,0,1,0],
-      [0,1,0,0,0,0,1,1,1,0,0,0,0,0,1,0],
-      [0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0],
-      [0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0],
-      [0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    ];
-  } else if (type === "ai") {
-    cells = [
-      [0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0],
-      [0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0],
-      [0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0],
-      [0,1,1,0,1,1,0,0,1,1,0,1,1,0,0,0],
-      [0,1,1,0,1,1,0,0,1,1,0,1,1,0,0,0],
-      [0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0],
-      [0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0],
-      [0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    ];
-  } else if (type === "cto") {
-    cells = [
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0],
-      [0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0],
-      [0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    ];
-  } else {
-    cells = [
-      [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
-      [0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
-      [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0],
-      [0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-      [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0],
-      [0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
-      [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    ];
-  }
-
-  return (
-    <div className="flex justify-center my-4 h-32">
-      <svg
-        viewBox="0 0 160 100"
-        className="h-full w-full max-w-[200px]"
-        style={{ imageRendering: "pixelated", shapeRendering: "crispEdges" }}
-        aria-hidden="true"
-      >
-        <style>{`
-          @keyframes px-pulse {
-            0%, 100% { fill: #C0F0FB; opacity: 0.95; }
-            50% { fill: #C0F0FB; opacity: 0.25; }
-          }
-          .px-active {
-            animation: px-pulse 3s infinite ease-in-out;
-          }
-        `}</style>
-        {cells.map((row, rIdx) =>
-          row.map((cell, cIdx) => {
-            if (cell === 0) return null;
-            const delay = ((rIdx + cIdx) * 0.08).toFixed(2) + "s";
-            return (
-              <rect
-                key={`${rIdx}-${cIdx}`}
-                x={cIdx * 10}
-                y={rIdx * 10}
-                width={8}
-                height={8}
-                className="px-active"
-                style={{ animationDelay: delay }}
-              />
-            );
-          })
-        )}
-      </svg>
-    </div>
-  );
-}
+import { ServicePixelArt } from "@/components/marketing/ServicePixelArt";
 
 const services = [
   {
@@ -195,7 +99,7 @@ export default function ServicesPage() {
               {services.map((service, index) => (
                 <div
                   key={service.title}
-                  className="relative p-[1px] transition-all duration-300 hover:scale-[1.01] bg-white/10 hover:bg-[#C0F0FB]/60"
+                  className="group relative p-[1px] transition-all duration-300 hover:scale-[1.01] bg-white/10 hover:bg-[#C0F0FB]/60"
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 42px) 0, 100% 42px, 100% 100%, 0 100%)",
                   }}
@@ -212,7 +116,7 @@ export default function ServicesPage() {
                       </h3>
                       
                       {/* Pixel Art Graphic */}
-                      <PixelGrid type={service.type} />
+                      <ServicePixelArt type={service.type} />
                     </div>
 
                     <div>
