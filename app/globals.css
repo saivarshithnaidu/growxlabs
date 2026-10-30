@@ -1982,11 +1982,20 @@ html {
 }
 
 
-/* Service pixel illustrations (components/marketing/ServicePixelArt): panel, connector and structure blue-greys */
+/* Service pixel illustrations (components/marketing/ServicePixelArt): dark navy base, muted steel blue, light cyan */
 :root {
-  --px-off: #0e1418;
-  --px-1: #2e4250;
-  --px-2: #546b7a;
-  --px-1-lit: #4a6372;
-  --px-2-lit: #8aa1af;
+  --px-off: #0b1015;
+  --px-1: #132230;
+  --px-2: #2c465a;
+  --px-3: #B8EDF7;
+  --px-1-lit: #1c3247;
+  --px-2-lit: #3f6480;
+
+  /* Services cards (app/(marketing)/services) */
+  --svc-card: #090a0c;
+  --svc-border: #1b1d20;
+  --svc-accent: #b8edf7; /* hover border, technical labels, buttons */
+  --svc-heading: #f7f5f2;
+  --svc-text: #b8c0c5;
+  --svc-on-accent: #090a0c; /* button label on the accent */
 }

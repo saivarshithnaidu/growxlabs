@@ -14,7 +14,7 @@ const services = [
     useCases: "Custom enterprise apps, platforms, integrations",
     weight: "Scoped build",
     dimensions: "Architecture to production delivery",
-    buttonText: "GET IN TOUCH",
+    buttonText: "Get in touch",
     buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20a%20Custom%20Software%20Build%20at%20GrowxLabs.",
   },
   {
@@ -24,7 +24,7 @@ const services = [
     useCases: "Scraping, developer harnesses, talent systems",
     weight: "Fast deployment",
     dimensions: "Configurable / production-ready",
-    buttonText: "EXPLORE LABS",
+    buttonText: "Explore labs",
     buttonHref: "/products",
   },
   {
@@ -34,7 +34,7 @@ const services = [
     useCases: "Roadmaps, system design, technical strategy",
     weight: "Strategic",
     dimensions: "Architecture & technical leadership",
-    buttonText: "GET IN TOUCH",
+    buttonText: "Get in touch",
     buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20Fractional%20CTO%20services%20at%20GrowxLabs.",
   },
   {
@@ -44,7 +44,7 @@ const services = [
     useCases: "MVPs, technology stack, delivery, scaling",
     weight: "Deep partnership",
     dimensions: "Long-term aligned engineering",
-    buttonText: "GET IN TOUCH",
+    buttonText: "Get in touch",
     buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20a%20Technical%20Co-founder%20partnership%20at%20GrowxLabs.",
   },
 ];
@@ -99,19 +99,19 @@ export default function ServicesPage() {
               {services.map((service, index) => (
                 <div
                   key={service.title}
-                  className="group relative p-[1px] transition-all duration-300 hover:scale-[1.01] bg-white/10 hover:bg-[#C0F0FB]/60"
+                  className="group relative p-[1px] transition-[background-color,scale] duration-300 motion-safe:hover:scale-[1.01] bg-[var(--svc-border)] hover:bg-[var(--svc-accent)]"
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 42px) 0, 100% 42px, 100% 100%, 0 100%)",
                   }}
                 >
                   <div
-                    className="bg-[#0A0A0C] py-6 px-7 sm:px-8 sm:py-9 flex flex-col h-full justify-between min-h-[500px]"
+                    className="bg-[var(--svc-card)] py-6 px-7 sm:px-8 sm:py-9 flex flex-col h-full justify-between min-h-[500px]"
                     style={{
                       clipPath: "polygon(0 0, calc(100% - 41px) 0, 100% 41px, 100% 100%, 0 100%)",
                     }}
                   >
                     <div>
-                      <h3 className="text-xl font-bold text-foreground leading-tight tracking-tight mt-4 min-h-[56px] flex items-center">
+                      <h3 className="text-xl font-bold text-[var(--svc-heading)] leading-tight tracking-tight mt-4 min-h-[56px] flex items-center">
                         {service.title}
                       </h3>
                       
@@ -121,18 +121,18 @@ export default function ServicesPage() {
 
                     <div>
                       {/* Metadata fields list */}
-                      <div className="flex flex-col gap-4 mt-4 pt-6 border-t border-white/10">
+                      <div className="flex flex-col gap-4 mt-4 pt-6 border-t border-[var(--svc-border)]">
                         {[
-                          { k: "MISSIONS", v: service.mission },
-                          { k: "USE CASES", v: service.useCases },
-                          { k: "WEIGHT", v: service.weight },
-                          { k: "DIMENSIONS", v: service.dimensions },
+                          { k: "Missions", v: service.mission },
+                          { k: "Use cases", v: service.useCases },
+                          { k: "Weight", v: service.weight },
+                          { k: "Dimensions", v: service.dimensions },
                         ].map((row) => (
                           <div key={row.k} className="flex flex-col gap-1">
-                            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#C0F0FB] font-mono">
+                            <span className="text-xs font-medium text-[var(--svc-accent)]">
                               {row.k}
                             </span>
-                            <span className="text-sm font-semibold text-foreground leading-normal">
+                            <span className="text-sm font-normal text-[var(--svc-text)] leading-normal">
                               {row.v}
                             </span>
                           </div>
@@ -148,7 +148,7 @@ export default function ServicesPage() {
                           className="w-full block mt-6"
                         >
                           <Button
-                            className="w-full uppercase font-bold text-[12px] tracking-wider py-5 bg-[#C0F0FB] text-black hover:bg-white hover:text-black border-none transition-all duration-300 shadow-md"
+                            className="w-full h-12 font-semibold text-sm bg-[var(--svc-accent)] text-[var(--svc-on-accent)] hover:bg-[var(--svc-heading)] hover:text-[var(--svc-on-accent)] active:opacity-85 border-none shadow-none transition-[background-color,color,opacity] duration-200"
                           >
                             {service.buttonText}
                           </Button>
@@ -156,7 +156,7 @@ export default function ServicesPage() {
                       ) : (
                         <Link href={service.buttonHref} className="w-full block mt-6">
                           <Button
-                            className="w-full uppercase font-bold text-[12px] tracking-wider py-5 bg-[#C0F0FB] text-black hover:bg-white hover:text-black border-none transition-all duration-300 shadow-md"
+                            className="w-full h-12 font-semibold text-sm bg-[var(--svc-accent)] text-[var(--svc-on-accent)] hover:bg-[var(--svc-heading)] hover:text-[var(--svc-on-accent)] active:opacity-85 border-none shadow-none transition-[background-color,color,opacity] duration-200"
                           >
                             {service.buttonText}
                           </Button>

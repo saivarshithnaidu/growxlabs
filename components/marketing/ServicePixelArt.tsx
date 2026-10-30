@@ -6,9 +6,9 @@ import styles from "./ServicePixelArt.module.css";
  *
  * CSS-only pixel illustrations for the four service cards: every one is the same
  * 16 x 10 grid of square <span> cells (no SVG, canvas or images), so they share
- * bounds, pixel size and spacing. Unused cells stay faintly lit like an LED panel.
+ * bounds, pixel size and spacing. Unused cells are the dark navy base of the panel.
  *
- * Legend: "." off · "a" connector (dim blue-grey) · "b" structure (blue-grey) · "c" signal (site cyan)
+ * Legend: "." base (navy) · "a" connector (dim steel) · "b" structure (steel blue) · "c" highlight (#B8EDF7)
  * Hovering (or focusing inside) the card lights the pixels in a left-to-right wave.
  */
 
@@ -39,30 +39,30 @@ const ART: Record<string, string[]> = {
     ".bbb........bbb.",
     "................",
   ],
-  // Fractional CTO: a layered architecture stack, strategy on top
+  // Fractional CTO: direction leading the architecture, an arrow rising out of the stack
   cto: [
     "................",
+    ".......cc.......",
     "......cccc......",
-    ".......aa.......",
-    "..bbbbbbbbbbbb..",
+    ".....cccccc.....",
+    ".......cc.......",
+    "..bbbb.aa.bbbb..",
     "..a....aa....a..",
-    ".bbbb.cccc.bbbb.",
-    "..a....aa....a..",
-    ".aaaaaaaaaaaaaa.",
+    ".bbbb.bbbb.bbbb.",
     ".bbbbbbbbbbbbbb.",
     "................",
   ],
-  // Technical Co-founders: two closed links that interlock, the shared span in cyan
+  // Technical Co-founders: two links in the shared 2-cell stroke, interlocking on one cyan span
   founder: [
     "................",
-    "..bbbbbbb.......",
-    "..b.....b.......",
-    "..b....ccbbbbb..",
-    "..b....cc....b..",
-    "..b....cc....b..",
-    "..bbbbbcc....b..",
-    ".......b.....b..",
-    ".......bbbbbbb..",
+    "...bbbbbb.......",
+    "...bbbbbb.......",
+    "...bb..ccbbbb...",
+    "...bb..ccbbbb...",
+    "...bbbbcc..bb...",
+    "...bbbbcc..bb...",
+    ".......bbbbbb...",
+    ".......bbbbbb...",
     "................",
   ],
 };

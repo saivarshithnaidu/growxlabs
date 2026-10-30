@@ -1,12 +1,12 @@
 /* Hallmark · component: illustration (4 service pixel marks) · genre: modern-minimal · theme: brand (project system) · states: rest, card hover, card focus-within, reduced motion · contrast: n/a, decorative and aria-hidden · v2.0.0
- * built: Hallmark · redesign: restyle (scoped to the four service illustrations; cards, type, layout and copy kept)
- * finish-review: subagent · 5 findings · 5 resolved (founders redrawn as closed interlocking links, rows 1-8; Labs connectors raised; Labs cyan cut to hub and packets; Software slash 2px) · gap: none
- * pre-emit critique: P4 H4 E5 S4 R5 V4 · weakest: S, abstract marks can drift generic; each card gets one cyan idea (the slash, the hub, the strategy block, the shared span) instead of an all-cyan icon */
+ * built: Hallmark · redesign: restyle (scoped to the four service cards: colours, label and button type, borders, pixel palette; layout, structure, content and routes kept)
+ * finish-review: subagent · 4 findings · 4 resolved (CTO arrow given a shaft through a split roof; highlight solid #B8EDF7 at rest; co-founders redrawn in the shared 2-cell stroke; record updated) · gap: none
+ * pre-emit critique: P4 H4 E5 S4 R5 V4 · weakest: S, abstract marks can drift generic; each card gets one cyan idea (the slash, the hub, the rising arrow, the shared span) instead of an all-cyan icon */
+/* Hallmark · waive 26b · no form control on the services cards, no aria-disabled anywhere, and the shared Button already styles disabled · each card action is a link to contact or labs that is never disabled */
 /* Hallmark · waive 82 · marks differ in colour, four light levels per grid, and no quantity is counted · the faint cells are the pixel panel each service illustration is drawn on, one mark per pixel of the drawing */
 
-/* Colours come from :root tokens in app/globals.css (--px-*) and the site cyan --ring */
+/* Colours come from :root tokens in app/globals.css (--px-*: navy base, steel depth, #B8EDF7 highlight) */
 .frame {
-  --px-3: var(--ring);
   --px-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 
   display: flex;
@@ -45,7 +45,6 @@
 
 .px[data-level="3"] {
   background-color: var(--px-3);
-  opacity: 0.78;
 }
 
 /* The card (.group) lights its illustration on hover and when anything inside it has focus */
@@ -57,11 +56,6 @@
 :global(.group):hover .px[data-level="2"],
 :global(.group):focus-within .px[data-level="2"] {
   background-color: var(--px-2-lit);
-}
-
-:global(.group):hover .px[data-level="3"],
-:global(.group):focus-within .px[data-level="3"] {
-  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
