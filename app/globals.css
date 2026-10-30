@@ -1327,9 +1327,9 @@ section:not(:first-of-type) {
 /* ═══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   /* Disable animations and transitions */
-  *:not(.animate-flicker), 
-  *:not(.animate-flicker)::before, 
-  *:not(.animate-flicker)::after {
+  *:not(.animate-flicker):not([data-growx-track]):not([data-growx-track] *), 
+  *:not(.animate-flicker):not([data-growx-track]):not([data-growx-track] *)::before, 
+  *:not(.animate-flicker):not([data-growx-track]):not([data-growx-track] *)::after {
     animation: none !important;
     transition: none !important;
     backdrop-filter: none !important;

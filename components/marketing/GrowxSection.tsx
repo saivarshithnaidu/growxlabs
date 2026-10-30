@@ -60,18 +60,38 @@ const STATEMENTS: StatementItem[] = [
 
 const TOTAL_STEPS = STATEMENTS.length - 1; // 4 transitions between 5 statements
 
+// Fixed height of the statement slot in pixels
+const STATEMENT_SLOT_HEIGHT = 280;
+// Fixed height of the right rail label slot in pixels
+const LABEL_SLOT_HEIGHT = 28;
+
 /**
- * GrowxSection
- * 
- * One unified, scroll-pinned section for GROWX.
- * Generous scroll height gives comfortable breathing room between statements.
- * Each statement holds firmly in view, and cleanly transitions without overlapping.
+ * Computes an eased continuous track value from raw scroll progress:
+ * - Each statement holds firmly in place for the first 60% of its scroll window (generous breathing room).
+ * - Smoothly transitions across the remaining 40% with a cubic smoothstep curve.
+ * - Statements are rendered in separate vertical slots like sections, making text overlay impossible.
  */
+function computeEasedTrack(rawTrack: number): number {
+  if (rawTrack <= 0) return 0;
+  if (rawTrack >= TOTAL_STEPS) return TOTAL_STEPS;
+
+  const k = Math.floor(rawTrack);
+  const frac = rawTrack - k;
+
+  const HOLD_THRESHOLD = 0.60;
+  if (frac <= HOLD_THRESHOLD) {
+    return k;
+  }
+
+  // Smoothstep easeInOut: 3t^2 - 2t^3
+  const t = (frac - HOLD_THRESHOLD) / (1 - HOLD_THRESHOLD);
+  const smoothT = t * t * (3 - 2 * t);
+  return k + smoothT;
+}
+
 export function GrowxSection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [track, setTrack] = useState(0);
-
-  const activeIndex = Math.min(Math.max(Math.round(track), 0), TOTAL_STEPS);
+  const [rawTrack, setRawTrack] = useState(0);
 
   const updateScroll = useCallback(() => {
     if (!containerRef.current) return;
@@ -84,9 +104,9 @@ export function GrowxSection() {
     // Scrolled distance from when the top of the container reaches the top of the viewport
     const scrolled = -rect.top;
     const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
-    const continuousTrack = progress * TOTAL_STEPS;
+    const track = progress * TOTAL_STEPS;
 
-    setTrack(continuousTrack);
+    setRawTrack(track);
   }, []);
 
   useEffect(() => {
@@ -122,18 +142,21 @@ export function GrowxSection() {
     const scrollableDistance = container.offsetHeight - window.innerHeight;
     if (scrollableDistance <= 0) return;
 
+    // Target progress lands right in the stable hold zone of statement `index`
     const targetProgress = index / TOTAL_STEPS;
     const targetOffset = containerTop + targetProgress * scrollableDistance;
     window.scrollTo({ top: targetOffset, behavior: "smooth" });
   };
 
+  const easedTrack = computeEasedTrack(rawTrack);
+  const activeIndex = Math.min(Math.max(Math.round(easedTrack), 0), TOTAL_STEPS);
   const activeLabel = STATEMENTS[activeIndex]?.label;
 
   return (
     <div
       ref={containerRef}
       data-sticky-host="true"
-      className="relative w-full h-[380vh] sm:h-[400vh] bg-black select-none border-b border-white/10"
+      className="relative w-full h-[380vh] sm:h-[420vh] bg-black select-none border-b border-white/10"
       aria-label="GROWX Interactive Section"
     >
       {/* ═══ One Stable Pinned Pure-Black Viewport ═══ */}
@@ -171,88 +194,65 @@ export function GrowxSection() {
             })}
           </nav>
 
-          {/* ═══ CENTER STATEMENT — Clean Hold & Drift Crossfade (No text overlap) ═══ */}
-          <div className="grid grid-cols-1 grid-rows-1 place-items-center w-full max-w-4xl px-4 sm:px-12 z-10">
-            {STATEMENTS.map((item, idx) => {
-              const diff = track - idx;
-              
-              // Clean non-overlapping animation calculation:
-              // - Holds solid opacity: 1 while |diff| <= 0.28 (generous breathing room)
-              // - Smoothly exits upwards when diff > 0.28 (opacity 1 -> 0 between diff 0.28 and 0.55)
-              // - Smoothly enters from below when diff < -0.28 (opacity 0 -> 1 between diff -0.55 and -0.28)
-              let opacity = 0;
-              let translateY = 0;
+          {/* ═══ CENTER STATEMENT REEL — Vertical Section Reel (No Text Overlaying) ═══ */}
+          <div
+            className="w-full max-w-4xl px-4 sm:px-12 overflow-hidden relative z-10 select-text"
+            style={{ height: `${STATEMENT_SLOT_HEIGHT}px` }}
+          >
+            <div
+              data-growx-track="true"
+              className="w-full will-change-transform"
+              style={{
+                transform: `translate3d(0, -${easedTrack * STATEMENT_SLOT_HEIGHT}px, 0)`,
+                transition: "transform 0.05s linear",
+              }}
+            >
+              {STATEMENTS.map((item, idx) => {
+                const isCurrent = activeIndex === idx;
+                const distance = Math.abs(easedTrack - idx);
+                // Subtle opacity fade on leaving/entering slots (never double-overlaying)
+                const opacity = Math.max(0.15, Math.min(1, 1 - (distance - 0.2) / 0.8));
 
-              if (Math.abs(diff) <= 0.28) {
-                opacity = 1;
-                translateY = 0;
-              } else if (diff > 0.28 && diff <= 0.58) {
-                // Outgoing (scrolling down): fades out and drifts upward
-                const progressOut = (diff - 0.28) / 0.30;
-                opacity = Math.max(0, 1 - progressOut);
-                translateY = -progressOut * 18;
-              } else if (diff < -0.28 && diff >= -0.58) {
-                // Incoming (scrolling down): fades in from below
-                const progressIn = (-diff - 0.28) / 0.30;
-                opacity = Math.max(0, 1 - progressIn);
-                translateY = progressIn * 18;
-              } else {
-                opacity = 0;
-                translateY = diff > 0 ? -18 : 18;
-              }
-
-              return (
-                <div
-                  key={item.letter}
-                  className="col-start-1 row-start-1 w-full text-center select-text transition-opacity duration-150"
-                  style={{
-                    opacity,
-                    transform: `translate3d(0, ${translateY}px, 0)`,
-                    pointerEvents: opacity > 0.6 ? "auto" : "none",
-                  }}
-                  aria-hidden={opacity < 0.1}
-                >
-                  {item.statement}
-                </div>
-              );
-            })}
+                return (
+                  <div
+                    key={item.letter}
+                    className="w-full flex items-center justify-center text-center px-2"
+                    style={{
+                      height: `${STATEMENT_SLOT_HEIGHT}px`,
+                      opacity,
+                      pointerEvents: isCurrent ? "auto" : "none",
+                    }}
+                  >
+                    {item.statement}
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* ═══ RIGHT RAIL — Section Label (Desktop) ═══ */}
-          <div className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 h-6 w-44 items-center justify-end font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase select-none z-30">
-            {STATEMENTS.map((item, idx) => {
-              if (!item.label) return null;
-              const diff = track - idx;
-              let opacity = 0;
-              let translateY = 0;
-
-              if (Math.abs(diff) <= 0.28) {
-                opacity = 1;
-                translateY = 0;
-              } else if (diff > 0.28 && diff <= 0.58) {
-                const progressOut = (diff - 0.28) / 0.30;
-                opacity = Math.max(0, 1 - progressOut);
-                translateY = -progressOut * 10;
-              } else if (diff < -0.28 && diff >= -0.58) {
-                const progressIn = (-diff - 0.28) / 0.30;
-                opacity = Math.max(0, 1 - progressIn);
-                translateY = progressIn * 10;
-              }
-
-              return (
-                <span
+          {/* ═══ RIGHT RAIL — Vertical Label Reel (Desktop) ═══ */}
+          <div
+            className="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 w-48 overflow-hidden z-30 pointer-events-none"
+            style={{ height: `${LABEL_SLOT_HEIGHT}px` }}
+          >
+            <div
+              data-growx-track="true"
+              className="w-full will-change-transform"
+              style={{
+                transform: `translate3d(0, -${easedTrack * LABEL_SLOT_HEIGHT}px, 0)`,
+                transition: "transform 0.05s linear",
+              }}
+            >
+              {STATEMENTS.map((item) => (
+                <div
                   key={item.letter}
-                  className="absolute right-0"
-                  style={{
-                    opacity,
-                    transform: `translate3d(0, ${translateY}px, 0)`,
-                    pointerEvents: opacity > 0.6 ? "auto" : "none",
-                  }}
+                  className="w-full flex items-center justify-end font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase"
+                  style={{ height: `${LABEL_SLOT_HEIGHT}px` }}
                 >
-                  {item.label}
-                </span>
-              );
-            })}
+                  {item.label || ""}
+                </div>
+              ))}
+            </div>
           </div>
 
         </div>
@@ -268,8 +268,8 @@ export function GrowxSection() {
         <div
           className="flex sm:hidden w-full items-center justify-between font-mono text-[9px] tracking-[0.22em] text-muted-foreground uppercase select-none pt-4 transition-opacity duration-200"
           style={{
-            opacity: Math.max(0, 1 - track * 2),
-            pointerEvents: track < 0.5 ? "auto" : "none",
+            opacity: Math.max(0, 1 - easedTrack * 2),
+            pointerEvents: easedTrack < 0.5 ? "auto" : "none",
           }}
         >
           <span>SOFTWARE STUDIO</span>
@@ -281,8 +281,8 @@ export function GrowxSection() {
         <div
           className="flex sm:hidden w-full items-center justify-between font-mono text-[9px] tracking-[0.18em] text-muted-foreground uppercase select-none pt-4 transition-opacity duration-200"
           style={{
-            opacity: Math.min(1, Math.max(0, (track - 0.5) * 2)),
-            pointerEvents: track >= 0.5 ? "auto" : "none",
+            opacity: Math.min(1, Math.max(0, (easedTrack - 0.5) * 2)),
+            pointerEvents: easedTrack >= 0.5 ? "auto" : "none",
           }}
         >
           <span>{activeLabel || ""}</span>
