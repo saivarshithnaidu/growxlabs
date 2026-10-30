@@ -4,11 +4,7 @@ import { projects } from "@/lib/data/projects";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
 import { HeroSection } from "@/components/marketing/HeroSection";
-import { SectionG } from "@/components/marketing/SectionG";
-import { SectionR } from "@/components/marketing/SectionR";
-import { SectionO } from "@/components/marketing/SectionO";
-import { SectionW } from "@/components/marketing/SectionW";
-import { SectionX } from "@/components/marketing/SectionX";
+import { GrowxSection } from "@/components/marketing/GrowxSection";
 import { PracticeAreasSection } from "@/components/marketing/PracticeAreasSection";
 import { ValuePropositions } from "@/components/marketing/ValuePropositions";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
@@ -103,12 +99,8 @@ export default function Home() {
       {/* ═══ HERO (studio + brand only) ═══ */}
       <HeroSection />
 
-      {/* ═══ Swiss-Editorial Sections (G, R, O, W, X) ═══ */}
-      <SectionG />
-      <SectionR />
-      <SectionO />
-      <SectionW />
-      <SectionX />
+      {/* ═══ Unified GROWX Section (G, R, O, W, X in one place) ═══ */}
+      <GrowxSection />
 
 
 

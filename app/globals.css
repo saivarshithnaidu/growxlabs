@@ -1081,7 +1081,7 @@ html.light .notion-theme button[class*="border-white/"]:not(.gxl-studio-editor *
 
 @layer base {
   html, body {
-    overflow-x: hidden;
+    overflow-x: clip;
     max-width: 100%;
     background-color: var(--background);
     -webkit-font-smoothing: antialiased;
@@ -1145,7 +1145,7 @@ html.light .notion-theme button[class*="border-white/"]:not(.gxl-studio-editor *
 /* ═══════════════════════════════════════════════════ */
 /* SECTION SAFETY                                      */
 /* ═══════════════════════════════════════════════════ */
-section {
+section:not([data-sticky-host]) {
   position: relative !important;
   overflow: hidden !important;
   isolation: isolate !important;
