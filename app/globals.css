@@ -1145,7 +1145,7 @@ html.light .notion-theme button[class*="border-white/"]:not(.gxl-studio-editor *
 /* ═══════════════════════════════════════════════════ */
 /* SECTION SAFETY                                      */
 /* ═══════════════════════════════════════════════════ */
-section {
+section:not(.growx-sticky-viewport) {
   position: relative !important;
   overflow: hidden !important;
   isolation: isolate !important;

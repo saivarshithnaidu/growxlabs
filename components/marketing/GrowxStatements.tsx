@@ -1,194 +1,279 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
-interface Statement {
+interface StatementItem {
   letter: string;
   label: string | null;
-  text: ReactNode;
+  statement: React.ReactNode;
 }
 
-const STATEMENTS: Statement[] = [
+const STATEMENTS: StatementItem[] = [
   {
     letter: "G",
     label: null,
-    text: (
-      <>
-        India's AI-native software Company,<br />
+    statement: (
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
+        India&apos;s AI-native software Company,<br />
         product studio and AI Engineering Lab
-      </>
+      </h2>
     ),
   },
   {
     letter: "R",
     label: "WHO WE ARE",
-    text: "A group of builders, engineers and product minds obsessed with software, AI and execution.",
+    statement: (
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
+        A group of builders, engineers and product minds obsessed with software, AI and execution.
+      </h2>
+    ),
   },
   {
     letter: "O",
     label: "OUR VISION",
-    text: "We turn ideas into software, AI agents and scalable products.",
+    statement: (
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
+        We turn ideas into software, AI agents and scalable products.
+      </h2>
+    ),
   },
   {
     letter: "W",
     label: "OUR PHILOSOPHY",
-    text: "Not as vendors, but as product partners and technical co-founders.",
+    statement: (
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
+        Not as vendors, but as product partners and technical co-founders.
+      </h2>
+    ),
   },
   {
     letter: "X",
     label: "GET IN TOUCH",
-    text: (
-      <>
+    statement: (
+      <h2 className="text-[clamp(1.5rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
         We help legacy enterprises become <span className="whitespace-nowrap">AI-native.</span>
-      </>
+      </h2>
     ),
   },
 ];
 
-const LAST = STATEMENTS.length - 1;
-// Fractions of the pinned scroll spent holding the first (G) and last (X) statements
-const LEAD_IN = 0.06;
-const LEAD_OUT = 0.1;
-
 /**
  * GrowxStatements
- *
- * One pinned section. While it is stuck to the viewport, scrolling ticks the
- * five G/R/O/W/X statements upward in place: each statement holds while you
- * read it, then slides up as the next one slides in from below. The letter
- * rail stays still and highlights the statement on screen.
+ * 
+ * One unified sticky section for GROWX.
+ * The viewport stays firmly pinned in place on both mobile and desktop while
+ * scrolling through G → R → O → W → X. Statements crossfade cleanly with
+ * zero layout shift, and the active letter and label synchronize seamlessly.
  */
 export function GrowxStatements() {
-  const sectionRef = useRef<HTMLElement>(null);
-  // 0 = G … 4 = X; fractional while a statement is sliding
-  const [position, setPosition] = useState(0);
-  const activeIndex = Math.round(position);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  useEffect(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const updateScroll = useCallback(() => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+    const scrollableDistance = container.offsetHeight - window.innerHeight;
 
-    // Position is a pure function of scroll progress (no catch-up loop), so the
-    // statement on screen always matches where the reader is in the pinned track.
-    const update = () => {
-      const section = sectionRef.current;
-      if (!section) return;
-      const pinDistance = section.offsetHeight - window.innerHeight;
-      if (pinDistance <= 0) return;
-      const progress = Math.min(Math.max(-section.getBoundingClientRect().top / pinDistance, 0), 1);
+    if (scrollableDistance <= 0) return;
 
-      // Short hold on G after pinning and on X before release
-      const usable = Math.min(Math.max((progress - LEAD_IN) / (1 - LEAD_IN - LEAD_OUT), 0), 1);
+    // Progress from 0 to 1 as container scrolls past top of viewport
+    const scrolled = -rect.top;
+    const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
 
-      // Hold each statement, then slide during the middle 50% between two letters
-      const track = usable * LAST;
-      const step = Math.min(Math.floor(track), LAST - 1);
-      const local = Math.min(Math.max((track - step - 0.25) / 0.5, 0), 1);
-      const value = step + local * local * (3 - 2 * local);
-      const next = reduceMotion ? Math.round(value) : value;
-      setPosition((prev) => (prev === next ? prev : next));
-    };
+    // 5 clean slices across the pinned track
+    let nextIndex = 0;
+    if (progress < 0.20) nextIndex = 0;
+    else if (progress < 0.40) nextIndex = 1;
+    else if (progress < 0.60) nextIndex = 2;
+    else if (progress < 0.80) nextIndex = 3;
+    else nextIndex = 4;
 
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
+    setActiveIndex((prev) => (prev === nextIndex ? prev : nextIndex));
   }, []);
 
-  // Uses the standalone `translate` property: globals.css "mobile performance mode"
-  // forces `transform: none !important` below 768px, which would stack every statement.
-  // The short transition smooths wheel steps on desktop (mobile mode strips it; touch scroll is continuous).
-  const tickerStyle = (idx: number) => ({
-    translate: `0 ${(idx - position) * 100}%`,
-    transition: "translate 160ms cubic-bezier(0.22, 0.61, 0.36, 1)",
-  });
+  useEffect(() => {
+    let rafId: number | null = null;
 
-  const edgeMask = {
-    maskImage: "linear-gradient(to bottom, transparent, black 25%, black 75%, transparent)",
-    WebkitMaskImage: "linear-gradient(to bottom, transparent, black 25%, black 75%, transparent)",
+    const handleScroll = () => {
+      if (rafId === null) {
+        rafId = window.requestAnimationFrame(() => {
+          updateScroll();
+          rafId = null;
+        });
+      }
+    };
+
+    updateScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
+
+    return () => {
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [updateScroll]);
+
+  const scrollToState = (index: number) => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+    const scrollTop = window.scrollY || window.pageYOffset;
+    const containerTop = scrollTop + rect.top;
+    const scrollableDistance = container.offsetHeight - window.innerHeight;
+    if (scrollableDistance <= 0) return;
+
+    const targetProgress = (index + 0.5) / 5;
+    const targetOffset = containerTop + targetProgress * scrollableDistance;
+    window.scrollTo({ top: targetOffset, behavior: "smooth" });
   };
 
-  const activeLabel = STATEMENTS[activeIndex].label;
+  const currentState = STATEMENTS[activeIndex] || STATEMENTS[0];
 
   return (
-    <section
-      ref={sectionRef}
-      aria-label="GrowxLabs in five statements"
-      // !overflow-visible: globals.css forces overflow:hidden on every <section>, which would break sticky
-      className="w-full relative h-[500dvh] border-b border-white/10 bg-black flex-none !overflow-visible"
+    <div
+      ref={containerRef}
+      className="relative w-full h-[380vh] sm:h-[400vh] bg-black select-none border-b border-white/10 growx-sticky-viewport"
+      aria-label="GROWX Interactive Presentation"
     >
-      <div className="sticky top-0 h-dvh overflow-hidden px-6 md:px-10 xl:px-16 2xl:px-24 flex flex-col justify-center pt-20 sm:pt-28 pb-8">
-        <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto w-full relative flex items-center justify-center min-h-[300px]">
-          {/* Left: fixed letter rail */}
-          <div className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 flex-col items-center gap-4 font-mono text-xs text-muted-foreground select-none z-10">
-            {STATEMENTS.map((item, idx) => (
-              <span
-                key={item.letter}
-                className={cn("transition-colors duration-200", idx === activeIndex && "text-foreground font-bold")}
-              >
-                {idx === activeIndex ? `[${item.letter}]` : item.letter}
-              </span>
-            ))}
+      {/* ═══ One Stable Pinned Pure-Black Viewport ═══ */}
+      <div
+        role="region"
+        aria-label="GROWX Presentation Stage"
+        className="sticky top-0 w-full h-screen min-h-dvh bg-black flex flex-col justify-between pt-24 sm:pt-28 pb-8 px-6 md:px-10 xl:px-16 2xl:px-24 overflow-hidden z-20"
+      >
+        {/* Center Stage Container */}
+        <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto w-full relative flex-grow flex items-center justify-center">
+          
+          {/* ═══ LEFT RAIL — GROWX Indicator (Desktop) ═══ */}
+          <nav
+            aria-label="GROWX Navigation"
+            className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 flex-col items-center gap-4 font-mono text-xs select-none z-30"
+          >
+            {STATEMENTS.map((item, idx) => {
+              const isActive = activeIndex === idx;
+              return (
+                <button
+                  key={item.letter}
+                  type="button"
+                  onClick={() => scrollToState(idx)}
+                  aria-current={isActive ? "step" : undefined}
+                  className={cn(
+                    "grid h-7 w-7 shrink-0 place-items-center leading-none transition-colors duration-200 cursor-pointer bg-transparent border-0",
+                    isActive
+                      ? "text-foreground font-bold"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {isActive ? `[${item.letter}]` : item.letter}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* ═══ CENTER STATEMENT — Crossfade Grid (Zero layout shift) ═══ */}
+          <div className="grid grid-cols-1 grid-rows-1 place-items-center w-full max-w-4xl px-4 sm:px-12 z-10">
+            {STATEMENTS.map((item, idx) => {
+              const isCurrent = activeIndex === idx;
+              const isPreceding = idx < activeIndex;
+
+              const translateY = isCurrent ? "0px" : isPreceding ? "-10px" : "10px";
+              const opacity = isCurrent ? 1 : 0;
+
+              return (
+                <div
+                  key={item.letter}
+                  className="col-start-1 row-start-1 w-full text-center select-text transition-all duration-300 ease-out"
+                  style={{
+                    opacity,
+                    transform: `translate3d(0, ${translateY}, 0)`,
+                    pointerEvents: isCurrent ? "auto" : "none",
+                  }}
+                  aria-hidden={!isCurrent}
+                >
+                  {item.statement}
+                </div>
+              );
+            })}
           </div>
 
-          {/* Center: statement ticker */}
-          <div className="relative w-full max-w-4xl h-[300px] overflow-hidden" style={edgeMask}>
-            {STATEMENTS.map((item, idx) => (
-              <div
-                key={item.letter}
-                aria-hidden={idx !== activeIndex}
-                className="absolute inset-0 flex items-center justify-center text-center px-8 will-change-transform"
-                style={tickerStyle(idx)}
-              >
-                <h2 className="text-[clamp(1.6rem,3.2vw,2.5rem)] font-medium text-foreground tracking-tight leading-[1.35] font-sans">
-                  {item.text}
-                </h2>
-              </div>
-            ))}
+          {/* ═══ RIGHT RAIL — Section Label (Desktop) ═══ */}
+          <div
+            className={cn(
+              "hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 flex-col gap-4 font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase select-none items-end leading-relaxed z-30 transition-all duration-300 ease-out",
+              currentState.label
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-2 pointer-events-none"
+            )}
+            aria-live="polite"
+          >
+            <span>{currentState.label || ""}</span>
           </div>
 
-          {/* Right: section label ticks with its statement */}
-          <div className="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 h-6 w-40 overflow-hidden font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase select-none">
-            {STATEMENTS.map((item, idx) => (
-              <span
-                key={item.letter}
-                className="absolute inset-0 flex items-center justify-end"
-                style={tickerStyle(idx)}
-              >
-                {item.label}
-              </span>
-            ))}
-          </div>
         </div>
 
-        {/* Bottom footer on G (all sizes) */}
+        {/* ═══ Desktop Footer ═══ */}
+        <div className="hidden sm:flex max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto w-full items-center justify-between font-mono text-[9px] sm:text-[10px] tracking-[0.22em] text-muted-foreground uppercase select-none pt-4">
+          <span>SOFTWARE STUDIO</span>
+          <span className="text-foreground font-bold">{`{ GROWXLABS }`}</span>
+          <span>AI LAB</span>
+        </div>
+
+        {/* ═══ Mobile Footer (State G: Studio / GrowxLabs / AI Lab) ═══ */}
         <div
-          className="absolute bottom-8 left-6 right-6 md:left-10 md:right-10 xl:left-16 xl:right-16 2xl:left-24 2xl:right-24 flex items-center justify-between font-mono text-[9px] sm:text-[10px] tracking-[0.22em] text-muted-foreground uppercase select-none"
-          style={{ opacity: Math.max(0, 1 - position * 2) }}
+          className={cn(
+            "flex sm:hidden w-full items-center justify-between font-mono text-[9px] tracking-[0.22em] text-muted-foreground uppercase select-none pt-4 transition-opacity duration-300 ease-out",
+            activeIndex === 0 ? "opacity-100" : "hidden"
+          )}
         >
           <span>SOFTWARE STUDIO</span>
           <span className="text-foreground font-bold">{`{ GROWXLABS }`}</span>
           <span>AI LAB</span>
         </div>
 
-        {/* Mobile footer on R–X: label + letters */}
+        {/* ═══ Mobile Footer (States R, O, W, X: Label on Left, Synchronized Letters on Right) ═══ */}
         <div
-          className="flex sm:hidden absolute bottom-8 left-6 right-6 items-center justify-between font-mono text-[9px] tracking-[0.18em] text-muted-foreground uppercase select-none"
-          style={{ opacity: Math.min(1, Math.max(0, position * 2 - 1)) }}
+          className={cn(
+            "flex sm:hidden w-full items-center justify-between font-mono text-[9px] tracking-[0.18em] text-muted-foreground uppercase select-none pt-4 transition-opacity duration-300 ease-out",
+            activeIndex > 0 ? "opacity-100" : "hidden"
+          )}
         >
-          <span>{activeLabel || ""}</span>
-          <span className="flex gap-2">
-            {STATEMENTS.map((item, idx) => (
-              <span key={item.letter} className={cn(idx === activeIndex && "text-foreground font-bold")}>
-                {idx === activeIndex ? `[${item.letter}]` : item.letter}
-              </span>
-            ))}
+          <span>{currentState.label || ""}</span>
+          <span className="flex items-center gap-2">
+            {STATEMENTS.map((item, idx) => {
+              const isActive = activeIndex === idx;
+
+              if (isActive) {
+                return (
+                  <button
+                    key={item.letter}
+                    type="button"
+                    onClick={() => scrollToState(idx)}
+                    className="text-foreground font-bold transition-all duration-300 bg-transparent border-0 p-0 cursor-pointer"
+                  >
+                    [{item.letter}]
+                  </button>
+                );
+              }
+
+              return (
+                <button
+                  key={item.letter}
+                  type="button"
+                  onClick={() => scrollToState(idx)}
+                  className="text-muted-foreground transition-colors duration-200 bg-transparent border-0 p-0 cursor-pointer"
+                >
+                  {item.letter}
+                </button>
+              );
+            })}
           </span>
         </div>
+
       </div>
-    </section>
+    </div>
   );
 }
