@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowRight } from "lucide-react";
 import { GrowxMenu, X } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
@@ -78,6 +79,79 @@ export function Navbar() {
     }
     return <Link href={href} className={className} {...extra}>{children}</Link>;
   };
+
+  // ── Drawer ──────────────────────────────────────────────
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  // Drawer theme tokens (dark default; cream variant on light editorial articles)
+  const dt = isLightThemePage
+    ? {
+        surface: "bg-[#F7F4EE] border-[#111111]/[0.08] text-[#111111]",
+        divider: "border-[#111111]/[0.08]",
+        divide: "divide-[#111111]/[0.07]",
+        textActive: "text-[#111111]",
+        textIdle: "text-[#111111]/45 hover:text-[#111111] focus-visible:text-[#111111]",
+        textSecondary: "text-[#111111]/60 hover:text-[#111111]",
+        footerText: "text-[#65625D] hover:text-[#111111]",
+        rowHover: "hover:bg-black/[0.03]",
+        badge: "text-[#111111]/60 border-[#111111]/15 bg-black/[0.02]",
+        closeButton: "text-[#65625D] hover:text-[#111111]",
+        focus: "outline-none focus-visible:bg-black/[0.04] focus-visible:shadow-[inset_0_0_0_1px_rgba(17,17,17,0.35)]",
+      }
+    : {
+        surface: "bg-[#020202] border-white/[0.08] text-white",
+        divider: "border-white/[0.08]",
+        divide: "divide-white/[0.06]",
+        textActive: "text-white",
+        textIdle: "text-white/45 hover:text-white focus-visible:text-white",
+        textSecondary: "text-white/60 hover:text-white",
+        footerText: "text-neutral-400 hover:text-white",
+        rowHover: "hover:bg-white/[0.03]",
+        badge: "text-neutral-400 border-white/10 bg-white/[0.02]",
+        closeButton: "text-neutral-400 hover:text-white",
+        focus: "outline-none focus-visible:bg-white/[0.04] focus-visible:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.35)]",
+      };
+
+  // Hover/focus arrow: sits inline right after the label, fades in just after the label shifts
+  const drawerArrowClass =
+    "h-[0.65em] w-[0.65em] shrink-0 opacity-0 -translate-x-1 transition-[opacity,translate] duration-200 delay-75 ease-out group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0";
+
+  const isActiveRoute = (href: string) =>
+    href === "/" ? pathname === "/" : Boolean(pathname === href || pathname?.startsWith(`${href}/`));
+
+  // Drawer links resolve cross-subdomain URLs like the header, and close the drawer on click
+  const renderDrawerLink = (href: string, className: string, children: React.ReactNode, isActive = false) => {
+    const resolvedHref = getAbsoluteUrl(href);
+    const isExternal = resolvedHref.startsWith("http") && isMounted;
+    const shared = {
+      className,
+      onClick: () => setIsMobileMenuOpen(false),
+      "aria-current": isActive ? ("page" as const) : undefined,
+    };
+    if (isExternal) {
+      return <a href={resolvedHref} {...shared}>{children}</a>;
+    }
+    return <Link href={href} {...shared}>{children}</Link>;
+  };
+
+  // Staggered entrance when the drawer opens. Uses the Web Animations API on
+  // opacity + `translate`, which globals.css "mobile performance mode"
+  // (animation/transition/transform: none !important) does not override.
+  useEffect(() => {
+    if (!isMobileMenuOpen || !drawerRef.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const items = drawerRef.current.querySelectorAll<HTMLElement>("[data-drawer-item]");
+    const animations = Array.from(items).map((el, i) =>
+      el.animate(
+        [
+          { opacity: 0, translate: "0 8px" },
+          { opacity: 1, translate: "0 0" },
+        ],
+        { duration: 250, delay: 80 + i * 35, easing: "cubic-bezier(0.22, 0.61, 0.36, 1)", fill: "backwards" }
+      )
+    );
+    return () => animations.forEach((a) => a.cancel());
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -181,6 +255,10 @@ export function Navbar() {
         </div>
       </nav>
 
+      {/* While the drawer is open, hide the dev-only floating widgets (TanStack Query devtools button,
+          Next.js dev indicator) that sit bottom-left over the drawer footer; they return on close */}
+      {isMobileMenuOpen && <style>{`.tsqd-open-btn-container,nextjs-portal{display:none !important}`}</style>}
+
       {/* Menu Drawer Overlay (slides in from left) */}
       <div
         className={cn(
@@ -189,178 +267,133 @@ export function Navbar() {
         )}
       >
         {/* Backdrop (dimmed background) */}
-        <div 
+        <div
           onClick={() => setIsMobileMenuOpen(false)}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500" 
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500"
         />
 
         {/* Drawer Container */}
         <div
+          ref={drawerRef}
           className={cn(
-            "absolute top-0 bottom-0 left-0 w-80 max-w-[85vw] border-r border-dashed flex flex-col justify-between py-6 transition-transform duration-500 ease-out z-10",
-            isLightThemePage ? "bg-[#F7F4EE] border-[#111111]/15 text-[#111111]" : "bg-[#020202] border-neutral-800 text-white",
+            "absolute top-0 bottom-0 left-0 w-80 max-w-[85vw] border-r flex flex-col transition-transform duration-500 ease-out z-10",
+            dt.surface,
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
-          {/* Top Section */}
-          <div className="flex flex-col flex-1 overflow-y-auto min-h-0">
-            {/* Close Button */}
-            <div className="flex justify-between items-center mb-6 px-6">
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={cn(
-                  "transition-colors cursor-pointer bg-transparent border-0",
-                  isLightThemePage ? "text-[#65625D] hover:text-[#111111]" : "text-neutral-400 hover:text-white"
-                )}
-                aria-label="Close menu"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-
-            {/* Navigation Links */}
-            <div className="flex flex-col">
-              {topLinks.map((link) => {
-                const resolvedHref = getAbsoluteUrl(link.href);
-                const isExternal = resolvedHref.startsWith("http") && isMounted;
-                if (isExternal) {
-                  return (
-                    <a
-                      key={link.href}
-                      href={resolvedHref}
-                      className={cn(
-                        "text-sm font-semibold transition-colors text-left block w-full px-6 py-3.5 border-b border-dashed",
-                        isLightThemePage ? "text-[#34312D] hover:text-[#111111] border-[#111111]/15 hover:bg-black/[0.03]" : "text-neutral-300 hover:text-white border-neutral-800 hover:bg-white/[0.02]"
-                      )}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {link.name}
-                    </a>
-                  );
-                }
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "text-sm font-semibold transition-colors text-left block w-full px-6 py-3.5 border-b border-dashed",
-                      isLightThemePage ? "text-[#34312D] hover:text-[#111111] border-[#111111]/15 hover:bg-black/[0.03]" : "text-neutral-300 hover:text-white border-neutral-800 hover:bg-white/[0.02]"
-                    )}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                );
-              })}
-              {isLoggedIn && (
-                <>
-                  {(() => {
-                    const resolvedHref = getAbsoluteUrl(dashboardPath);
-                    const isExternal = resolvedHref.startsWith("http") && isMounted;
-                    if (isExternal) {
-                      return (
-                        <a
-                          href={resolvedHref}
-                          className={cn(
-                            "text-sm font-semibold transition-colors text-left block w-full px-6 py-3.5 border-b border-dashed",
-                            isLightThemePage ? "text-[#34312D] hover:text-[#111111] border-[#111111]/15 hover:bg-black/[0.03]" : "text-neutral-300 hover:text-white border-neutral-800 hover:bg-white/[0.02]"
-                          )}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Dashboard
-                        </a>
-                      );
-                    }
-                    return (
-                      <Link
-                        href={dashboardPath}
-                        className={cn(
-                          "text-sm font-semibold transition-colors text-left block w-full px-6 py-3.5 border-b border-dashed",
-                          isLightThemePage ? "text-[#34312D] hover:text-[#111111] border-[#111111]/15 hover:bg-black/[0.03]" : "text-neutral-300 hover:text-white border-neutral-800 hover:bg-white/[0.02]"
-                        )}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        Dashboard
-                      </Link>
-                    );
-                  })()}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      signOut({ callbackUrl: "/" });
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-sm font-semibold text-neutral-300 hover:text-red-400 transition-colors text-left block w-full px-6 py-3.5 border-b border-dashed border-neutral-800 hover:bg-white/[0.02] bg-transparent border-0 cursor-pointer"
-                  >
-                    Sign Out
-                  </button>
-                </>
+          {/* Header: close button in its own 72px band */}
+          <div className="flex items-center h-[72px] px-6 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                "grid place-items-center h-10 w-10 -ml-2 rounded-md transition-colors cursor-pointer bg-transparent border-0",
+                dt.focus,
+                dt.closeButton
               )}
-            </div>
+              aria-label="Close menu"
+            >
+              <X className="h-6 w-6" />
+            </button>
           </div>
 
-          {/* Bottom Section: Careers + Direct Contact Details */}
-          <div className={cn(
-            "border-t border-dashed flex flex-col mt-auto pt-3 shrink-0",
-            isLightThemePage ? "border-[#111111]/15" : "border-neutral-800"
-          )}>
-            {/* Careers Link */}
-            {(() => {
-              const resolvedHref = getAbsoluteUrl("/careers");
-              const isExternal = resolvedHref.startsWith("http") && isMounted;
-              const linkContent = (
-                <div className="flex items-center justify-between w-full">
+          {/* Primary navigation: a typographic block, separated by spacing only.
+              Type and padding scale with viewport height so it fits without scrolling;
+              very short screens can still scroll, with the scrollbar hidden. */}
+          <nav
+            aria-label="Main"
+            className="flex-1 min-h-0 overflow-y-auto pt-6 pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <div className="flex flex-col">
+              {topLinks.map((link) => {
+                const isActive = isActiveRoute(link.href);
+                return (
+                  <div key={link.href} data-drawer-item>
+                    {renderDrawerLink(
+                      link.href,
+                      cn(
+                        "group flex items-center w-full min-h-11 px-6 py-[clamp(3px,0.7vh,10px)] text-left text-[clamp(20px,3.2vh,30px)] font-medium tracking-[-0.02em] leading-[1.1] transition-colors duration-200",
+                        dt.focus,
+                        isActive ? dt.textActive : dt.textIdle
+                      ),
+                      <span className="inline-flex items-center gap-[0.3em] transition-[translate] duration-200 ease-out group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5">
+                        {link.name}
+                        <ArrowRight aria-hidden="true" className={drawerArrowClass} />
+                      </span>,
+                      isActive
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </nav>
+
+          {/* Bottom section: one hairline above; account actions, then the contact footer.
+              Icons and text share the main nav's 24px left edge. */}
+          <div className={cn("shrink-0 border-t pb-[calc(20px+env(safe-area-inset-bottom))]", dt.divider)}>
+            {/* Account actions: compact, low-emphasis, side by side.
+                The ::after extends each tap target to 48px without changing the visual rhythm. */}
+            {isLoggedIn && (
+              <div data-drawer-item className="flex items-center gap-6 px-6 py-5">
+                {renderDrawerLink(
+                  dashboardPath,
+                  cn(
+                    "relative inline-flex items-center rounded-md text-[14px] font-medium transition-colors duration-200 after:absolute after:-inset-x-2 after:-inset-y-3.5",
+                    dt.focus,
+                    isActiveRoute(dashboardPath) ? dt.textActive : dt.textSecondary
+                  ),
+                  "Dashboard",
+                  isActiveRoute(dashboardPath)
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    signOut({ callbackUrl: "/" });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={cn(
+                    "relative inline-flex items-center rounded-md text-[14px] font-medium transition-colors duration-200 bg-transparent border-0 cursor-pointer after:absolute after:-inset-x-2 after:-inset-y-3.5",
+                    dt.focus,
+                    dt.textSecondary,
+                    "hover:text-[#f87171]/80"
+                  )}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+
+            {/* Footer: Careers + Direct Contact Details. A hairline + 16px separates it from the
+                account row; hairlines only between these rows. */}
+            <div
+              data-drawer-item
+              className={cn("flex flex-col divide-y pt-4", dt.divide, isLoggedIn && cn("border-t", dt.divider))}
+            >
+              {/* Careers Link */}
+              {renderDrawerLink(
+                "/careers",
+                cn(
+                  "flex items-center justify-between gap-3 w-full min-h-[52px] px-6 text-left transition-colors duration-200",
+                  dt.rowHover,
+                  dt.focus,
+                  dt.footerText
+                ),
+                <>
                   <span className="text-xs font-semibold uppercase tracking-wider">Careers</span>
-                  <span className={cn(
-                    "text-[10px] font-mono px-1.5 py-0.5 rounded border border-dashed tracking-normal",
-                    isLightThemePage 
-                      ? "text-[#111111]/60 border-[#111111]/20 bg-black/[0.02]" 
-                      : "text-neutral-400 border-neutral-700 bg-white/[0.02]"
-                  )}>
+                  <span className={cn("shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded border tracking-normal", dt.badge)}>
                     WE&apos;RE HIRING
                   </span>
-                </div>
-              );
+                </>
+              )}
 
-              if (isExternal) {
-                return (
-                  <a
-                    href={resolvedHref}
-                    className={cn(
-                      "transition-colors text-left block w-full px-6 py-2.5 border-b border-dashed",
-                      isLightThemePage ? "text-[#34312D] hover:text-[#111111] border-[#111111]/15 hover:bg-black/[0.03]" : "text-neutral-300 hover:text-white border-neutral-800 hover:bg-white/[0.02]"
-                    )}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {linkContent}
-                  </a>
-                );
-              }
-              return (
-                <Link
-                  href="/careers"
-                  className={cn(
-                    "transition-colors text-left block w-full px-6 py-2.5 border-b border-dashed",
-                    isLightThemePage ? "text-[#34312D] hover:text-[#111111] border-[#111111]/15 hover:bg-black/[0.03]" : "text-neutral-300 hover:text-white border-neutral-800 hover:bg-white/[0.02]"
-                  )}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {linkContent}
-                </Link>
-              );
-            })()}
-
-            {/* Contact Details Section */}
-            <div className="flex flex-col">
               {/* Contact Email */}
               <a
                 href="mailto:svp@growxlabs.tech"
                 className={cn(
-                  "group flex items-center w-full px-6 py-2.5 border-b border-dashed transition-colors text-left",
-                  isLightThemePage
-                    ? "text-[#65625D] hover:text-[#111111] border-[#111111]/15 hover:bg-black/[0.03]"
-                    : "text-neutral-400 hover:text-white border-neutral-800 hover:bg-white/[0.02]"
+                  "flex items-center w-full min-h-[52px] px-6 text-left transition-colors duration-200",
+                  dt.rowHover,
+                  dt.focus,
+                  dt.footerText
                 )}
                 title="Email us directly"
               >
@@ -368,34 +401,35 @@ export function Navbar() {
               </a>
 
               {/* Mobile No & WhatsApp */}
-              <div
-                className={cn(
-                  "flex items-center justify-between w-full px-6 py-2.5 transition-colors text-left",
-                  isLightThemePage
-                    ? "text-[#65625D] hover:text-[#111111] hover:bg-black/[0.03]"
-                    : "text-neutral-400 hover:text-white hover:bg-white/[0.02]"
-                )}
-              >
+              <div className={cn("flex items-stretch w-full min-h-[52px] transition-colors duration-200", dt.rowHover)}>
                 <a
                   href="tel:+919381188153"
-                  className="group flex items-center truncate flex-1"
+                  className={cn(
+                    "flex flex-1 items-center min-w-0 pl-6 pr-2 text-left transition-colors duration-200",
+                    dt.focus,
+                    dt.footerText
+                  )}
                   title="Call directly"
                 >
-                  <span className="text-xs font-mono tracking-tight group-hover:text-white transition-colors">+91 93811 88153</span>
+                  <span className="text-xs font-mono tracking-tight truncate">+91 93811 88153</span>
                 </a>
                 <a
                   href="https://wa.me/919381188153"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn(
-                    "text-[10px] font-mono px-1.5 py-0.5 rounded transition-colors shrink-0 ml-2 border flex items-center",
-                    isLightThemePage
-                      ? "text-emerald-700 border-emerald-300/60 bg-emerald-50 hover:bg-emerald-100"
-                      : "text-emerald-400 border-emerald-500/30 bg-emerald-950/40 hover:bg-emerald-900/50"
-                  )}
+                  className={cn("flex items-center shrink-0 pl-2 pr-6 rounded-md", dt.focus)}
                   title="Chat on WhatsApp"
                 >
-                  <span>WA</span>
+                  <span
+                    className={cn(
+                      "text-[10px] font-mono px-1.5 py-0.5 rounded transition-colors border",
+                      isLightThemePage
+                        ? "text-emerald-700 border-emerald-300/60 bg-emerald-50 hover:bg-emerald-100"
+                        : "text-emerald-400 border-emerald-500/30 bg-emerald-950/40 hover:bg-emerald-900/50"
+                    )}
+                  >
+                    WA
+                  </span>
                 </a>
               </div>
             </div>
