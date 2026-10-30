@@ -1,19 +1,11 @@
+
 import { Reveal } from "@/components/marketing/Reveal";
 import { locales, Link } from "@/navigation";
 import { DynamicSchema } from "@/components/marketing/DynamicSchema";
 import { PageHero } from "@/components/marketing/PageHero";
-import { LiquidButton } from "@/components/ui/LiquidButton";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
-function PixelGrid({ 
-  type, 
-  fill = "#4A4330", 
-  pulseFill = "#6E6246" 
-}: { 
-  type: string; 
-  fill?: string; 
-  pulseFill?: string; 
-}) {
+function PixelGrid({ type }: { type: string }) {
   // grids of 16 columns by 10 rows
   let cells: number[][] = [];
   
@@ -71,10 +63,8 @@ function PixelGrid({
     ];
   }
 
-  const animName = `px-pulse-${type}`;
-
   return (
-    <div className="flex justify-center my-2 h-32">
+    <div className="flex justify-center my-4 h-32">
       <svg
         viewBox="0 0 160 100"
         className="h-full w-full max-w-[200px]"
@@ -82,12 +72,12 @@ function PixelGrid({
         aria-hidden="true"
       >
         <style>{`
-          @keyframes ${animName} {
-            0%, 100% { fill: ${fill}; opacity: 0.95; }
-            50% { fill: ${pulseFill}; opacity: 0.72; }
+          @keyframes px-pulse {
+            0%, 100% { fill: #C0F0FB; opacity: 0.95; }
+            50% { fill: #C0F0FB; opacity: 0.25; }
           }
-          .${animName}-active {
-            animation: ${animName} 3s infinite ease-in-out;
+          .px-active {
+            animation: px-pulse 3s infinite ease-in-out;
           }
         `}</style>
         {cells.map((row, rIdx) =>
@@ -101,7 +91,7 @@ function PixelGrid({
                 y={rIdx * 10}
                 width={8}
                 height={8}
-                className={`${animName}-active`}
+                className="px-active"
                 style={{ animationDelay: delay }}
               />
             );
@@ -122,16 +112,6 @@ const services = [
     dimensions: "Architecture to production delivery",
     buttonText: "GET IN TOUCH",
     buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20a%20Custom%20Software%20Build%20at%20GrowxLabs.",
-    // Earth #E9E7E1 + Midnight #22282C palette
-    cardBg: "bg-[#E9E7E1]",
-    borderBg: "bg-[#C2BFB7] hover:bg-[#93979B] focus-within:bg-[#93979B]",
-    titleColor: "text-[#22282C]",
-    labelColor: "text-[#4D5860]",
-    bodyColor: "text-[#22282C]",
-    dividerColor: "border-[#D0CDC5]",
-    buttonClass: "bg-[#22282C] text-[#FFFFFF] hover:bg-[#343D43] border border-[#22282C]",
-    pixelFill: "#455057",
-    pixelPulse: "#687680",
   },
   {
     title: "Labs & Platforms",
@@ -142,16 +122,6 @@ const services = [
     dimensions: "Configurable / production-ready",
     buttonText: "EXPLORE LABS",
     buttonHref: "/products",
-    // Earth #E9E7E1 + Midnight #22282C palette
-    cardBg: "bg-[#E9E7E1]",
-    borderBg: "bg-[#C2BFB7] hover:bg-[#93979B] focus-within:bg-[#93979B]",
-    titleColor: "text-[#22282C]",
-    labelColor: "text-[#4D5860]",
-    bodyColor: "text-[#22282C]",
-    dividerColor: "border-[#D0CDC5]",
-    buttonClass: "bg-[#22282C] text-[#FFFFFF] hover:bg-[#343D43] border border-[#22282C]",
-    pixelFill: "#455057",
-    pixelPulse: "#687680",
   },
   {
     title: "Fractional CTO",
@@ -162,16 +132,6 @@ const services = [
     dimensions: "Architecture & technical leadership",
     buttonText: "GET IN TOUCH",
     buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20Fractional%20CTO%20services%20at%20GrowxLabs.",
-    // Earth #E9E7E1 + Midnight #22282C palette
-    cardBg: "bg-[#E9E7E1]",
-    borderBg: "bg-[#C2BFB7] hover:bg-[#93979B] focus-within:bg-[#93979B]",
-    titleColor: "text-[#22282C]",
-    labelColor: "text-[#4D5860]",
-    bodyColor: "text-[#22282C]",
-    dividerColor: "border-[#D0CDC5]",
-    buttonClass: "bg-[#22282C] text-[#FFFFFF] hover:bg-[#343D43] border border-[#22282C]",
-    pixelFill: "#455057",
-    pixelPulse: "#687680",
   },
   {
     title: "Technical Co-founders",
@@ -182,16 +142,6 @@ const services = [
     dimensions: "Long-term aligned engineering",
     buttonText: "GET IN TOUCH",
     buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20a%20Technical%20Co-founder%20partnership%20at%20GrowxLabs.",
-    // Earth #E9E7E1 + Midnight #22282C palette
-    cardBg: "bg-[#E9E7E1]",
-    borderBg: "bg-[#C2BFB7] hover:bg-[#93979B] focus-within:bg-[#93979B]",
-    titleColor: "text-[#22282C]",
-    labelColor: "text-[#4D5860]",
-    bodyColor: "text-[#22282C]",
-    dividerColor: "border-[#D0CDC5]",
-    buttonClass: "bg-[#22282C] text-[#FFFFFF] hover:bg-[#343D43] border border-[#22282C]",
-    pixelFill: "#455057",
-    pixelPulse: "#687680",
   },
 ];
 
@@ -207,7 +157,7 @@ export async function generateMetadata() {
 
 export default function ServicesPage() {
   return (
-    <div className="flex flex-col bg-[#F5F4F0] text-[#22282C] min-h-screen">
+    <div className="flex flex-col bg-black text-foreground min-h-screen">
       <DynamicSchema
         graph={[
           {
@@ -236,56 +186,38 @@ export default function ServicesPage() {
         tagline="SOFTWARE & PRODUCT ENGINEERING"
       />
 
-      <div className="w-full px-3 sm:px-4 md:px-6 pb-6 md:pb-8">
-        <section className="w-full bg-[#F5F5F5] rounded-[16px] p-6 sm:p-8 md:p-12">
-          <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
+      <div className="pb-12 px-6 md:px-10 xl:px-16 2xl:px-24 w-full border-t border-white/10 pt-16 bg-black">
+        <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
 
-            {/* Services Cards Grid */}
-            <Reveal y={40}>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-0">
-              {services.map((service) => (
+          {/* Services Cards Grid */}
+          <Reveal y={40}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-0">
+              {services.map((service, index) => (
                 <div
                   key={service.title}
-                  className={cn(
-                    "relative p-[1px] transition-all duration-300 hover:scale-[1.01] shadow-[0_2px_8px_rgba(23,37,45,0.04)] hover:shadow-[0_8px_24px_rgba(23,37,45,0.08)]",
-                    service.borderBg
-                  )}
+                  className="relative p-[1px] transition-all duration-300 hover:scale-[1.01] bg-white/10 hover:bg-[#C0F0FB]/60"
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 42px) 0, 100% 42px, 100% 100%, 0 100%)",
                   }}
                 >
                   <div
-                    className={cn(
-                      "py-6 px-7 sm:px-8 sm:py-9 flex flex-col h-full justify-between min-h-[500px]",
-                      service.cardBg
-                    )}
+                    className="bg-[#0A0A0C] py-6 px-7 sm:px-8 sm:py-9 flex flex-col h-full justify-between min-h-[500px]"
                     style={{
                       clipPath: "polygon(0 0, calc(100% - 41px) 0, 100% 41px, 100% 100%, 0 100%)",
                     }}
                   >
-                    {/* Top Region: Title + Graphic + Divider */}
                     <div>
-                      <div className="h-[58px] flex items-center mt-3">
-                        <h3 className={cn("text-[22px] font-semibold leading-[1.25] tracking-tight font-sans", service.titleColor)}>
-                          {service.title}
-                        </h3>
-                      </div>
+                      <h3 className="text-xl font-bold text-foreground leading-tight tracking-tight mt-4 min-h-[56px] flex items-center">
+                        {service.title}
+                      </h3>
                       
                       {/* Pixel Art Graphic */}
-                      <PixelGrid 
-                        type={service.type} 
-                        fill={service.pixelFill} 
-                        pulseFill={service.pixelPulse} 
-                      />
-
-                      {/* Horizontally Aligned Divider */}
-                      <div className={cn("w-full border-t mt-2 mb-6", service.dividerColor)} />
+                      <PixelGrid type={service.type} />
                     </div>
 
-                    {/* Bottom Region: Metadata + CTA Button */}
-                    <div className="flex flex-col flex-1 justify-between">
+                    <div>
                       {/* Metadata fields list */}
-                      <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-4 mt-4 pt-6 border-t border-white/10">
                         {[
                           { k: "MISSIONS", v: service.mission },
                           { k: "USE CASES", v: service.useCases },
@@ -293,28 +225,39 @@ export default function ServicesPage() {
                           { k: "DIMENSIONS", v: service.dimensions },
                         ].map((row) => (
                           <div key={row.k} className="flex flex-col gap-1">
-                            <span className={cn("text-[11px] font-medium uppercase tracking-[0.16em] font-mono select-none", service.labelColor)}>
+                            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#C0F0FB] font-mono">
                               {row.k}
                             </span>
-                            <span className={cn("text-[15px] font-medium leading-relaxed font-sans", service.bodyColor)}>
+                            <span className="text-sm font-semibold text-foreground leading-normal">
                               {row.v}
                             </span>
                           </div>
                         ))}
                       </div>
 
-                      {/* Action Button with Fluid Fill Hover */}
-                      <div className="pt-6 mt-auto">
-                        <LiquidButton
-                          href={service.buttonHref}
-                          target={service.buttonHref.startsWith("http") ? "_blank" : undefined}
-                          rel={service.buttonHref.startsWith("http") ? "noopener noreferrer" : undefined}
-                          className="w-full"
-                          size="default"
+                      {/* Action Button */}
+                      {service.buttonHref.startsWith("http") ? (
+                        <a 
+                          href={service.buttonHref} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="w-full block mt-6"
                         >
-                          {service.buttonText}
-                        </LiquidButton>
-                      </div>
+                          <Button
+                            className="w-full uppercase font-bold text-[12px] tracking-wider py-5 bg-[#C0F0FB] text-black hover:bg-white hover:text-black border-none transition-all duration-300 shadow-md"
+                          >
+                            {service.buttonText}
+                          </Button>
+                        </a>
+                      ) : (
+                        <Link href={service.buttonHref} className="w-full block mt-6">
+                          <Button
+                            className="w-full uppercase font-bold text-[12px] tracking-wider py-5 bg-[#C0F0FB] text-black hover:bg-white hover:text-black border-none transition-all duration-300 shadow-md"
+                          >
+                            {service.buttonText}
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -322,8 +265,7 @@ export default function ServicesPage() {
             </div>
           </Reveal>
         </div>
-      </section>
+      </div>
     </div>
-  </div>
-);
+  );
 }
