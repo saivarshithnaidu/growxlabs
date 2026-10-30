@@ -64,22 +64,22 @@ const LABS_SLIDES: Slide[] = [
 ];
 
 /**
- * Solid graphite card design with subtle graphite image borders (#252525).
- * The content panel has a solid background color (#111315) so the overlapping text
- * stays crisp and completely opaque over the image.
+ * Option 2: Deep Petroleum / Midnight Cyan image frame (#0A1B22 / #16323B).
+ * Grounds both dark UI dashboards and bright white screenshots with GrowX's signature brand accent.
+ * The content panel has a solid graphite background (#111315) so overlapping text is crisp and readable.
  */
 
-/** Image slideshow inside a subtle graphite frame (#252525). */
+/** Image slideshow inside a Deep Petroleum frame (#0A1B22) with midnight cyan border (#16323B). */
 function FramedSlideshow({ slides, currentIndex }: { slides: Slide[]; currentIndex: number }) {
   return (
-    <div className="rounded-2xl sm:rounded-3xl border border-[#252525] overflow-hidden bg-black">
-      <div className="relative aspect-[16/9] w-full overflow-hidden bg-black">
+    <div className="rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 bg-[#0A1B22] border border-[#16323B] transition-colors duration-300 group-hover:border-[#234E5D]">
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl sm:rounded-2xl bg-[#05070E]">
         <div
           className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {slides.map((slide, idx) => (
-            <div key={slide.src} className="relative w-full h-full shrink-0 bg-black">
+            <div key={slide.src} className="relative w-full h-full shrink-0 bg-[#05070E]">
               {slide.isComponent ? (
                 <DeepfakeSimpleCardDiagram className="w-full h-full" />
               ) : (
