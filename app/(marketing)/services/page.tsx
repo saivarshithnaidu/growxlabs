@@ -1,63 +1,147 @@
-/* Hallmark · services/page.tsx · modern-minimal · built: redesign */
 
 import { Reveal } from "@/components/marketing/Reveal";
-import { Link } from "@/navigation";
+import { locales, Link } from "@/navigation";
 import { DynamicSchema } from "@/components/marketing/DynamicSchema";
 import { PageHero } from "@/components/marketing/PageHero";
-import { ArrowUpRight, Code2, Layers, Compass, Users } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+
+function PixelGrid({ type }: { type: string }) {
+  // grids of 16 columns by 10 rows
+  let cells: number[][] = [];
+  
+  if (type === "software") {
+    cells = [
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
+      [0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0],
+      [0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+      [0,1,0,0,0,1,1,0,1,1,0,0,0,0,1,0],
+      [0,1,0,0,0,0,1,1,1,0,0,0,0,0,1,0],
+      [0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0],
+      [0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0],
+      [0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    ];
+  } else if (type === "ai") {
+    cells = [
+      [0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0],
+      [0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0],
+      [0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0],
+      [0,1,1,0,1,1,0,0,1,1,0,1,1,0,0,0],
+      [0,1,1,0,1,1,0,0,1,1,0,1,1,0,0,0],
+      [0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0],
+      [0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0],
+      [0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    ];
+  } else if (type === "cto") {
+    cells = [
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+      [0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0],
+      [0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    ];
+  } else {
+    cells = [
+      [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+      [0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
+      [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+      [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0],
+      [0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
+      [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    ];
+  }
+
+  return (
+    <div className="flex justify-center my-4 h-32">
+      <svg
+        viewBox="0 0 160 100"
+        className="h-full w-full max-w-[200px]"
+        style={{ imageRendering: "pixelated", shapeRendering: "crispEdges" }}
+        aria-hidden="true"
+      >
+        <style>{`
+          @keyframes px-pulse {
+            0%, 100% { fill: #C0F0FB; opacity: 0.95; }
+            50% { fill: #C0F0FB; opacity: 0.25; }
+          }
+          .px-active {
+            animation: px-pulse 3s infinite ease-in-out;
+          }
+        `}</style>
+        {cells.map((row, rIdx) =>
+          row.map((cell, cIdx) => {
+            if (cell === 0) return null;
+            const delay = ((rIdx + cIdx) * 0.08).toFixed(2) + "s";
+            return (
+              <rect
+                key={`${rIdx}-${cIdx}`}
+                x={cIdx * 10}
+                y={rIdx * 10}
+                width={8}
+                height={8}
+                className="px-active"
+                style={{ animationDelay: delay }}
+              />
+            );
+          })
+        )}
+      </svg>
+    </div>
+  );
+}
 
 const services = [
   {
-    index: "01",
     title: "Custom Software Builds",
     type: "software",
-    icon: Code2,
     mission: "Problem to prototype",
-    scope: "Scoped build",
-    dimensions: "Architecture to production delivery",
     useCases: "Custom enterprise apps, platforms, integrations",
-    buttonText: "Get in touch",
+    weight: "Scoped build",
+    dimensions: "Architecture to production delivery",
+    buttonText: "GET IN TOUCH",
     buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20a%20Custom%20Software%20Build%20at%20GrowxLabs.",
-    isExternal: true,
   },
   {
-    index: "02",
     title: "Labs & Platforms",
     type: "ai",
-    icon: Layers,
     mission: "Deploy proven architectures",
-    scope: "Fast deployment",
-    dimensions: "Configurable / production-ready",
     useCases: "Scraping, developer harnesses, talent systems",
-    buttonText: "Explore labs",
+    weight: "Fast deployment",
+    dimensions: "Configurable / production-ready",
+    buttonText: "EXPLORE LABS",
     buttonHref: "/products",
-    isExternal: false,
   },
   {
-    index: "03",
     title: "Fractional CTO",
     type: "cto",
-    icon: Compass,
     mission: "Own product and architecture",
-    scope: "Strategic",
-    dimensions: "Architecture & technical leadership",
     useCases: "Roadmaps, system design, technical strategy",
-    buttonText: "Get in touch",
+    weight: "Strategic",
+    dimensions: "Architecture & technical leadership",
+    buttonText: "GET IN TOUCH",
     buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20Fractional%20CTO%20services%20at%20GrowxLabs.",
-    isExternal: true,
   },
   {
-    index: "04",
     title: "Technical Co-founders",
     type: "founder",
-    icon: Users,
     mission: "Embed from day one",
-    scope: "Deep partnership",
-    dimensions: "Long-term aligned engineering",
     useCases: "MVPs, technology stack, delivery, scaling",
-    buttonText: "Get in touch",
+    weight: "Deep partnership",
+    dimensions: "Long-term aligned engineering",
+    buttonText: "GET IN TOUCH",
     buttonHref: "https://wa.me/919381188153?text=Hi%2C%20I%27m%20interested%20in%20a%20Technical%20Co-founder%20partnership%20at%20GrowxLabs.",
-    isExternal: true,
   },
 ];
 
@@ -66,8 +150,8 @@ export async function generateMetadata() {
     title: "Software Engineering, Web Platforms & Enterprise AI Services | GrowxLabs",
     description: "GrowxLabs provides custom enterprise software development, product engineering, web platform engineering, modernization, and intelligent workflow integrations.",
     alternates: {
-      canonical: "https://growxlabs.tech/services",
-    },
+      canonical: "https://growxlabs.tech/services"
+    }
   };
 }
 
@@ -82,7 +166,7 @@ export default function ServicesPage() {
             "name": "Enterprise Software Engineering",
             "provider": { "@id": "https://growxlabs.tech/#organization" },
             "areaServed": "Global",
-            "description": "Custom enterprise software development, modern web platform engineering, and scalable digital architectures.",
+            "description": "Custom enterprise software development, modern web platform engineering, and scalable digital architectures."
           },
           {
             "@type": "Service",
@@ -90,127 +174,98 @@ export default function ServicesPage() {
             "name": "AI & Intelligent Workflows",
             "provider": { "@id": "https://growxlabs.tech/#organization" },
             "areaServed": "Global",
-            "description": "Multi-agent systems, document intelligence pipelines, and secure enterprise AI integrations.",
-          },
+            "description": "Multi-agent systems, document intelligence pipelines, and secure enterprise AI integrations."
+          }
         ]}
       />
 
       <PageHero
         title="Services"
-        viewingText="Services"
-        exploreText="What we do"
-        tagline="Software & product engineering"
+        viewingText="SERVICES"
+        exploreText="WHAT WE DO"
+        tagline="SOFTWARE & PRODUCT ENGINEERING"
       />
 
-      <section
-        aria-label="Capabilities and engagement models"
-        className="pb-24 px-6 md:px-10 xl:px-16 2xl:px-24 w-full border-t border-border pt-16 bg-black"
-      >
+      <div className="pb-12 px-6 md:px-10 xl:px-16 2xl:px-24 w-full border-t border-white/10 pt-16 bg-black">
         <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-          {/* Section Introduction */}
-          <Reveal y={20}>
-            <div className="mb-12 max-w-3xl">
-              <span className="text-xs text-muted-foreground font-mono">
-                [ 01 / 04 ]
-              </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-foreground mt-2 mb-4">
-                Engagement models and core capabilities
-              </h2>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                From rapid scoped prototypes to production enterprise architectures and full-lifecycle engineering partnerships.
-              </p>
-            </div>
-          </Reveal>
 
-          {/* Capability Grid */}
-          <Reveal y={30}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-              {services.map((service) => {
-                const Icon = service.icon;
-                return (
-                  <article
-                    key={service.title}
-                    className="group relative flex flex-col justify-between rounded-2xl bg-card border border-border p-6 sm:p-8 lg:p-10 transition-colors duration-200 hover:border-neutral-700 motion-reduce:transition-none"
+          {/* Services Cards Grid */}
+          <Reveal y={40}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-0">
+              {services.map((service, index) => (
+                <div
+                  key={service.title}
+                  className="relative p-[1px] transition-all duration-300 hover:scale-[1.01] bg-white/10 hover:bg-[#C0F0FB]/60"
+                  style={{
+                    clipPath: "polygon(0 0, calc(100% - 42px) 0, 100% 42px, 100% 100%, 0 100%)",
+                  }}
+                >
+                  <div
+                    className="bg-[#0A0A0C] py-6 px-7 sm:px-8 sm:py-9 flex flex-col h-full justify-between min-h-[500px]"
+                    style={{
+                      clipPath: "polygon(0 0, calc(100% - 41px) 0, 100% 41px, 100% 100%, 0 100%)",
+                    }}
                   >
                     <div>
-                      {/* Top Row: Index + Icon Badge */}
-                      <div className="flex items-center justify-between pb-6 border-b border-border">
-                        <span className="text-xs font-mono text-muted-foreground">
-                          {service.index}
-                        </span>
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-900 border border-border text-foreground">
-                          <Icon className="h-5 w-5" aria-hidden="true" />
-                        </div>
-                      </div>
-
-                      {/* Header & Mission */}
-                      <div className="mt-6">
-                        <h3 className="text-xl sm:text-2xl font-medium tracking-tight text-foreground">
-                          {service.title}
-                        </h3>
-                        <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-                          {service.mission}
-                        </p>
-                      </div>
-
-                      {/* Structured Details Matrix */}
-                      <dl className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-border">
-                        <div>
-                          <dt className="text-xs text-muted-foreground font-normal">
-                            Scope
-                          </dt>
-                          <dd className="mt-1 text-sm font-medium text-foreground">
-                            {service.scope}
-                          </dd>
-                        </div>
-                        <div>
-                          <dt className="text-xs text-muted-foreground font-normal">
-                            Delivery
-                          </dt>
-                          <dd className="mt-1 text-sm font-medium text-foreground">
-                            {service.dimensions}
-                          </dd>
-                        </div>
-                        <div className="sm:col-span-2">
-                          <dt className="text-xs text-muted-foreground font-normal">
-                            Use cases
-                          </dt>
-                          <dd className="mt-1 text-sm text-foreground">
-                            {service.useCases}
-                          </dd>
-                        </div>
-                      </dl>
+                      <h3 className="text-xl font-bold text-foreground leading-tight tracking-tight mt-4 min-h-[56px] flex items-center">
+                        {service.title}
+                      </h3>
+                      
+                      {/* Pixel Art Graphic */}
+                      <PixelGrid type={service.type} />
                     </div>
 
-                    {/* Action Link / Button */}
-                    <div className="mt-8 pt-6 border-t border-border">
-                      {service.isExternal ? (
-                        <a
-                          href={service.buttonHref}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-neutral-200 active:bg-neutral-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
+                    <div>
+                      {/* Metadata fields list */}
+                      <div className="flex flex-col gap-4 mt-4 pt-6 border-t border-white/10">
+                        {[
+                          { k: "MISSIONS", v: service.mission },
+                          { k: "USE CASES", v: service.useCases },
+                          { k: "WEIGHT", v: service.weight },
+                          { k: "DIMENSIONS", v: service.dimensions },
+                        ].map((row) => (
+                          <div key={row.k} className="flex flex-col gap-1">
+                            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#C0F0FB] font-mono">
+                              {row.k}
+                            </span>
+                            <span className="text-sm font-semibold text-foreground leading-normal">
+                              {row.v}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Action Button */}
+                      {service.buttonHref.startsWith("http") ? (
+                        <a 
+                          href={service.buttonHref} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="w-full block mt-6"
                         >
-                          <span>{service.buttonText}</span>
-                          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                          <Button
+                            className="w-full uppercase font-bold text-[12px] tracking-wider py-5 bg-[#C0F0FB] text-black hover:bg-white hover:text-black border-none transition-all duration-300 shadow-md"
+                          >
+                            {service.buttonText}
+                          </Button>
                         </a>
                       ) : (
-                        <Link
-                          href={service.buttonHref}
-                          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-neutral-200 active:bg-neutral-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
-                        >
-                          <span>{service.buttonText}</span>
-                          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                        <Link href={service.buttonHref} className="w-full block mt-6">
+                          <Button
+                            className="w-full uppercase font-bold text-[12px] tracking-wider py-5 bg-[#C0F0FB] text-black hover:bg-white hover:text-black border-none transition-all duration-300 shadow-md"
+                          >
+                            {service.buttonText}
+                          </Button>
                         </Link>
                       )}
                     </div>
-                  </article>
-                );
-              })}
+                  </div>
+                </div>
+              ))}
             </div>
           </Reveal>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
