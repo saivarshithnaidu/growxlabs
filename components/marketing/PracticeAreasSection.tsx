@@ -3,11 +3,18 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Link } from "@/navigation";
-import { ArrowRight } from "lucide-react";
 import { AnimatedSection, AnimatedStagger, AnimatedItem } from "@/components/marketing/AnimatedSection";
 import { DeepfakeSimpleCardDiagram } from "@/components/ailab/DeepfakeSimpleCardDiagram";
 
-const PORTFOLIO_SLIDES = [
+interface Slide {
+  src: string;
+  alt: string;
+  title: string;
+  fit: string;
+  isComponent?: boolean;
+}
+
+const PORTFOLIO_SLIDES: Slide[] = [
   {
     src: "/portfolio/trionyx-dashboard.png",
     alt: "TRIONYX — Distributor Management Platform",
@@ -22,7 +29,7 @@ const PORTFOLIO_SLIDES = [
   },
 ];
 
-const LABS_SLIDES = [
+const LABS_SLIDES: Slide[] = [
   {
     src: "/images/ailab/deepfake-architecture.png",
     alt: "GrowX Deepfake — Neural System Architecture",
@@ -56,128 +63,22 @@ const LABS_SLIDES = [
   },
 ];
 
-function PortfolioWindowCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+/**
+ * Color system for these tiles: teal image frame (#0F313A / #1E4952), neutral
+ * content panel (#111315, border #292D32), off-white type and action (#F7F7F5),
+ * muted body copy (#A6ADB4), and the site cyan (#C0F0FB) as the only accent, on hover.
+ */
 
-  useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % PORTFOLIO_SLIDES.length);
-    }, 4200);
-    return () => clearInterval(interval);
-  }, [isPaused]);
-
+/** Image slideshow inside a neutral frame; driven by the parent tile's index. */
+function FramedSlideshow({ slides, currentIndex }: { slides: Slide[]; currentIndex: number }) {
   return (
-    <div
-      className="mt-8 sm:mt-10 rounded-xl sm:rounded-2xl border border-neutral-800/80 bg-[#07070A] overflow-hidden shadow-2xl transition-all duration-300 group-hover:border-neutral-700/80"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      {/* Window Title Bar */}
-      <div className="h-10 px-4 bg-[#0E0E14] border-b border-neutral-800/80 flex items-center justify-between select-none">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444] inline-block" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] inline-block" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] inline-block" />
-        </div>
-
-        <div className="font-mono text-[11px] sm:text-xs text-neutral-400 tracking-wider uppercase font-semibold">
-          GROWX / CLIENTS
-        </div>
-
-        <div className="w-12" />
-      </div>
-
-      {/* Window Body: Horizontal Moving Slider */}
-      <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#05070E]">
+    <div className="rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 bg-[#0F313A] border border-[#1E4952] transition-colors duration-300 group-hover:border-[#2C6470]">
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl sm:rounded-2xl bg-[#05070E]">
         <div
           className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
-          {PORTFOLIO_SLIDES.map((slide, idx) => (
-            <div key={slide.src} className="relative w-full h-full shrink-0 bg-[#05070E]">
-              <Image
-                src={slide.src}
-                alt={slide.alt}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className={
-                  slide.fit === "contain"
-                    ? "object-contain object-center p-2.5"
-                    : "object-cover object-top"
-                }
-                priority={idx === 0}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Floating Slide Indicator Dots */}
-        <div className="absolute bottom-3 right-3 sm:bottom-3.5 sm:right-3.5 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/10 shadow-lg select-none">
-          {PORTFOLIO_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setCurrentIndex(i);
-              }}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === currentIndex
-                  ? "w-4 sm:w-5 bg-[#C0F0FB]"
-                  : "w-1.5 bg-white/30 hover:bg-white/60"
-              }`}
-              aria-label={`Portfolio slide ${i + 1}`}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function LabsWindowCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % LABS_SLIDES.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isPaused]);
-
-  return (
-    <div
-      className="mt-8 sm:mt-10 rounded-xl sm:rounded-2xl border border-neutral-800/80 bg-[#07070A] overflow-hidden shadow-2xl transition-all duration-300 group-hover:border-neutral-700/80"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      {/* Window Title Bar */}
-      <div className="h-10 px-4 bg-[#0E0E14] border-b border-neutral-800/80 flex items-center justify-between select-none">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444] inline-block" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] inline-block" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] inline-block" />
-        </div>
-
-        <div className="font-mono text-[11px] sm:text-xs text-neutral-400 tracking-wider uppercase font-semibold">
-          GROWX / RESEARCH
-        </div>
-
-        <div className="w-12" />
-      </div>
-
-      {/* Window Body: Horizontal Moving Slider */}
-      <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#05070E]">
-        <div
-          className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-        >
-          {LABS_SLIDES.map((slide, idx) => (
+          {slides.map((slide, idx) => (
             <div key={slide.src} className="relative w-full h-full shrink-0 bg-[#05070E]">
               {slide.isComponent ? (
                 <DeepfakeSimpleCardDiagram className="w-full h-full" />
@@ -186,11 +87,11 @@ function LabsWindowCarousel() {
                   src={slide.src}
                   alt={slide.alt}
                   fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className={
                     slide.fit === "contain"
                       ? "object-contain object-center p-2.5"
-                      : "object-cover object-top"
+                      : "object-cover object-left-top"
                   }
                   priority={idx === 0}
                 />
@@ -198,29 +99,63 @@ function LabsWindowCarousel() {
             </div>
           ))}
         </div>
-
-        {/* Floating Slide Indicator Dots */}
-        <div className="absolute bottom-3 right-3 sm:bottom-3.5 sm:right-3.5 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/10 shadow-lg select-none">
-          {LABS_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setCurrentIndex(i);
-              }}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === currentIndex
-                  ? "w-4 sm:w-5 bg-[#C0F0FB]"
-                  : "w-1.5 bg-white/30 hover:bg-white/60"
-              }`}
-              aria-label={`Labs slide ${i + 1}`}
-            />
-          ))}
-        </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Framed image on top, dark text panel overlapping its bottom edge,
+ * and a solid call-to-action. The whole tile links to `href`.
+ */
+function WorkTile({
+  href,
+  title,
+  description,
+  cta,
+  slides,
+  interval,
+}: {
+  href: string;
+  title: string;
+  description: string;
+  cta: string;
+  slides: Slide[];
+  interval: number;
+}) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    }, interval);
+    return () => clearInterval(timer);
+  }, [isPaused, slides.length, interval]);
+
+  return (
+    <Link
+      href={href}
+      className="group flex flex-col h-full select-none"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <FramedSlideshow slides={slides} currentIndex={currentIndex} />
+
+      <div className="relative z-10 flex-1 flex flex-col -mt-12 mx-3 sm:mx-5 rounded-2xl border border-[#292D32] bg-[#111315] shadow-[0_-12px_40px_rgba(0,0,0,0.55)] p-6 sm:p-8 transition-[transform,border-color] duration-300 group-hover:-translate-y-1 group-hover:border-[#C0F0FB]/40">
+        <h3 className="font-sans font-medium text-[26px] sm:text-[30px] text-[#F7F7F5] tracking-tight leading-tight">
+          {title}
+        </h3>
+        <p className="mt-3 text-[#A6ADB4] text-base sm:text-[17px] leading-relaxed max-w-xl font-normal">
+          {description}
+        </p>
+        {/* Same size/type/hover as the header's Contact button (site cyan on hover) */}
+        <span className="mt-7 self-start inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-md bg-[#F7F7F5] text-[#111315] text-[15px] font-medium transition-colors duration-200 group-hover:bg-[#C0F0FB]">
+          {cta}
+        </span>
+      </div>
+    </Link>
   );
 }
 
@@ -228,77 +163,33 @@ export function PracticeAreasSection() {
   return (
     <section className="w-full py-24 px-6 md:px-10 xl:px-16 2xl:px-24 bg-black border-t border-white/10">
       <div className="max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1680px] mx-auto">
-        <AnimatedSection className="text-center mb-16">
-          <h2 className="text-[clamp(32px,4vw,48px)] font-sans font-bold text-white tracking-tight">
+        <AnimatedSection className="mb-8 sm:mb-10">
+          <h2 className="text-[clamp(30px,3.4vw,42px)] font-sans font-medium text-white tracking-tight">
             Client Solutions & Proprietary Labs
           </h2>
         </AnimatedSection>
 
-        <AnimatedStagger className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-12">
-          {/* PORTFOLIO CARD */}
-          <AnimatedItem>
-            <Link href="/portfolio" className="group block h-full select-none">
-              <div className="h-full flex flex-col justify-between bg-[#0A0A0D] border border-neutral-800/80 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-neutral-600 hover:shadow-[0_0_50px_rgba(255,255,255,0.06)] p-8 sm:p-10 lg:p-12">
-                <div className="space-y-4 sm:space-y-6">
-                  {/* Eyebrow Badge (360Labs Pill Style) */}
-                  <div>
-                    <span className="inline-flex items-center px-3 py-1 rounded-md border border-neutral-700/80 bg-neutral-900/60 font-mono text-[11px] sm:text-xs tracking-[0.14em] text-neutral-300 uppercase font-semibold">
-                      CLIENT PORTFOLIO
-                    </span>
-                  </div>
-
-                  {/* Title + Circular Arrow Button */}
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-sans font-bold text-3xl sm:text-4xl lg:text-[44px] text-white tracking-tight leading-tight">
-                      Portfolio
-                    </h3>
-                    <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full border border-neutral-700/80 flex items-center justify-center text-neutral-400 transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:border-white shrink-0">
-                      <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
-                    </div>
-                  </div>
-
-                  <p className="text-neutral-400 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
-                    Custom software architectures, autonomous AI workflows, and secure integrations engineered with senior-developer velocity.
-                  </p>
-                </div>
-
-                {/* Window Frame with Moving Portfolio Screenshots */}
-                <PortfolioWindowCarousel />
-              </div>
-            </Link>
+        <AnimatedStagger className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-10 xl:gap-12">
+          <AnimatedItem className="h-full">
+            <WorkTile
+              href="/portfolio"
+              title="Portfolio"
+              description="Custom software architectures, autonomous AI workflows, and secure integrations engineered with senior-developer velocity."
+              cta="View projects"
+              slides={PORTFOLIO_SLIDES}
+              interval={4200}
+            />
           </AnimatedItem>
 
-          {/* LABS CARD */}
-          <AnimatedItem>
-            <Link href="/research" className="group block h-full select-none">
-              <div className="h-full flex flex-col justify-between bg-[#0A0A0D] border border-neutral-800/80 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-neutral-600 hover:shadow-[0_0_50px_rgba(255,255,255,0.06)] p-8 sm:p-10 lg:p-12">
-                <div className="space-y-4 sm:space-y-6">
-                  {/* Eyebrow Badge (360Labs Pill Style) */}
-                  <div>
-                    <span className="inline-flex items-center px-3 py-1 rounded-md border border-neutral-700/80 bg-neutral-900/60 font-mono text-[11px] sm:text-xs tracking-[0.14em] text-neutral-300 uppercase font-semibold">
-                      AI &amp; ROBOTICS LAB
-                    </span>
-                  </div>
-
-                  {/* Title + Circular Arrow Button */}
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-sans font-bold text-3xl sm:text-4xl lg:text-[44px] text-white tracking-tight leading-tight">
-                      Research
-                    </h3>
-                    <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full border border-neutral-700/80 flex items-center justify-center text-neutral-400 transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:border-white shrink-0">
-                      <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
-                    </div>
-                  </div>
-
-                  <p className="text-neutral-400 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
-                    Explore our AI research, experiments, and open-source tools built at the frontier of intelligence.
-                  </p>
-                </div>
-
-                {/* Window Frame with Moving Labs & Products Screenshots */}
-                <LabsWindowCarousel />
-              </div>
-            </Link>
+          <AnimatedItem className="h-full">
+            <WorkTile
+              href="/research"
+              title="Research"
+              description="Explore our AI research, experiments, and open-source tools built at the frontier of intelligence."
+              cta="Explore research"
+              slides={LABS_SLIDES}
+              interval={4000}
+            />
           </AnimatedItem>
         </AnimatedStagger>
       </div>
