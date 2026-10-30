@@ -228,8 +228,8 @@ export default async function RootLayout({
             <QueryProvider>
               <ThemeProvider
                 attribute="class"
-                defaultTheme="light"
-                enableSystem={false}
+                defaultTheme="system"
+                enableSystem={true}
                 disableTransitionOnChange
               >
                 <AccentColorProvider>

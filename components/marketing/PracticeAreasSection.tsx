@@ -1,77 +1,222 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { LiquidButton } from "@/components/ui/LiquidButton";
+import { Link } from "@/navigation";
+import { ArrowRight } from "lucide-react";
+import { AnimatedSection, AnimatedStagger, AnimatedItem } from "@/components/marketing/AnimatedSection";
+import { DeepfakeSimpleCardDiagram } from "@/components/ailab/DeepfakeSimpleCardDiagram";
 
-interface Preview {
-  src: string;
-  alt: string;
-  title: string;
-  framing?: string;
-}
-
-const PORTFOLIO_SLIDES: Preview[] = [
-  { src: "/portfolio/trionyx-dashboard.png", alt: "TRIONYX distributor management dashboard", title: "TRIONYX", framing: "object-cover object-top origin-top-right scale-[1.65]" },
-  { src: "/portfolio/growx-crawl.png", alt: "GrowX Crawl web intelligence platform", title: "GrowX Crawl" },
+const PORTFOLIO_SLIDES = [
+  {
+    src: "/portfolio/trionyx-dashboard.png",
+    alt: "TRIONYX — Distributor Management Platform",
+    title: "TRIONYX™",
+    fit: "cover",
+  },
+  {
+    src: "/portfolio/growx-crawl.png",
+    alt: "GrowX Crawl — Enterprise Web Intelligence Runtime",
+    title: "GrowX Crawl™",
+    fit: "cover",
+  },
 ];
 
-const LABS_SLIDES: Preview[] = [
-  { src: "/images/robotics/humanoid-embodied-ai.jpg", alt: "Humanoid robotics research", title: "Embodied AI" },
-  { src: "/images/robotics/autonomous-manipulation.jpg", alt: "Robotic precision manipulation", title: "Autonomous manipulation" },
+const LABS_SLIDES = [
+  {
+    src: "/images/ailab/deepfake-architecture.png",
+    alt: "GrowX Deepfake — Neural System Architecture",
+    title: "GrowX Deepfake™ Architecture",
+    fit: "contain",
+    isComponent: true,
+  },
+  {
+    src: "/images/robotics/humanoid-embodied-ai.jpg",
+    alt: "GrowX Robotics — Humanoid Embodied Intelligence & Kinematics",
+    title: "Embodied Humanoid AI",
+    fit: "cover",
+  },
+  {
+    src: "/images/robotics/autonomous-manipulation.jpg",
+    alt: "GrowX Robotics — Autonomous Precision Manipulation",
+    title: "Autonomous Manipulation",
+    fit: "cover",
+  },
+  {
+    src: "/images/products/recruitai.png",
+    alt: "RecruitAI — Autonomous Talent Acquisition",
+    title: "RecruitAI™",
+    fit: "cover",
+  },
+  {
+    src: "/images/products/pipper.png",
+    alt: "Pipper — Desktop Agent Workspace",
+    title: "Pipper™",
+    fit: "cover",
+  },
 ];
 
-function ProjectPreview({ slides, label }: { slides: Preview[]; label: string }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+function PortfolioWindowCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let timer: ReturnType<typeof setInterval> | undefined;
-    const sync = () => {
-      clearInterval(timer);
-      if (!paused && !motion.matches && !document.hidden) {
-        timer = setInterval(() => setIndex(current => (current + 1) % slides.length), 6000);
-      }
-    };
-    sync();
-    motion.addEventListener("change", sync);
-    document.addEventListener("visibilitychange", sync);
-    return () => {
-      clearInterval(timer);
-      motion.removeEventListener("change", sync);
-      document.removeEventListener("visibilitychange", sync);
-    };
-  }, [paused, slides.length]);
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % PORTFOLIO_SLIDES.length);
+    }, 4200);
+    return () => clearInterval(interval);
+  }, [isPaused]);
 
   return (
     <div
-      role="region"
-      aria-label={`${label} previews; focus or hover to pause`}
-      tabIndex={0}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
-      className="overflow-hidden rounded-[14px] bg-[#B9CFDA] p-2 sm:p-2.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#17252D]"
+      className="mt-8 sm:mt-10 rounded-xl sm:rounded-2xl border border-neutral-800/80 bg-[#07070A] overflow-hidden shadow-2xl transition-all duration-300 group-hover:border-neutral-700/80"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-[#0B1013]">
-        <div className="work-image-frame relative w-full h-full">
-          {slides.map((slide, slideIndex) => (
-            <div
-              key={slide.src}
-              aria-hidden={slideIndex !== index}
-              className={`absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none ${slideIndex === index ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-            >
+      {/* Window Title Bar */}
+      <div className="h-10 px-4 bg-[#0E0E14] border-b border-neutral-800/80 flex items-center justify-between select-none">
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444] inline-block" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] inline-block" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] inline-block" />
+        </div>
+
+        <div className="font-mono text-[11px] sm:text-xs text-neutral-400 tracking-wider uppercase font-semibold">
+          GROWX / CLIENTS
+        </div>
+
+        <div className="w-12" />
+      </div>
+
+      {/* Window Body: Horizontal Moving Slider */}
+      <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#05070E]">
+        <div
+          className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {PORTFOLIO_SLIDES.map((slide, idx) => (
+            <div key={slide.src} className="relative w-full h-full shrink-0 bg-[#05070E]">
               <Image
                 src={slide.src}
                 alt={slide.alt}
                 fill
-                sizes="(max-width: 767px) calc(100vw - 80px), (max-width: 1280px) 44vw, 560px"
-                className={slide.framing ?? (label === "Portfolio" ? "object-cover object-top" : "object-cover object-center")}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className={
+                  slide.fit === "contain"
+                    ? "object-contain object-center p-2.5"
+                    : "object-cover object-top"
+                }
+                priority={idx === 0}
               />
             </div>
+          ))}
+        </div>
+
+        {/* Floating Slide Indicator Dots */}
+        <div className="absolute bottom-3 right-3 sm:bottom-3.5 sm:right-3.5 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/10 shadow-lg select-none">
+          {PORTFOLIO_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setCurrentIndex(i);
+              }}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === currentIndex
+                  ? "w-4 sm:w-5 bg-[#C0F0FB]"
+                  : "w-1.5 bg-white/30 hover:bg-white/60"
+              }`}
+              aria-label={`Portfolio slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LabsWindowCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % LABS_SLIDES.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isPaused]);
+
+  return (
+    <div
+      className="mt-8 sm:mt-10 rounded-xl sm:rounded-2xl border border-neutral-800/80 bg-[#07070A] overflow-hidden shadow-2xl transition-all duration-300 group-hover:border-neutral-700/80"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Window Title Bar */}
+      <div className="h-10 px-4 bg-[#0E0E14] border-b border-neutral-800/80 flex items-center justify-between select-none">
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444] inline-block" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] inline-block" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] inline-block" />
+        </div>
+
+        <div className="font-mono text-[11px] sm:text-xs text-neutral-400 tracking-wider uppercase font-semibold">
+          GROWX / RESEARCH
+        </div>
+
+        <div className="w-12" />
+      </div>
+
+      {/* Window Body: Horizontal Moving Slider */}
+      <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#05070E]">
+        <div
+          className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {LABS_SLIDES.map((slide, idx) => (
+            <div key={slide.src} className="relative w-full h-full shrink-0 bg-[#05070E]">
+              {slide.isComponent ? (
+                <DeepfakeSimpleCardDiagram className="w-full h-full" />
+              ) : (
+                <Image
+                  src={slide.src}
+                  alt={slide.alt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className={
+                    slide.fit === "contain"
+                      ? "object-contain object-center p-2.5"
+                      : "object-cover object-top"
+                  }
+                  priority={idx === 0}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Floating Slide Indicator Dots */}
+        <div className="absolute bottom-3 right-3 sm:bottom-3.5 sm:right-3.5 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/10 shadow-lg select-none">
+          {LABS_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setCurrentIndex(i);
+              }}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === currentIndex
+                  ? "w-4 sm:w-5 bg-[#C0F0FB]"
+                  : "w-1.5 bg-white/30 hover:bg-white/60"
+              }`}
+              aria-label={`Labs slide ${i + 1}`}
+            />
           ))}
         </div>
       </div>
@@ -81,67 +226,82 @@ function ProjectPreview({ slides, label }: { slides: Preview[]; label: string })
 
 export function PracticeAreasSection() {
   return (
-    <div className="w-full px-3 sm:px-4 md:px-6 mb-4 sm:mb-6 select-none">
-      <section
-        aria-labelledby="practice-areas-title"
-        className="w-full rounded-[16px] bg-[#F5F5F5] px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12"
-      >
-        <div className="mx-auto max-w-7xl">
-          <h2
-            id="practice-areas-title"
-            className="mb-5 sm:mb-7 font-sans text-xl sm:text-2xl font-medium tracking-[-0.035em] text-[#17252D] md:mb-9 md:text-3xl"
-          >
-            Our work
+    <section className="w-full py-24 px-6 md:px-10 xl:px-16 2xl:px-24 bg-black border-t border-white/10">
+      <div className="max-w-7xl xl:max-w-[1536px] 2xl:max-w-[1680px] mx-auto">
+        <AnimatedSection className="text-center mb-16">
+          <h2 className="text-[clamp(32px,4vw,48px)] font-sans font-bold text-white tracking-tight">
+            Client Solutions & Proprietary Labs
           </h2>
-          <div className="grid grid-cols-1 gap-7 sm:gap-9 md:grid-cols-2 md:gap-5 items-stretch">
-            {[
-              {
-                title: "Portfolio",
-                description:
-                  "We design and build custom software, AI agents, and integrated platforms for companies across automotive, manufacturing, logistics, and other industries.",
-                href: "/portfolio",
-                action: "VIEW PROJECTS",
-                slides: PORTFOLIO_SLIDES,
-              },
-              {
-                title: "Research",
-                description:
-                  "We research and explore foundation AI models, robotics, and intelligent systems, designing and engineering technologies for real-world applications.",
-                href: "/research",
-                action: "EXPLORE RESEARCH",
-                slides: LABS_SLIDES,
-              },
-            ].map(({ title, description, href, action, slides }) => (
-              <article
-                key={title}
-                className="work-item group flex min-w-0 flex-col h-full cursor-default"
-              >
-                {/* 1. Large 16:9 Image Surface with Powder-Blue #B9CFDA Framing */}
-                <div className="w-full">
-                  <ProjectPreview slides={slides} label={title} />
+        </AnimatedSection>
+
+        <AnimatedStagger className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-12">
+          {/* PORTFOLIO CARD */}
+          <AnimatedItem>
+            <Link href="/portfolio" className="group block h-full select-none">
+              <div className="h-full flex flex-col justify-between bg-[#0A0A0D] border border-neutral-800/80 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-neutral-600 hover:shadow-[0_0_50px_rgba(255,255,255,0.06)] p-8 sm:p-10 lg:p-12">
+                <div className="space-y-4 sm:space-y-6">
+                  {/* Eyebrow Badge (360Labs Pill Style) */}
+                  <div>
+                    <span className="inline-flex items-center px-3 py-1 rounded-md border border-neutral-700/80 bg-neutral-900/60 font-mono text-[11px] sm:text-xs tracking-[0.14em] text-neutral-300 uppercase font-semibold">
+                      CLIENT PORTFOLIO
+                    </span>
+                  </div>
+
+                  {/* Title + Circular Arrow Button */}
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="font-sans font-bold text-3xl sm:text-4xl lg:text-[44px] text-white tracking-tight leading-tight">
+                      Portfolio
+                    </h3>
+                    <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full border border-neutral-700/80 flex items-center justify-center text-neutral-400 transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:border-white shrink-0">
+                      <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </div>
+                  </div>
+
+                  <p className="text-neutral-400 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
+                    Custom software architectures, autonomous AI workflows, and secure integrations engineered with senior-developer velocity.
+                  </p>
                 </div>
 
-                {/* 2. Overlapping White Information Panel (Balanced mobile overlap, equal heights, refined padding) */}
-                <div className="work-info-panel relative z-10 -mt-4 sm:-mt-6 md:-mt-8 w-[94%] sm:w-[92%] mx-auto flex-1 flex flex-col justify-between rounded-[12px] border border-[#E6E6E6] bg-white p-5 sm:p-6 md:p-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
-                  <div className="flex flex-col">
-                    <h3 className="font-sans text-[20px] sm:text-[22px] md:text-[24px] font-semibold leading-[1.2] tracking-[-0.025em] text-[#22282C]">
-                      {title}
+                {/* Window Frame with Moving Portfolio Screenshots */}
+                <PortfolioWindowCarousel />
+              </div>
+            </Link>
+          </AnimatedItem>
+
+          {/* LABS CARD */}
+          <AnimatedItem>
+            <Link href="/research" className="group block h-full select-none">
+              <div className="h-full flex flex-col justify-between bg-[#0A0A0D] border border-neutral-800/80 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-neutral-600 hover:shadow-[0_0_50px_rgba(255,255,255,0.06)] p-8 sm:p-10 lg:p-12">
+                <div className="space-y-4 sm:space-y-6">
+                  {/* Eyebrow Badge (360Labs Pill Style) */}
+                  <div>
+                    <span className="inline-flex items-center px-3 py-1 rounded-md border border-neutral-700/80 bg-neutral-900/60 font-mono text-[11px] sm:text-xs tracking-[0.14em] text-neutral-300 uppercase font-semibold">
+                      AI &amp; ROBOTICS LAB
+                    </span>
+                  </div>
+
+                  {/* Title + Circular Arrow Button */}
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="font-sans font-bold text-3xl sm:text-4xl lg:text-[44px] text-white tracking-tight leading-tight">
+                      Research
                     </h3>
-                    <p className="mt-2.5 sm:mt-3 font-sans text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[1.5] sm:leading-[1.55] tracking-normal text-[#4B555A]">
-                      {description}
-                    </p>
+                    <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full border border-neutral-700/80 flex items-center justify-center text-neutral-400 transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:border-white shrink-0">
+                      <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </div>
                   </div>
-                  <div className="mt-auto pt-5 sm:pt-6 md:pt-7">
-                    <LiquidButton href={href} variant="primary" size="default">
-                      {action}
-                    </LiquidButton>
-                  </div>
+
+                  <p className="text-neutral-400 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
+                    Explore our AI research, experiments, and open-source tools built at the frontier of intelligence.
+                  </p>
                 </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
+
+                {/* Window Frame with Moving Labs & Products Screenshots */}
+                <LabsWindowCarousel />
+              </div>
+            </Link>
+          </AnimatedItem>
+        </AnimatedStagger>
+      </div>
+    </section>
   );
 }

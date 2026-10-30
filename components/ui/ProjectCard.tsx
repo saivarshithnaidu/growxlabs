@@ -1,4 +1,4 @@
-import { LiquidButton } from "@/components/ui/LiquidButton";
+import { GrowxArrowRight } from "@/components/icons";
 import { CaseStudy } from "@/lib/data/projects";
 import Image from "next/image";
 import { Link } from "@/navigation";
@@ -22,24 +22,73 @@ export function ProjectCard({ slug, title, description, image, tag, category, su
     : null;
 
   return (
-    <article className="h-full min-w-0 flex flex-col rounded-[6px] border border-[#17252D]/10 bg-[#B5CBD6] p-4 sm:p-5 text-[#17252D]">
-      <Link href={`/portfolio/${slug}`} className="block rounded-[4px] bg-[#8EAAB9] p-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#17252D]">
-        <div className="relative aspect-[16/9] overflow-hidden rounded-[3px] bg-[#0B1013]">
-          {image && <Image src={image} alt={`${title} project preview`} fill className="object-cover object-top" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />}
+    <div className="group h-full relative">
+      <div className="h-full flex flex-col bg-[#C0F0FB] text-black border border-black/15 shadow-[0_2px_4px_rgba(0,0,0,0.4),0_10px_20px_rgba(0,0,0,0.5),0_28px_56px_rgba(0,0,0,0.75),0_48px_96px_rgba(0,0,0,0.85)] transition-all duration-300 ease-out hover:-translate-y-3 hover:shadow-[0_12px_24px_rgba(0,0,0,0.5),0_24px_48px_rgba(0,0,0,0.65),0_48px_96px_rgba(0,0,0,0.85),0_72px_130px_rgba(0,0,0,0.95)] will-change-transform">
+        
+        {/* Clickable Image Preview (Sharp edges matching card) */}
+        <div className="p-4 sm:p-5">
+          <Link
+            href={`/portfolio/${slug}`}
+            className="relative aspect-[16/10] w-full overflow-hidden block bg-black border border-black/15 shadow-md"
+          >
+            {image ? (
+              <Image
+                src={image}
+                alt={`${title} project preview`}
+                fill
+                className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
+              />
+            ) : (
+              <div className="w-full h-full bg-neutral-900" />
+            )}
+          </Link>
         </div>
-      </Link>
-      <div className="mt-6">
-        {displayCategory && <p className="mb-2 font-mono text-[10px] tracking-wider uppercase text-[#3E5B6B]">{displayCategory}</p>}
-        <Link href={`/portfolio/${slug}`} className="block">
-          <h3 className="font-sans text-[18px] sm:text-[20px] font-medium leading-7 tracking-[-0.015em]">{title}</h3>
-        </Link>
-        {subtitle && <p className="mt-1 text-sm font-sans text-[#3E5B6B]">{subtitle}</p>}
-        {client && <p className="mt-1 text-xs font-sans text-[#3E5B6B]">{client}</p>}
-        {description && <p className="mt-3 text-[15px] sm:text-[16px] leading-6 font-sans text-[#3E5B6B]">{description}</p>}
+
+        {/* Card Body */}
+        <div className="px-6 pb-6 pt-1 md:px-8 md:pb-8 md:pt-1 flex flex-col flex-1 justify-between space-y-5">
+          <div className="space-y-2">
+            {displayCategory && (
+              <span className="font-mono text-[11px] font-bold text-black/60 tracking-wider uppercase block">
+                {displayCategory}
+              </span>
+            )}
+            <Link href={`/portfolio/${slug}`} className="block">
+              <h3 className="text-2xl md:text-[26px] font-black text-black tracking-tight leading-tight">
+                {title}
+              </h3>
+            </Link>
+            {subtitle && (
+              <p className="font-mono text-xs font-bold text-black/75">
+                {subtitle}
+              </p>
+            )}
+            {client && (
+              <p className="font-mono text-[11px] text-black/60">
+                {client}
+              </p>
+            )}
+            
+            {description ? (
+              <p className="text-black/80 text-sm md:text-[15px] leading-relaxed pt-1 font-medium font-sans">
+                {description}
+              </p>
+            ) : null}
+          </div>
+
+          {/* Action Link: View Project → */}
+          <div className="pt-4 border-t border-black/15">
+            <Link
+              href={`/portfolio/${slug}`}
+              className="inline-flex items-center gap-2 text-sm font-bold text-black hover:opacity-75 transition-opacity"
+            >
+              <span>View Project</span>
+              <GrowxArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
       </div>
-      <div className="mt-auto pt-10 sm:pt-12">
-        <LiquidButton href={`/portfolio/${slug}`} variant="primary" size="default">View Project</LiquidButton>
-      </div>
-    </article>
+    </div>
   );
 }

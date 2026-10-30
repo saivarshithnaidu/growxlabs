@@ -4,16 +4,17 @@ import { projects } from "@/lib/data/projects";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { AEOBlock } from "@/components/marketing/AEOBlock";
 import { HeroSection } from "@/components/marketing/HeroSection";
-import { AiTechnologyStrip } from "@/components/marketing/AiTechnologyStrip";
-import { GrowxScrollSection } from "@/components/marketing/GrowxScrollSection";
+import { SectionG } from "@/components/marketing/SectionG";
+import { SectionR } from "@/components/marketing/SectionR";
+import { SectionO } from "@/components/marketing/SectionO";
+import { SectionW } from "@/components/marketing/SectionW";
+import { SectionX } from "@/components/marketing/SectionX";
 import { PracticeAreasSection } from "@/components/marketing/PracticeAreasSection";
 import { ValuePropositions } from "@/components/marketing/ValuePropositions";
 import { AccordionFAQ } from "@/components/marketing/AccordionFAQ";
 import { AnimatedSection } from "@/components/marketing/AnimatedSection";
 import Script from "next/script";
 import { ArrowUpRight } from "@/components/icons";
-import { LiquidButton } from "@/components/ui/LiquidButton";
-import styles from "./homepage.module.css";
 
 export async function generateMetadata() {
   return {
@@ -33,8 +34,8 @@ export default function Home() {
       answer: "GrowxLabs is an AI-native software company and product studio based in India. We specialize in custom software development, AI agent engineering, intelligent automation solutions, and mobile and web application development. We combine deep AI expertise with rapid product development to ship production-ready solutions, built to scale from day one. We don't build off-the-shelf systems. We build products."
     },
     {
-      question: "How is GrowxLabs different from large IT consultancies like Infosys, TCS or Accenture?",
-      answer: "While large consultancies often focus on staff augmentation and lengthy discovery phases, GrowxLabs operates as an AI-first product studio. We ship working software fast: prototypes in 24 hours, production systems in 2-8 weeks. Our team thinks in AI natively; we grew up building with LLMs and generative AI, not retrofitting it. You get senior engineering talent working directly on your project, not layers of project managers and junior developers."
+      question: "How is GrowxLabs different from other consultancies?",
+      answer: "Traditional IT firms often operate as body shops or spend months writing discovery documents before writing any code. We do the opposite: we are an AI-first software lab that prioritizes working software. Within 24 hours of kickoff, you get a functional prototype, and we deploy complete, scalable production systems. Every engineer on our team has been building with LLMs and neural architectures natively from day one—we don't 'retrofit' AI into legacy software. When you build with us, you collaborate directly with the core developers writing your code, eliminating project management overhead and junior developer errors."
     },
     {
       question: "What industries does GrowxLabs work with?",
@@ -50,7 +51,7 @@ export default function Home() {
     },
     {
       question: "How much does custom software development cost at GrowxLabs?",
-      answer: "Our custom software development projects typically start at $10,000 for focused AI agents and automations. Mid-complexity web and mobile applications range from $25,000 to $75,000, while enterprise-grade platforms with multiple integrations sit in the $100,000 to $500,000 range. We provide transparent pricing upfront based on scope, and our rates are significantly more competitive than traditional IT consultancies while delivering faster results."
+      answer: "Our custom software development projects typically start at ₹1 lakh (approximately $1,200 USD) for focused AI agents and automations. Mid-complexity web and mobile applications range from ₹3-10 lakhs, while enterprise-grade platforms with multiple integrations start at ₹10 lakhs and above. We offer transparent pricing upfront based on scope, providing highly competitive rates compared to traditional IT consultancies while delivering faster results."
     },
     {
       question: "What is the typical project timeline for software development?",
@@ -92,7 +93,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`${styles.homepage} flex flex-col text-[#17252D] min-h-screen`}>
+    <div className="flex flex-col bg-black text-foreground min-h-screen">
       <Script
         id="faq-schema"
         type="application/ld+json"
@@ -102,36 +103,39 @@ export default function Home() {
       {/* ═══ HERO (studio + brand only) ═══ */}
       <HeroSection />
 
-      <AiTechnologyStrip />
+      {/* ═══ Swiss-Editorial Sections (G, R, O, W, X) ═══ */}
+      <SectionG />
+      <SectionR />
+      <SectionO />
+      <SectionW />
+      <SectionX />
 
-      {/* ═══ Continuous Sticky Scroll-Driven Section (G, R, O, W, X) ═══ */}
-      <GrowxScrollSection />
+
 
       {/* ═══ PRACTICE AREAS & DIVISIONS ═══ */}
       <PracticeAreasSection />
 
-      {/* ═══ FAQ — Accordion (Cohesive Dark Charcoal Surface: #30373B) ═══ */}
-      <div className="w-full bg-[#F5F4F0] px-3 sm:px-4 md:px-[26px] select-none">
-        <section aria-labelledby="faq-title" className="w-full rounded-t-[16px] rounded-b-none bg-[#30373B] overflow-hidden py-20 sm:py-28 px-6 md:px-10 xl:px-16 2xl:px-24">
+      {/* ═══ FAQ — Accordion (360labs.dev Swiss-editorial layout) ═══ */}
+      <section className="w-full py-24 sm:py-32 px-6 md:px-10 xl:px-16 2xl:px-24 bg-black border-t border-white/10">
         <div className="max-w-[1400px] mx-auto">
           {/* Eyebrow Bar: { FAQ } — { GROWXLABS } — SUPPORT */}
-          <div className="flex items-center justify-between font-mono text-[11px] sm:text-xs tracking-[0.22em] text-[#B6C2C7] uppercase mb-12 sm:mb-16 select-none">
+          <div className="flex items-center justify-between font-mono text-[11px] sm:text-xs tracking-[0.22em] text-white/40 uppercase mb-12 sm:mb-16 select-none">
             <span>{`{ FAQ }`}</span>
-            <span className="text-[#F5F4F0] font-semibold">{`{ GROWXLABS }`}</span>
+            <span className="text-white/60 font-semibold">{`{ GROWXLABS }`}</span>
             <span>SUPPORT</span>
           </div>
 
           {/* Asymmetric Header: Giant 3-Line Heading + Subtext on Right */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end pb-12 sm:pb-16 border-b border-[#566166] mb-2">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end pb-12 sm:pb-16 border-b border-white/10 mb-2">
             <div className="lg:col-span-7 xl:col-span-8">
-              <h2 className="font-sans font-bold tracking-tight text-[#F5F4F0] leading-[0.96] text-[clamp(44px,6.5vw,84px)]">
+              <h2 className="font-sans font-bold tracking-tight text-white leading-[0.96] text-[clamp(44px,6.5vw,84px)]">
                 Frequently<br />
                 Asked<br />
                 Questions
               </h2>
             </div>
             <div className="lg:col-span-5 xl:col-span-4 lg:pb-3">
-              <p className="font-sans text-[15px] sm:text-[17px] text-[#B6C2C7] leading-relaxed max-w-md">
+              <p className="font-sans text-[15px] sm:text-[17px] text-white/60 leading-relaxed max-w-md">
                 Got questions? We have got answers. If you do not find what you are looking for, feel free to reach out.
               </p>
             </div>
@@ -142,28 +146,23 @@ export default function Home() {
           </AnimatedSection>
 
           <AnimatedSection delay={0.2} className="text-center mt-14 sm:mt-16">
-            <LiquidButton 
+            <Link 
               href="/faq" 
-              variant="inverted"
-              size="default"
-              icon={<ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />}
-              iconPosition="right"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-md border border-white/15 bg-white/5 hover:bg-white/10 text-white text-[12px] font-bold tracking-[0.15em] uppercase transition-all shadow-sm active:scale-95 group font-mono"
             >
-              View All FAQs
-            </LiquidButton>
+              <span>View All FAQs</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+            </Link>
           </AnimatedSection>
         </div>
       </section>
-      </div>
 
       {/* ═══ AEO — Hidden, SEO only ═══ */}
       <section className="sr-only" aria-hidden="true">
         <div className="max-w-5xl mx-auto">
           <AEOBlock question="What does GrowxLabs actually do?" answer="GrowxLabs researches, designs, and engineers AI-native software, digital platforms, and intelligent workflows for organizations." explanation="We combine product engineering, AI engineering, and systems integration to move complex ideas from architecture to production." example="A team brings an operational constraint → we map the workflow → engineer the capability → deploy it into the existing environment." ctaText="Discuss an engagement" ctaHref="/contact" />
           <AEOBlock question="How does GrowxLabs approach web platform engineering?" answer="We engineer production-grade web applications and digital platforms for performance, accessibility, reliability, and scale." explanation="Web platform engineering is treated as a software discipline: clear architecture, secure integrations, observable delivery, and maintainable systems." example="A platform is designed around its users, data flows, integrations, and operational requirements before it is released." ctaText="Explore our services" ctaHref="/services" />
-          <AEOBlock question="How is GrowxLabs different from large IT consultancies like Infosys, TCS or Accenture?" answer="While large consultancies often focus on staff augmentation and lengthy discovery phases, GrowxLabs operates as an AI-first product studio. We ship working software fast: prototypes in 24 hours, production systems in 2-8 weeks. Our team thinks in AI natively; we grew up building with LLMs and generative AI, not retrofitting it. You get senior engineering talent working directly on your project, not layers of project managers and junior developers." explanation="GrowxLabs prioritizes working software over lengthy discovery documents and replaces staffing layers with direct senior engineer access." example="Traditional consultancy: 3 months discovery + layers of PMs → GrowxLabs: Functional prototype in 24 hours + complete production system in 2-8 weeks." ctaText="Discuss an engagement" ctaHref="/contact" />
           <AEOBlock question="How does GrowxLabs support modernization?" answer="We assess legacy environments, identify high-value opportunities, and deliver practical AI and software capabilities that integrate with existing applications and data." explanation="The work is staged around technical feasibility, governance, and measurable operational outcomes." example="An existing process is mapped → integration constraints are documented → a focused capability is piloted → the architecture is extended deliberately." ctaText="Start a conversation" ctaHref="/contact" />
-          <AEOBlock question="How much does custom software development cost at GrowxLabs?" answer="GrowxLabs custom software development projects typically start at $10,000 for focused AI agents and automations. Mid-complexity web and mobile applications range from $25,000 to $75,000, while enterprise-grade platforms with multiple integrations sit in the $100,000 to $500,000 range." explanation="We provide transparent pricing upfront based on scope, and our rates are significantly more competitive than traditional IT consultancies while delivering faster results." example="A focused AI agent workflow starts at $10,000 → a custom web/mobile platform is $25,000–$75,000 → enterprise platforms sit in the $100,000–$500,000 range." ctaText="Discuss an engagement" ctaHref="/contact" />
         </div>
       </section>
     </div>
