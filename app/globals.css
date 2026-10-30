@@ -1998,4 +1998,13 @@ html {
   --svc-heading: #f7f5f2;
   --svc-text: #b8c0c5;
   --svc-on-accent: #090a0c; /* button label on the accent */
+
+  /* Research AI Lab & Robotics Lab cards (app/(marketing)/research) */
+  --res-card: #090a0c;
+  --res-border: #1b1d20;
+  --res-border-lit: #2c323b;
+  --res-accent: #b8edf7;
+  --res-heading: #f7f5f2;
+  --res-text: #b8c0c5;
+  --res-surface: #050709;
 }
