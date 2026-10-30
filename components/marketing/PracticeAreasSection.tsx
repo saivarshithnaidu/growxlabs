@@ -64,22 +64,22 @@ const LABS_SLIDES: Slide[] = [
 ];
 
 /**
- * Color system for these tiles: teal image frame (#0F313A / #1E4952), neutral
- * content panel (#111315, border #292D32), off-white type and action (#F7F7F5),
- * muted body copy (#A6ADB4), and the site cyan (#C0F0FB) as the only accent, on hover.
+ * Solid graphite card design with subtle graphite image borders (#252525).
+ * The content panel has a solid background color (#111315) so the overlapping text
+ * stays crisp and completely opaque over the image.
  */
 
-/** Image slideshow inside a neutral frame; driven by the parent tile's index. */
+/** Image slideshow inside a subtle graphite frame (#252525). */
 function FramedSlideshow({ slides, currentIndex }: { slides: Slide[]; currentIndex: number }) {
   return (
-    <div className="rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 bg-[#0F313A] border border-[#1E4952] transition-colors duration-300 group-hover:border-[#2C6470]">
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl sm:rounded-2xl bg-[#05070E]">
+    <div className="rounded-2xl sm:rounded-3xl border border-[#252525] overflow-hidden bg-black">
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-black">
         <div
           className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {slides.map((slide, idx) => (
-            <div key={slide.src} className="relative w-full h-full shrink-0 bg-[#05070E]">
+            <div key={slide.src} className="relative w-full h-full shrink-0 bg-black">
               {slide.isComponent ? (
                 <DeepfakeSimpleCardDiagram className="w-full h-full" />
               ) : (
@@ -105,8 +105,8 @@ function FramedSlideshow({ slides, currentIndex }: { slides: Slide[]; currentInd
 }
 
 /**
- * Framed image on top, dark text panel overlapping its bottom edge,
- * and a solid call-to-action. The whole tile links to `href`.
+ * Solid graphite card overlapping the image with white headings,
+ * muted grey text (#A5A5A5), and a solid white button with black text.
  */
 function WorkTile({
   href,
@@ -143,15 +143,14 @@ function WorkTile({
     >
       <FramedSlideshow slides={slides} currentIndex={currentIndex} />
 
-      <div className="relative z-10 flex-1 flex flex-col -mt-12 mx-3 sm:mx-5 rounded-2xl border border-[#292D32] bg-[#111315] shadow-[0_-12px_40px_rgba(0,0,0,0.55)] p-6 sm:p-8 transition-[transform,border-color] duration-300 group-hover:-translate-y-1 group-hover:border-[#C0F0FB]/40">
-        <h3 className="font-sans font-medium text-[26px] sm:text-[30px] text-[#F7F7F5] tracking-tight leading-tight">
+      <div className="relative z-10 flex-1 flex flex-col -mt-12 mx-3 sm:mx-5 rounded-2xl border border-[#252525] bg-[#111315] shadow-[0_-12px_40px_rgba(0,0,0,0.65)] p-6 sm:p-8 transition-transform duration-300 group-hover:-translate-y-1">
+        <h3 className="font-sans font-medium text-[26px] sm:text-[30px] text-white tracking-tight leading-tight">
           {title}
         </h3>
-        <p className="mt-3 text-[#A6ADB4] text-base sm:text-[17px] leading-relaxed max-w-xl font-normal">
+        <p className="mt-3 text-[#A5A5A5] text-base sm:text-[17px] leading-relaxed max-w-xl font-normal">
           {description}
         </p>
-        {/* Same size/type/hover as the header's Contact button (site cyan on hover) */}
-        <span className="mt-7 self-start inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-md bg-[#F7F7F5] text-[#111315] text-[15px] font-medium transition-colors duration-200 group-hover:bg-[#C0F0FB]">
+        <span className="mt-7 self-start inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-md bg-white text-black text-[15px] font-medium transition-colors duration-200">
           {cta}
         </span>
       </div>
