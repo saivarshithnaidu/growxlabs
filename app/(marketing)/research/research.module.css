@@ -1,0 +1,20 @@
+/* Hallmark · component: lab cards (AI Lab, Robotics Lab) · genre: modern-minimal · theme: brand (project system, --svc-* tokens) · states: rest, hover, focus-visible, active, chosen project, reduced motion · v2.0.0
+ * built: Hallmark · redesign: full (scoped to the two lab cards; titles, descriptions, actions, links, hero and section head kept)
+ * pre-emit critique: P4 H4 E4 S4 R5 V4 · weakest: S/E, two cards on one template; each lab gets its own media (real product screens for AI, its focus areas set in type for robotics, no generated pictures) */
+/* Hallmark · dropped onMouseEnter={() => setIsPaused(true)}, onMouseLeave={() => setIsPaused(false)} · they only paused the auto-advancing slideshow, which this redesign removes; a visitor now chooses each project from the lab's index */
+/* Hallmark · waive 83 · a portfolio of the user's own work, every picture a real GrowX product screen (Crawl, Crawl API, Pipper, TRIONYX) · the AI Lab card exists to show these products, and only the chosen one is visible at a time */
+
+/* The chosen project fades in; the outgoing one hides at once, so two panels never overlap */
+.panel {
+  transition: opacity 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.panel[aria-hidden="true"] {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition: none;
+  }
+}

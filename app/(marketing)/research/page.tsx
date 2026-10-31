@@ -1,152 +1,204 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { Link } from "@/navigation";
 import { PageHero } from "@/components/marketing/PageHero";
 import { AnimatedSection, AnimatedStagger, AnimatedItem } from "@/components/marketing/AnimatedSection";
 import { DeepfakeSimpleCardDiagram } from "@/components/ailab/DeepfakeSimpleCardDiagram";
+import styles from "./research.module.css";
 
-interface Slide {
-  src: string;
-  alt: string;
+/**
+ * A lab item. With `src` it shows that real screenshot or photo; with `isComponent` the live
+ * Deepfake diagram; with neither, the panel sets the item's name in type (no stand-in picture).
+ */
+interface LabItem {
   title: string;
-  fit: "contain" | "cover";
+  detail: string;
+  src?: string;
+  alt?: string;
+  fit?: "contain" | "cover";
   isComponent?: boolean;
 }
 
-const AILAB_SLIDES: Slide[] = [
+// AI Lab: real product screens lead (the most populated first), the Deepfake diagram last
+const AILAB_ITEMS: LabItem[] = [
   {
-    src: "/images/ailab/deepfake-architecture.png",
-    alt: "GrowX Deepfake — Neural Architecture & Pipeline",
-    title: "GrowX Deepfake™ Architecture",
-    fit: "contain",
-    isComponent: true,
-  },
-  {
-    src: "/images/ailab/crawl-playground.png",
-    alt: "GrowX Crawl — Extraction Playground",
-    title: "GrowX Crawl™",
+    title: "TRIONYX™",
+    detail: "Distributor Management Platform",
+    src: "/portfolio/trionyx-dashboard.png",
+    alt: "TRIONYX — Distributor Management Platform",
     fit: "cover",
   },
   {
-    src: "/portfolio/growx-crawl-api.png",
-    alt: "GrowX Crawl — RESTful API Specification Suite",
-    title: "GrowX Crawl API Suite",
-    fit: "cover",
-  },
-  {
+    title: "Pipper™",
+    detail: "Multi-Agent Workspace",
     src: "/images/ailab/pipper-harness.png",
     alt: "Pipper — Multi-Agent Workspace",
-    title: "Pipper™",
     fit: "cover",
+  },
+  {
+    title: "GrowX Crawl API Suite",
+    detail: "RESTful API Specification Suite",
+    src: "/portfolio/growx-crawl-api.png",
+    alt: "GrowX Crawl — RESTful API Specification Suite",
+    fit: "cover",
+  },
+  {
+    title: "GrowX Crawl™",
+    detail: "Extraction Playground",
+    src: "/images/ailab/crawl-playground.png",
+    alt: "GrowX Crawl — Extraction Playground",
+    fit: "cover",
+  },
+  {
+    title: "GrowX Deepfake™ Architecture",
+    detail: "Neural Architecture & Pipeline",
+    isComponent: true,
   },
 ];
 
-const ROBOTICS_SLIDES: Slide[] = [
+// Robotics Lab: no photographs yet. Add `src` and `alt` to an item when a real photo of the
+// lab's work exists, and the panel shows it instead of the type.
+const ROBOTICS_ITEMS: LabItem[] = [
   {
-    src: "/images/robotics/humanoid-embodied-ai.jpg",
-    alt: "GrowX Robotics — Humanoid Embodied Intelligence & Kinematics",
     title: "Embodied Humanoid AI",
-    fit: "cover",
+    detail: "Humanoid Embodied Intelligence & Kinematics",
   },
   {
-    src: "/images/robotics/autonomous-manipulation.jpg",
-    alt: "GrowX Robotics — Autonomous Precision Manipulation & Real-Time Teleoperation",
     title: "Autonomous Manipulation",
-    fit: "cover",
+    detail: "Autonomous Precision Manipulation & Real-Time Teleoperation",
   },
 ];
 
-/**
- * Deep Petroleum frame (#0A1B22) with midnight cyan border (#16323B).
- * Grounds both dark UI dashboards and bright white schematics.
- */
-function FramedSlideshow({ slides, currentIndex }: { slides: Slide[]; currentIndex: number }) {
-  return (
-    <div className="rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 bg-[#0A1B22] border border-[#16323B] transition-colors duration-300 group-hover:border-[#234E5D]">
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl sm:rounded-2xl bg-[#05070E]">
-        <div
-          className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-        >
-          {slides.map((slide, idx) => (
-            <div key={slide.src} className="relative w-full h-full shrink-0 bg-[#05070E]">
-              {slide.isComponent ? (
-                <DeepfakeSimpleCardDiagram className="w-full h-full" />
-              ) : (
-                <Image
-                  src={slide.src}
-                  alt={slide.alt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className={
-                    slide.fit === "contain"
-                      ? "object-contain object-center p-2.5 sm:p-4"
-                      : "object-cover object-top"
-                  }
-                  priority={idx === 0}
-                />
-              )}
-            </div>
-          ))}
-        </div>
+/** The media panel for one item: the real picture, the live diagram, or the item set in type. */
+function LabPanel({ item, priority }: { item: LabItem; priority: boolean }) {
+  if (item.isComponent) {
+    return (
+      <div className="h-full w-full p-2.5 sm:p-4">
+        <DeepfakeSimpleCardDiagram className="h-full w-full overflow-hidden rounded-lg" />
       </div>
+    );
+  }
+  if (item.src) {
+    return (
+      <Image
+        src={item.src}
+        alt={item.alt ?? item.title}
+        fill
+        sizes="(max-width: 1024px) 100vw, 50vw"
+        className={item.fit === "contain" ? "object-contain object-center p-2.5 sm:p-4" : "object-cover object-left-top"}
+        priority={priority}
+      />
+    );
+  }
+  return (
+    <div className="flex h-full w-full flex-col justify-center p-6 sm:p-8">
+      <p className="min-w-0 break-words font-serif text-[clamp(26px,3vw,40px)] font-semibold leading-[1.08] tracking-tight text-[var(--svc-heading)]">
+        {item.title}
+      </p>
+      <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--svc-text)]">{item.detail}</p>
     </div>
   );
 }
 
 /**
- * Overlapping solid graphite card (#111315) with subtle border (#252525),
- * white heading, muted grey text (#A5A5A5), and a solid white action button.
+ * Lab card as a small index: identifier row, a 16:10 media panel, the lab's projects as a
+ * list that switches the panel, then the serif heading, description and action. The whole
+ * card is one link (stretched from the action); the project buttons sit above it.
  */
-function ResearchCardTile({
+function LabCard({
   href,
+  identifier,
   title,
   description,
   cta,
-  slides,
-  interval,
+  items,
 }: {
   href: string;
+  identifier: string;
   title: string;
   description: string;
   cta: string;
-  slides: Slide[];
-  interval: number;
+  items: LabItem[];
 }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slides.length);
-    }, interval);
-    return () => clearInterval(timer);
-  }, [isPaused, slides.length, interval]);
+  const [active, setActive] = useState(0);
+  const listId = `${identifier.replace("/", "-")}-projects`;
 
   return (
-    <Link
-      href={href}
-      className="group flex flex-col h-full select-none"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      <FramedSlideshow slides={slides} currentIndex={currentIndex} />
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--svc-border)] bg-[var(--svc-card)] transition-colors duration-200 hover:border-[var(--svc-accent)] has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-4 has-[a:focus-visible]:outline-[var(--svc-accent)]">
+      {/* Identifier */}
+      <div className="flex h-11 items-center border-b border-[var(--svc-border)] px-5 sm:px-6">
+        <span className="text-xs text-[var(--svc-text)]">{identifier}</span>
+      </div>
 
-      <div className="relative z-10 flex-1 flex flex-col -mt-12 mx-3 sm:mx-5 rounded-2xl border border-[#252525] bg-[#111315] shadow-[0_-12px_40px_rgba(0,0,0,0.65)] p-6 sm:p-8 transition-transform duration-300 group-hover:-translate-y-1">
-        <h3 className="font-sans font-medium text-[26px] sm:text-[30px] text-white tracking-tight leading-tight">
+      {/* Media panel: items stacked in one cell, the chosen one fades in */}
+      <div className="relative grid aspect-[16/10] w-full overflow-hidden bg-[var(--svc-card)]">
+        {items.map((item, i) => (
+          <div
+            key={item.title}
+            className={`${styles.panel} relative col-start-1 row-start-1 h-full w-full ${
+              i === active ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+            aria-hidden={i !== active}
+          >
+            <LabPanel item={item} priority={i === 0} />
+          </div>
+        ))}
+      </div>
+
+      {/* Project index: switches the panel */}
+      {/* Same minimum height on both cards (5 rows) so the headings and descriptions line up */}
+      <ul id={listId} aria-label={`${title} projects`} className="relative z-10 border-y border-[var(--svc-border)] lg:min-h-[226px]">
+        {items.map((item, i) => {
+          const isActive = i === active;
+          return (
+            <li key={item.title} className="border-b border-[var(--svc-border)] last:border-b-0">
+              <button
+                type="button"
+                onClick={() => setActive(i)}
+                aria-pressed={isActive}
+                className="flex min-h-11 w-full cursor-pointer items-center justify-between gap-4 px-5 py-2 text-left outline-none transition-colors duration-200 hover:bg-[var(--svc-border)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--svc-accent)] active:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 sm:px-6"
+              >
+                <span
+                  className={`shrink-0 whitespace-nowrap text-sm ${
+                    isActive ? "font-semibold text-[var(--svc-accent)]" : "text-[var(--svc-heading)]"
+                  }`}
+                >
+                  {item.title}
+                </span>
+                {/* Type-led items already name their detail in the panel above */}
+                {isActive && (item.src || item.isComponent) && (
+                  <span className="hidden min-w-0 truncate text-xs text-[var(--svc-text)] sm:block">{item.detail}</span>
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Heading, description, action */}
+      <div className="flex flex-1 flex-col px-5 pt-6 pb-6 sm:px-6 sm:pt-7">
+        <h3 className="min-w-0 break-words font-serif text-[32px] font-semibold leading-[1.1] tracking-tight text-[var(--svc-heading)] sm:text-[38px]">
           {title}
         </h3>
-        <p className="mt-3 text-[#A5A5A5] text-base sm:text-[17px] leading-relaxed max-w-xl font-normal">
-          {description}
-        </p>
-        <span className="mt-7 self-start inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-md bg-white text-black text-[15px] font-medium transition-colors duration-200 group-hover:bg-neutral-200">
-          {cta}
-        </span>
+        <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--svc-text)]">{description}</p>
+
+        <Link
+          href={href}
+          className="mt-auto flex items-center justify-between gap-4 pt-8 outline-none after:absolute after:inset-0 after:content-['']"
+        >
+          <span className="text-sm font-medium text-[var(--svc-accent)]">{cta}</span>
+          <span
+            aria-hidden="true"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[var(--svc-border)] text-[var(--svc-heading)] transition-colors duration-200 group-hover:border-[var(--svc-accent)] group-hover:bg-[var(--svc-accent)] group-hover:text-[var(--svc-on-accent)]"
+          >
+            <ArrowUpRight size={18} strokeWidth={1.5} />
+          </span>
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -168,26 +220,26 @@ export default function ResearchPage() {
             </h2>
           </AnimatedSection>
 
-          <AnimatedStagger className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-10 xl:gap-12">
+          <AnimatedStagger className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-12 lg:gap-10 xl:gap-12">
             <AnimatedItem className="h-full">
-              <ResearchCardTile
+              <LabCard
                 href="/ailab"
+                identifier="growx/ailab"
                 title="AI Lab"
                 description="We research and develop new AI models, neural methods, and autonomous agent workflows in-house."
                 cta="Explore AI Lab"
-                slides={AILAB_SLIDES}
-                interval={4200}
+                items={AILAB_ITEMS}
               />
             </AnimatedItem>
 
             <AnimatedItem className="h-full">
-              <ResearchCardTile
+              <LabCard
                 href="/robotics"
+                identifier="growx/robotics"
                 title="Robotics Lab"
                 description="Autonomous systems, embodied humanoid intelligence, and physical AI platforms bridging software models with real-world robotics."
                 cta="Explore robotics"
-                slides={ROBOTICS_SLIDES}
-                interval={4000}
+                items={ROBOTICS_ITEMS}
               />
             </AnimatedItem>
           </AnimatedStagger>
