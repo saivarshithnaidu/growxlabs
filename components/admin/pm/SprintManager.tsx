@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { Play, TrendingDown, Target, Zap, Award } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import React from "react";
+import { Zap } from "lucide-react";
+import { Badge, Button, Card, CardHeader, KeyValueList, Tooltip } from "@/src/components/ui";
+import { EmptyState } from "@/src/components/patterns";
+import { ProgressMeter } from "./ProgressMeter";
 
 interface Sprint {
   id: string;
@@ -20,130 +21,171 @@ interface SprintManagerProps {
   sprints: Sprint[];
   onStartSprint?: (id: string) => Promise<void>;
   onCompleteSprint?: (id: string) => Promise<void>;
+  /** Id of the sprint whose start/complete request is in flight. */
+  busyId?: string | null;
 }
 
-export function SprintManager({ sprints, onStartSprint, onCompleteSprint }: SprintManagerProps) {
+const DAY_MS = 86_400_000;
+const day = (value?: string) => {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+};
+const formatDay = (value?: string) => day(value)?.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) ?? "No date";
+const range = (s: Sprint) => `${formatDay(s.start_date)} to ${formatDay(s.end_date)}`;
+const pct = (done: number, total: number) => (total > 0 ? Math.round((done / total) * 100) : 0);
+
+export function SprintManager({ sprints, onStartSprint, onCompleteSprint, busyId }: SprintManagerProps) {
   const activeSprint = sprints.find(s => s.status === "ACTIVE");
   const futureSprints = sprints.filter(s => s.status === "FUTURE");
-
-  // Burn-down points estimation
-  const totalPoints = activeSprint?.capacity_story_points || 30;
-  const completedPoints = activeSprint?.completed_story_points || 12;
-  const remainingPoints = Math.max(0, totalPoints - completedPoints);
-
-  // CSS Burndown simulator
-  const daysTotal = 10; // 2 week sprint
-  const idealPointsPerDay = totalPoints / daysTotal;
-  const burndownData = Array.from({ length: daysTotal + 1 }, (_, day) => {
-    const ideal = totalPoints - (day * idealPointsPerDay);
-    // Simulate actual burndown path
-    const actual = day <= 4 
-      ? totalPoints - (day * (idealPointsPerDay * 0.75)) 
-      : Math.max(0, totalPoints - 4 * (idealPointsPerDay * 0.75) - (day - 4) * (idealPointsPerDay * 1.2));
-    return { day, ideal, actual };
-  });
+  const completedSprints = sprints.filter(s => s.status === "COMPLETED").reverse();
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
-      {/* Burn-down and Active Sprint info */}
-      <div className="md:col-span-2 space-y-6">
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
-          <div className="flex items-center justify-between border-b border-[#e6e6e6] pb-3.5 mb-4">
-            <div>
-              <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest flex items-center gap-2">
-                <Target size={16} className="text-[#0075de]" /> Active Sprint Dashboard
-              </h3>
-              <p className="text-[10px] font-bold text-[#0075de] uppercase tracking-wider mt-1">{activeSprint?.name || "No Active Sprint"}</p>
-            </div>
-            {activeSprint && onCompleteSprint && (
-              <Button 
-                onClick={() => onCompleteSprint(activeSprint.id)}
-                className="h-8 text-[9px] font-bold uppercase tracking-widest bg-white border border-[#e6e6e6] text-green-600 hover:bg-neutral-50 rounded-md"
-              >
-                Complete Sprint
-              </Button>
-            )}
-          </div>
-
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="flex min-w-0 flex-col gap-6">
+        <Card as="section">
           {activeSprint ? (
-            <div className="space-y-6">
-              <div className="bg-[#f6f5f4] p-4 rounded-md border border-[#e6e6e6] text-xs font-semibold">
-                <span className="text-[10px] font-bold uppercase text-neutral-450 block mb-1">Sprint Goal</span>
-                <p className="text-neutral-900 leading-relaxed font-medium">{activeSprint.goal || "No goal specified."}</p>
-              </div>
-
-              {/* Progress trajectory burndown */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-                  <span>Burn-down Progress Chart</span>
-                  <span>{remainingPoints} SP remaining / {totalPoints} SP total</span>
-                </div>
-                
-                <div className="h-44 border-b border-l border-[#e6e6e6] relative flex items-end gap-1 px-4 pb-2 pt-8 font-mono text-[8px] text-neutral-450">
-                  {burndownData.map((d) => {
-                    const idealPercent = (d.ideal / totalPoints) * 100;
-                    const actualPercent = (d.actual / totalPoints) * 100;
-
-                    return (
-                      <div key={d.day} className="flex-1 flex flex-col justify-end items-center h-full relative group">
-                        {/* Ideal line guide */}
-                        <div 
-                          className="absolute w-2 h-2 rounded-full bg-neutral-300 border border-white z-10 transition-transform group-hover:scale-125"
-                          style={{ bottom: `calc(${idealPercent}% - 4px)` }}
-                          title={`Day ${d.day} Ideal: ${Math.round(d.ideal)} SP`}
-                        />
-                        {/* Actual line guide */}
-                        <div 
-                          className="absolute w-2.5 h-2.5 rounded-full bg-[#0075de] border-2 border-white z-20 transition-transform group-hover:scale-125 shadow-sm"
-                          style={{ bottom: `calc(${actualPercent}% - 5px)` }}
-                          title={`Day ${d.day} Actual: ${Math.round(d.actual)} SP`}
-                        />
-                        <span className="mt-2 text-neutral-400">D{d.day}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            <ActiveSprint sprint={activeSprint} onComplete={onCompleteSprint} busy={busyId === activeSprint.id} />
           ) : (
-            <div className="text-center py-16 text-xs font-semibold text-neutral-400">
-              There is currently no active sprint. Activate a sprint to track burndown charts.
-            </div>
+            <EmptyState
+              icon={<Zap size={24} strokeWidth={1.5} />}
+              title="No active sprint"
+              description={futureSprints.length ? "Start one of the upcoming sprints to track its progress here." : "Once a sprint is planned, start it to track its progress here."}
+            />
           )}
         </Card>
+
+        {completedSprints.length > 0 && (
+          <Card as="section" padding="none">
+            <div className="px-5 pt-5"><CardHeader title="Completed sprints" description="Story points delivered against what was committed." /></div>
+            <ul className="divide-y divide-[var(--border-subtle)] border-t border-[var(--border-subtle)]">
+              {completedSprints.map((s) => (
+                <li key={s.id} className="flex flex-wrap items-center gap-4 px-5 py-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="ds-t-body-strong truncate text-[var(--text-primary)]">{s.name}</p>
+                    <p className="ds-t-meta ds-num text-[var(--text-muted)]">{range(s)}</p>
+                  </div>
+                  <span className="ds-t-meta ds-num text-[var(--text-secondary)]">{s.completed_story_points || 0} of {s.capacity_story_points || 0} SP</span>
+                  <ProgressMeter value={pct(s.completed_story_points, s.capacity_story_points)} barClassName="w-24" />
+                </li>
+              ))}
+            </ul>
+          </Card>
+        )}
       </div>
 
-      {/* Sprints backlog planning */}
-      <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm h-fit">
-        <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-3 mb-4">Sprint Backlog Planning</h3>
+      <Card as="section" padding="none" className="self-start">
+        <div className="px-5 pt-5"><CardHeader title="Upcoming sprints" actions={futureSprints.length ? <Badge variant="neutral" noDot>{futureSprints.length}</Badge> : undefined} /></div>
         {futureSprints.length === 0 ? (
-          <div className="text-center py-8 text-xs font-semibold text-neutral-400">No upcoming sprints scheduled.</div>
+          <p className="ds-t-body border-t border-[var(--border-subtle)] px-5 py-6 text-[var(--text-muted)]">No upcoming sprints scheduled.</p>
         ) : (
-          <div className="space-y-4">
-            {futureSprints.map((sp) => (
-              <div key={sp.id} className="border border-[#e6e6e6] p-4 rounded-md space-y-3 hover:border-[#0075de]/30 transition-all">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-xs font-bold text-neutral-900 leading-snug">{sp.name}</h4>
-                    <span className="text-[9px] font-mono text-neutral-400">{sp.start_date} to {sp.end_date}</span>
+          <ul className="divide-y divide-[var(--border-subtle)] border-t border-[var(--border-subtle)]">
+            {futureSprints.map((sp) => {
+              const start = onStartSprint && (
+                <Button
+                  size={28}
+                  variant={activeSprint ? "secondary" : "primary"}
+                  disabled={!!activeSprint || (!!busyId && busyId !== sp.id)}
+                  loading={busyId === sp.id}
+                  onClick={() => onStartSprint(sp.id)}
+                >
+                  Start sprint
+                </Button>
+              );
+              return (
+                <li key={sp.id} className="flex flex-col gap-2 px-5 py-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="ds-t-body-strong truncate text-[var(--text-primary)]">{sp.name}</p>
+                      <p className="ds-t-meta ds-num text-[var(--text-muted)]">{range(sp)}</p>
+                    </div>
+                    <span className="ds-t-meta ds-num shrink-0 text-[var(--text-secondary)]">{sp.capacity_story_points || 0} SP</span>
                   </div>
-                  <span className="text-[10px] font-bold bg-[#f6f5f4] border border-[#e6e6e6] text-[#0075de] px-2 py-0.5 rounded-full shrink-0">
-                    {sp.capacity_story_points} SP
-                  </span>
-                </div>
-                {onStartSprint && (
-                  <Button 
-                    onClick={() => onStartSprint(sp.id)}
-                    className="w-full h-8 text-[9px] font-bold uppercase tracking-widest bg-[#0075de] text-white hover:bg-[#0075de]/95 rounded-md flex items-center justify-center gap-1"
-                  >
-                    <Play size={10} fill="white" /> Start Sprint
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
+                  {sp.goal && <p className="ds-t-meta line-clamp-2 text-[var(--text-secondary)]">{sp.goal}</p>}
+                  {start && (
+                    <div>
+                      {activeSprint ? <Tooltip content="Complete the active sprint first"><span className="inline-flex">{start}</span></Tooltip> : start}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         )}
       </Card>
+    </div>
+  );
+}
+
+function ActiveSprint({ sprint, onComplete, busy }: { sprint: Sprint; onComplete?: (id: string) => Promise<void>; busy: boolean }) {
+  const committed = sprint.capacity_story_points || 0;
+  const completed = sprint.completed_story_points || 0;
+  const remaining = Math.max(0, committed - completed);
+  const start = day(sprint.start_date);
+  const end = day(sprint.end_date);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // The straight-line pace from the sprint dates; a reference, not a measurement.
+  let schedule: { daysLeft: number; expected: number } | null = null;
+  if (start && end && end > start) {
+    const span = (end.getTime() - start.getTime()) / DAY_MS;
+    const elapsed = Math.min(span, Math.max(0, (today.getTime() - start.getTime()) / DAY_MS));
+    schedule = {
+      daysLeft: Math.max(0, Math.ceil((end.getTime() - today.getTime()) / DAY_MS)),
+      expected: Math.round((committed * elapsed) / span),
+    };
+  }
+  const behind = schedule && committed > 0 && completed < schedule.expected;
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h2 className="ds-t-title-sm truncate text-[var(--text-primary)]">{sprint.name}</h2>
+            <Badge variant="info">Active</Badge>
+          </div>
+          <p className="ds-t-meta ds-num mt-0.5 text-[var(--text-muted)]">{range(sprint)}</p>
+        </div>
+        {onComplete && (
+          <Button
+            size={28}
+            variant="secondary"
+            loading={busy}
+            onClick={() => { if (window.confirm(`Complete ${sprint.name}?`)) void onComplete(sprint.id); }}
+          >
+            Complete sprint
+          </Button>
+        )}
+      </div>
+
+      <p className="ds-t-body text-[var(--text-secondary)]">{sprint.goal || <span className="text-[var(--text-disabled)]">No sprint goal set.</span>}</p>
+
+      <div>
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <span className="ds-t-meta-strong text-[var(--text-secondary)]">Completed</span>
+          <span className="ds-t-meta ds-num text-[var(--text-muted)]">{completed} of {committed} SP</span>
+        </div>
+        <ProgressMeter value={pct(completed, committed)} barClassName="flex-1" className="w-full" />
+        {schedule && committed > 0 && (
+          <p className={`ds-t-meta mt-2 ${behind ? "text-[var(--warning)]" : "text-[var(--text-muted)]"}`}>
+            {behind
+              ? `Behind pace: about ${schedule.expected} SP would be done by today at an even rate.`
+              : `On pace: about ${schedule.expected} SP would be done by today at an even rate.`}
+          </p>
+        )}
+      </div>
+
+      <KeyValueList
+        columns={2}
+        items={[
+          { label: "Committed", value: <span className="ds-num">{committed} SP</span> },
+          { label: "Remaining", value: <span className="ds-num">{remaining} SP</span> },
+          { label: "Days left", value: <span className="ds-num">{schedule ? schedule.daysLeft : "No end date"}</span> },
+          { label: "Ends", value: formatDay(sprint.end_date) },
+        ]}
+      />
     </div>
   );
 }

@@ -26,7 +26,7 @@ export function FinanceDashboard({ stats, expenseBreakdown }: FinanceDashboardPr
     <div className="space-y-6">
       {/* Vital KPIs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <Card className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-5 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <div className="flex justify-between items-start mb-2">
             <span className="admin-kpi-label text-[10px] font-bold uppercase tracking-wider text-neutral-400">Total Cash Balance</span>
             <span className="text-green-600 bg-green-500/5 px-2 py-0.5 rounded border border-green-200 text-[8px] font-bold">Liquid</span>
@@ -35,7 +35,7 @@ export function FinanceDashboard({ stats, expenseBreakdown }: FinanceDashboardPr
           <p className="text-[9px] text-neutral-400 mt-1 font-medium">Bank & cash accounts</p>
         </Card>
 
-        <Card className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-5 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <div className="flex justify-between items-start mb-2">
             <span className="admin-kpi-label text-[10px] font-bold uppercase tracking-wider text-neutral-400">Accounts Receivable</span>
             <span className="text-blue-600 bg-blue-500/5 px-2 py-0.5 rounded border border-blue-200 text-[8px] font-bold">Due</span>
@@ -44,7 +44,7 @@ export function FinanceDashboard({ stats, expenseBreakdown }: FinanceDashboardPr
           <p className="text-[9px] text-neutral-400 mt-1 font-medium">₹{stats.outstandingInvoices.toLocaleString()} outstanding</p>
         </Card>
 
-        <Card className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-5 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <div className="flex justify-between items-start mb-2">
             <span className="admin-kpi-label text-[10px] font-bold uppercase tracking-wider text-neutral-400">Accounts Payable</span>
             <span className="text-red-500 bg-red-500/5 px-2 py-0.5 rounded border border-red-200 text-[8px] font-bold">Liability</span>
@@ -53,7 +53,7 @@ export function FinanceDashboard({ stats, expenseBreakdown }: FinanceDashboardPr
           <p className="text-[9px] text-neutral-400 mt-1 font-medium">₹{stats.upcomingPayments.toLocaleString()} bills due</p>
         </Card>
 
-        <Card className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-5 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <div className="flex justify-between items-start mb-2">
             <span className="admin-kpi-label text-[10px] font-bold uppercase tracking-wider text-neutral-400">Net Profit Margin</span>
             <span className="text-green-600 bg-green-500/5 px-2 py-0.5 rounded border border-green-200 text-[8px] font-bold">{profitMargin}%</span>
@@ -65,7 +65,7 @@ export function FinanceDashboard({ stats, expenseBreakdown }: FinanceDashboardPr
 
       {/* Expense category charts */}
       <div className="grid md:grid-cols-3 gap-6">
-        <Card className="md:col-span-2 p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm space-y-4">
+        <Card className="md:col-span-2 p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm space-y-4">
           <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5 flex items-center gap-2">
             <TrendingUp size={14} className="text-[#0075de]" /> Profit & Loss Monthly Trajectory
           </h3>
@@ -96,7 +96,7 @@ export function FinanceDashboard({ stats, expenseBreakdown }: FinanceDashboardPr
         </Card>
 
         {/* Expenses categories */}
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm space-y-4">
+        <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm space-y-4">
           <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5">Expense Breakdown</h3>
           <div className="space-y-3">
             {expenseBreakdown.map((item, idx) => {

@@ -174,8 +174,8 @@ ${PLAYBOOK.scorecard.template}
                   className={cn(
                     "w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center gap-3 cursor-pointer",
                     playbookSubTab === sub.key
-                      ? "bg-white border-neutral-300 text-neutral-900 font-bold shadow-sm"
-                      : "bg-neutral-50 border-neutral-200/60 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/70"
+                      ? "bg-[var(--surface-1)] border-[var(--border)] text-neutral-900 font-bold shadow-sm"
+                      : "bg-[var(--surface-2)] border-neutral-200/60 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/70"
                   )}
                 >
                   <Icon size={14} className={playbookSubTab === sub.key ? "text-primary" : "text-neutral-400"} />
@@ -186,7 +186,7 @@ ${PLAYBOOK.scorecard.template}
           </div>
 
           {/* Playbook Panel Content */}
-          <div className="lg:col-span-3 border border-neutral-200 bg-white rounded-2xl p-8 shadow-sm">
+          <div className="lg:col-span-3 border border-[var(--border)] bg-[var(--surface-1)] rounded-2xl p-8 shadow-sm">
             {/* Screening Call Tab */}
             {playbookSubTab === "screening" && (
               <div className="space-y-6">
@@ -195,12 +195,12 @@ ${PLAYBOOK.scorecard.template}
                   <p className="text-xs text-neutral-500 mt-1.5 leading-relaxed">{PLAYBOOK.screening.description}</p>
                 </div>
 
-                <div className="border border-neutral-200 bg-neutral-50 rounded-xl overflow-hidden">
-                  <div className="bg-neutral-100/70 px-5 py-3 border-b border-neutral-200 flex items-center justify-between">
+                <div className="border border-[var(--border)] bg-[var(--surface-2)] rounded-xl overflow-hidden">
+                  <div className="bg-neutral-100/70 px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
                     <span className="text-[10px] font-mono font-bold text-neutral-600 uppercase tracking-wider">Opening Script</span>
                     <button
                       onClick={() => handleCopy(PLAYBOOK.screening.opening, "screening_opening")}
-                      className="px-2.5 py-1 border border-neutral-250 hover:border-neutral-300 bg-white rounded text-[9px] font-mono font-bold tracking-wider text-neutral-700 hover:text-neutral-900 flex items-center gap-1 transition-all cursor-pointer shadow-sm"
+                      className="px-2.5 py-1 border border-neutral-250 hover:border-neutral-300 bg-[var(--surface-1)] rounded text-[9px] font-mono font-bold tracking-wider text-neutral-700 hover:text-neutral-900 flex items-center gap-1 transition-all cursor-pointer shadow-sm"
                     >
                       {copiedKey === "screening_opening" ? <Check size={10} className="text-emerald-500" /> : <Clipboard size={10} />}
                       {copiedKey === "screening_opening" ? "COPIED" : "COPY SCRIPT"}
@@ -214,9 +214,9 @@ ${PLAYBOOK.scorecard.template}
                 <div className="space-y-4">
                   <h4 className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">// Evaluation Questions</h4>
                   {PLAYBOOK.screening.questions.map((item, idx) => (
-                    <div key={idx} className="p-5 border border-neutral-200 bg-neutral-50 rounded-xl space-y-2.5">
+                    <div key={idx} className="p-5 border border-[var(--border)] bg-[var(--surface-2)] rounded-xl space-y-2.5">
                       <p className="text-xs font-bold text-neutral-900 leading-relaxed"><span className="font-mono text-primary mr-2">Q{idx + 1}:</span> {item.q}</p>
-                      <div className="pt-2.5 border-t border-neutral-200 flex items-start gap-2">
+                      <div className="pt-2.5 border-t border-[var(--border)] flex items-start gap-2">
                         <span className="text-[8px] font-mono font-black uppercase bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.5 rounded tracking-wider shrink-0 mt-0.5">What to listen for</span>
                         <p className="text-xs text-neutral-650 leading-relaxed font-sans">{item.listen}</p>
                       </div>
@@ -234,12 +234,12 @@ ${PLAYBOOK.scorecard.template}
                   <p className="text-xs text-neutral-500 mt-1.5 leading-relaxed">{PLAYBOOK.assessment.description}</p>
                 </div>
 
-                <div className="border border-neutral-200 bg-neutral-50 rounded-xl overflow-hidden">
-                  <div className="bg-neutral-100/70 px-5 py-3 border-b border-neutral-200 flex items-center justify-between">
+                <div className="border border-[var(--border)] bg-[var(--surface-2)] rounded-xl overflow-hidden">
+                  <div className="bg-neutral-100/70 px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
                     <span className="text-[10px] font-mono font-bold text-neutral-600 uppercase tracking-wider">Email Template</span>
                     <button
                       onClick={() => handleCopy(`Subject: ${PLAYBOOK.assessment.emailSubject}\n\n${PLAYBOOK.assessment.emailBody}`, "assessment_email")}
-                      className="px-2.5 py-1 border border-neutral-250 hover:border-neutral-300 bg-white rounded text-[9px] font-mono font-bold tracking-wider text-neutral-700 hover:text-neutral-900 flex items-center gap-1 transition-all cursor-pointer shadow-sm"
+                      className="px-2.5 py-1 border border-neutral-250 hover:border-neutral-300 bg-[var(--surface-1)] rounded text-[9px] font-mono font-bold tracking-wider text-neutral-700 hover:text-neutral-900 flex items-center gap-1 transition-all cursor-pointer shadow-sm"
                     >
                       {copiedKey === "assessment_email" ? <Check size={10} className="text-emerald-500" /> : <Clipboard size={10} />}
                       {copiedKey === "assessment_email" ? "COPIED" : "COPY EMAIL"}
@@ -247,7 +247,7 @@ ${PLAYBOOK.scorecard.template}
                   </div>
                   <div className="p-6 space-y-4 font-sans text-xs text-neutral-700 select-text leading-relaxed">
                     <p><strong className="text-neutral-900">Subject:</strong> {PLAYBOOK.assessment.emailSubject}</p>
-                    <hr className="border-neutral-200" />
+                    <hr className="border-[var(--border)]" />
                     <pre className="whitespace-pre-wrap font-sans leading-relaxed text-neutral-600">{PLAYBOOK.assessment.emailBody}</pre>
                   </div>
                 </div>
@@ -264,14 +264,14 @@ ${PLAYBOOK.scorecard.template}
 
                 <div className="space-y-4">
                   {PLAYBOOK.roleplay.objections.map((item, idx) => (
-                    <div key={idx} className="p-5 border border-neutral-200 bg-neutral-50 rounded-xl space-y-3">
+                    <div key={idx} className="p-5 border border-[var(--border)] bg-[var(--surface-2)] rounded-xl space-y-3">
                       <p className="text-xs font-bold text-red-600 leading-relaxed"><span className="font-mono mr-2">OBJECTION:</span> "{item.obj}"</p>
-                      <div className="pt-3 border-t border-neutral-200 relative">
+                      <div className="pt-3 border-t border-[var(--border)] relative">
                         <div className="flex justify-between items-center mb-1.5">
                           <span className="text-[9px] font-mono text-emerald-600 uppercase tracking-wider block">Recommended Objection Handler</span>
                           <button
                             onClick={() => handleCopy(item.ans, `objection_${idx}`)}
-                            className="px-2.5 py-0.5 border border-neutral-250 hover:border-neutral-300 bg-white rounded text-[8.5px] font-mono font-bold tracking-wider text-neutral-700 hover:text-neutral-900 flex items-center gap-1 transition-all cursor-pointer shadow-sm"
+                            className="px-2.5 py-0.5 border border-neutral-250 hover:border-neutral-300 bg-[var(--surface-1)] rounded text-[8.5px] font-mono font-bold tracking-wider text-neutral-700 hover:text-neutral-900 flex items-center gap-1 transition-all cursor-pointer shadow-sm"
                           >
                             {copiedKey === `objection_${idx}` ? <Check size={8} className="text-emerald-500" /> : <Clipboard size={8} />}
                             {copiedKey === `objection_${idx}` ? "COPIED" : "COPY SCRIPT"}
@@ -293,12 +293,12 @@ ${PLAYBOOK.scorecard.template}
                   <p className="text-xs text-neutral-500 mt-1.5 leading-relaxed">{PLAYBOOK.scorecard.description}</p>
                 </div>
 
-                <div className="border border-neutral-200 bg-neutral-50 rounded-xl overflow-hidden">
-                  <div className="bg-neutral-100/70 px-5 py-3 border-b border-neutral-200 flex items-center justify-between">
+                <div className="border border-[var(--border)] bg-[var(--surface-2)] rounded-xl overflow-hidden">
+                  <div className="bg-neutral-100/70 px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
                     <span className="text-[10px] font-mono font-bold text-neutral-600 uppercase tracking-wider">Scorecard Template</span>
                     <button
                       onClick={() => handleCopy(PLAYBOOK.scorecard.template, "scorecard_template")}
-                      className="px-2.5 py-1 border border-neutral-250 hover:border-neutral-300 bg-white rounded text-[9px] font-mono font-bold tracking-wider text-neutral-700 hover:text-neutral-900 flex items-center gap-1 transition-all cursor-pointer shadow-sm"
+                      className="px-2.5 py-1 border border-neutral-250 hover:border-neutral-300 bg-[var(--surface-1)] rounded text-[9px] font-mono font-bold tracking-wider text-neutral-700 hover:text-neutral-900 flex items-center gap-1 transition-all cursor-pointer shadow-sm"
                     >
                       {copiedKey === "scorecard_template" ? <Check size={10} className="text-emerald-500" /> : <Clipboard size={10} />}
                       {copiedKey === "scorecard_template" ? "COPIED" : "COPY SCORECARD"}
@@ -314,7 +314,7 @@ ${PLAYBOOK.scorecard.template}
         </div>
       </Reveal>
 
-      <div className="mt-8 pt-4 border-t border-neutral-200 flex items-center gap-3">
+      <div className="mt-8 pt-4 border-t border-[var(--border)] flex items-center gap-3">
         <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
         <span className="text-[9px] font-mono text-neutral-450 uppercase tracking-widest">GrowX Labs HR Playbook v1.0.0</span>
       </div>

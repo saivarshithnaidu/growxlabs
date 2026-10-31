@@ -92,7 +92,7 @@ export default function ReportsPage() {
           <Loader2 className="animate-spin text-[#0075de] h-8 w-8" />
         </div>
       ) : (
-        <Card className="p-8 border border-[#e6e6e6] bg-white rounded-lg shadow-sm max-w-3xl mx-auto space-y-6">
+        <Card className="p-8 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm max-w-3xl mx-auto space-y-6">
           {reportType === "PL" && (
             <div className="space-y-6 text-xs font-semibold">
               <div className="text-center border-b border-[#e6e6e6] pb-4">
@@ -221,15 +221,15 @@ export default function ReportsPage() {
               </div>
               
               <div className="grid grid-cols-3 gap-4">
-                <Card className="p-4 border bg-white rounded-md text-center">
+                <Card className="p-4 border bg-[var(--surface-1)] rounded-md text-center">
                   <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider block">CGST (9%)</span>
                   <h4 className="text-base font-black font-mono mt-1 text-neutral-900">₹{(totalRevenue * 0.09).toLocaleString()}</h4>
                 </Card>
-                <Card className="p-4 border bg-white rounded-md text-center">
+                <Card className="p-4 border bg-[var(--surface-1)] rounded-md text-center">
                   <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider block">SGST (9%)</span>
                   <h4 className="text-base font-black font-mono mt-1 text-neutral-900">₹{(totalRevenue * 0.09).toLocaleString()}</h4>
                 </Card>
-                <Card className="p-4 border bg-white rounded-md text-center">
+                <Card className="p-4 border bg-[var(--surface-1)] rounded-md text-center">
                   <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider block">Total GST Liability</span>
                   <h4 className="text-base font-black font-mono mt-1 text-[#0075de]">₹{(totalRevenue * 0.18).toLocaleString()}</h4>
                 </Card>

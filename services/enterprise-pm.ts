@@ -25,13 +25,23 @@ export class EnterprisePmService {
     const companyName = meta.company_name || dealOverride?.company?.name || "Global Client";
     const projectManagerName = meta.project_manager_name || "GrowX PM Lead";
 
+    // Progress follows the task board (done story points); the stored column is never updated.
+    const tasks: any[] = Array.isArray(meta.tasks) ? meta.tasks : [];
+    const totalPoints = tasks.reduce((sum, t) => sum + (Number(t.story_points) || 0), 0);
+    const donePoints = tasks.filter((t) => t.status === "DONE").reduce((sum, t) => sum + (Number(t.story_points) || 0), 0);
+    const progress = totalPoints > 0
+      ? Math.round((donePoints / totalPoints) * 100)
+      : tasks.length > 0
+        ? Math.round((tasks.filter((t) => t.status === "DONE").length / tasks.length) * 100)
+        : typeof row.progress === "number" ? row.progress : 0;
+
     return {
       id: row.id,
       title: row.title || row.name || "Delivery Project",
       name: row.title || row.name || "Delivery Project",
       status: row.status === "active" ? "ACTIVE" : row.status === "completed" ? "COMPLETED" : "PLANNING",
       raw_status: row.status || "active",
-      progress: typeof row.progress === "number" ? row.progress : 0,
+      progress,
       health: meta.health || "ON_TRACK",
       priority: meta.priority || "MEDIUM",
       budget: meta.budget ?? dealOverride?.value ?? 0,

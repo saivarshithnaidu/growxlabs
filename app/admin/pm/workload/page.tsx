@@ -1,12 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
-import { WorkloadBalancer } from "@/components/admin/pm/WorkloadBalancer";
+import { WorkloadBalancer, type TeamWorkload } from "@/components/admin/pm/WorkloadBalancer";
+import { Alert, KPIItem, KPIStrip } from "@/src/components/ui";
+import { ErrorState, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
 
 export default function WorkloadPage() {
-  const [workloads, setWorkloads] = useState<any[]>([]);
+  const breadcrumb = useAdminBreadcrumb();
+  const [workloads, setWorkloads] = useState<TeamWorkload[]>([]);
+  const [unassigned, setUnassigned] = useState(0);
+  const [unmatched, setUnmatched] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchWorkloads();
@@ -15,40 +21,55 @@ export default function WorkloadPage() {
   const fetchWorkloads = async () => {
     try {
       setLoading(true);
-      // Simulate/aggregate team members capacity logs
-      const membersRes = await fetch("/api/contacts"); // Use contacts or team endpoint
-      const membersData = await membersRes.json();
-      
-      const mockWorkloads = (membersData.contacts || []).map((m: any, idx: number) => ({
-        team_member_id: m.id,
-        name: `${m.first_name} ${m.last_name || ""}`,
-        email: m.email,
-        assigned_hours: idx === 0 ? 48 : idx === 1 ? 0 : 35, // Simulate overload/idle/balanced states
-        capacity_hours: 40,
-        tasks_count: idx === 0 ? 8 : idx === 1 ? 0 : 5
-      }));
-      setWorkloads(mockWorkloads);
-    } catch (e) {
-      console.error(e);
+      setError("");
+      const res = await fetch("/api/pm/workload");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to load workload.");
+      setWorkloads(data.members || []);
+      setUnassigned(data.unassignedOpen || 0);
+      setUnmatched(data.unmatchedOpen || 0);
+    } catch (e: any) {
+      setError(e.message || "Failed to load workload.");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-bold text-neutral-950 tracking-tight leading-none">Workload Metrics</h1>
-        <p className="text-neutral-500 text-xs">Verify resource workloads allocations, idle developers, and capacity thresholds.</p>
-      </div>
+  const openTasks = workloads.reduce((s, w) => s + w.open_tasks, 0);
+  const blocked = workloads.reduce((s, w) => s + w.blocked, 0);
+  const withoutWork = workloads.filter((w) => w.open_tasks === 0).length;
 
-      {loading ? (
-        <div className="h-64 flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-8 w-8" />
-        </div>
+  return (
+    <div className="mx-auto max-w-[1440px]">
+      <PageHeader
+        title="Workload"
+        breadcrumb={breadcrumb}
+        info="Open tasks and story points assigned to each active team member across delivery projects."
+      />
+
+      {error ? (
+        <ErrorState title="Couldn't load workload" description={error} onRetry={fetchWorkloads} />
       ) : (
-        <WorkloadBalancer workloads={workloads} />
+        <div className="flex flex-col gap-6">
+          <KPIStrip>
+            <KPIItem label="Assigned open tasks" loading={loading} value={<span className="ds-num">{openTasks}</span>} />
+            <KPIItem label="Unassigned open tasks" loading={loading} value={<span className="ds-num">{unassigned}</span>} />
+            <KPIItem label="Blocked" loading={loading} value={<span className="ds-num">{blocked}</span>} />
+            <KPIItem label="Members with no open tasks" loading={loading} value={<span className="ds-num">{withoutWork} of {workloads.length}</span>} />
+          </KPIStrip>
+
+          {!loading && unmatched > 0 && (
+            <Alert variant="warning" title={`${unmatched} open ${unmatched === 1 ? "task is" : "tasks are"} assigned to someone not on the team`}>
+              The assignee name doesn&apos;t match an active team member, so those tasks aren&apos;t counted below.
+            </Alert>
+          )}
+
+          <WorkloadBalancer workloads={workloads} loading={loading} />
+
+          <p className="ds-t-meta text-[var(--text-muted)]">
+            Hours and capacity aren&apos;t tracked yet, so this page shows assigned work only.
+          </p>
+        </div>
       )}
     </div>
   );

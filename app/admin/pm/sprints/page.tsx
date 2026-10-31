@@ -1,12 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2, Zap } from "lucide-react";
 import { SprintManager } from "@/components/admin/pm/SprintManager";
+import { Skeleton, toast } from "@/src/components/ui";
+import { ErrorState, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
 
 export default function SprintsPage() {
+  const breadcrumb = useAdminBreadcrumb();
   const [sprints, setSprints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSprints();
@@ -15,44 +20,54 @@ export default function SprintsPage() {
   const fetchSprints = async () => {
     try {
       setLoading(true);
+      setError("");
       const res = await fetch("/api/pm/sprints");
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to load sprints.");
       setSprints(data.sprints || []);
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      setError(e.message || "Failed to load sprints.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleStartSprint = async (sprintId: string) => {
+  const updateSprint = async (sprintId: string, action: "start" | "complete") => {
+    setBusyId(sprintId);
     try {
-      // Simulate patch to start sprint
-      alert("Sprint started!");
-      fetchSprints();
-    } catch (e) {
-      console.error(e);
+      const res = await fetch("/api/pm/sprints", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: sprintId, action })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Failed to ${action} sprint.`);
+      toast({ title: action === "start" ? "Sprint started" : "Sprint completed", variant: "success" });
+      await fetchSprints();
+    } catch (e: any) {
+      toast({ title: e.message, variant: "danger" });
+    } finally {
+      setBusyId(null);
     }
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-bold text-neutral-950 tracking-tight leading-none flex items-center gap-2">
-          <Zap size={28} className="text-[#0075de]" /> Sprint Dashboard
-        </h1>
-        <p className="text-neutral-500 text-xs">Agile sprints trackers, velocity capacities, and team burn-downs.</p>
-      </div>
+    <div className="mx-auto max-w-[1440px]">
+      <PageHeader title="Sprints" breadcrumb={breadcrumb} info="The active sprint's progress, upcoming sprints to start, and what past sprints delivered." />
 
-      {loading ? (
-        <div className="h-64 flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-8 w-8" />
+      {error ? (
+        <ErrorState title="Couldn't load sprints" description={error} onRetry={fetchSprints} />
+      ) : loading ? (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]" aria-busy="true">
+          <Skeleton height={280} radius="md" />
+          <Skeleton height={200} radius="md" />
         </div>
       ) : (
-        <SprintManager 
+        <SprintManager
           sprints={sprints}
-          onStartSprint={handleStartSprint}
+          busyId={busyId}
+          onStartSprint={(id) => updateSprint(id, "start")}
+          onCompleteSprint={(id) => updateSprint(id, "complete")}
         />
       )}
     </div>

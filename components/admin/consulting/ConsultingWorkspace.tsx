@@ -135,13 +135,13 @@ export function ConsultingWorkspace({
   if (kind === "report")
     return (
       <main className="p-6 md:p-10">
-        <div className="no-print mx-auto mb-6 max-w-6xl rounded-xl border border-slate-200 bg-white p-5">
+        <div className="no-print mx-auto mb-6 max-w-6xl rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Consulting workflow
               </p>
-              <p className="mt-1 text-sm text-slate-600">
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">
                 {consultingStatusLabel(status)}
               </p>
             </div>
@@ -158,7 +158,7 @@ export function ConsultingWorkspace({
                 <button
                   onClick={() => update.mutate({ generateAi: true })}
                   disabled={update.isPending}
-                  className="rounded bg-[#1d4f7a] px-4 py-2 text-sm font-semibold text-white"
+                  className="rounded bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white"
                 >
                   {update.isPending
                     ? "Generating…"
@@ -176,7 +176,7 @@ export function ConsultingWorkspace({
                       update.mutate({ status: "approved_internal" })
                     }
                     disabled={update.isPending}
-                    className="rounded border border-[#1d4f7a] px-4 py-2 text-sm font-semibold text-[#1d4f7a]"
+                    className="rounded border border-[#1d4f7a] px-4 py-2 text-sm font-semibold text-[var(--accent)]"
                   >
                     Approve Report
                   </button>
@@ -187,7 +187,7 @@ export function ConsultingWorkspace({
                   onClick={() => createNext.mutate()}
                   disabled={createNext.isPending}
                   aria-busy={createNext.isPending}
-                  className="inline-flex min-w-64 items-center justify-center gap-2 rounded bg-[#1d4f7a] px-4 py-2 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-70"
+                  className="inline-flex min-w-64 items-center justify-center gap-2 rounded bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-70"
                 >
                   {createNext.isPending && (
                     <span
@@ -203,7 +203,7 @@ export function ConsultingWorkspace({
               <button
                 onClick={() => window.print()}
                 disabled={createNext.isPending}
-                className="rounded border border-slate-300 px-4 py-2 text-sm font-semibold disabled:opacity-50"
+                className="rounded border border-[var(--border)] px-4 py-2 text-sm font-semibold disabled:opacity-50"
               >
                 Print
               </button>
@@ -232,14 +232,14 @@ export function ConsultingWorkspace({
     );
   return (
     <main className="p-6 md:p-10">
-      <div className="no-print mx-auto mb-6 max-w-6xl rounded-xl border border-slate-200 bg-white p-5">
+      <div className="no-print mx-auto mb-6 max-w-6xl rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div><p className="text-xs font-bold uppercase tracking-widest text-slate-500">Solution architecture workflow</p><p className="mt-1 text-sm text-slate-600">{consultingStatusLabel(status)}</p></div>
+          <div><p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">Solution architecture workflow</p><p className="mt-1 text-sm text-[var(--text-secondary)]">{consultingStatusLabel(status)}</p></div>
           <div className="flex flex-wrap gap-3">
-            {architecturePlaceholder&&<button onClick={()=>update.mutate({generateDraft:true})} disabled={update.isPending} className="rounded bg-[#1d4f7a] px-4 py-2 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-70">{update.isPending?"Generating Architecture…":"Generate Architecture Draft"}</button>}
-            {!architecturePlaceholder&&["draft","internal_review","changes_required"].includes(status)&&<button onClick={()=>update.mutate({status:"approved_internal"})} disabled={update.isPending} className="rounded border border-[#1d4f7a] px-4 py-2 text-sm font-semibold text-[#1d4f7a]">Approve Architecture</button>}
-            {["approved_internal","closed"].includes(status)&&<button onClick={()=>createScope.mutate()} disabled={createScope.isPending} className="rounded bg-[#1d4f7a] px-4 py-2 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-70">{createScope.isPending?"Creating Scope of Work…":status==="closed"?"Create/Open Scope of Work":"Complete & Create Scope of Work"}</button>}
-            <button onClick={()=>window.print()} disabled={update.isPending} className="rounded border border-slate-300 px-4 py-2 text-sm font-semibold">Print</button>
+            {architecturePlaceholder&&<button onClick={()=>update.mutate({generateDraft:true})} disabled={update.isPending} className="rounded bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-70">{update.isPending?"Generating Architecture…":"Generate Architecture Draft"}</button>}
+            {!architecturePlaceholder&&["draft","internal_review","changes_required"].includes(status)&&<button onClick={()=>update.mutate({status:"approved_internal"})} disabled={update.isPending} className="rounded border border-[#1d4f7a] px-4 py-2 text-sm font-semibold text-[var(--accent)]">Approve Architecture</button>}
+            {["approved_internal","closed"].includes(status)&&<button onClick={()=>createScope.mutate()} disabled={createScope.isPending} className="rounded bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-70">{createScope.isPending?"Creating Scope of Work…":status==="closed"?"Create/Open Scope of Work":"Complete & Create Scope of Work"}</button>}
+            <button onClick={()=>window.print()} disabled={update.isPending} className="rounded border border-[var(--border)] px-4 py-2 text-sm font-semibold">Print</button>
           </div>
         </div>
         {architecturePlaceholder&&<p className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">Architecture generation is required. This workspace still contains the initial placeholder.</p>}

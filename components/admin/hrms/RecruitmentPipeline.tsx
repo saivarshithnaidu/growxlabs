@@ -921,7 +921,7 @@ export function RecruitmentPipeline({
                       <textarea
                         value={offerOverrideReason}
                         onChange={(e) => setOfferOverrideReason(e.target.value)}
-                        className="mt-1 min-h-20 w-full rounded border border-amber-300 bg-white p-2 text-xs normal-case"
+                        className="mt-1 min-h-20 w-full rounded border border-amber-300 bg-[var(--surface-1)] p-2 text-xs normal-case"
                       />
                     </label>
                     <button

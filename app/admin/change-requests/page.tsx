@@ -1,9 +1,63 @@
 "use client";
 import { useEffect, useState } from "react";
+import { FileText } from "lucide-react";
+import { Badge, DataTable, type DataTableColumn, RelativeTime, type BadgeVariant } from "@/src/components/ui";
+import { EmptyState, ErrorState, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
+
+type ChangeRequest = { id: string; change_number: string | null; title: string; status: string; impact: string | null; created_at: string | null };
+
+const STATUS: Record<string, BadgeVariant> = {
+  draft: "neutral", submitted: "info", requested: "info", under_review: "info", in_review: "info",
+  approved: "success", implemented: "success", completed: "success", rejected: "danger", cancelled: "neutral",
+};
+const humanize = (value?: string | null) => {
+  const t = String(value || "").replaceAll("_", " ").trim();
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : "";
+};
 
 export default function ChangeRequestsPage() {
-  const [changes, setChanges] = useState<any[]>([]);
+  const breadcrumb = useAdminBreadcrumb();
+  const [changes, setChanges] = useState<ChangeRequest[]>([]);
   const [error, setError] = useState("");
-  useEffect(() => { fetch("/api/admin/change-requests").then(async (r) => { const body = await r.json(); if (!r.ok) throw new Error(body.error || "Unable to load change requests"); setChanges(body.changes || []); }).catch((e) => setError(e.message)); }, []);
-  return <main className="mx-auto max-w-6xl space-y-6 p-8"><div><p className="text-xs font-bold uppercase tracking-widest text-[#0075de]">Delivery operations</p><h1 className="mt-2 text-3xl font-black">Change Requests</h1><p className="mt-2 text-sm text-slate-500">Review client-requested scope and delivery changes.</p></div>{error ? <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div> : <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white"><table className="w-full text-left text-sm"><thead className="bg-slate-50 text-xs uppercase text-slate-500"><tr><th className="px-5 py-3">Request</th><th className="px-5 py-3">Title</th><th className="px-5 py-3">Status</th><th className="px-5 py-3">Impact</th><th className="px-5 py-3">Created</th></tr></thead><tbody>{changes.length ? changes.map((item) => <tr key={item.id} className="border-t border-slate-100"><td className="px-5 py-4 font-semibold">{item.change_number || item.id}</td><td className="px-5 py-4">{item.title}</td><td className="px-5 py-4">{item.status}</td><td className="px-5 py-4">{item.impact || "—"}</td><td className="px-5 py-4 text-slate-500">{item.created_at ? new Date(item.created_at).toLocaleString() : "—"}</td></tr>) : <tr><td colSpan={5} className="px-5 py-12 text-center text-slate-500">No change requests found.</td></tr>}</tbody></table></div>}</main>;
+  const [loading, setLoading] = useState(true);
+  const load = () => {
+    setLoading(true);
+    setError("");
+    fetch("/api/admin/change-requests").then(async (r) => { const body = await r.json(); if (!r.ok) throw new Error(body.error || "Unable to load change requests"); setChanges(body.changes || []); }).catch((e) => setError(e.message)).finally(() => setLoading(false));
+  };
+  useEffect(load, []);
+
+  const columns: DataTableColumn<ChangeRequest>[] = [
+    { id: "request", header: "Request", width: "18%", sortValue: (c) => c.change_number || c.id, cell: (c) => <span className="ds-t-body-strong ds-num text-[var(--text-primary)]">{c.change_number || c.id}</span> },
+    { id: "title", header: "Title", width: "34%", sortValue: (c) => c.title, cell: (c) => <span className="truncate text-[var(--text-primary)]" title={c.title}>{c.title}</span> },
+    { id: "status", header: "Status", sortValue: (c) => c.status, cell: (c) => <Badge variant={STATUS[c.status] || "neutral"}>{humanize(c.status)}</Badge> },
+    { id: "impact", header: "Impact", sortValue: (c) => c.impact || "", cell: (c) => c.impact ? <span className="text-[var(--text-secondary)]">{humanize(c.impact)}</span> : <span className="text-[var(--text-disabled)]">Not assessed</span> },
+    { id: "created", header: "Created", sortValue: (c) => (c.created_at ? new Date(c.created_at) : null), cell: (c) => <RelativeTime value={c.created_at} className="text-[var(--text-muted)]" /> },
+  ];
+
+  return (
+    <div className="mx-auto max-w-[1280px]">
+      <PageHeader title="Change requests" breadcrumb={breadcrumb} info="Review client-requested scope and delivery changes." />
+      {error ? (
+        <ErrorState title="Couldn't load change requests" description={error} onRetry={load} />
+      ) : (
+        <DataTable
+          label="Change requests"
+          columns={columns}
+          rows={changes}
+          getRowId={(c) => c.id}
+          loading={loading}
+          skeletonRows={4}
+          emptyState={
+            <EmptyState
+              icon={<FileText size={24} strokeWidth={1.5} />}
+              title="No change requests"
+              description="When a client asks to change scope or delivery, the request shows up here for review."
+            />
+          }
+        />
+      )}
+    </div>
+  );
 }

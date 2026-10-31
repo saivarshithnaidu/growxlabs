@@ -1,102 +1,88 @@
 "use client";
 
 import React from "react";
-import { Users, AlertTriangle, AlertCircle, CheckCircle } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { cn } from "@/lib/utils";
+import { Users } from "lucide-react";
+import { Avatar, Badge, DataTable, type DataTableColumn } from "@/src/components/ui";
+import { EmptyState } from "@/src/components/patterns";
+import { ProgressMeter } from "./ProgressMeter";
 
-interface TeamWorkload {
-  team_member_id: string;
+export interface TeamWorkload {
+  id: string;
   name: string;
   email: string;
-  assigned_hours: number;
-  capacity_hours: number;
-  tasks_count: number;
+  open_tasks: number;
+  open_points: number;
+  in_progress: number;
+  blocked: number;
+  done_tasks: number;
+  projects: string[];
 }
 
 interface WorkloadBalancerProps {
   workloads: TeamWorkload[];
+  loading?: boolean;
 }
 
-export function WorkloadBalancer({ workloads }: WorkloadBalancerProps) {
+export function WorkloadBalancer({ workloads, loading }: WorkloadBalancerProps) {
+  const teamPoints = workloads.reduce((s, w) => s + w.open_points, 0);
+
+  const columns: DataTableColumn<TeamWorkload>[] = [
+    {
+      id: "member",
+      header: "Team member",
+      width: "26%",
+      sortValue: (w) => w.name,
+      cell: (w) => (
+        <span className="flex min-w-0 items-center gap-3">
+          <Avatar name={w.name} size={28} />
+          <span className="flex min-w-0 flex-col">
+            <span className="ds-t-body-strong truncate text-[var(--text-primary)]">{w.name}</span>
+            <span className="ds-t-meta truncate text-[var(--text-muted)]">{w.email || "No email"}</span>
+          </span>
+        </span>
+      ),
+    },
+    {
+      id: "open_tasks",
+      header: "Open tasks",
+      numeric: true,
+      sortValue: (w) => w.open_tasks,
+      cell: (w) => w.open_tasks ? <span className="text-[var(--text-primary)]">{w.open_tasks}</span> : <Badge variant="neutral" noDot>No open tasks</Badge>,
+    },
+    { id: "open_points", header: "Open points", numeric: true, sortValue: (w) => w.open_points, cell: (w) => `${w.open_points} SP` },
+    {
+      id: "share",
+      header: "Share of team points",
+      sortValue: (w) => w.open_points,
+      cell: (w) => <ProgressMeter value={teamPoints ? (w.open_points / teamPoints) * 100 : 0} barClassName="w-24" />,
+    },
+    { id: "in_progress", header: "In progress", numeric: true, sortValue: (w) => w.in_progress, cell: (w) => w.in_progress },
+    {
+      id: "blocked",
+      header: "Blocked",
+      numeric: true,
+      sortValue: (w) => w.blocked,
+      cell: (w) => w.blocked ? <span className="text-[var(--danger)]">{w.blocked}</span> : <span className="text-[var(--text-muted)]">0</span>,
+    },
+    {
+      id: "projects",
+      header: "Projects",
+      sortValue: (w) => w.projects.length,
+      cell: (w) => w.projects.length
+        ? <span className="ds-t-meta truncate text-[var(--text-secondary)]" title={w.projects.join(", ")}>{w.projects.join(", ")}</span>
+        : <span className="text-[var(--text-disabled)]">None</span>,
+    },
+  ];
+
   return (
-    <div className="space-y-6">
-      <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
-        <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-3.5 mb-6 flex items-center gap-2">
-          <Users size={16} className="text-[#0075de]" /> Team Resource Workload Balancing
-        </h3>
-
-        {workloads.length === 0 ? (
-          <div className="text-center py-12 text-xs font-semibold text-neutral-400">No member allocations found.</div>
-        ) : (
-          <div className="grid md:grid-cols-2 gap-6">
-            {workloads.map((member) => {
-              const allocationPercent = Math.round((member.assigned_hours / member.capacity_hours) * 100);
-              const isOverloaded = member.assigned_hours > member.capacity_hours;
-              const isIdle = member.assigned_hours === 0;
-
-              return (
-                <div 
-                  key={member.team_member_id} 
-                  className={cn(
-                    "border p-5 rounded-md flex flex-col justify-between gap-4 transition-all hover:shadow-md bg-white",
-                    isOverloaded 
-                      ? "border-red-200 bg-red-500/[0.01]" 
-                      : isIdle 
-                        ? "border-[#e6e6e6]/60 bg-neutral-50/[0.1]" 
-                        : "border-[#e6e6e6] hover:border-[#0075de]/30"
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h4 className="text-xs font-bold text-neutral-900 leading-snug">{member.name}</h4>
-                      <span className="text-[9px] font-mono text-neutral-400 block mt-0.5">{member.email}</span>
-                    </div>
-
-                    <div className="shrink-0 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider">
-                      {isOverloaded ? (
-                        <span className="text-red-500 bg-red-500/5 px-2 py-0.5 rounded border border-red-200 flex items-center gap-1">
-                          <AlertTriangle size={10} /> Overloaded
-                        </span>
-                      ) : isIdle ? (
-                        <span className="text-neutral-450 bg-neutral-100 px-2 py-0.5 rounded border border-neutral-300 flex items-center gap-1">
-                          <AlertCircle size={10} /> Idle
-                        </span>
-                      ) : (
-                        <span className="text-green-600 bg-green-500/5 px-2 py-0.5 rounded border border-green-200 flex items-center gap-1">
-                          <CheckCircle size={10} /> Balanced
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 text-xs font-semibold">
-                    <div className="flex justify-between items-center text-[10px]">
-                      <span className="text-neutral-400 uppercase tracking-wider">Capacity Allocations</span>
-                      <span className="text-neutral-900 font-bold">{member.assigned_hours} hrs / {member.capacity_hours} hrs ({allocationPercent}%)</span>
-                    </div>
-
-                    <div className="h-2.5 w-full bg-[#f6f5f4] rounded-full overflow-hidden border border-[#e6e6e6]/50">
-                      <div 
-                        className={cn(
-                          "h-full rounded-full transition-all duration-300",
-                          isOverloaded ? "bg-red-500" : isIdle ? "bg-neutral-300" : "bg-[#0075de]"
-                        )}
-                        style={{ width: `${Math.min(100, allocationPercent)}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="border-t border-[#e6e6e6]/60 pt-3 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-neutral-450">
-                    <span>Tasks Assigned:</span>
-                    <span className="text-neutral-800 font-mono font-bold">{member.tasks_count} tasks</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </Card>
-    </div>
+    <DataTable
+      label="Team workload"
+      columns={columns}
+      rows={workloads}
+      getRowId={(w) => w.id}
+      loading={loading}
+      skeletonRows={5}
+      emptyState={<EmptyState icon={<Users size={24} strokeWidth={1.5} />} title="No active team members" description="Active workspace employees appear here with the tasks assigned to them." />}
+    />
   );
 }

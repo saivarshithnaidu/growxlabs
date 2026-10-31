@@ -72,25 +72,25 @@ export default function ReportsPage() {
         <div className="space-y-6">
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <Card className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+            <Card className="p-5 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
               <span className="admin-kpi-label text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">Total Pipeline</span>
               <h3 className="admin-kpi-value text-neutral-900">₹{totalValue.toLocaleString()}</h3>
               <p className="text-[9px] text-neutral-400 mt-1 font-medium">{deals.length} deals total</p>
             </Card>
 
-            <Card className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+            <Card className="p-5 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
               <span className="admin-kpi-label text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">Weighted Forecast</span>
               <h3 className="admin-kpi-value text-[#0075de]">₹{forecastWeighted.toLocaleString()}</h3>
               <p className="text-[9px] text-neutral-400 mt-1 font-medium">Expected revenue yield</p>
             </Card>
 
-            <Card className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+            <Card className="p-5 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
               <span className="admin-kpi-label text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">Average Deal Size</span>
               <h3 className="admin-kpi-value text-neutral-900">₹{averageDealSize.toLocaleString()}</h3>
               <p className="text-[9px] text-neutral-400 mt-1 font-medium">Mean contract value</p>
             </Card>
 
-            <Card className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+            <Card className="p-5 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
               <span className="admin-kpi-label text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">Win Rate %</span>
               <h3 className="admin-kpi-value text-[#1aae39]">{winRate}%</h3>
               <p className="text-[9px] text-neutral-400 mt-1 font-medium">{wonCount} won vs {lostCount} lost</p>
@@ -100,7 +100,7 @@ export default function ReportsPage() {
           {/* Detailed Reports Blocks */}
           <div className="grid md:grid-cols-2 gap-6">
             {/* Forecast trajectory */}
-            <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm space-y-4">
+            <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm space-y-4">
               <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5 flex items-center gap-2">
                 <DollarSign size={16} className="text-[#0075de]" /> Expected Close Trajectory
               </h3>
@@ -124,7 +124,7 @@ export default function ReportsPage() {
             </Card>
 
             {/* Lead source performance */}
-            <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm space-y-4">
+            <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm space-y-4">
               <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5 flex items-center gap-2">
                 <Target size={16} className="text-[#0075de]" /> Lead Source Breakdown
               </h3>

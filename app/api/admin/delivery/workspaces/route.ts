@@ -6,7 +6,7 @@ export async function GET() {
     const [workspacesResult, projectsResult] = await Promise.all([
       supabaseAdmin
         .from("project_workspaces")
-        .select("id,project_id,status,health,summary,created_at,consulting_projects(project_number)")
+        .select("id,project_id,status,health,summary,created_at,consulting_projects(project_number,company_id)")
         .order("created_at", { ascending: false }),
       supabaseAdmin
         .from("consulting_projects")
@@ -21,7 +21,12 @@ export async function GET() {
     const activeProjects = projectsResult.data || [];
 
     // Get company names
-    const companyIds = activeProjects.map((p) => p.company_id).filter(Boolean) as string[];
+    const projectOf = (w: { consulting_projects: unknown }) =>
+      (Array.isArray(w.consulting_projects) ? w.consulting_projects[0] : w.consulting_projects) as { company_id?: string | null } | null;
+    const companyIds = [...new Set([
+      ...activeProjects.map((p) => p.company_id),
+      ...workspaces.map((w) => projectOf(w)?.company_id),
+    ].filter(Boolean))] as string[];
     const { data: companies } = companyIds.length
       ? await supabaseAdmin.from("companies").select("id,name").in("id", companyIds)
       : { data: [] };
@@ -33,10 +38,12 @@ export async function GET() {
       .map((p) => ({
         id: p.id,
         projectNumber: p.project_number,
-        companyName: companyMap.get(p.company_id) || "Client Partner",
+        companyName: companyMap.get(p.company_id) || null,
       }));
 
-    return Response.json({ workspaces, availableProjects: unactivatedProjects });
+    const withCompany = workspaces.map((w) => ({ ...w, companyName: companyMap.get(projectOf(w)?.company_id || "") || null }));
+
+    return Response.json({ workspaces: withCompany, availableProjects: unactivatedProjects });
   } catch (error) {
     return deliveryError(error);
   }

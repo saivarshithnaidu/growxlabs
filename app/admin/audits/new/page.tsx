@@ -48,20 +48,20 @@ export default function NewAuditPage() {
 
   return (
     <main className="mx-auto max-w-2xl p-6 md:p-10">
-      <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Consulting deliverable</p>
+      <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">Consulting deliverable</p>
       <h1 className="mt-2 text-3xl font-bold">Create Business & Technical Audit</h1>
-      <p className="mt-2 text-sm text-slate-600">Choose a completed discovery meeting. The audit will be prepared from its meeting notes and assessment information.</p>
-      <form onSubmit={submit} className="mt-8 space-y-5 rounded-xl border border-slate-200 bg-white p-6">
+      <p className="mt-2 text-sm text-[var(--text-secondary)]">Choose a completed discovery meeting. The audit will be prepared from its meeting notes and assessment information.</p>
+      <form onSubmit={submit} className="mt-8 space-y-5 rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-6">
         <label className="grid gap-2 text-sm font-semibold">
           Completed discovery meeting
-          <select required value={meetingId} disabled={loading || !meetings.length} onChange={(event) => setMeetingId(event.target.value)} className="rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal disabled:bg-slate-50">
+          <select required value={meetingId} disabled={loading || !meetings.length} onChange={(event) => setMeetingId(event.target.value)} className="rounded-lg border border-[var(--border)] bg-[var(--surface-1)] px-3 py-2 font-normal disabled:bg-slate-50">
             <option value="">{loading ? "Loading completed meetings…" : "Select a discovery meeting"}</option>
             {meetings.map((meeting) => <option key={meeting.id} value={meeting.id}>{meeting.meeting_number}{meeting.title ? ` — ${meeting.title}` : ""}</option>)}
           </select>
         </label>
         {!loading && !meetings.length && !error && <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">There are no completed discovery meetings available yet. Complete a meeting first, then return here to create its audit.</p>}
         {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-        <button disabled={busy || loading || !meetingId} className="rounded-lg bg-[#1d4f7a] px-5 py-3 text-sm font-semibold text-white disabled:opacity-50">
+        <button disabled={busy || loading || !meetingId} className="rounded-lg bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white disabled:opacity-50">
           {busy ? "Creating audit…" : "Create audit"}
         </button>
       </form>

@@ -70,9 +70,9 @@ export function OnboardingAdminList() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-950">Create Onboarding</h2>
-        <p className="mt-1 text-sm text-slate-600">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-6 shadow-sm">
+        <h2 className="text-lg font-bold text-[var(--text-primary)]">Create Onboarding</h2>
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">
           Select an official client partner or enter an Agreement Reference (e.g. GXL-MSA-2026-000001) to initialize their onboarding workspace.
         </p>
 
@@ -81,7 +81,7 @@ export function OnboardingAdminList() {
             <select
               value={clientId}
               onChange={(e) => setClientId(e.target.value)}
-              className="min-h-11 min-w-[320px] rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-900 outline-none focus:border-[#0075de] transition-colors"
+              className="min-h-11 min-w-[320px] rounded-lg border border-[var(--border)] bg-[var(--surface-1)] px-3 text-sm font-medium text-[var(--text-primary)] outline-none focus:border-[#0075de] transition-colors"
             >
               <option value="">Select official client partner...</option>
               {clients.map((c) => (
@@ -96,7 +96,7 @@ export function OnboardingAdminList() {
             value={clientId}
             onChange={(e) => setClientId(e.target.value)}
             placeholder="Or enter Agreement / Invoice # (e.g. GXL-MSA-2026-000001)..."
-            className="min-h-11 flex-1 min-w-[280px] rounded-lg border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-[#0075de] transition-colors"
+            className="min-h-11 flex-1 min-w-[280px] rounded-lg border border-[var(--border)] bg-[var(--surface-1)] px-3 text-sm font-normal text-[var(--text-primary)] outline-none focus:border-[#0075de] transition-colors"
           />
 
           <button
@@ -112,13 +112,13 @@ export function OnboardingAdminList() {
       </section>
 
       {q.isPending ? (
-        <p className="text-sm text-slate-500">Loading onboarding records…</p>
+        <p className="text-sm text-[var(--text-muted)]">Loading onboarding records…</p>
       ) : q.error ? (
         <p className="text-sm text-red-600">{q.error.message}</p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--surface-1)] shadow-sm">
           <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+            <thead className="bg-[var(--surface-2)] text-xs uppercase tracking-wider text-[var(--text-muted)] border-b border-[var(--border)]">
               <tr>
                 <th className="p-3.5">Onboarding Reference</th>
                 <th className="p-3.5">Company Partner</th>
@@ -128,18 +128,18 @@ export function OnboardingAdminList() {
                 <th className="p-3.5">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[var(--border-subtle)]">
               {q.data?.onboardings.map((x) => (
                 <tr key={x.id} className="hover:bg-slate-50/50">
-                  <td className="p-3.5 font-semibold text-slate-900">{x.onboarding_number}</td>
-                  <td className="p-3.5 text-slate-700">{x.companies?.name || "Linked client"}</td>
+                  <td className="p-3.5 font-semibold text-[var(--text-primary)]">{x.onboarding_number}</td>
+                  <td className="p-3.5 text-[var(--text-secondary)]">{x.companies?.name || "Linked client"}</td>
                   <td className="p-3.5">
                     <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold capitalize bg-blue-50 text-blue-700">
                       {x.status.replaceAll("_", " ")}
                     </span>
                   </td>
-                  <td className="p-3.5 text-slate-700 font-medium">{x.completion_percentage}%</td>
-                  <td className="p-3.5 text-slate-500 text-xs">{new Date(x.updated_at).toLocaleString()}</td>
+                  <td className="p-3.5 text-[var(--text-secondary)] font-medium">{x.completion_percentage}%</td>
+                  <td className="p-3.5 text-[var(--text-muted)] text-xs">{new Date(x.updated_at).toLocaleString()}</td>
                   <td className="p-3.5">
                     <Link href={`/admin/onboarding/${x.id}`} className="font-semibold text-[#0075de] hover:underline">
                       Open Workspace
@@ -149,7 +149,7 @@ export function OnboardingAdminList() {
               ))}
               {!q.data?.onboardings.length && (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-slate-500 text-sm">
+                  <td colSpan={6} className="p-6 text-center text-[var(--text-muted)] text-sm">
                     No active onboarding records. Select a client partner above to initialize onboarding.
                   </td>
                 </tr>
@@ -195,7 +195,7 @@ export function OnboardingAdminDetail({ id }: { id: string }) {
     onError: (e) => setNotice(e.message),
   });
 
-  if (q.isPending) return <p className="text-sm text-slate-500">Loading onboarding…</p>;
+  if (q.isPending) return <p className="text-sm text-[var(--text-muted)]">Loading onboarding…</p>;
   if (q.error || !q.data) return <p className="text-sm text-red-600">{q.error?.message || "Not found"}</p>;
 
   const o = q.data;

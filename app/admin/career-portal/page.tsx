@@ -451,7 +451,7 @@ export default function AdminCareersPage() {
                     className={cn(
                       "w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center gap-3 cursor-pointer",
                       playbookSubTab === sub.key
-                        ? "bg-white border-white text-black font-bold"
+                        ? "bg-[var(--surface-1)] border-white text-black font-bold"
                         : "bg-[var(--surface-1)] border-[var(--border-subtle)] hover:border-[var(--border-hover)] text-[var(--text-secondary)]"
                     )}
                   >
@@ -611,10 +611,10 @@ export default function AdminCareersPage() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="relative w-full max-w-2xl bg-white border-l border-neutral-200 shadow-2xl flex flex-col h-full z-10"
+              className="relative w-full max-w-2xl bg-[var(--surface-1)] border-l border-[var(--border)] shadow-2xl flex flex-col h-full z-10"
             >
               {/* Header */}
-              <div className="p-6 border-b border-neutral-200 flex items-center justify-between bg-neutral-50">
+              <div className="p-6 border-b border-[var(--border)] flex items-center justify-between bg-[var(--surface-2)]">
                 <div className="flex items-center gap-3">
                   <div className="h-9 w-9 rounded-md bg-primary/5 flex items-center justify-center text-primary border border-primary/10">
                     <FileText size={16} />
@@ -633,10 +633,10 @@ export default function AdminCareersPage() {
               </div>
 
               {/* Scrollable details */}
-              <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar bg-white">
+              <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar bg-[var(--surface-1)]">
                 
                 {/* 1. Header Info section with a neat structured profile header */}
-                <div className="border-b border-neutral-200 pb-6">
+                <div className="border-b border-[var(--border)] pb-6">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest">// Application Dossier</p>
@@ -648,7 +648,7 @@ export default function AdminCareersPage() {
                       <div className="mt-1">{getStatusBadge(activeCandidate.status)}</div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-neutral-100 text-xs font-mono">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-[var(--border)] text-xs font-mono">
                     <div>
                       <span className="block text-[9px] text-neutral-550 uppercase">Location</span>
                       <span className="font-bold text-neutral-900 mt-1 block">{activeCandidate.location || "Unknown"}</span>
@@ -672,8 +672,8 @@ export default function AdminCareersPage() {
 
                 {/* 2. Structured Dossier Form Layout */}
                 <div className="space-y-6">
-                  <div className="border border-neutral-200 rounded-xl overflow-hidden bg-neutral-50/50">
-                    <div className="bg-neutral-50 px-5 py-3 border-b border-neutral-200 flex items-center justify-between">
+                  <div className="border border-[var(--border)] rounded-xl overflow-hidden bg-neutral-50/50">
+                    <div className="bg-[var(--surface-2)] px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
                       <span className="text-[10px] font-mono font-bold text-neutral-600 uppercase tracking-wider">01. Contact Credentials</span>
                     </div>
                     <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm font-sans">
@@ -688,8 +688,8 @@ export default function AdminCareersPage() {
                     </div>
                   </div>
 
-                  <div className="border border-neutral-200 rounded-xl overflow-hidden bg-neutral-50/50">
-                    <div className="bg-neutral-50 px-5 py-3 border-b border-neutral-200 flex items-center justify-between">
+                  <div className="border border-[var(--border)] rounded-xl overflow-hidden bg-neutral-50/50">
+                    <div className="bg-[var(--surface-2)] px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
                       <span className="text-[10px] font-mono font-bold text-neutral-600 uppercase tracking-wider">02. Career & Compensation Settings</span>
                     </div>
                     <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm font-sans">
@@ -706,7 +706,7 @@ export default function AdminCareersPage() {
                         <span className="text-neutral-900 font-bold block">{activeCandidate.job_title || "Not specified"}</span>
                       </div>
                     </div>
-                    <div className="p-5 border-t border-neutral-200 text-sm font-sans">
+                    <div className="p-5 border-t border-[var(--border)] text-sm font-sans">
                       <div className="space-y-1">
                         <span className="text-[10px] font-mono text-neutral-455 uppercase tracking-wider block">Last/Current Employer</span>
                         <span className="text-neutral-900 font-bold block">{activeCandidate.company || "Not specified"}</span>
@@ -714,8 +714,8 @@ export default function AdminCareersPage() {
                     </div>
                   </div>
 
-                  <div className="border border-neutral-200 rounded-xl overflow-hidden bg-neutral-50/50">
-                    <div className="bg-neutral-50 px-5 py-3 border-b border-neutral-200 flex items-center justify-between">
+                  <div className="border border-[var(--border)] rounded-xl overflow-hidden bg-neutral-50/50">
+                    <div className="bg-[var(--surface-2)] px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
                       <span className="text-[10px] font-mono font-bold text-neutral-600 uppercase tracking-wider">03. Systems Expertise & Stack</span>
                     </div>
                     <div className="p-5 text-sm font-sans space-y-2">
@@ -724,20 +724,20 @@ export default function AdminCareersPage() {
                     </div>
                   </div>
 
-                  <div className="border border-neutral-200 rounded-xl overflow-hidden bg-neutral-50/50">
-                    <div className="bg-neutral-50 px-5 py-3 border-b border-neutral-200 flex items-center justify-between">
+                  <div className="border border-[var(--border)] rounded-xl overflow-hidden bg-neutral-50/50">
+                    <div className="bg-[var(--surface-2)] px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
                       <span className="text-[10px] font-mono font-bold text-neutral-600 uppercase tracking-wider">04. Candidate Motivation</span>
                     </div>
                     <div className="p-5 text-sm font-sans space-y-2">
                       <span className="text-[10px] font-mono text-neutral-455 uppercase tracking-wider block">Why join the team?</span>
-                      <p className="text-neutral-800 leading-relaxed italic whitespace-pre-line font-bold bg-neutral-100/50 p-4 rounded-lg border border-neutral-200">
+                      <p className="text-neutral-800 leading-relaxed italic whitespace-pre-line font-bold bg-neutral-100/50 p-4 rounded-lg border border-[var(--border)]">
                         "{activeCandidate.motivation || "No motivation statement provided."}"
                       </p>
                     </div>
                   </div>
 
-                  <div className="border border-neutral-200 rounded-xl overflow-hidden bg-neutral-50/50">
-                    <div className="bg-neutral-50 px-5 py-3 border-b border-neutral-200 flex items-center justify-between">
+                  <div className="border border-[var(--border)] rounded-xl overflow-hidden bg-neutral-50/50">
+                    <div className="bg-[var(--surface-2)] px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
                       <span className="text-[10px] font-mono font-bold text-neutral-600 uppercase tracking-wider">05. Professional Footprints & Links</span>
                     </div>
                     <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -746,7 +746,7 @@ export default function AdminCareersPage() {
                           href={activeCandidate.resume_url} 
                           target="_blank" 
                           rel="noreferrer" 
-                          className="p-3.5 rounded-lg border border-neutral-200 hover:border-neutral-400 bg-white hover:bg-neutral-50 flex items-center justify-between text-xs font-bold text-neutral-800 transition-all duration-300"
+                          className="p-3.5 rounded-lg border border-[var(--border)] hover:border-neutral-400 bg-[var(--surface-1)] hover:bg-[var(--surface-hover)] flex items-center justify-between text-xs font-bold text-neutral-800 transition-all duration-300"
                         >
                           <span className="flex items-center gap-2.5 text-neutral-750"><FileText className="h-4 w-4 text-emerald-600" /> Resume / CV Document</span>
                           <ExternalLink size={12} className="text-neutral-450" />
@@ -757,7 +757,7 @@ export default function AdminCareersPage() {
                           href={activeCandidate.github_url} 
                           target="_blank" 
                           rel="noreferrer" 
-                          className="p-3.5 rounded-lg border border-neutral-200 hover:border-neutral-400 bg-white hover:bg-neutral-50 flex items-center justify-between text-xs font-bold text-neutral-800 transition-all duration-300"
+                          className="p-3.5 rounded-lg border border-[var(--border)] hover:border-neutral-400 bg-[var(--surface-1)] hover:bg-[var(--surface-hover)] flex items-center justify-between text-xs font-bold text-neutral-800 transition-all duration-300"
                         >
                           <span className="flex items-center gap-2.5 text-neutral-750"><Link2 className="h-4 w-4 text-neutral-500" /> GitHub Repository</span>
                           <ExternalLink size={12} className="text-neutral-450" />
@@ -768,7 +768,7 @@ export default function AdminCareersPage() {
                           href={activeCandidate.linkedin_url} 
                           target="_blank" 
                           rel="noreferrer" 
-                          className="p-3.5 rounded-lg border border-neutral-200 hover:border-neutral-400 bg-white hover:bg-neutral-50 flex items-center justify-between text-xs font-bold text-neutral-800 transition-all duration-300"
+                          className="p-3.5 rounded-lg border border-[var(--border)] hover:border-neutral-400 bg-[var(--surface-1)] hover:bg-[var(--surface-hover)] flex items-center justify-between text-xs font-bold text-neutral-800 transition-all duration-300"
                         >
                           <span className="flex items-center gap-2.5 text-neutral-750"><Link2 className="h-4 w-4 text-blue-600" /> LinkedIn Profile</span>
                           <ExternalLink size={12} className="text-neutral-450" />
@@ -779,7 +779,7 @@ export default function AdminCareersPage() {
                           href={activeCandidate.portfolio_url} 
                           target="_blank" 
                           rel="noreferrer" 
-                          className="p-3.5 rounded-lg border border-neutral-200 hover:border-neutral-400 bg-white hover:bg-neutral-50 flex items-center justify-between text-xs font-bold text-neutral-800 transition-all duration-300"
+                          className="p-3.5 rounded-lg border border-[var(--border)] hover:border-neutral-400 bg-[var(--surface-1)] hover:bg-[var(--surface-hover)] flex items-center justify-between text-xs font-bold text-neutral-800 transition-all duration-300"
                         >
                           <span className="flex items-center gap-2.5 text-neutral-750"><Link2 className="h-4 w-4 text-purple-600" /> Portfolio Website</span>
                           <ExternalLink size={12} className="text-neutral-450" />
@@ -790,7 +790,7 @@ export default function AdminCareersPage() {
                 </div>
 
                 {/* 3. Notes and internal review */}
-                <div className="space-y-3 pt-4 border-t border-neutral-200">
+                <div className="space-y-3 pt-4 border-t border-[var(--border)]">
                   <p className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-2"><Save size={12} /> Internal Hiring Notes</p>
                   <div className="space-y-2">
                     <textarea
@@ -798,7 +798,7 @@ export default function AdminCareersPage() {
                       onChange={e => setCandidateNotes(e.target.value)}
                       placeholder="Write internal notes about candidate interview, technical assessment results, or communications..."
                       rows={3}
-                      className="w-full bg-neutral-50 border border-neutral-200 focus:border-[#C0F0FB] focus:outline-none p-4 rounded-xl text-xs text-neutral-800 leading-relaxed resize-none transition-all duration-300"
+                      className="w-full bg-[var(--surface-2)] border border-[var(--border)] focus:border-[#C0F0FB] focus:outline-none p-4 rounded-xl text-xs text-neutral-800 leading-relaxed resize-none transition-all duration-300"
                     />
                     <div className="flex justify-end">
                       <button
@@ -815,7 +815,7 @@ export default function AdminCareersPage() {
               </div>
 
               {/* Footer Actions (Status Updates) */}
-              <div className="p-6 border-t border-neutral-200 bg-neutral-50 flex flex-col gap-4">
+              <div className="p-6 border-t border-[var(--border)] bg-[var(--surface-2)] flex flex-col gap-4">
                 <div className="border-b border-neutral-250 pb-3">
                   <div className="flex items-center justify-between">
                     <p className="text-[9px] font-bold text-neutral-550 uppercase tracking-widest">// Operations & Actions</p>
@@ -849,7 +849,7 @@ export default function AdminCareersPage() {
 
                   {/* Inline Schedule Form */}
                   {showScheduleForm && (
-                    <div className="mt-4 p-4 border border-neutral-200 bg-white rounded-lg space-y-3 font-sans">
+                    <div className="mt-4 p-4 border border-[var(--border)] bg-[var(--surface-1)] rounded-lg space-y-3 font-sans">
                       <p className="text-[9.5px] font-bold text-neutral-600 uppercase tracking-wider">// Schedule Interview Details</p>
                       
                       <div className="space-y-1">
@@ -858,7 +858,7 @@ export default function AdminCareersPage() {
                           type="datetime-local"
                           value={interviewDateTime}
                           onChange={e => setInterviewDateTime(e.target.value)}
-                          className="w-full bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-neutral-400 p-2 rounded text-xs text-neutral-800"
+                          className="w-full bg-[var(--surface-2)] border border-[var(--border)] focus:outline-none focus:border-neutral-400 p-2 rounded text-xs text-neutral-800"
                         />
                       </div>
 
@@ -869,7 +869,7 @@ export default function AdminCareersPage() {
                           placeholder="Leave empty for default meet URL"
                           value={customMeetLink}
                           onChange={e => setCustomMeetLink(e.target.value)}
-                          className="w-full bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-neutral-400 p-2 rounded text-xs text-neutral-800"
+                          className="w-full bg-[var(--surface-2)] border border-[var(--border)] focus:outline-none focus:border-neutral-400 p-2 rounded text-xs text-neutral-800"
                         />
                       </div>
 
@@ -892,8 +892,8 @@ export default function AdminCareersPage() {
                     className={cn(
                       "px-3 py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg border transition-all duration-300 cursor-pointer",
                       activeCandidate.status === "reviewed"
-                        ? "bg-neutral-200 border-neutral-300 text-neutral-850"
-                        : "bg-transparent border-neutral-300 hover:border-neutral-500 text-neutral-700"
+                        ? "bg-neutral-200 border-[var(--border)] text-neutral-850"
+                        : "bg-transparent border-[var(--border)] hover:border-neutral-500 text-neutral-700"
                     )}
                   >
                     Reviewed
@@ -905,7 +905,7 @@ export default function AdminCareersPage() {
                       "px-3 py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg border transition-all duration-300 cursor-pointer",
                       activeCandidate.status === "shortlisted"
                         ? "bg-purple-100 border-purple-200 text-purple-800"
-                        : "bg-transparent border-neutral-300 hover:border-purple-500 hover:text-purple-705 text-neutral-700"
+                        : "bg-transparent border-[var(--border)] hover:border-purple-500 hover:text-purple-705 text-neutral-700"
                     )}
                   >
                     Shortlist
@@ -917,7 +917,7 @@ export default function AdminCareersPage() {
                       "px-3 py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg border transition-all duration-300 cursor-pointer",
                       activeCandidate.status === "contacted"
                         ? "bg-amber-100 border-amber-200 text-amber-800"
-                        : "bg-transparent border-neutral-300 hover:border-amber-500 hover:text-amber-705 text-neutral-700"
+                        : "bg-transparent border-[var(--border)] hover:border-amber-500 hover:text-amber-705 text-neutral-700"
                     )}
                   >
                     Contacted
@@ -929,7 +929,7 @@ export default function AdminCareersPage() {
                       "px-3 py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg border transition-all duration-300 cursor-pointer",
                       activeCandidate.status === "hired"
                         ? "bg-emerald-100 border-emerald-200 text-emerald-800"
-                        : "bg-transparent border-neutral-300 hover:border-emerald-500 hover:text-emerald-705 text-neutral-700"
+                        : "bg-transparent border-[var(--border)] hover:border-emerald-500 hover:text-emerald-705 text-neutral-700"
                     )}
                   >
                     Hire
@@ -941,7 +941,7 @@ export default function AdminCareersPage() {
                       "px-3 py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg border transition-all duration-300 cursor-pointer ml-auto",
                       activeCandidate.status === "rejected"
                         ? "bg-rose-100 border-rose-200 text-rose-800"
-                        : "bg-transparent border-neutral-300 hover:border-rose-500 hover:text-rose-705 text-neutral-700 hover:bg-rose-50/50"
+                        : "bg-transparent border-[var(--border)] hover:border-rose-500 hover:text-rose-705 text-neutral-700 hover:bg-rose-50/50"
                     )}
                   >
                     Reject

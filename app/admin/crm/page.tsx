@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import {
   Avatar, Badge, Button, Card, CardHeader, DataTable, DataTableColumn, Drawer, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DueChip, FilterChip, FilterSelect, IconButton, Input, Kbd, KeyValueList, Modal, Monogram,
-  RelativeTime, SearchInput, Select, StageBar, StatusBadge, Tabs, TabsList, TabsTrigger, Textarea, Tooltip, formatCurrency, toast, useMediaQuery, type BadgeVariant,
+  RelativeTime, SearchInput, Select, StageBar, StatusBadge, Tabs, TabsList, TabsTrigger, Textarea, Tooltip, CurrencyAmount, formatCurrency, toast, useMediaQuery, type BadgeVariant,
 } from "@/src/components/ui";
 import { EmptyState, FormField, PageHeader, Toolbar } from "@/src/components/patterns";
 import { FileUpload, LeadScore } from "@/src/components/business";
@@ -16,13 +16,22 @@ import { useAdminBreadcrumb } from "@/lib/admin-nav";
 const UNASSIGNED = "__unassigned";
 const STATUSES = ["new", "contacted", "engaged", "qualified", "disqualified"] as const;
 const STATUS_META: Record<string, { label: string; color: string; variant: BadgeVariant }> = {
-  new: { label: "New", color: "var(--chart-compare)", variant: "neutral" },
+  new: { label: "New", color: "var(--chart-1)", variant: "info" },
   contacted: { label: "Contacted", color: "var(--chart-3)", variant: "info" },
   engaged: { label: "Engaged", color: "var(--chart-2)", variant: "info" },
   qualified: { label: "Qualified", color: "var(--chart-4)", variant: "success" },
   disqualified: { label: "Lost", color: "var(--danger)", variant: "danger" },
 };
 const STATUS_BADGE_MAP = Object.fromEntries(Object.entries(STATUS_META).map(([k, v]) => [k, v.variant]));
+const OPEN_STATUSES = ["new", "contacted", "engaged"];
+const DAY_MS = 86_400_000;
+
+// Imported names sometimes arrive in all caps; show them in title case.
+const displayName = (value?: string) =>
+  value && value.length > 3 && /[A-Z]/.test(value) && value === value.toUpperCase()
+    ? value.toLowerCase().replace(/(^|[\s.'-])(\p{L})/gu, (_, sep, ch) => sep + ch.toUpperCase())
+    : value;
+
 const OPTIONAL_COLUMNS = [
   { id: "score", label: "Score" },
   { id: "last_contacted_at", label: "Last activity" },
@@ -413,10 +422,14 @@ export default function AdminCRMPage() {
   const newCount = leads.filter(l => l.status === 'new').length;
   const closedWonCount = leads.filter(l => l.status === 'qualified').length;
   
-  // Pipeline deal value sum (fallback to dummy defaults if null)
-  const pipelineValue = leads.reduce((sum, lead) => sum + (Number(lead.deal_value) || 0), 0) || (leads.length * 6800);
+  // Pipeline value counts only open leads with a real deal value.
+  const openLeads = leads.filter(l => OPEN_STATUSES.includes(l.status));
+  const valuedLeads = openLeads.filter(l => Number(l.deal_value) > 0);
+  const pipelineValue = valuedLeads.reduce((sum, lead) => sum + Number(lead.deal_value), 0);
   const conversionRate = totalLeads ? Math.round((closedWonCount / totalLeads) * 100) : 0;
-  const followupsDue = leads.filter(l => l.status === 'new' || l.status === 'contacted').length;
+  const todayEnd = new Date().setHours(23, 59, 59, 999);
+  const neverContacted = openLeads.filter(l => !l.last_contacted_at && !l.next_followup_at).length;
+  const followupsDue = openLeads.filter(l => l.next_followup_at && new Date(l.next_followup_at).getTime() <= todayEnd).length;
 
     const selectedLead = leads.find(l => l.id === activeLeadId);
 
@@ -451,7 +464,7 @@ export default function AdminCRMPage() {
     return { quality, variant, missingFields, risks, confidence };
   };
 
-    const [visibleCols, setVisibleCols] = useState<Record<string, boolean>>({ score: false, last_contacted_at: false, source: false });
+    const [visibleCols, setVisibleCols] = useState<Record<string, boolean>>({ score: false, last_contacted_at: true, source: false });
   const wide = useMediaQuery("(min-width: 1280px)");
 
   // Keyboard: J / K move through the visible rows, Esc closes the detail pane.
@@ -479,18 +492,33 @@ export default function AdminCRMPage() {
   const assignOwner = (lead: Lead, memberId: string) =>
     handleUpdateLead(lead.id!, { assigned_to: memberId || undefined, assigned_employee_id: memberId || undefined } as any);
 
+  // A scheduled follow-up wins; otherwise say what the lead is actually waiting on.
+  const nextStep = (lead: Lead) => {
+    if (lead.next_followup_at) return <DueChip value={lead.next_followup_at} />;
+    if (!OPEN_STATUSES.includes(lead.status)) return <span className="ds-t-meta text-[var(--text-disabled)]">Closed</span>;
+    if (!lead.last_contacted_at) {
+      const waiting = lead.created_at ? Math.max(0, Math.floor((Date.now() - new Date(lead.created_at).getTime()) / DAY_MS)) : null;
+      return (
+        <span className="ds-t-meta-strong ds-num inline-flex h-6 items-center whitespace-nowrap rounded-[var(--radius-sm)] bg-[var(--warning-tint)] px-2 text-[var(--warning)]">
+          First contact{waiting ? ` · ${waiting}d` : ""}
+        </span>
+      );
+    }
+    return <span className="ds-t-meta text-[var(--text-muted)]">Set follow-up</span>;
+  };
+
   const columns: DataTableColumn<Lead>[] = [
     {
       id: "business_name",
       header: "Company",
-      width: "30%",
+      width: "26%",
       sortable: true,
       cell: (lead) => (
         <span className="flex min-w-0 items-center gap-3">
           <Monogram name={lead.business_name || "?"} size={32} />
           <span className="flex min-w-0 flex-col">
             <span className="flex min-w-0 items-center gap-1">
-              <span className="ds-t-body-strong truncate text-[var(--text-primary)]" title={lead.business_name}>{lead.business_name}</span>
+              <span className="ds-t-body-strong truncate text-[var(--text-primary)]" title={lead.business_name}>{displayName(lead.business_name)}</span>
               {lead.website_url && (
                 <a href={lead.website_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} aria-label={`Open ${lead.business_name} website`} className="ds-focus shrink-0 rounded-[var(--radius-xs)] text-[var(--text-muted)] opacity-0 transition-opacity hover:text-[var(--text-primary)] focus-visible:opacity-100 group-hover/row:opacity-100">
                   <ArrowUpRight size={14} strokeWidth={1.5} />
@@ -507,7 +535,7 @@ export default function AdminCRMPage() {
       header: "Contact",
       cell: (lead) => (
         <span className="flex min-w-0 flex-col">
-          <span className="truncate text-[var(--text-primary)]" title={lead.contact_name || lead.name}>{lead.contact_name || lead.name || "—"}</span>
+          <span className="truncate text-[var(--text-primary)]" title={lead.contact_name || lead.name}>{displayName(lead.contact_name || lead.name) || "—"}</span>
           <span className="ds-t-meta truncate text-[var(--text-muted)]" title={lead.email || lead.phone}>{lead.email || lead.phone || "—"}</span>
         </span>
       ),
@@ -522,9 +550,25 @@ export default function AdminCRMPage() {
           <span className="flex min-w-0 items-center gap-2"><Avatar name={lead.assigned_to_member.name} size={24} /><span className="truncate text-[var(--text-primary)]">{lead.assigned_to_member.name}</span></span>
         ) : <span className="text-[var(--text-disabled)]">Unassigned</span>,
     },
-    { id: "next_followup_at", header: "Next step", sortable: true, cell: (lead) => <DueChip value={lead.next_followup_at} /> },
+    {
+      id: "deal_value",
+      header: "Value",
+      numeric: true,
+      sortable: true,
+      cell: (lead) => Number(lead.deal_value) > 0
+        ? <CurrencyAmount value={lead.deal_value} compact className="text-[var(--text-primary)]" />
+        : <span className="text-[var(--text-disabled)]">—</span>,
+    },
+    { id: "next_followup_at", header: "Next step", sortable: true, cell: nextStep },
     ...(visibleCols.score ? [{ id: "score", header: "Score", numeric: true, sortable: true, cell: (lead: Lead) => <LeadScore score={lead.score} tone="quality" /> }] : []),
-    ...(visibleCols.last_contacted_at ? [{ id: "last_contacted_at", header: "Last activity", sortable: true, cell: (lead: Lead) => <RelativeTime value={lead.last_contacted_at} className="text-[var(--text-muted)]" /> }] : []),
+    ...(visibleCols.last_contacted_at ? [{
+      id: "last_contacted_at",
+      header: "Last activity",
+      sortable: true,
+      cell: (lead: Lead) => lead.last_contacted_at
+        ? <RelativeTime value={lead.last_contacted_at} className="text-[var(--text-muted)]" />
+        : <span className="text-[var(--text-disabled)]">Never</span>,
+    }] : []),
     ...(visibleCols.source ? [{ id: "source", header: "Source", sortable: true, cell: (lead: Lead) => <span className="capitalize text-[var(--text-muted)]">{lead.source || "Organic"}</span> }] : []),
   ];
 
@@ -618,7 +662,7 @@ export default function AdminCRMPage() {
       <Card>
         <CardHeader title="Contact" />
         <KeyValueList items={[
-          { label: "Person", value: selectedLead.contact_name || selectedLead.name || "—" },
+          { label: "Person", value: displayName(selectedLead.contact_name || selectedLead.name) || "—" },
           { label: "Phone", value: selectedLead.phone ? <a href={`tel:${selectedLead.phone}`} className="ds-focus rounded-[var(--radius-xs)] text-[var(--accent)]">{selectedLead.phone}</a> : "—" },
           { label: "Email", value: selectedLead.email ? <a href={`mailto:${selectedLead.email}`} className="ds-focus break-all rounded-[var(--radius-xs)] text-[var(--accent)]">{selectedLead.email}</a> : "—" },
           { label: "Location", value: selectedLead.city || "—" },
@@ -697,9 +741,15 @@ export default function AdminCRMPage() {
       <section aria-label="Pipeline summary" className="mb-8 mt-6 grid items-end gap-8 lg:grid-cols-[auto_minmax(0,1fr)]">
         <div>
           <p className="ds-t-meta-strong text-[var(--text-muted)]">Pipeline value</p>
-          <p className="ds-t-hero mt-1 text-[var(--text-primary)]">{loading ? "—" : formatCurrency(pipelineValue, { compact: true })}</p>
+          <p className="ds-t-hero mt-1 text-[var(--text-primary)]">{loading || pipelineValue === 0 ? "—" : formatCurrency(pipelineValue, { compact: true })}</p>
           <p className="ds-t-meta ds-num mt-2 text-[var(--text-muted)]">
-            <span className="text-[var(--text-primary)]">{totalLeads}</span> leads · <span className="text-[var(--text-primary)]">{conversionRate}%</span> conversion · <span className="text-[var(--text-primary)]">{followupsDue}</span> need follow-up
+            {!loading && valuedLeads.length < openLeads.length && (
+              <><span className="text-[var(--text-primary)]">{valuedLeads.length}</span> of {openLeads.length} open leads have a value · </>
+            )}
+            <span className="text-[var(--text-primary)]">{conversionRate}%</span> won
+          </p>
+          <p className="ds-t-meta ds-num mt-1 text-[var(--text-muted)]">
+            <span className={neverContacted ? "text-[var(--warning)]" : "text-[var(--text-primary)]"}>{neverContacted}</span> never contacted · <span className={followupsDue ? "text-[var(--danger)]" : "text-[var(--text-primary)]"}>{followupsDue}</span> follow-ups due
           </p>
         </div>
         <StageBar

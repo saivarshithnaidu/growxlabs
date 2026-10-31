@@ -44,17 +44,17 @@ export default function AdminScopesPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
             Consulting workflow
           </p>
-          <h1 className="mt-2 text-3xl font-semibold text-slate-950">
+          <h1 className="mt-2 text-3xl font-semibold text-[var(--text-primary)]">
             Scopes of work
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
             Review approved solution scopes before creating commercial
             proposals.
           </p>
         </div>
         <button
           onClick={() => void load()}
-          className="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700"
+          className="inline-flex h-10 items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-1)] px-4 text-sm font-medium text-[var(--text-secondary)]"
         >
           <RefreshCw size={15} /> Refresh
         </button>
@@ -67,25 +67,25 @@ export default function AdminScopesPage() {
           {error}
         </div>
       )}
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-1)] shadow-sm">
         {loading ? (
           <div className="flex h-56 items-center justify-center">
-            <Loader2 className="animate-spin text-slate-500" />
+            <Loader2 className="animate-spin text-[var(--text-muted)]" />
           </div>
         ) : scopes.length === 0 ? (
           <div className="flex h-56 flex-col items-center justify-center gap-2 text-center">
             <FileText className="text-slate-300" size={30} />
-            <p className="font-medium text-slate-700">
+            <p className="font-medium text-[var(--text-secondary)]">
               No scopes of work found
             </p>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-[var(--text-muted)]">
               Scopes are created from approved solution architectures.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+              <thead className="border-b border-[var(--border)] bg-[var(--surface-2)] text-xs uppercase tracking-wide text-[var(--text-muted)]">
                 <tr>
                     <th className="px-5 py-3">Scope of Work</th>
                   <th className="px-5 py-3">Status</th>
@@ -94,10 +94,10 @@ export default function AdminScopesPage() {
                     <th className="px-5 py-3">Last Updated</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[var(--border-subtle)]">
                 {scopes.map((scope) => (
-                  <tr key={scope.id} className="cursor-pointer hover:bg-slate-50">
-                    <td className="px-5 py-4 font-semibold text-slate-900">
+                  <tr key={scope.id} className="cursor-pointer hover:bg-[var(--surface-hover)]">
+                    <td className="px-5 py-4 font-semibold text-[var(--text-primary)]">
                       <Link className="text-blue-700 hover:underline" href={`/admin/scopes/${scope.id}`}>{scope.scope_number}</Link>
                     </td>
                     <td className="px-5 py-4">
@@ -105,18 +105,18 @@ export default function AdminScopesPage() {
                         {readable(scope.status)}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-slate-600">
+                    <td className="px-5 py-4 text-[var(--text-secondary)]">
                         {scope.version}
                     </td>
                       <td className="px-5 py-4">
-                        <p className="font-medium text-slate-800">
+                        <p className="font-medium text-[var(--text-primary)]">
                           {scope.company?.name || "Customer name unavailable"}
                         </p>
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-1 text-xs text-[var(--text-muted)]">
                           {scope.deal?.name || "No opportunity linked"}
                         </p>
                     </td>
-                    <td className="px-5 py-4 text-slate-600">
+                    <td className="px-5 py-4 text-[var(--text-secondary)]">
                       {new Date(scope.updated_at).toLocaleString("en-IN")}
                     </td>
                   </tr>

@@ -74,7 +74,7 @@ export default function AiHelperPage() {
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Receipt Parser */}
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm space-y-4">
+        <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm space-y-4">
           <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5 flex items-center gap-2">
             <Sparkles size={14} className="text-[#0075de]" /> OCR Receipt Classification
           </h3>
@@ -121,7 +121,7 @@ export default function AiHelperPage() {
         </Card>
 
         {/* Cash Flow Forecast */}
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm space-y-4">
+        <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm space-y-4">
           <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5 flex items-center gap-2">
             <TrendingUp size={14} className="text-[#0075de]" /> AI Cash Flow Projections
           </h3>

@@ -1,24 +1,18 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowUpRight, ChevronDown, MessageSquare, MoreHorizontal } from "lucide-react";
 import {
-  CalendarDays,
-  Building2,
-  FileText,
-  Clock,
-  Video,
-  ArrowLeft,
-  CheckCircle2,
-  AlertCircle,
-  Sparkles,
-  Save,
-  Shield,
-  Send
-} from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+  Alert, Badge, Button, Card, CardHeader, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
+  DropdownMenuSeparator, DropdownMenuTrigger, IconButton, KeyValueList, Skeleton, Textarea, toast, type BadgeVariant,
+} from "@/src/components/ui";
+import { ErrorState, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
+import { cn } from "@/lib/utils";
+
+type AgendaItem = { order: number; title: string; draft?: boolean; covered?: boolean; notes?: string; [key: string]: unknown };
 
 type Meeting = {
   id: string;
@@ -26,44 +20,85 @@ type Meeting = {
   title: string;
   status: string;
   meeting_type: string;
+  assessment_id: string;
   scheduled_start: string | null;
   scheduled_end: string | null;
   timezone: string | null;
   platform: string | null;
   meeting_url: string | null;
   location: string | null;
-  agenda: Array<{ order: number; title: string; draft?: boolean }>;
+  closed_at: string | null;
+  agenda: AgendaItem[];
   client_assessments?: { assessment_number: string | null; assessment_answers?: Array<{ question_key: string; value: unknown }> } | null;
   companies?: { name: string } | null;
   discovery_meeting_notes?: Array<{ id: string; section_key: string; content: Record<string, unknown> }>;
   discovery_findings?: Array<{ id: string; finding_number: string; title: string; priority: string }>;
   discovery_requirements?: Array<{ id: string; requirement_number: string; title: string; status: string }>;
-  discovery_action_items?: Array<{ id: string; action: string; status: string }>;
+  discovery_decisions?: Array<{ id: string; decision_number: string; decision: string; status: string | null }>;
+  discovery_action_items?: Array<{ id: string; action: string; status: string; owner_name?: string | null; due_date?: string | null }>;
+  discovery_risks?: Array<{ id: string; risk: string; severity: string | null; status: string | null }>;
 };
 
-const label = (value: string) => value.replaceAll("_", " ").replace(/\b\w/g, (m) => m.toUpperCase());
+const STATUS: Record<string, { label: string; variant: BadgeVariant }> = {
+  draft: { label: "Draft", variant: "neutral" },
+  scheduled: { label: "Scheduled", variant: "info" },
+  confirmed: { label: "Confirmed", variant: "info" },
+  in_progress: { label: "In progress", variant: "info" },
+  completed: { label: "Meeting completed", variant: "success" },
+  information_required: { label: "Information required", variant: "warning" },
+  follow_up_required: { label: "Follow-up required", variant: "warning" },
+  closed: { label: "Discovery complete", variant: "success" },
+  cancelled: { label: "Cancelled", variant: "danger" },
+};
+const STATUS_ORDER = Object.keys(STATUS);
 
-const STATUS_CONFIG: Record<string, { bg: string; text: string; border: string }> = {
-  draft: { bg: "bg-zinc-500/10", text: "text-zinc-400", border: "border-zinc-500/20" },
-  scheduled: { bg: "bg-blue-500/10", text: "text-blue-400", border: "border-blue-500/20" },
-  confirmed: { bg: "bg-indigo-500/10", text: "text-indigo-400", border: "border-indigo-500/20" },
-  in_progress: { bg: "bg-amber-500/10", text: "text-amber-400", border: "border-amber-500/20" },
-  completed: { bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/20" },
-  information_required: { bg: "bg-purple-500/10", text: "text-purple-400", border: "border-purple-500/20" },
-  follow_up_required: { bg: "bg-amber-500/10", text: "text-amber-400", border: "border-amber-500/20" },
-  closed: { bg: "bg-zinc-500/10", text: "text-zinc-400", border: "border-zinc-500/20" },
-  cancelled: { bg: "bg-red-500/10", text: "text-red-400", border: "border-red-500/20" }
+// The one obvious next move from each status; everything else lives in the menu.
+const NEXT: Record<string, { status: string; label: string; confirm?: string }> = {
+  draft: { status: "scheduled", label: "Mark scheduled" },
+  scheduled: { status: "confirmed", label: "Mark confirmed" },
+  confirmed: { status: "in_progress", label: "Start meeting" },
+  in_progress: { status: "completed", label: "Mark completed" },
+  completed: { status: "closed", label: "Close discovery", confirm: "Close discovery? Notes and the agenda become read-only until it is reopened." },
+  information_required: { status: "closed", label: "Close discovery", confirm: "Close discovery? Notes and the agenda become read-only until it is reopened." },
+  follow_up_required: { status: "closed", label: "Close discovery", confirm: "Close discovery? Notes and the agenda become read-only until it is reopened." },
+  closed: { status: "in_progress", label: "Reopen" },
+  cancelled: { status: "draft", label: "Reopen" },
+};
+
+const NOTE_SECTIONS = [
+  { key: "discussion", label: "Discussion notes", placeholder: "What the client said, by topic" },
+  { key: "risks", label: "Business risks", placeholder: "Technical, timeline or budget risks" },
+  { key: "opportunities", label: "AI and automation opportunities", placeholder: "Where AI could take work off their plate" },
+  { key: "next_action", label: "Recommended next action", placeholder: "What we should do next, and who owns it" },
+] as const;
+type NoteKey = (typeof NOTE_SECTIONS)[number]["key"];
+
+const humanize = (value: string) => {
+  const t = value.replaceAll("_", " ").trim();
+  return t.charAt(0).toUpperCase() + t.slice(1);
+};
+const formatWhen = (value: string | null, end?: string | null) => {
+  if (!value) return null;
+  const start = new Date(value);
+  const date = start.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+  const time = (d: Date) => d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return end ? `${date}, ${time(start)} to ${time(new Date(end))}` : `${date}, ${time(start)}`;
+};
+const noteText = (m: Meeting, key: string) => {
+  const text = m.discovery_meeting_notes?.find((n) => n.section_key === key)?.content?.text;
+  return typeof text === "string" ? text : "";
 };
 
 export function DiscoveryMeetingWorkspace({ meetingId }: { meetingId: string }) {
   const qc = useQueryClient();
-  const [notes, setNotes] = useState("");
-  const [risks, setRisks] = useState("");
-  const [opportunities, setOpportunities] = useState("");
-  const [nextAction, setNextAction] = useState("");
+  const breadcrumb = useAdminBreadcrumb();
+  const queryKey = ["discovery-meeting", meetingId];
+  const [drafts, setDrafts] = useState<Record<NoteKey, string> | null>(null);
+  const [openTopic, setOpenTopic] = useState<number | null>(null);
+  const [topicDraft, setTopicDraft] = useState("");
 
   const query = useQuery<{ meeting: Meeting }>({
-    queryKey: ["discovery-meeting", meetingId],
+    queryKey,
     queryFn: async () => {
       const r = await fetch(`/api/admin/discovery-meetings/${meetingId}`);
       const b = await r.json();
@@ -83,235 +118,298 @@ export function DiscoveryMeetingWorkspace({ meetingId }: { meetingId: string }) 
       if (!r.ok) throw new Error(b.error || "Unable to update meeting.");
       return b;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["discovery-meeting", meetingId] })
+    onError: (e: Error) => toast({ title: e.message, variant: "danger" }),
+    onSettled: () => qc.invalidateQueries({ queryKey })
   });
+
+  const saveNotes = useMutation({
+    mutationFn: async (notes: { sectionKey: NoteKey; text: string }[]) => {
+      const r = await fetch(`/api/admin/discovery-meetings/${meetingId}/notes`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes })
+      });
+      const b = await r.json();
+      if (!r.ok) throw new Error(b.error || "Unable to save notes.");
+      return b;
+    },
+    onSuccess: () => { toast({ title: "Notes saved", variant: "success" }); qc.invalidateQueries({ queryKey }); },
+    onError: (e: Error) => toast({ title: e.message, variant: "danger" })
+  });
+
+  const m = query.data?.meeting;
+
+  // Seed the editable notes once from what the server has saved.
+  useEffect(() => {
+    if (m && drafts === null) {
+      setDrafts(Object.fromEntries(NOTE_SECTIONS.map((s) => [s.key, noteText(m, s.key)])) as Record<NoteKey, string>);
+    }
+  }, [m, drafts]);
 
   if (query.isPending) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-10 w-64 bg-[#141416] rounded-xl border border-[#27272a]" />
-        <div className="grid gap-5 xl:grid-cols-[280px_minmax(0,1fr)_300px]">
-          <div className="h-96 bg-[#141416] rounded-xl border border-[#27272a]" />
-          <div className="h-96 bg-[#141416] rounded-xl border border-[#27272a]" />
-          <div className="h-96 bg-[#141416] rounded-xl border border-[#27272a]" />
+      <div className="mx-auto max-w-[1280px]" aria-busy="true">
+        <Skeleton width={180} height={12} />
+        <Skeleton width={320} height={28} className="mt-3" />
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <Skeleton height={420} radius="md" />
+          <Skeleton height={260} radius="md" />
         </div>
       </div>
     );
   }
 
-  if (query.error) {
-    return (
-      <div className="p-6 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
-        {query.error.message}
-      </div>
-    );
+  if (query.error || !m) {
+    return <ErrorState title="Couldn't load this meeting" description={query.error?.message} onRetry={() => query.refetch()} />;
   }
 
-  const m = query.data.meeting;
-  const statusBadge = STATUS_CONFIG[m.status] || STATUS_CONFIG.draft;
+  const status = STATUS[m.status] || STATUS.draft;
+  const readOnly = m.status === "closed" || m.status === "cancelled";
+  const next = NEXT[m.status];
+  const agenda = [...(m.agenda || [])].sort((a, b) => a.order - b.order);
+  const covered = agenda.filter((a) => a.covered).length;
+  const agendaIsDraft = agenda.some((a) => a.draft);
+  const dirty = drafts ? NOTE_SECTIONS.filter((s) => drafts[s.key] !== noteText(m, s.key)) : [];
+
+  const changeStatus = (to: string, confirmText?: string) => {
+    if (confirmText && !window.confirm(confirmText)) return;
+    update.mutate({ status: to });
+  };
+
+  const saveAgenda = (items: AgendaItem[]) => {
+    qc.setQueryData<{ meeting: Meeting }>(queryKey, (old) => old && { meeting: { ...old.meeting, agenda: items } });
+    update.mutate({ agenda: items });
+  };
+  const patchTopic = (order: number, patch: Partial<AgendaItem>) =>
+    saveAgenda(agenda.map((a) => (a.order === order ? { ...a, ...patch } : a)));
+
+  const toggleTopicNotes = (item: AgendaItem) => {
+    if (openTopic === item.order) { setOpenTopic(null); return; }
+    setOpenTopic(item.order);
+    setTopicDraft(item.notes || "");
+  };
+  const commitTopicNotes = (item: AgendaItem) => {
+    if (topicDraft !== (item.notes || "")) patchTopic(item.order, { notes: topicDraft });
+  };
+
+  const outcomes = [
+    { title: "Findings", rows: (m.discovery_findings || []).map((f) => ({ id: f.id, ref: f.finding_number, text: f.title, meta: f.priority })) },
+    { title: "Requirements", rows: (m.discovery_requirements || []).map((r) => ({ id: r.id, ref: r.requirement_number, text: r.title, meta: r.status })) },
+    { title: "Decisions", rows: (m.discovery_decisions || []).map((d) => ({ id: d.id, ref: d.decision_number, text: d.decision, meta: d.status })) },
+    { title: "Action items", rows: (m.discovery_action_items || []).map((a) => ({ id: a.id, ref: null, text: a.action, meta: [a.owner_name, a.status].filter(Boolean).join(", ") })) },
+    { title: "Risks", rows: (m.discovery_risks || []).map((r) => ({ id: r.id, ref: null, text: r.risk, meta: r.severity || r.status })) },
+  ].filter((g) => g.rows.length > 0);
+
+  const scheduled = formatWhen(m.scheduled_start, m.scheduled_end);
 
   return (
-    <div className="space-y-6 text-[var(--text-primary)]">
-      {/* --- Breadcrumb & Header --- */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#27272a] pb-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs text-zinc-400">
-            <Link href="/admin/discovery-meetings" className="hover:text-white flex items-center gap-1 transition-colors">
-              <ArrowLeft size={13} />
-              Discovery Meetings
-            </Link>
-            <span>/</span>
-            <span className="font-mono text-zinc-300 font-semibold">{m.meeting_number}</span>
-          </div>
-
-          <div className="flex items-center gap-3 pt-1">
-            <h1 className="text-2xl font-bold tracking-tight text-white">{m.title}</h1>
-            <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border ${statusBadge.bg} ${statusBadge.text} ${statusBadge.border}`}>
-              {label(m.status)}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-[#141416] border border-[#27272a] rounded-lg px-3 py-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Status:</span>
-            <select
-              aria-label="Meeting status"
-              value={m.status}
-              onChange={(e) => update.mutate({ status: e.target.value })}
-              className="bg-transparent border-0 text-white font-bold text-xs uppercase tracking-wide focus:outline-none cursor-pointer"
-            >
-              {[
-                "draft",
-                "scheduled",
-                "confirmed",
-                "in_progress",
-                "completed",
-                "information_required",
-                "follow_up_required",
-                "closed",
-                "cancelled"
-              ].map((s) => (
-                <option key={s} value={s} className="bg-neutral-950 text-white">
-                  {label(s)}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* --- 3-Column Workspace --- */}
-      <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)_320px]">
-        {/* ══ COLUMN 1: MEETING CONTEXT ══ */}
-        <aside className="space-y-4">
-          <Card className="p-5 bg-[#141416] border-[#27272a] rounded-xl space-y-4 shadow-sm">
-            <div className="flex items-center justify-between border-b border-[#27272a] pb-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Meeting Context</span>
-              <span className="font-mono text-xs font-bold text-emerald-400">{m.meeting_number}</span>
-            </div>
-
-            <div className="space-y-3.5 text-xs">
-              <div>
-                <dt className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1 flex items-center gap-1.5">
-                  <Building2 size={12} className="text-zinc-400" />
-                  Client / Company
-                </dt>
-                <dd className="font-semibold text-white">{m.companies?.name || "Company not linked"}</dd>
-              </div>
-
-              <div className="border-t border-[#27272a]/60 pt-3">
-                <dt className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1 flex items-center gap-1.5">
-                  <FileText size={12} className="text-zinc-400" />
-                  Linked Assessment
-                </dt>
-                <dd className="font-mono text-zinc-300">{m.client_assessments?.assessment_number || "—"}</dd>
-              </div>
-
-              <div className="border-t border-[#27272a]/60 pt-3">
-                <dt className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1 flex items-center gap-1.5">
-                  <Clock size={12} className="text-zinc-400" />
-                  Scheduled Time
-                </dt>
-                <dd className="font-semibold text-zinc-200">
-                  {m.scheduled_start ? new Date(m.scheduled_start).toLocaleString() : "Not scheduled"}
-                </dd>
-              </div>
-
-              <div className="border-t border-[#27272a]/60 pt-3">
-                <dt className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1 flex items-center gap-1.5">
-                  <Video size={12} className="text-zinc-400" />
-                  Meeting Platform
-                </dt>
-                <dd className="font-semibold text-zinc-200">{m.platform || "Not selected"}</dd>
-              </div>
-            </div>
-          </Card>
-        </aside>
-
-        {/* ══ COLUMN 2: WORKSPACE (AGENDA & DISCUSSION NOTES) ══ */}
-        <main className="space-y-6">
-          {/* Agenda Section */}
-          <Card className="p-6 bg-[#141416] border-[#27272a] rounded-xl shadow-sm">
-            <div className="flex items-center justify-between mb-4 border-b border-[#27272a] pb-3">
-              <div>
-                <h3 className="font-bold text-white text-base">Meeting Agenda</h3>
-                <p className="text-xs text-zinc-400">Structured discovery topics and client review sequence.</p>
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400">
-                Draft — Review
-              </span>
-            </div>
-
-            <div className="space-y-2.5">
-              {m.agenda.map((item) => (
-                <div
-                  key={item.order}
-                  className="p-3.5 bg-black/40 border border-[#27272a] rounded-xl flex items-center gap-3 text-xs text-zinc-200 hover:border-[#3f3f46] transition-all"
-                >
-                  <span className="w-6 h-6 rounded-md bg-[#0075de]/10 border border-[#0075de]/20 text-[#0075de] font-bold flex items-center justify-center text-xs shrink-0">
-                    {item.order}
-                  </span>
-                  <span className="font-medium">{item.title}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* Discussion Notes Section */}
-          <Card className="p-6 bg-[#141416] border-[#27272a] rounded-xl shadow-sm space-y-4">
-            <div className="border-b border-[#27272a] pb-3">
-              <h3 className="font-bold text-white text-base">Discussion Notes</h3>
-              <p className="text-xs text-zinc-400">Internal consultant notes are confidential and never shown to clients.</p>
-            </div>
-
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={7}
-              placeholder="Record the discussion points, requirements, and key takeaways by topic…"
-              className="w-full bg-black/40 border border-[#27272a] focus:border-[#0075de] text-zinc-200 rounded-xl p-4 text-xs leading-relaxed focus:outline-none placeholder:text-zinc-600"
-            />
-
-            <div className="flex justify-end">
-              <Button
-                onClick={() => update.mutate({ status: "in_progress" })}
-                className="h-9 px-4 bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-semibold rounded-lg shadow-sm flex items-center gap-2"
-              >
-                <Save size={14} /> Save Notes
+    <div className="mx-auto max-w-[1280px]">
+      <PageHeader
+        title={m.companies?.name || m.title}
+        breadcrumb={breadcrumb}
+        actions={
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <IconButton variant="secondary" label="More status options" icon={<MoreHorizontal size={16} strokeWidth={1.5} />} />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" minWidth={208}>
+                <DropdownMenuLabel>Move to</DropdownMenuLabel>
+                {STATUS_ORDER.filter((s) => s !== m.status && s !== "cancelled").map((s) => (
+                  <DropdownMenuItem key={s} onSelect={() => changeStatus(s, s === "closed" ? NEXT.completed.confirm : undefined)}>{STATUS[s].label}</DropdownMenuItem>
+                ))}
+                {m.status !== "cancelled" && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem danger onSelect={() => changeStatus("cancelled", "Cancel this discovery meeting?")}>Cancel meeting</DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {next && (
+              <Button variant={readOnly ? "secondary" : "primary"} loading={update.isPending && !!update.variables && "status" in update.variables} onClick={() => changeStatus(next.status, next.confirm)}>
+                {next.label}
               </Button>
+            )}
+          </>
+        }
+      >
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <Badge variant={status.variant}>{status.label}</Badge>
+          <span className="ds-t-meta ds-num text-[var(--text-muted)]">{m.meeting_number}</span>
+          {m.companies?.name && m.title && <span className="ds-t-meta text-[var(--text-muted)]">{m.title}</span>}
+        </div>
+      </PageHeader>
+
+      {readOnly && (
+        <div className="mb-6">
+          <Alert variant={m.status === "cancelled" ? "warning" : "success"} title={m.status === "cancelled" ? "This meeting was cancelled" : "Discovery is complete"}>
+            The agenda and notes are read-only. Reopen the meeting to change them.
+          </Alert>
+        </div>
+      )}
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="flex min-w-0 flex-col gap-6">
+          {/* Agenda: the work of the meeting */}
+          <Card as="section" padding="none">
+            <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5">
+              <div>
+                <h2 className="ds-t-title-sm text-[var(--text-primary)]">Agenda</h2>
+                <p className="ds-t-meta ds-num mt-0.5 text-[var(--text-muted)]">{covered} of {agenda.length} topics covered</p>
+              </div>
+              {agendaIsDraft && !readOnly && (
+                <Button size={28} variant="secondary" onClick={() => saveAgenda(agenda.map((a) => ({ ...a, draft: false })))}>Mark agenda reviewed</Button>
+              )}
+            </div>
+            {agendaIsDraft && !readOnly && (
+              <p className="ds-t-meta mx-5 mt-3 text-[var(--warning)]">Drafted from the assessment. Review the topics before the meeting.</p>
+            )}
+
+            {agenda.length === 0 ? (
+              <p className="ds-t-body px-5 py-8 text-[var(--text-muted)]">No agenda topics yet.</p>
+            ) : (
+              <ol className="mt-3 divide-y divide-[var(--border-subtle)] border-t border-[var(--border-subtle)]">
+                {agenda.map((item) => {
+                  const open = openTopic === item.order;
+                  return (
+                    <li key={item.order} className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          checked={!!item.covered}
+                          disabled={readOnly}
+                          onCheckedChange={(v) => patchTopic(item.order, { covered: v })}
+                          aria-label={`${item.title} covered`}
+                        />
+                        <span className="ds-t-meta ds-num w-5 shrink-0 text-[var(--text-muted)]">{item.order}</span>
+                        <span className={cn("ds-t-body min-w-0 flex-1", item.covered ? "text-[var(--text-muted)]" : "text-[var(--text-primary)]")}>{item.title}</span>
+                        {(item.notes || !readOnly) && (
+                          <button
+                            type="button"
+                            onClick={() => toggleTopicNotes(item)}
+                            aria-expanded={open}
+                            className="ds-focus ds-t-meta inline-flex shrink-0 items-center gap-1 rounded-[var(--radius-xs)] px-1.5 py-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:shadow-[var(--focus-ring)] active:text-[var(--text-primary)]"
+                          >
+                            <MessageSquare size={14} strokeWidth={1.5} />
+                            {item.notes ? "Notes" : "Add notes"}
+                            <ChevronDown size={14} strokeWidth={1.5} className={cn("transition-transform motion-reduce:transition-none", open && "rotate-180")} />
+                          </button>
+                        )}
+                      </div>
+                      {open && (
+                        <div className="mt-2 pl-[52px]">
+                          {readOnly ? (
+                            <p className="ds-t-body whitespace-pre-wrap text-[var(--text-secondary)]">{item.notes}</p>
+                          ) : (
+                            <Textarea
+                              aria-label={`Notes for ${item.title}`}
+                              rows={3}
+                              autoFocus
+                              value={topicDraft}
+                              onChange={(e) => setTopicDraft(e.target.value)}
+                              onBlur={() => commitTopicNotes(item)}
+                              placeholder="What came up on this topic. Saves when you click away."
+                            />
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+          </Card>
+
+          {/* Consultant notes: internal, never shown to the client */}
+          <Card as="section">
+            <CardHeader
+              title="Consultant notes"
+              description="Internal. Never shared with the client."
+              actions={!readOnly && (
+                <>
+                  {dirty.length > 0 && <span className="ds-t-meta text-[var(--text-muted)]">Unsaved changes</span>}
+                  <Button
+                    size={28}
+                    variant="primary"
+                    disabled={!dirty.length}
+                    loading={saveNotes.isPending}
+                    onClick={() => drafts && saveNotes.mutate(dirty.map((s) => ({ sectionKey: s.key, text: drafts[s.key] })))}
+                  >
+                    Save notes
+                  </Button>
+                </>
+              )}
+            />
+            <div className="grid gap-4 md:grid-cols-2">
+              {NOTE_SECTIONS.map((s) => (
+                <label key={s.key} className={cn("flex flex-col gap-1.5", s.key === "discussion" && "md:col-span-2")}>
+                  <span className="ds-t-meta-strong text-[var(--text-secondary)]">{s.label}</span>
+                  {readOnly ? (
+                    <span className="ds-t-body whitespace-pre-wrap text-[var(--text-primary)]">{noteText(m, s.key) || <span className="text-[var(--text-disabled)]">Nothing recorded</span>}</span>
+                  ) : (
+                    <Textarea
+                      rows={s.key === "discussion" ? 6 : 4}
+                      value={drafts?.[s.key] ?? ""}
+                      onChange={(e) => setDrafts((d) => d && { ...d, [s.key]: e.target.value })}
+                      placeholder={s.placeholder}
+                    />
+                  )}
+                </label>
+              ))}
             </div>
           </Card>
-        </main>
 
-        {/* ══ COLUMN 3: INTERNAL CONSULTING ══ */}
-        <aside className="space-y-4">
-          <Card className="p-5 bg-[#141416] border-[#27272a] rounded-xl space-y-4 shadow-sm">
-            <div className="border-b border-[#27272a] pb-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Internal Consulting</span>
-              <p className="text-[11px] text-zinc-500 mt-0.5">Strategic consultant assessments</p>
-            </div>
-
-            <div className="space-y-4 text-xs">
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5 block">
-                  Business Risks (Internal Only)
-                </label>
-                <textarea
-                  rows={3}
-                  value={risks}
-                  onChange={(e) => setRisks(e.target.value)}
-                  placeholder="Identify technical or timeline risks…"
-                  className="w-full bg-black/40 border border-[#27272a] focus:border-[#0075de] text-zinc-200 rounded-xl p-3 text-xs leading-relaxed focus:outline-none placeholder:text-zinc-600"
-                />
+          {/* Outcomes recorded against this meeting */}
+          <Card as="section">
+            <CardHeader title="Outcomes" />
+            {outcomes.length === 0 ? (
+              <p className="ds-t-body text-[var(--text-muted)]">No findings, requirements, decisions or action items recorded yet.</p>
+            ) : (
+              <div className="flex flex-col gap-5">
+                {outcomes.map((group) => (
+                  <div key={group.title}>
+                    <h3 className="ds-t-meta-strong text-[var(--text-secondary)]">{group.title} <span className="ds-num text-[var(--text-muted)]">({group.rows.length})</span></h3>
+                    <ul className="mt-2 divide-y divide-[var(--border-subtle)]">
+                      {group.rows.map((row) => (
+                        <li key={row.id} className="flex items-baseline gap-3 py-2">
+                          {row.ref && <span className="ds-t-meta ds-num shrink-0 text-[var(--text-muted)]">{row.ref}</span>}
+                          <span className="ds-t-body min-w-0 flex-1 text-[var(--text-primary)]">{row.text}</span>
+                          {row.meta && <span className="ds-t-meta shrink-0 text-[var(--text-muted)]">{humanize(String(row.meta))}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
+            )}
+          </Card>
+        </div>
 
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5 block">
-                  AI & Automation Opportunities
-                </label>
-                <textarea
-                  rows={3}
-                  value={opportunities}
-                  onChange={(e) => setOpportunities(e.target.value)}
-                  placeholder="Draft high-leverage AI opportunities…"
-                  className="w-full bg-black/40 border border-[#27272a] focus:border-[#0075de] text-zinc-200 rounded-xl p-3 text-xs leading-relaxed focus:outline-none placeholder:text-zinc-600"
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5 block">
-                  Recommended Next Action
-                </label>
-                <textarea
-                  rows={3}
-                  value={nextAction}
-                  onChange={(e) => setNextAction(e.target.value)}
-                  placeholder="Consultant next step recommendation…"
-                  className="w-full bg-black/40 border border-[#27272a] focus:border-[#0075de] text-zinc-200 rounded-xl p-3 text-xs leading-relaxed focus:outline-none placeholder:text-zinc-600"
-                />
-              </div>
-            </div>
+        {/* Meeting details */}
+        <aside className="flex min-w-0 flex-col gap-4 lg:sticky lg:top-6 lg:self-start">
+          <Card as="section">
+            <CardHeader title="Details" />
+            <KeyValueList items={[
+              { label: "Company", value: m.companies?.name || <span className="text-[var(--text-disabled)]">Not linked</span> },
+              {
+                label: "Assessment",
+                value: m.client_assessments?.assessment_number ? (
+                  <Link href={`/admin/assessments/${m.assessment_id}`} className="ds-focus ds-num inline-flex items-center gap-1 rounded-[var(--radius-xs)] text-[var(--accent)] hover:underline">
+                    {m.client_assessments.assessment_number}<ArrowUpRight size={14} strokeWidth={1.5} />
+                  </Link>
+                ) : <span className="text-[var(--text-disabled)]">None</span>,
+              },
+              { label: "Type", value: humanize(m.meeting_type) },
+              { label: "When", value: scheduled || <span className="text-[var(--text-disabled)]">Not scheduled</span> },
+              ...(m.timezone ? [{ label: "Time zone", value: m.timezone }] : []),
+              { label: "Platform", value: m.platform ? humanize(m.platform) : <span className="text-[var(--text-disabled)]">Not set</span> },
+              ...(m.meeting_url ? [{
+                label: "Join link",
+                value: <a href={m.meeting_url} target="_blank" rel="noopener noreferrer" className="ds-focus inline-flex items-center gap-1 rounded-[var(--radius-xs)] text-[var(--accent)] hover:underline">Open<ArrowUpRight size={14} strokeWidth={1.5} /></a>,
+              }] : []),
+              ...(m.location ? [{ label: "Location", value: m.location }] : []),
+              ...(m.closed_at ? [{ label: "Closed", value: formatWhen(m.closed_at) }] : []),
+            ]} />
           </Card>
         </aside>
       </div>

@@ -1,12 +1,29 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2, Kanban, Briefcase, Plus, ArrowRight, TrendingUp } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FolderKanban, Plus } from "lucide-react";
+import {
+  Avatar, Badge, Button, DataTable, type DataTableColumn, Modal, Select, formatCurrency, toast, type BadgeVariant,
+} from "@/src/components/ui";
+import { EmptyState, FormField, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
+import { ProgressMeter } from "@/components/admin/pm/ProgressMeter";
+
+const STATUS: Record<string, { label: string; variant: BadgeVariant }> = {
+  ACTIVE: { label: "Active", variant: "info" },
+  PLANNING: { label: "Planning", variant: "neutral" },
+  COMPLETED: { label: "Completed", variant: "success" },
+};
+const HEALTH: Record<string, { label: string; variant: BadgeVariant }> = {
+  ON_TRACK: { label: "On track", variant: "success" },
+  AT_RISK: { label: "At risk", variant: "warning" },
+  OFF_TRACK: { label: "Off track", variant: "danger" },
+};
 
 export default function ProjectsPage() {
+  const router = useRouter();
+  const breadcrumb = useAdminBreadcrumb();
   const [projects, setProjects] = useState<any[]>([]);
   const [deals, setDeals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,118 +71,103 @@ export default function ProjectsPage() {
       if (res.ok) {
         setShowPromoteModal(false);
         setSelectedDealId("");
+        toast({ title: "Project created", variant: "success" });
         await fetchData();
       } else {
         const errorData = await res.json().catch(() => ({}));
-        alert(errorData.error || "Failed to initialize project.");
+        toast({ title: errorData.error || "Failed to initialize project.", variant: "danger" });
       }
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "An unexpected error occurred while initializing project.");
+      toast({ title: err.message || "An unexpected error occurred while initializing project.", variant: "danger" });
     } finally {
       setSubmitting(false);
     }
   };
 
+  const columns: DataTableColumn<any>[] = [
+    {
+      id: "name",
+      header: "Project",
+      width: "34%",
+      sortValue: (p) => p.name || p.title,
+      cell: (p) => (
+        <span className="flex min-w-0 flex-col">
+          <span className="ds-t-body-strong truncate text-[var(--text-primary)]">{p.name || p.title}</span>
+          <span className="ds-t-meta truncate text-[var(--text-muted)]">{p.company?.name || "No client"}</span>
+        </span>
+      ),
+    },
+    { id: "status", header: "Status", sortValue: (p) => p.status, cell: (p) => <Badge variant={STATUS[p.status]?.variant || "neutral"}>{STATUS[p.status]?.label || p.status}</Badge> },
+    { id: "health", header: "Health", sortValue: (p) => p.health, cell: (p) => p.health ? <Badge variant={HEALTH[p.health]?.variant || "neutral"}>{HEALTH[p.health]?.label || p.health}</Badge> : null },
+    { id: "progress", header: "Progress", sortValue: (p) => p.progress || 0, cell: (p) => <ProgressMeter value={p.progress} /> },
+    {
+      id: "manager",
+      header: "Manager",
+      sortValue: (p) => p.project_manager?.name || "",
+      cell: (p) => p.project_manager?.name
+        ? <span className="flex min-w-0 items-center gap-2"><Avatar name={p.project_manager.name} size={24} /><span className="truncate text-[var(--text-primary)]">{p.project_manager.name}</span></span>
+        : <span className="text-[var(--text-disabled)]">Unassigned</span>,
+    },
+    { id: "budget", header: "Budget", numeric: true, sortValue: (p) => Number(p.budget) || 0, cell: (p) => Number(p.budget) > 0 ? formatCurrency(p.budget) : <span className="text-[var(--text-disabled)]">Not set</span> },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold text-neutral-950 tracking-tight leading-none flex items-center gap-2">
-            <Briefcase size={28} className="text-[#0075de]" /> Projects Registry
-          </h1>
-          <p className="text-neutral-500 text-xs">Track Agile delivery pipelines, health metrics, and client deliverables.</p>
-        </div>
-        <Button 
-          onClick={() => setShowPromoteModal(true)}
-          className="bg-[#0075de] hover:bg-[#0075de]/90 text-white font-bold tracking-widest uppercase text-[10px] px-6 h-10 rounded-md"
-        >
-          <Plus size={14} className="mr-1" /> Promote Deal
-        </Button>
-      </div>
+    <div className="mx-auto max-w-[1440px]">
+      <PageHeader
+        title="Projects"
+        breadcrumb={breadcrumb}
+        info="Delivery projects promoted from won CRM deals. Open one to see its board, milestones and issues."
+        actions={<Button variant="primary" iconLeft={<Plus size={16} strokeWidth={1.5} />} onClick={() => setShowPromoteModal(true)}>Promote deal</Button>}
+      />
 
-      {/* Grid */}
-      {loading ? (
-        <div className="h-64 flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-6 w-6" />
-        </div>
-      ) : projects.length === 0 ? (
-        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-white text-center p-6">
-          <Briefcase className="w-10 h-10 text-neutral-300 mb-2" />
-          <h4 className="text-sm font-bold text-neutral-850">No delivery projects registered</h4>
-          <p className="text-xs text-neutral-400 max-w-xs mt-1">Promote a won deal from the CRM to start project tracking.</p>
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((p) => (
-            <Card key={p.id} className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm hover:border-[#0075de]/30 hover:shadow-md transition-all">
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div>
-                  <h3 className="text-xs font-bold text-neutral-900 leading-snug">{p.name || p.title}</h3>
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-450 mt-0.5 block">{p.company?.name || "Global Client"}</span>
-                </div>
-                <span className="text-[8px] font-bold uppercase tracking-wider bg-green-500/5 text-green-600 border border-green-200 px-2 py-0.5 rounded">
-                  {p.status}
-                </span>
-              </div>
+      <DataTable
+        label="Delivery projects"
+        columns={columns}
+        rows={projects}
+        getRowId={(p) => p.id}
+        loading={loading}
+        skeletonRows={5}
+        onRowClick={(p) => router.push(`/admin/pm/projects/${p.id}`)}
+        emptyState={
+          <EmptyState
+            icon={<FolderKanban size={24} strokeWidth={1.5} />}
+            title="No delivery projects yet"
+            description="Promote a won deal from the CRM to start tracking delivery."
+            action={<Button variant="primary" onClick={() => setShowPromoteModal(true)}>Promote deal</Button>}
+          />
+        }
+      />
 
-              {/* Progress and Health */}
-              <div className="space-y-4 border-t border-[#e6e6e6]/60 pt-3.5">
-                <div className="space-y-1.5 text-[10px] font-semibold text-neutral-400">
-                  <div className="flex justify-between">
-                    <span>Task Progress:</span>
-                    <span className="text-neutral-900 font-bold">{p.progress || 0}%</span>
-                  </div>
-                  <div className="h-2 w-full bg-[#f6f5f4] rounded-full overflow-hidden border border-[#e6e6e6]/40">
-                    <div className="h-full bg-[#0075de]" style={{ width: `${p.progress || 0}%` }} />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-neutral-450">
-                  <span>Manager:</span>
-                  <span className="text-neutral-800 font-bold">{p.project_manager?.name || "Unassigned"}</span>
-                </div>
-
-                <Link 
-                  href={`/admin/pm/projects/${p.id}`}
-                  className="w-full h-8 text-[9px] font-bold uppercase tracking-widest bg-white border border-[#e6e6e6] text-[#0075de] hover:bg-neutral-50 rounded-md flex items-center justify-center gap-1 mt-2.5 transition-colors"
-                >
-                  Project Delivery Board <ArrowRight size={10} />
-                </Link>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Promote Modal */}
-      {showPromoteModal && (
-        <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <Card className="bg-white border border-[#e6e6e6] w-full max-w-md p-6 shadow-xl rounded-lg space-y-6">
-            <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5">Promote Deal to Project</h3>
-            <form onSubmit={handlePromoteDeal} className="space-y-4">
-              <div className="space-y-1">
-                <span className="text-[9px] font-bold uppercase text-neutral-400">Select Won CRM Deal</span>
-                <select
-                  required
-                  value={selectedDealId}
-                  onChange={e => setSelectedDealId(e.target.value)}
-                  className="w-full h-9 bg-white border border-[#e6e6e6] rounded-md px-2.5 text-xs text-neutral-805"
-                >
-                  <option value="">Select won deal...</option>
-                  {deals.map(d => <option key={d.id} value={d.id}>{d.name} (₹{Number(d.value).toLocaleString()})</option>)}
-                </select>
-              </div>
-
-              <div className="flex gap-3 justify-end border-t border-[#e6e6e6] pt-4">
-                <Button type="button" onClick={() => setShowPromoteModal(false)} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-white border border-[#e6e6e6] text-neutral-500 hover:bg-neutral-50 rounded-md px-4">Cancel</Button>
-                <Button type="submit" disabled={submitting} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-[#0075de] text-white hover:bg-[#0075de]/90 rounded-md px-4">Initialize Project</Button>
-              </div>
-            </form>
-          </Card>
-        </div>
-      )}
+      <Modal
+        open={showPromoteModal}
+        onOpenChange={(open) => { setShowPromoteModal(open); if (!open) setSelectedDealId(""); }}
+        title="Promote deal to project"
+        description="Creates a delivery project from a won CRM deal."
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowPromoteModal(false)}>Cancel</Button>
+            <Button type="submit" form="promote-deal-form" variant="primary" loading={submitting} disabled={!selectedDealId}>Create project</Button>
+          </>
+        }
+      >
+        <form id="promote-deal-form" onSubmit={handlePromoteDeal}>
+          <FormField label="Won deal" required hint={deals.length === 0 ? "No won deals in the CRM yet." : undefined}>
+            {(f) => (
+              <Select
+                {...f}
+                required
+                value={selectedDealId || undefined}
+                onValueChange={setSelectedDealId}
+                placeholder="Select a won deal"
+                disabled={deals.length === 0}
+                options={deals.map((d) => ({ value: d.id, label: `${d.name} (${formatCurrency(d.value)})` }))}
+              />
+            )}
+          </FormField>
+        </form>
+      </Modal>
     </div>
   );
 }

@@ -1047,7 +1047,7 @@ export default function InvoicesPage() {
               </div>
 
               {/* Bill To Info */}
-              <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-100 flex justify-between">
+              <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex justify-between">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Billed To</span>
                   <p className="font-bold text-sm text-neutral-900 mt-0.5">
@@ -1079,14 +1079,14 @@ export default function InvoicesPage() {
               {/* Items Table */}
               <div className="space-y-2">
                 <table className="w-full text-left text-xs">
-                  <thead className="border-b-2 border-neutral-100 text-[10px] font-bold uppercase text-neutral-400 tracking-wider">
+                  <thead className="border-b-2 border-[var(--border)] text-[10px] font-bold uppercase text-neutral-400 tracking-wider">
                     <tr>
                       <th className="py-2.5">Description</th>
                       <th className="py-2.5 text-center w-16">Qty</th>
                       <th className="py-2.5 text-right w-28">Amount</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-100">
+                  <tbody className="divide-y divide-[var(--border-subtle)]">
                     {Array.isArray(previewInvoice.items) && previewInvoice.items.length > 0 ? (
                       previewInvoice.items.map((it: any, idx: number) => (
                         <tr key={idx}>
@@ -1111,7 +1111,7 @@ export default function InvoicesPage() {
               </div>
 
               {/* Totals Summary */}
-              <div className="flex justify-between items-start pt-4 border-t border-neutral-100">
+              <div className="flex justify-between items-start pt-4 border-t border-[var(--border)]">
                 <div className="space-y-1 text-xs text-neutral-500 max-w-xs">
                   <p className="font-bold text-neutral-700">Bank & UPI Settlement:</p>
                   <p className="font-mono text-neutral-900">{COMPANY.upi}</p>

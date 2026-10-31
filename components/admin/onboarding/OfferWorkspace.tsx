@@ -465,7 +465,7 @@ export default function OfferWorkspace() {
                           hydrateOffer(item);
                           setOpen(true);
                         }}
-                        className="rounded border px-2 py-1 text-[10px] font-bold text-slate-700 hover:bg-slate-50"
+                        className="rounded border px-2 py-1 text-[10px] font-bold text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
                       >
                         Edit offer
                       </button>
@@ -492,7 +492,7 @@ export default function OfferWorkspace() {
                     )}
                     {["sent", "accepted"].includes(item.status) && (
                       <a
-                        className="rounded border px-2 py-1 text-[10px] font-bold hover:bg-slate-50"
+                        className="rounded border px-2 py-1 text-[10px] font-bold hover:bg-[var(--surface-hover)]"
                         href={`/api/admin/recruitment/offers/${item.id}`}
                       >
                         View document

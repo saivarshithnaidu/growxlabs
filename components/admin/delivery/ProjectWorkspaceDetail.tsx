@@ -64,7 +64,7 @@ export function ProjectWorkspaceDetail({ projectId }: { projectId: string }) {
       <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Milestones</h2>
-          <span className="text-xs font-mono font-medium text-slate-500">
+          <span className="text-xs font-mono font-medium text-[var(--text-muted)]">
             {milestones.data?.milestones?.length || 0} active
           </span>
         </div>
@@ -129,15 +129,15 @@ export function ProjectWorkspaceDetail({ projectId }: { projectId: string }) {
                 >
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <p className="text-[10px] font-mono font-bold text-slate-500">{item.milestone_number}</p>
+                      <p className="text-[10px] font-mono font-bold text-[var(--text-muted)]">{item.milestone_number}</p>
                       {item.planned_completion && (
-                        <span className="text-[10px] text-slate-400">Due {item.planned_completion.slice(0, 10)}</span>
+                        <span className="text-[10px] text-[var(--text-muted)]">Due {item.planned_completion.slice(0, 10)}</span>
                       )}
                     </div>
                     <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#164d75] dark:group-hover:text-blue-400 transition-colors">
                       {item.name}
                     </p>
-                    <div className="flex items-center gap-3 text-[10px] text-slate-500">
+                    <div className="flex items-center gap-3 text-[10px] text-[var(--text-muted)]">
                       {item.owner && <span>Owner: {item.owner.name}</span>}
                       {item.tasks_count !== undefined && item.tasks_count > 0 && (
                         <span>{item.tasks_count} {item.tasks_count === 1 ? "task" : "tasks"}</span>
@@ -148,14 +148,14 @@ export function ProjectWorkspaceDetail({ projectId }: { projectId: string }) {
                     <span className={`shrink-0 px-2 py-0.5 text-[10px] font-semibold rounded capitalize ${statusColors}`}>
                       {item.status.replaceAll("_", " ")}
                     </span>
-                    <IconChevronRight size={14} className="text-slate-400 group-hover:translate-x-0.5 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-all" />
+                    <IconChevronRight size={14} className="text-[var(--text-muted)] group-hover:translate-x-0.5 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-all" />
                   </div>
                 </div>
               );
             }
           )}
           {!milestones.data?.milestones?.length && !milestones.isPending && (
-            <p className="py-6 text-center text-xs text-slate-400">No milestones created yet.</p>
+            <p className="py-6 text-center text-xs text-[var(--text-muted)]">No milestones created yet.</p>
           )}
         </div>
       </section>
@@ -164,7 +164,7 @@ export function ProjectWorkspaceDetail({ projectId }: { projectId: string }) {
       <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Tasks</h2>
-          <span className="text-xs font-mono font-medium text-slate-500">
+          <span className="text-xs font-mono font-medium text-[var(--text-muted)]">
             {tasks.data?.tasks?.length || 0} tasks
           </span>
         </div>
@@ -202,7 +202,7 @@ export function ProjectWorkspaceDetail({ projectId }: { projectId: string }) {
             (item: { id: string; task_number: string; title: string; status: string }) => (
               <div className="py-3 flex items-start justify-between gap-3" key={item.id}>
                 <div>
-                  <p className="text-[10px] font-mono font-bold text-slate-500">{item.task_number}</p>
+                  <p className="text-[10px] font-mono font-bold text-[var(--text-muted)]">{item.task_number}</p>
                   <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5">{item.title}</p>
                 </div>
                 <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 capitalize">
@@ -212,7 +212,7 @@ export function ProjectWorkspaceDetail({ projectId }: { projectId: string }) {
             )
           )}
           {!tasks.data?.tasks?.length && !tasks.isPending && (
-            <p className="py-6 text-center text-xs text-slate-400">No tasks created yet.</p>
+            <p className="py-6 text-center text-xs text-[var(--text-muted)]">No tasks created yet.</p>
           )}
         </div>
       </section>

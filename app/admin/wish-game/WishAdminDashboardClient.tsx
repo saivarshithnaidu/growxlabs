@@ -247,7 +247,7 @@ export default function WishAdminDashboardClient({
     <div className="space-y-8">
       {/* 4 Stat Cards in a Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-[#e6e6e6] p-6 rounded-md hover:shadow-sm transition-all duration-200 relative group">
+        <div className="bg-[var(--surface-1)] border border-[#e6e6e6] p-6 rounded-md hover:shadow-sm transition-all duration-200 relative group">
           <div className="flex justify-between items-start mb-4">
             <span className="admin-kpi-label text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Total Wishes Made</span>
             <div className="p-2 bg-[#f6f5f4] border border-[#e6e6e6] rounded-md text-neutral-500">
@@ -259,7 +259,7 @@ export default function WishAdminDashboardClient({
             <p className="text-[10px] text-neutral-400 font-medium">Logged wishes</p>
           </div>
         </div>
-        <div className="bg-white border border-[#e6e6e6] p-6 rounded-md hover:shadow-sm transition-all duration-200 relative group">
+        <div className="bg-[var(--surface-1)] border border-[#e6e6e6] p-6 rounded-md hover:shadow-sm transition-all duration-200 relative group">
           <div className="flex justify-between items-start mb-4">
             <span className="admin-kpi-label text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Active Subscribers</span>
             <div className="p-2 bg-[#f6f5f4] border border-[#e6e6e6] rounded-md text-neutral-500">
@@ -271,7 +271,7 @@ export default function WishAdminDashboardClient({
             <p className="text-[10px] text-neutral-400 font-medium">Emails pool</p>
           </div>
         </div>
-        <div className="bg-white border border-[#e6e6e6] p-6 rounded-md hover:shadow-sm transition-all duration-200 relative group">
+        <div className="bg-[var(--surface-1)] border border-[#e6e6e6] p-6 rounded-md hover:shadow-sm transition-all duration-200 relative group">
           <div className="flex justify-between items-start mb-4">
             <span className="admin-kpi-label text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Total Emails Sent</span>
             <div className="p-2 bg-[#f6f5f4] border border-[#e6e6e6] rounded-md text-neutral-500">
@@ -283,7 +283,7 @@ export default function WishAdminDashboardClient({
             <p className="text-[10px] text-neutral-400 font-medium">Resend dispatches</p>
           </div>
         </div>
-        <div className="bg-white border border-[#e6e6e6] p-6 rounded-md hover:shadow-sm transition-all duration-200 relative group">
+        <div className="bg-[var(--surface-1)] border border-[#e6e6e6] p-6 rounded-md hover:shadow-sm transition-all duration-200 relative group">
           <div className="flex justify-between items-start mb-4">
             <span className="admin-kpi-label text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Blog Posts Sent</span>
             <div className="p-2 bg-[#f6f5f4] border border-[#e6e6e6] rounded-md text-neutral-500">
@@ -306,7 +306,7 @@ export default function WishAdminDashboardClient({
           }}
           className={`py-3 px-4 text-xs font-bold uppercase tracking-wider border-b-2 whitespace-nowrap transition-all duration-200 ${
             activeTab === "wishes"
-              ? "border-[#0075de] text-[#0075de] bg-white rounded-t-md border-t border-l border-r border-[#e6e6e6] -mb-[1px]"
+              ? "border-[#0075de] text-[#0075de] bg-[var(--surface-1)] rounded-t-md border-t border-l border-r border-[#e6e6e6] -mb-[1px]"
               : "border-transparent text-neutral-400 hover:text-neutral-600"
           }`}
         >
@@ -319,7 +319,7 @@ export default function WishAdminDashboardClient({
           }}
           className={`py-3 px-4 text-xs font-bold uppercase tracking-wider border-b-2 whitespace-nowrap transition-all duration-200 ${
             activeTab === "subscribers"
-              ? "border-[#0075de] text-[#0075de] bg-white rounded-t-md border-t border-l border-r border-[#e6e6e6] -mb-[1px]"
+              ? "border-[#0075de] text-[#0075de] bg-[var(--surface-1)] rounded-t-md border-t border-l border-r border-[#e6e6e6] -mb-[1px]"
               : "border-transparent text-neutral-400 hover:text-neutral-600"
           }`}
         >
@@ -332,7 +332,7 @@ export default function WishAdminDashboardClient({
           }}
           className={`py-3 px-4 text-xs font-bold uppercase tracking-wider border-b-2 whitespace-nowrap transition-all duration-200 ${
             activeTab === "emailLogs"
-              ? "border-[#0075de] text-[#0075de] bg-white rounded-t-md border-t border-l border-r border-[#e6e6e6] -mb-[1px]"
+              ? "border-[#0075de] text-[#0075de] bg-[var(--surface-1)] rounded-t-md border-t border-l border-r border-[#e6e6e6] -mb-[1px]"
               : "border-transparent text-neutral-400 hover:text-neutral-600"
           }`}
         >
@@ -342,7 +342,7 @@ export default function WishAdminDashboardClient({
           onClick={() => setActiveTab("newsletter")}
           className={`py-3 px-4 text-xs font-bold uppercase tracking-wider border-b-2 whitespace-nowrap transition-all duration-200 ${
             activeTab === "newsletter"
-              ? "border-[#0075de] text-[#0075de] bg-white rounded-t-md border-t border-l border-r border-[#e6e6e6] -mb-[1px]"
+              ? "border-[#0075de] text-[#0075de] bg-[var(--surface-1)] rounded-t-md border-t border-l border-r border-[#e6e6e6] -mb-[1px]"
               : "border-transparent text-neutral-400 hover:text-neutral-600"
           }`}
         >
@@ -364,7 +364,7 @@ export default function WishAdminDashboardClient({
                   setWishesPage(1);
                 }}
                 placeholder="Search wishes, email or name..."
-                className="bg-white border border-[#e6e6e6] rounded-md px-4 py-2 text-xs text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-[#0075de] focus:ring-1 focus:ring-[#0075de] w-full sm:w-80 font-mono"
+                className="bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md px-4 py-2 text-xs text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-[#0075de] focus:ring-1 focus:ring-[#0075de] w-full sm:w-80 font-mono"
               />
               <select
                 value={wishesSort}
@@ -372,7 +372,7 @@ export default function WishAdminDashboardClient({
                   setWishesSort(e.target.value as any);
                   setWishesPage(1);
                 }}
-                className="bg-white border border-[#e6e6e6] rounded-md px-4 py-2 text-xs text-neutral-800 focus:outline-none focus:border-[#0075de] font-mono cursor-pointer"
+                className="bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md px-4 py-2 text-xs text-neutral-800 focus:outline-none focus:border-[#0075de] font-mono cursor-pointer"
               >
                 <option value="latest">Latest First</option>
                 <option value="oldest">Oldest First</option>
@@ -380,13 +380,13 @@ export default function WishAdminDashboardClient({
             </div>
             <button
               onClick={() => handleCSVExport(filteredWishes, "wish_game_telemetry.csv")}
-              className="bg-white hover:bg-[#f6f5f4] text-neutral-800 border border-[#e6e6e6] font-bold font-mono py-2 px-4 rounded-md text-xs transition self-start sm:self-auto flex items-center gap-2"
+              className="bg-[var(--surface-1)] hover:bg-[#f6f5f4] text-neutral-800 border border-[#e6e6e6] font-bold font-mono py-2 px-4 rounded-md text-xs transition self-start sm:self-auto flex items-center gap-2"
             >
               📥 Export CSV
             </button>
           </div>
 
-          <div className="bg-white border border-[#e6e6e6] rounded-md overflow-hidden shadow-sm">
+          <div className="bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs md:text-sm">
                 <thead>
@@ -425,7 +425,7 @@ export default function WishAdminDashboardClient({
                                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                 : w.screen_reached === "wish_input"
                                 ? "bg-amber-50 text-amber-700 border-amber-200"
-                                : "bg-neutral-50 text-neutral-700 border-neutral-200"
+                                : "bg-[var(--surface-2)] text-neutral-700 border-[var(--border)]"
                             }`}
                           >
                             {w.screen_reached || "N/A"}
@@ -448,7 +448,7 @@ export default function WishAdminDashboardClient({
                 <button
                   disabled={wishesPage === 1}
                   onClick={() => setWishesPage((p) => p - 1)}
-                  className="px-3 py-1 bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-800 rounded-md disabled:opacity-40 disabled:hover:bg-white text-xs font-mono transition"
+                  className="px-3 py-1 bg-[var(--surface-1)] border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-800 rounded-md disabled:opacity-40 disabled:hover:bg-white text-xs font-mono transition"
                 >
                   PREVIOUS
                 </button>
@@ -458,7 +458,7 @@ export default function WishAdminDashboardClient({
                 <button
                   disabled={wishesPage === wishesTotalPages}
                   onClick={() => setWishesPage((p) => p + 1)}
-                  className="px-3 py-1 bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-800 rounded-md disabled:opacity-40 disabled:hover:bg-white text-xs font-mono transition"
+                  className="px-3 py-1 bg-[var(--surface-1)] border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-800 rounded-md disabled:opacity-40 disabled:hover:bg-white text-xs font-mono transition"
                 >
                   NEXT
                 </button>
@@ -481,7 +481,7 @@ export default function WishAdminDashboardClient({
                   setSubscribersPage(1);
                 }}
                 placeholder="Search subscribers..."
-                className="bg-white border border-[#e6e6e6] rounded-md px-4 py-2 text-xs text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-[#0075de] focus:ring-1 focus:ring-[#0075de] w-full sm:w-80 font-mono"
+                className="bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md px-4 py-2 text-xs text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-[#0075de] focus:ring-1 focus:ring-[#0075de] w-full sm:w-80 font-mono"
               />
               <select
                 value={subscribersSort}
@@ -489,7 +489,7 @@ export default function WishAdminDashboardClient({
                   setSubscribersSort(e.target.value as any);
                   setSubscribersPage(1);
                 }}
-                className="bg-white border border-[#e6e6e6] rounded-md px-4 py-2 text-xs text-neutral-800 focus:outline-none focus:border-[#0075de] font-mono cursor-pointer"
+                className="bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md px-4 py-2 text-xs text-neutral-800 focus:outline-none focus:border-[#0075de] font-mono cursor-pointer"
               >
                 <option value="latest">Latest First</option>
                 <option value="oldest">Oldest First</option>
@@ -497,13 +497,13 @@ export default function WishAdminDashboardClient({
             </div>
             <button
               onClick={() => handleCSVExport(filteredSubscribers, "subscribers_pool.csv")}
-              className="bg-white hover:bg-[#f6f5f4] text-neutral-800 border border-[#e6e6e6] font-bold font-mono py-2 px-4 rounded-md text-xs transition self-start sm:self-auto flex items-center gap-2"
+              className="bg-[var(--surface-1)] hover:bg-[#f6f5f4] text-neutral-800 border border-[#e6e6e6] font-bold font-mono py-2 px-4 rounded-md text-xs transition self-start sm:self-auto flex items-center gap-2"
             >
               📥 Export CSV
             </button>
           </div>
 
-          <div className="bg-white border border-[#e6e6e6] rounded-md overflow-hidden shadow-sm">
+          <div className="bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs md:text-sm">
                 <thead>
@@ -551,7 +551,7 @@ export default function WishAdminDashboardClient({
                 <button
                   disabled={subscribersPage === 1}
                   onClick={() => setSubscribersPage((p) => p - 1)}
-                  className="px-3 py-1 bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-800 rounded-md disabled:opacity-40 disabled:hover:bg-white text-xs font-mono transition"
+                  className="px-3 py-1 bg-[var(--surface-1)] border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-800 rounded-md disabled:opacity-40 disabled:hover:bg-white text-xs font-mono transition"
                 >
                   PREVIOUS
                 </button>
@@ -561,7 +561,7 @@ export default function WishAdminDashboardClient({
                 <button
                   disabled={subscribersPage === subsTotalPages}
                   onClick={() => setSubscribersPage((p) => p + 1)}
-                  className="px-3 py-1 bg-white border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-800 rounded-md disabled:opacity-40 disabled:hover:bg-white text-xs font-mono transition"
+                  className="px-3 py-1 bg-[var(--surface-1)] border border-[#e6e6e6] hover:bg-[#f6f5f4] text-neutral-800 rounded-md disabled:opacity-40 disabled:hover:bg-white text-xs font-mono transition"
                 >
                   NEXT
                 </button>

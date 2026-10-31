@@ -101,7 +101,7 @@ export function InvoiceBuilder({ products, companies, onGenerateInvoice }: Invoi
   };
 
   return (
-    <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+    <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
       <form onSubmit={handleSubmit} className="space-y-6">
         <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5 flex items-center gap-2">
           <FileText size={16} className="text-[#0075de]" /> Create Sales Invoice
@@ -152,7 +152,7 @@ export function InvoiceBuilder({ products, companies, onGenerateInvoice }: Invoi
             <Button
               type="button"
               onClick={handleAddItem}
-              className="h-7 text-[8px] font-bold uppercase tracking-widest bg-white border border-[#e6e6e6] text-[#0075de] hover:bg-neutral-50 px-3 rounded-md"
+              className="h-7 text-[8px] font-bold uppercase tracking-widest bg-[var(--surface-1)] border border-[#e6e6e6] text-[#0075de] hover:bg-[var(--surface-hover)] px-3 rounded-md"
             >
               Add Item
             </Button>
@@ -167,7 +167,7 @@ export function InvoiceBuilder({ products, companies, onGenerateInvoice }: Invoi
                     required
                     value={item.product_id}
                     onChange={(e) => handleProductChange(idx, e.target.value)}
-                    className="w-full h-9 bg-white border border-[#e6e6e6] rounded-md px-2.5 text-xs text-neutral-805"
+                    className="w-full h-9 bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md px-2.5 text-xs text-neutral-805"
                   >
                     <option value="">Select item...</option>
                     {products.map(p => <option key={p.id} value={p.id}>{p.name} (₹{p.price})</option>)}
@@ -182,7 +182,7 @@ export function InvoiceBuilder({ products, companies, onGenerateInvoice }: Invoi
                     min={1}
                     value={item.quantity}
                     onChange={e => handleFieldChange(idx, "quantity", Number(e.target.value))}
-                    className="h-9 text-xs text-center bg-white border-[#e6e6e6]"
+                    className="h-9 text-xs text-center bg-[var(--surface-1)] border-[#e6e6e6]"
                   />
                 </div>
 
@@ -193,7 +193,7 @@ export function InvoiceBuilder({ products, companies, onGenerateInvoice }: Invoi
                     required
                     value={item.unit_price}
                     onChange={e => handleFieldChange(idx, "unit_price", Number(e.target.value))}
-                    className="h-9 text-xs bg-white border-[#e6e6e6]"
+                    className="h-9 text-xs bg-[var(--surface-1)] border-[#e6e6e6]"
                   />
                 </div>
 
@@ -204,7 +204,7 @@ export function InvoiceBuilder({ products, companies, onGenerateInvoice }: Invoi
                     required
                     value={item.tax_rate}
                     onChange={e => handleFieldChange(idx, "tax_rate", Number(e.target.value))}
-                    className="h-9 text-xs text-center bg-white border-[#e6e6e6]"
+                    className="h-9 text-xs text-center bg-[var(--surface-1)] border-[#e6e6e6]"
                   />
                 </div>
 

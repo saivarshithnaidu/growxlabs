@@ -113,7 +113,7 @@ export function AutomationBuilder({ initialRules, recentRuns, onCreateRule }: Au
     <div className="grid md:grid-cols-3 gap-6">
       {/* Rules list */}
       <div className="md:col-span-2 space-y-6">
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-3 mb-4 flex items-center gap-2">
             <Zap size={16} className="text-[#0075de]" /> Active Workflows Rules
           </h3>
@@ -140,7 +140,7 @@ export function AutomationBuilder({ initialRules, recentRuns, onCreateRule }: Au
         </Card>
 
         {/* Audit runs */}
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-3 mb-4">Recent Automation Executions</h3>
           {recentRuns.length === 0 ? (
             <div className="text-center py-8 text-xs font-semibold text-neutral-400">No executions logged yet.</div>
@@ -176,7 +176,7 @@ export function AutomationBuilder({ initialRules, recentRuns, onCreateRule }: Au
       </div>
 
       {/* Creator Form */}
-      <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm h-fit">
+      <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm h-fit">
         <form onSubmit={handleSubmitRule} className="space-y-4">
           <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5">New Automation</h3>
           
@@ -221,7 +221,7 @@ export function AutomationBuilder({ initialRules, recentRuns, onCreateRule }: Au
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="Welcome [Name]"
-                  className="h-8 bg-white border-[#e6e6e6] text-xs"
+                  className="h-8 bg-[var(--surface-1)] border-[#e6e6e6] text-xs"
                 />
               </div>
               <div className="space-y-1">
@@ -231,7 +231,7 @@ export function AutomationBuilder({ initialRules, recentRuns, onCreateRule }: Au
                   value={bodyText}
                   onChange={(e) => setBodyText(e.target.value)}
                   placeholder="Body text..."
-                  className="w-full text-xs bg-white border border-[#e6e6e6] rounded p-2 focus:outline-none"
+                  className="w-full text-xs bg-[var(--surface-1)] border border-[#e6e6e6] rounded p-2 focus:outline-none"
                 />
               </div>
             </div>
@@ -244,7 +244,7 @@ export function AutomationBuilder({ initialRules, recentRuns, onCreateRule }: Au
                 value={taskTitle}
                 onChange={(e) => setTaskTitle(e.target.value)}
                 placeholder="Call client [Company]"
-                className="h-8 bg-white border-[#e6e6e6] text-xs"
+                className="h-8 bg-[var(--surface-1)] border-[#e6e6e6] text-xs"
               />
             </div>
           )}

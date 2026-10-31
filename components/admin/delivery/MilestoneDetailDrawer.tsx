@@ -199,7 +199,7 @@ export function MilestoneDetailDrawer({
           <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
             {milestone?.name || "Milestone Details"}
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[var(--text-muted)]">
             Milestone Execution View · Update status, owner assignment, and scheduled timelines.
           </p>
         </div>
@@ -207,7 +207,7 @@ export function MilestoneDetailDrawer({
         {/* Content */}
         <div className="p-6 flex-1 space-y-6">
           {query.isPending && (
-            <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-400">
+            <div className="py-12 flex flex-col items-center justify-center gap-3 text-[var(--text-muted)]">
               <IconSpinner size={24} className="animate-spin text-[#164d75]" />
               <p className="text-xs">Loading milestone details…</p>
             </div>
@@ -255,7 +255,7 @@ export function MilestoneDetailDrawer({
                     </option>
                   ))}
                 </select>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-[var(--text-muted)]">
                   Expected execution progression: Planned → In Progress → Completed
                 </p>
               </div>
@@ -278,7 +278,7 @@ export function MilestoneDetailDrawer({
                     </option>
                   ))}
                 </select>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-[var(--text-muted)]">
                   Only verified internal team members and admins can be assigned.
                 </p>
               </div>
@@ -319,25 +319,25 @@ export function MilestoneDetailDrawer({
                 </h3>
                 <dl className="grid grid-cols-2 gap-3 text-xs">
                   <div>
-                    <dt className="text-[10px] text-slate-500 uppercase font-semibold">Linked Tasks</dt>
+                    <dt className="text-[10px] text-[var(--text-muted)] uppercase font-semibold">Linked Tasks</dt>
                     <dd className="mt-0.5 font-bold text-slate-800 dark:text-slate-200">
                       {milestone.tasks_count} {milestone.tasks_count === 1 ? "task" : "tasks"}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[10px] text-slate-500 uppercase font-semibold">Completion</dt>
+                    <dt className="text-[10px] text-[var(--text-muted)] uppercase font-semibold">Completion</dt>
                     <dd className="mt-0.5 font-bold text-slate-800 dark:text-slate-200">
                       {milestone.progress}%
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[10px] text-slate-500 uppercase font-semibold">Created Date</dt>
+                    <dt className="text-[10px] text-[var(--text-muted)] uppercase font-semibold">Created Date</dt>
                     <dd className="mt-0.5 text-slate-700 dark:text-slate-300">
                       {new Date(milestone.created_at).toLocaleDateString()}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[10px] text-slate-500 uppercase font-semibold">Current State</dt>
+                    <dt className="text-[10px] text-[var(--text-muted)] uppercase font-semibold">Current State</dt>
                     <dd className="mt-0.5 capitalize text-slate-700 dark:text-slate-300">
                       {milestone.status.replaceAll("_", " ")}
                     </dd>

@@ -158,7 +158,7 @@ export default function AdminSearchLeads() {
                            </div>
                            <div className="mt-6 flex items-center justify-between">
                               <span className="text-[10px] font-black text-white/10 uppercase tracking-widest italic">{params.category}</span>
-                              <Button className="h-9 px-4 bg-white/[0.05] hover:bg-white text-white hover:text-black text-[10px] font-black uppercase tracking-widest rounded-lg transition-all">
+                              <Button className="h-9 px-4 bg-white/[0.05] hover:bg-[var(--surface-hover)] text-white hover:text-black text-[10px] font-black uppercase tracking-widest rounded-lg transition-all">
                                  Collect Lead
                               </Button>
                            </div>

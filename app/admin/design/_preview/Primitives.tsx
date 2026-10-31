@@ -31,7 +31,7 @@ export function TokensSection() {
   const type = [
     ["ds-t-title", "Title 20/28 600"], ["ds-t-title-md", "Title md 16/24 600"], ["ds-t-title-sm", "Title sm 14/20 600"], ["ds-t-kpi", "KPI 24/32 600"],
     ["ds-t-body", "Body 13/20 400"], ["ds-t-body-strong", "Body strong 13/20 500"], ["ds-t-body-bold", "Body bold 13/20 600"],
-    ["ds-t-meta", "Meta 12/16 400"], ["ds-t-meta-strong", "Meta strong 12/16 500"], ["ds-t-label", "Label 11/16 500 caps"], ["ds-t-mono", "Mono 11/16"],
+    ["ds-t-meta", "Meta 12/16 400"], ["ds-t-meta-strong", "Meta strong 12/16 500"], ["ds-t-label", "Label 12/16 500"], ["ds-t-mono", "Mono 11/16"],
   ];
   return (
     <Section id="tokens" title="Tokens">

@@ -609,7 +609,7 @@ export default function DedicatedOfferLetterStudioPage() {
 
       {/* ── TOP HEADER & ACTION BAR ── */}
       <div className="max-w-[1400px] mx-auto px-6 py-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#E5E7EB] shadow-xs">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[var(--surface-1)] p-5 rounded-2xl border border-[#E5E7EB] shadow-xs">
           
           <div className="space-y-1">
             <h1 className="text-2xl font-bold text-[#111827] tracking-tight">Offer Letter Studio</h1>
@@ -641,11 +641,11 @@ export default function DedicatedOfferLetterStudioPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Verified Candidate
             </span>
 
-            <span className="px-2.5 py-1 bg-slate-100 text-[#111827] border border-[#E5E7EB] text-[11px] font-medium rounded-lg">
+            <span className="px-2.5 py-1 bg-[var(--surface-hover)] text-[#111827] border border-[#E5E7EB] text-[11px] font-medium rounded-lg">
               Ref: <span className="font-mono font-bold">{refNumber}</span>
             </span>
 
-            <span className="px-2.5 py-1 bg-slate-100 text-[#111827] border border-[#E5E7EB] text-[11px] font-medium rounded-lg">
+            <span className="px-2.5 py-1 bg-[var(--surface-hover)] text-[#111827] border border-[#E5E7EB] text-[11px] font-medium rounded-lg">
               Joining: <span className="font-bold">{joiningDate}</span>
             </span>
           </div>
@@ -675,7 +675,7 @@ export default function DedicatedOfferLetterStudioPage() {
         <div className="lg:col-span-4 space-y-5">
           
           {/* Candidate Profile Card */}
-          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-4 shadow-xs overflow-hidden">
+          <div className="bg-[var(--surface-1)] border border-[#E5E7EB] rounded-2xl p-5 space-y-4 shadow-xs overflow-hidden">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center text-base font-bold shadow-sm shrink-0">
                 {selectedCandidate?.name ? selectedCandidate.name.charAt(0) : "A"}
@@ -710,7 +710,7 @@ export default function DedicatedOfferLetterStudioPage() {
           </div>
 
           {/* Hiring Pre-Flight Checklist */}
-          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-4 shadow-xs overflow-hidden">
+          <div className="bg-[var(--surface-1)] border border-[#E5E7EB] rounded-2xl p-5 space-y-4 shadow-xs overflow-hidden">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-[#111827] uppercase tracking-wider">Hiring Checklist</h4>
               <span className="text-xs font-extrabold text-[#2563EB] bg-[#2563EB]/10 px-2.5 py-0.5 rounded-full">
@@ -754,7 +754,7 @@ export default function DedicatedOfferLetterStudioPage() {
           </div>
 
           {/* Activity Log */}
-          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-3 shadow-xs overflow-hidden">
+          <div className="bg-[var(--surface-1)] border border-[#E5E7EB] rounded-2xl p-5 space-y-3 shadow-xs overflow-hidden">
             <h4 className="text-xs font-bold text-[#111827] uppercase tracking-wider">Document Activity</h4>
             <div className="space-y-3 text-xs text-[#4B5563]">
               <div className="flex gap-2.5 min-w-0">
@@ -788,7 +788,7 @@ export default function DedicatedOfferLetterStudioPage() {
           <div 
             ref={documentCanvasRef}
             id="offer-letter-canvas"
-            className="w-full max-w-[840px] bg-white border border-[#E5E7EB] rounded-2xl shadow-sm p-6 sm:p-12 space-y-8 overflow-hidden"
+            className="w-full max-w-[840px] bg-[var(--surface-1)] border border-[#E5E7EB] rounded-2xl shadow-sm p-6 sm:p-12 space-y-8 overflow-hidden"
           >
             
             {/* Notion Header */}
@@ -804,7 +804,7 @@ export default function DedicatedOfferLetterStudioPage() {
                   </p>
                 </div>
                 <div className="sm:text-right shrink-0">
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-slate-100 text-[#0F172A] border border-slate-200 rounded-md">
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-[var(--surface-hover)] text-[#0F172A] border border-[var(--border)] rounded-md">
                     CONFIDENTIAL CONTRACT
                   </span>
                 </div>
@@ -865,15 +865,15 @@ export default function DedicatedOfferLetterStudioPage() {
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1 overflow-hidden">
+                <div className="bg-[var(--surface-1)] border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1 overflow-hidden">
                   <p className="text-[10px] font-bold uppercase text-[#6B7280]">Daily Activity</p>
                   <p className="text-xs font-bold text-[#111827]">40 Dials / 50 Emails</p>
                 </div>
-                <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1 overflow-hidden">
+                <div className="bg-[var(--surface-1)] border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1 overflow-hidden">
                   <p className="text-[10px] font-bold uppercase text-[#6B7280]">Weekly Target</p>
                   <p className="text-xs font-extrabold text-[#2563EB]">5 Meetings Booked</p>
                 </div>
-                <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1 overflow-hidden">
+                <div className="bg-[var(--surface-1)] border border-[#E5E7EB] rounded-xl p-3.5 text-center space-y-1 overflow-hidden">
                   <p className="text-[10px] font-bold uppercase text-[#6B7280]">Monthly Goal</p>
                   <p className="text-xs font-extrabold text-emerald-600">3 Qualified Deals</p>
                 </div>
@@ -904,7 +904,7 @@ export default function DedicatedOfferLetterStudioPage() {
                   <ChevronDown size={14} className={cn("transition-transform", expandedAnnexure === "annexure-a" ? "rotate-180" : "")} />
                 </button>
                 {expandedAnnexure === "annexure-a" && (
-                  <div className="p-4 text-xs text-[#4B5563] space-y-2 bg-white border-t border-[#E5E7EB]">
+                  <div className="p-4 text-xs text-[#4B5563] space-y-2 bg-[var(--surface-1)] border-t border-[#E5E7EB]">
                     <p>• Base Quota (1–3 SQOs): 10% Net Revenue Commission</p>
                     <p>• High Performer (4–6 SQOs): 12.5% Net Revenue Commission</p>
                     <p>• President's Club (7+ SQOs): 15% Net Revenue Commission + ₹10,000 Milestone Bonus</p>
@@ -922,7 +922,7 @@ export default function DedicatedOfferLetterStudioPage() {
                   <ChevronDown size={14} className={cn("transition-transform", expandedAnnexure === "annexure-b" ? "rotate-180" : "")} />
                 </button>
                 {expandedAnnexure === "annexure-b" && (
-                  <div className="p-4 text-xs text-[#4B5563] space-y-2 bg-white border-t border-[#E5E7EB]">
+                  <div className="p-4 text-xs text-[#4B5563] space-y-2 bg-[var(--surface-1)] border-t border-[#E5E7EB]">
                     <p>Aggressive sales tactics or false pricing commitments are strictly prohibited.</p>
                   </div>
                 )}
@@ -977,7 +977,7 @@ export default function DedicatedOfferLetterStudioPage() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="relative w-full max-w-xl bg-white h-full shadow-2xl border-l border-[#E5E7EB] flex flex-col z-10 overflow-hidden"
+              className="relative w-full max-w-xl bg-[var(--surface-1)] h-full shadow-2xl border-l border-[#E5E7EB] flex flex-col z-10 overflow-hidden"
             >
               {/* Drawer Header */}
               <div className="p-5 border-b border-[#E5E7EB] flex items-center justify-between bg-[#F7F7F5] shrink-0">
@@ -1003,7 +1003,7 @@ export default function DedicatedOfferLetterStudioPage() {
                 </div>
 
                 {/* Email Body Notification Text */}
-                <div className="border border-[#E5E7EB] rounded-xl p-5 bg-white shadow-xs space-y-4 leading-relaxed text-[#374151] overflow-hidden">
+                <div className="border border-[#E5E7EB] rounded-xl p-5 bg-[var(--surface-1)] shadow-xs space-y-4 leading-relaxed text-[#374151] overflow-hidden">
                   <p className="font-semibold text-[#111827]">Dear {selectedCandidate?.name},</p>
                   <p>Congratulations.</p>
                   <p>Following our recent discussions, we are pleased to extend an offer for the position of <strong>Sales Development Representative (SDR)</strong> at GrowX Labs Tech Pvt. Ltd.</p>
@@ -1028,7 +1028,7 @@ export default function DedicatedOfferLetterStudioPage() {
                     <Paperclip size={16} className="shrink-0" />
                     <span className="truncate">{pdfFilename}</span>
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider bg-white px-2 py-0.5 rounded border border-blue-200 text-blue-700 shrink-0">
+                  <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--surface-1)] px-2 py-0.5 rounded border border-blue-200 text-blue-700 shrink-0">
                     PDF Attachment
                   </span>
                 </div>

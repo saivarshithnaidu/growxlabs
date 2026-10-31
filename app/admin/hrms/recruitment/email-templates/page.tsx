@@ -248,7 +248,7 @@ export default function EmailTemplatesPage() {
               <div className="flex-1 overflow-auto">
                 {previewMode ? (
                   <div className="p-6">
-                    <div className="max-w-[600px] mx-auto bg-white rounded-lg shadow-lg overflow-hidden border border-slate-200">
+                    <div className="max-w-[600px] mx-auto bg-[var(--surface-1)] rounded-lg shadow-lg overflow-hidden border border-[var(--border)]">
                       <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
                     </div>
                   </div>

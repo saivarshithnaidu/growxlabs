@@ -81,7 +81,7 @@ export default async function RevenueTracking() {
             </div>
          </div>
 
-         <div className="bg-white border border-white p-8 rounded-2xl flex flex-col justify-center gap-4 group hover:translate-y-[-4px] transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.05)] cursor-pointer">
+         <div className="bg-[var(--surface-1)] border border-white p-8 rounded-2xl flex flex-col justify-center gap-4 group hover:translate-y-[-4px] transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.05)] cursor-pointer">
             <h3 className="text-2xl font-bold text-black tracking-tight leading-tight">Optimize <br/> Monetization</h3>
             <p className="text-black/60 text-sm font-medium leading-relaxed">Analyze drop-off rates and adjust discount corridors for maximum terminal yield.</p>
             <ArrowRight className="text-black ml-auto mt-2 transition-transform group-hover:translate-x-2" size={20} />

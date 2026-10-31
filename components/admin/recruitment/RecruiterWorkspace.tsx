@@ -322,7 +322,7 @@ function CandidateFlyout({ candidate, onClose }: { candidate: Candidate; onClose
           </h3>
           <div className="flex items-baseline gap-2">
             <div className="admin-kpi-value text-violet-600">{candidate.matchScore ?? 94}%</div>
-            <span className="text-xs font-bold text-slate-500">Overall Role Fit: High Match</span>
+            <span className="text-xs font-bold text-[var(--text-muted)]">Overall Role Fit: High Match</span>
           </div>
 
           <p className="text-xs leading-5 text-[var(--text-secondary)]">

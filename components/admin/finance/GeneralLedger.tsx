@@ -89,7 +89,7 @@ export function GeneralLedger({ accounts, items, onPostVoucher }: GeneralLedgerP
     <div className="grid md:grid-cols-3 gap-6">
       {/* Chart accounts balances */}
       <div className="md:col-span-1">
-        <Card className="p-5 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-5 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-3 mb-4 flex items-center gap-2">
             <Database size={14} className="text-[#0075de]" /> Chart of Accounts
           </h3>
@@ -110,7 +110,7 @@ export function GeneralLedger({ accounts, items, onPostVoucher }: GeneralLedgerP
 
       {/* Ledger transactions logs */}
       <div className="md:col-span-2 space-y-6">
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <div className="flex justify-between items-center border-b border-[#e6e6e6] pb-3 mb-4">
             <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-widest flex items-center gap-2">
               <ArrowLeftRight size={14} className="text-[#0075de]" /> Double-Entry General Ledger
@@ -160,7 +160,7 @@ export function GeneralLedger({ accounts, items, onPostVoucher }: GeneralLedgerP
       {/* Manual Voucher Entry Modal */}
       {showVoucherModal && (
         <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <Card className="bg-white border border-[#e6e6e6] w-full max-w-2xl p-6 shadow-xl rounded-lg space-y-6">
+          <Card className="bg-[var(--surface-1)] border border-[#e6e6e6] w-full max-w-2xl p-6 shadow-xl rounded-lg space-y-6">
             <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5">Post Journal Voucher</h3>
             <form onSubmit={handlePostEntry} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -182,7 +182,7 @@ export function GeneralLedger({ accounts, items, onPostVoucher }: GeneralLedgerP
               <div className="space-y-3.5 border-t border-[#e6e6e6] pt-4">
                 <div className="flex justify-between items-center">
                   <span className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Journal debits / credits splits</span>
-                  <Button type="button" onClick={handleAddLine} className="h-7 text-[8px] font-bold uppercase tracking-widest bg-white border border-[#e6e6e6] text-[#0075de] hover:bg-neutral-50 px-2 rounded-md">
+                  <Button type="button" onClick={handleAddLine} className="h-7 text-[8px] font-bold uppercase tracking-widest bg-[var(--surface-1)] border border-[#e6e6e6] text-[#0075de] hover:bg-[var(--surface-hover)] px-2 rounded-md">
                     Add Line
                   </Button>
                 </div>
@@ -233,7 +233,7 @@ export function GeneralLedger({ accounts, items, onPostVoucher }: GeneralLedgerP
               </div>
 
               <div className="flex gap-3 justify-end border-t border-[#e6e6e6] pt-4">
-                <Button type="button" onClick={() => setShowVoucherModal(false)} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-white border border-[#e6e6e6] text-neutral-500 hover:bg-neutral-50 rounded-md px-4">Cancel</Button>
+                <Button type="button" onClick={() => setShowVoucherModal(false)} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-[var(--surface-1)] border border-[#e6e6e6] text-neutral-500 hover:bg-[var(--surface-hover)] rounded-md px-4">Cancel</Button>
                 <Button type="submit" disabled={submitting} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-[#0075de] text-white hover:bg-[#0075de]/90 rounded-md px-4">Post Voucher</Button>
               </div>
             </form>

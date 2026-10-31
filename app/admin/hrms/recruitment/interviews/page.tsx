@@ -149,7 +149,7 @@ export default function AdminInterviewsPage() {
 
   const getAccessBadge = (assignments: any[]) => {
     if (!assignments || assignments.length === 0) {
-      return <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">Unassigned</span>;
+      return <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[var(--surface-hover)] text-[var(--text-secondary)]">Unassigned</span>;
     }
 
     const now = new Date();

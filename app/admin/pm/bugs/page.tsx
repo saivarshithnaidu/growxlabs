@@ -100,13 +100,13 @@ export default function BugsPage() {
           <Loader2 className="animate-spin text-[#0075de] h-6 w-6" />
         </div>
       ) : bugs.length === 0 ? (
-        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-white text-center p-6">
+        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-[var(--surface-1)] text-center p-6">
           <Bug className="w-10 h-10 text-neutral-300 mb-2" />
           <h4 className="text-sm font-bold text-neutral-850">All quiet on Bug QA</h4>
           <p className="text-xs text-neutral-400 max-w-xs mt-1">No active issues logged for your current projects.</p>
         </div>
       ) : (
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <div className="overflow-x-auto text-xs text-left">
             <table className="w-full border-collapse">
               <thead>
@@ -141,7 +141,7 @@ export default function BugsPage() {
       {/* Add Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <Card className="bg-white border border-[#e6e6e6] w-full max-w-md p-6 shadow-xl rounded-lg space-y-6">
+          <Card className="bg-[var(--surface-1)] border border-[#e6e6e6] w-full max-w-md p-6 shadow-xl rounded-lg space-y-6">
             <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5">Create Bug Ticket</h3>
             <form onSubmit={handleCreateBug} className="space-y-4">
               <div className="space-y-3">
@@ -156,7 +156,7 @@ export default function BugsPage() {
                       required
                       value={newBug.project_id}
                       onChange={e => setNewBug({ ...newBug, project_id: e.target.value })}
-                      className="w-full h-9 bg-white border border-[#e6e6e6] rounded-md px-2 text-xs text-neutral-805"
+                      className="w-full h-9 bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md px-2 text-xs text-neutral-805"
                     >
                       <option value="">Select project...</option>
                       {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -167,7 +167,7 @@ export default function BugsPage() {
                     <select
                       value={newBug.severity}
                       onChange={e => setNewBug({ ...newBug, severity: e.target.value })}
-                      className="w-full h-9 bg-white border border-[#e6e6e6] rounded-md px-2 text-xs text-neutral-805"
+                      className="w-full h-9 bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md px-2 text-xs text-neutral-805"
                     >
                       <option value="LOW">LOW</option>
                       <option value="MEDIUM">MEDIUM</option>
@@ -184,13 +184,13 @@ export default function BugsPage() {
                     value={newBug.steps_to_reproduce}
                     onChange={e => setNewBug({ ...newBug, steps_to_reproduce: e.target.value })}
                     placeholder="1. Open app..."
-                    className="w-full text-xs bg-white border border-[#e6e6e6] rounded p-2 focus:outline-none"
+                    className="w-full text-xs bg-[var(--surface-1)] border border-[#e6e6e6] rounded p-2 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="flex gap-3 justify-end border-t border-[#e6e6e6] pt-4">
-                <Button type="button" onClick={() => setShowAddModal(false)} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-white border border-[#e6e6e6] text-neutral-500 hover:bg-neutral-50 rounded-md px-4">Cancel</Button>
+                <Button type="button" onClick={() => setShowAddModal(false)} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-[var(--surface-1)] border border-[#e6e6e6] text-neutral-500 hover:bg-[var(--surface-hover)] rounded-md px-4">Cancel</Button>
                 <Button type="submit" className="h-9 text-[10px] font-bold uppercase tracking-widest bg-red-500 text-white hover:bg-red-500/90 rounded-md px-4">Log Bug</Button>
               </div>
             </form>

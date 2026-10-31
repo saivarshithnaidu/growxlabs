@@ -71,7 +71,7 @@ export default function TimesheetsPage() {
           <TimeTracker tasks={tasks} onLogTime={handleLogTime} />
 
           {/* Timesheets List */}
-          <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+          <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
             <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-3 mb-4">Historical Time Logs</h3>
             {logs.length === 0 ? (
               <div className="text-center py-10 text-xs text-neutral-450 font-semibold">No hours logs submitted yet.</div>

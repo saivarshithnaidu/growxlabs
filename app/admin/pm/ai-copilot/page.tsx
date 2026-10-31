@@ -45,7 +45,7 @@ export default function AiCopilotPage() {
       <div className="grid md:grid-cols-3 gap-6">
         {/* Requirements form */}
         <div className="md:col-span-1">
-          <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+          <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
             <form onSubmit={handlePlanSprint} className="space-y-4">
               <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5">Agile Requirements Breakdown</h3>
               <div className="space-y-1">
@@ -73,12 +73,12 @@ export default function AiCopilotPage() {
         {/* Results */}
         <div className="md:col-span-2">
           {loading ? (
-            <div className="h-64 flex flex-col items-center justify-center border border-[#e6e6e6] rounded-md bg-white">
+            <div className="h-64 flex flex-col items-center justify-center border border-[#e6e6e6] rounded-md bg-[var(--surface-1)]">
               <Loader2 className="animate-spin text-[#0075de] h-8 w-8 mb-2" />
               <span className="text-xs font-semibold text-neutral-450">Gemini parsing requirements scope...</span>
             </div>
           ) : plan ? (
-            <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm space-y-6">
+            <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm space-y-6">
               <div className="border-b border-[#e6e6e6] pb-3">
                 <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest">Generated Sprint Goals</h3>
                 <p className="text-xs text-neutral-600 font-medium mt-2 bg-[#f6f5f4] p-3.5 rounded border border-[#e6e6e6]/60 leading-relaxed">
@@ -90,7 +90,7 @@ export default function AiCopilotPage() {
                 <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Backlog Items Proposal</span>
                 <div className="space-y-3">
                   {plan.tasks?.map((t: any, idx: number) => (
-                    <div key={idx} className="border border-[#e6e6e6] p-4 rounded-md flex items-center justify-between hover:border-[#0075de]/30 transition-all bg-white shadow-sm">
+                    <div key={idx} className="border border-[#e6e6e6] p-4 rounded-md flex items-center justify-between hover:border-[#0075de]/30 transition-all bg-[var(--surface-1)] shadow-sm">
                       <div className="space-y-1">
                         <h4 className="text-xs font-bold text-neutral-900 leading-snug">{t.title}</h4>
                         {t.description && <p className="text-[10px] text-neutral-500">{t.description}</p>}
@@ -104,7 +104,7 @@ export default function AiCopilotPage() {
               </div>
             </Card>
           ) : (
-            <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-white text-center p-6">
+            <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-[var(--surface-1)] text-center p-6">
               <Zap className="w-10 h-10 text-neutral-300 mb-2" />
               <h4 className="text-sm font-bold text-neutral-850">Sprint Planning Workspace</h4>
               <p className="text-xs text-neutral-400 max-w-xs mt-1">Submit your requirements specs to auto-populate story logs.</p>

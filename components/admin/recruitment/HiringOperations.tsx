@@ -164,11 +164,11 @@ export default function HiringOperations() {
   const jobList = jobs.data?.items || [];
 
   return (
-    <div className="space-y-6 text-slate-900">
-      <header className="border-b border-slate-200 pb-6">
+    <div className="space-y-6 text-[var(--text-primary)]">
+      <header className="border-b border-[var(--border)] pb-6">
         <div className="text-[10px] font-bold uppercase tracking-[.18em] text-[#0075de]">Recruitment Operations</div>
         <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Requisitions and Jobs</h1>
-        <p className="mt-1 text-xs text-slate-500">Run approval-gated workforce requests and publish approved openings to careers.growxlabs.tech.</p>
+        <p className="mt-1 text-xs text-[var(--text-muted)]">Run approval-gated workforce requests and publish approved openings to careers.growxlabs.tech.</p>
       </header>
 
       {message && (
@@ -196,40 +196,40 @@ export default function HiringOperations() {
       {/* Create Requisition Form */}
       <form
         onSubmit={handleCreateRequisitionSubmit}
-        className="grid gap-3.5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:grid-cols-4"
+        className="grid gap-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-5 shadow-sm md:grid-cols-4"
       >
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Role Title</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Role Title</label>
           <input
             required
             placeholder="e.g. Business Development Executive (BDE)"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium outline-none focus:border-[#0075de]"
+            className="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium outline-none focus:border-[#0075de]"
           />
         </div>
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Department</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Department</label>
           <input
             required
             placeholder="e.g. Sales & Marketing"
             value={form.departmentID}
             onChange={(e) => setForm({ ...form, departmentID: e.target.value })}
-            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium outline-none focus:border-[#0075de]"
+            className="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium outline-none focus:border-[#0075de]"
           />
         </div>
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Hiring Manager</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Hiring Manager</label>
           <input
             required
             placeholder="e.g. svp@growxlabs.tech"
             value={form.managerID}
             onChange={(e) => setForm({ ...form, managerID: e.target.value })}
-            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium outline-none focus:border-[#0075de]"
+            className="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium outline-none focus:border-[#0075de]"
           />
         </div>
         <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Openings</label>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Openings</label>
           <div className="flex gap-2">
             <input
               required
@@ -237,7 +237,7 @@ export default function HiringOperations() {
               type="number"
               value={form.positions}
               onChange={(e) => setForm({ ...form, positions: e.target.value })}
-              className="w-20 rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium outline-none focus:border-[#0075de]"
+              className="w-20 rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium outline-none focus:border-[#0075de]"
             />
             <button
               disabled={createRequisitionMutation.isPending}
@@ -251,18 +251,18 @@ export default function HiringOperations() {
 
       {/* Active Requisitions List */}
       <section className="space-y-3">
-        <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+        <h2 className="text-sm font-extrabold text-[var(--text-primary)] flex items-center gap-2">
           <FileText size={16} className="text-[#0075de]" /> Active Requisitions ({reqList.length})
         </h2>
         <div className="grid gap-3">
           {reqList.map((item) => (
             <article
               key={item.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-4 shadow-sm"
             >
               <div>
-                <b className="text-sm font-bold text-slate-900">{item.title}</b>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <b className="text-sm font-bold text-[var(--text-primary)]">{item.title}</b>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5">
                   {item.numberOfPositions} position(s) · Status:{" "}
                   <span className="font-bold text-[#0075de] uppercase tracking-wider text-[11px]">{item.status}</span>
                 </p>
@@ -271,7 +271,7 @@ export default function HiringOperations() {
                 {item.status === "draft" && (
                   <button
                     onClick={() => void action(`/requisitions/${item.id}/submit`)}
-                    className="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                    className="rounded-xl border border-[var(--border)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
                   >
                     Submit for Approval
                   </button>
@@ -308,19 +308,19 @@ export default function HiringOperations() {
 
       {/* Published Jobs List */}
       <section className="space-y-3">
-        <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+        <h2 className="text-sm font-extrabold text-[var(--text-primary)] flex items-center gap-2">
           <PlusCircle size={16} className="text-[#0075de]" /> Job Postings ({jobList.length})
         </h2>
         <div className="grid gap-3">
           {jobList.map((item) => (
             <article
               key={item.id}
-              className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-4 shadow-sm"
             >
               <div>
-                <b className="text-sm font-bold text-slate-900">{item.title}</b>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Path: <span className="font-mono text-slate-700">/{item.slug}</span> · Status:{" "}
+                <b className="text-sm font-bold text-[var(--text-primary)]">{item.title}</b>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                  Path: <span className="font-mono text-[var(--text-secondary)]">/{item.slug}</span> · Status:{" "}
                   <span className="font-bold uppercase tracking-wider text-[11px] text-[#0075de]">{item.status}</span>
                 </p>
               </div>

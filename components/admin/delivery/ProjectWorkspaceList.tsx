@@ -1,8 +1,14 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IconPlus, IconSparkle } from "@/components/admin/GrowXIcons";
+import { FolderKanban, Plus } from "lucide-react";
+import {
+  Badge, Button, Card, CardHeader, DataTable, type DataTableColumn, Input, Modal, RelativeTime, toast, type BadgeVariant,
+} from "@/src/components/ui";
+import { EmptyState, ErrorState, FormField, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
 
 type Workspace = {
   id: string;
@@ -12,17 +18,39 @@ type Workspace = {
   summary: Record<string, unknown>;
   created_at: string;
   consulting_projects: { project_number: string } | null;
+  companyName?: string | null;
 };
 
 type AvailableProject = {
   id: string;
   projectNumber: string;
-  companyName: string;
+  companyName: string | null;
 };
 
 type WorkspaceResponse = {
   workspaces: Workspace[];
   availableProjects?: AvailableProject[];
+};
+
+const STATUS: Record<string, BadgeVariant> = {
+  planning: "neutral",
+  active: "info",
+  in_progress: "info",
+  on_hold: "warning",
+  blocked: "danger",
+  completed: "success",
+  closed: "success",
+  cancelled: "danger",
+};
+const HEALTH: Record<string, BadgeVariant> = {
+  on_track: "success",
+  at_risk: "warning",
+  off_track: "danger",
+  blocked: "danger",
+};
+const humanize = (value?: string | null) => {
+  const t = String(value || "").replaceAll("_", " ").trim();
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : "";
 };
 
 const fetchWorkspaces = async () => {
@@ -34,7 +62,10 @@ const fetchWorkspaces = async () => {
 
 export function ProjectWorkspaceList() {
   const qc = useQueryClient();
+  const router = useRouter();
+  const breadcrumb = useAdminBreadcrumb();
   const [projectId, setProjectId] = useState("");
+  const [manualOpen, setManualOpen] = useState(false);
 
   const query = useQuery({
     queryKey: ["admin", "project-workspaces"],
@@ -55,8 +86,11 @@ export function ProjectWorkspaceList() {
     },
     onSuccess: () => {
       setProjectId("");
+      setManualOpen(false);
+      toast({ title: "Workspace activated", variant: "success" });
       qc.invalidateQueries({ queryKey: ["admin", "project-workspaces"] });
     },
+    onError: (error: Error) => toast({ title: error.message, variant: "danger" }),
   });
 
   const submit = (event: FormEvent) => {
@@ -65,107 +99,105 @@ export function ProjectWorkspaceList() {
   };
 
   const availableProjects = query.data?.availableProjects || [];
+  const pendingId = activate.isPending ? activate.variables : undefined;
+
+  const columns: DataTableColumn<Workspace>[] = [
+    {
+      id: "project",
+      header: "Project",
+      width: "30%",
+      sortValue: (w) => w.consulting_projects?.project_number || "",
+      cell: (w) => <span className="ds-t-body-strong ds-num text-[var(--text-primary)]">{w.consulting_projects?.project_number || "Unnumbered"}</span>,
+    },
+    {
+      id: "client",
+      header: "Client",
+      sortValue: (w) => w.companyName || "",
+      cell: (w) => w.companyName ? <span className="truncate text-[var(--text-primary)]">{w.companyName}</span> : <span className="text-[var(--text-disabled)]">Not linked</span>,
+    },
+    { id: "status", header: "Status", sortValue: (w) => w.status, cell: (w) => <Badge variant={STATUS[w.status] || "neutral"}>{humanize(w.status)}</Badge> },
+    { id: "health", header: "Health", sortValue: (w) => w.health, cell: (w) => w.health ? <Badge variant={HEALTH[w.health] || "neutral"}>{humanize(w.health)}</Badge> : null },
+    { id: "created", header: "Activated", sortValue: (w) => new Date(w.created_at), cell: (w) => <RelativeTime value={w.created_at} className="text-[var(--text-muted)]" /> },
+  ];
 
   return (
-    <div className="space-y-6">
-      {/* Quick-Activate Banner for unactivated projects */}
-      {availableProjects.length > 0 && (
-        <div className="rounded-xl border border-blue-200 dark:border-blue-900/60 bg-blue-50/60 dark:bg-blue-950/20 p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wider">
-            <IconSparkle size={14} className="text-[#0075de]" />
-            <span>Ready for Workspace Activation ({availableProjects.length})</span>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {availableProjects.map((p) => (
-              <div
-                key={p.id}
-                className="flex items-center justify-between gap-3 p-3 rounded-lg bg-white dark:bg-slate-900 border border-blue-100 dark:border-blue-900/40 shadow-xs"
-              >
-                <div className="min-w-0">
-                  <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
-                    {p.companyName}
-                  </div>
-                  <div className="text-[11px] font-mono font-semibold text-[#0075de] mt-0.5">
-                    {p.projectNumber}
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => activate.mutate(p.id)}
-                  disabled={activate.isPending}
-                  className="shrink-0 px-3 py-1.5 rounded-md bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
-                >
-                  <IconPlus size={13} />
-                  <span>{activate.isPending ? "Activating…" : "1-Click Activate"}</span>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+    <div className="mx-auto max-w-[1280px]">
+      <PageHeader
+        title="Project workspaces"
+        breadcrumb={breadcrumb}
+        info="Delivery workspaces open only after payment is verified and kickoff is complete."
+        actions={<Button variant="secondary" iconLeft={<Plus size={16} strokeWidth={1.5} />} onClick={() => setManualOpen(true)}>Activate by project ID</Button>}
+      />
 
-      {/* Manual Input Form */}
-      <form
-        className="flex flex-col gap-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 md:flex-row"
-        onSubmit={submit}
-      >
-        <label className="grid flex-1 gap-2">
-          <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-            Activated consulting project ID or Official Number
-          </span>
-          <input
-            className="min-h-11 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 text-xs font-mono"
-            value={projectId}
-            onChange={(event) => setProjectId(event.target.value)}
-            placeholder="Paste GXL-PRJ-2026-000001 or project UUID"
-          />
-        </label>
-        <button
-          className="min-h-11 self-end rounded-md bg-[#164d75] hover:bg-[#113a58] px-5 font-semibold text-white text-xs disabled:opacity-50 transition-colors cursor-pointer"
-          disabled={activate.isPending || !projectId.trim()}
-        >
-          {activate.isPending ? "Activating…" : "Activate workspace"}
-        </button>
-        {activate.error && (
-          <p role="alert" className="self-center text-sm text-red-700">
-            {activate.error.message}
-          </p>
-        )}
-      </form>
-
-      {/* Workspaces Grid */}
-      {query.isPending ? (
-        <p className="text-xs text-slate-500">Loading projects…</p>
-      ) : query.error ? (
-        <p role="alert" className="text-red-700 text-xs">
-          {query.error.message}
-        </p>
+      {query.error ? (
+        <ErrorState title="Couldn't load workspaces" description={query.error.message} onRetry={() => query.refetch()} />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {query.data?.workspaces.map((workspace) => (
-            <a
-              key={workspace.id}
-              href={`/admin/projects/${workspace.id}`}
-              className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm transition hover:border-[#164d75]"
-            >
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
-                {workspace.consulting_projects?.project_number || "Project workspace"}
-              </p>
-              <h2 className="mt-3 text-xl font-semibold capitalize text-slate-900 dark:text-slate-100">
-                {workspace.status.replaceAll("_", " ")}
-              </h2>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                Health: {workspace.health.replaceAll("_", " ")}
-              </p>
-            </a>
-          ))}
-          {!query.data?.workspaces.length && (
-            <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-800 p-8 text-slate-500 text-xs">
-              No activated project workspaces.
-            </div>
+        <div className="flex flex-col gap-6">
+          {availableProjects.length > 0 && (
+            <Card as="section" padding="none">
+              <div className="px-5 pt-5">
+                <CardHeader title="Ready to activate" description="Active consulting projects without a delivery workspace yet." />
+              </div>
+              <ul className="divide-y divide-[var(--border-subtle)] border-t border-[var(--border-subtle)]">
+                {availableProjects.map((p) => (
+                  <li key={p.id} className="flex flex-wrap items-center gap-3 px-5 py-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="ds-t-body-strong truncate text-[var(--text-primary)]">{p.companyName || "Client not linked"}</p>
+                      <p className="ds-t-meta ds-num text-[var(--text-muted)]">{p.projectNumber}</p>
+                    </div>
+                    <Button
+                      size={28}
+                      variant="primary"
+                      loading={pendingId === p.id}
+                      disabled={activate.isPending && pendingId !== p.id}
+                      onClick={() => activate.mutate(p.id)}
+                    >
+                      Activate workspace
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </Card>
           )}
+
+          <DataTable
+            label="Project workspaces"
+            columns={columns}
+            rows={query.data?.workspaces || []}
+            getRowId={(w) => w.id}
+            loading={query.isPending}
+            skeletonRows={4}
+            onRowClick={(w) => router.push(`/admin/projects/${w.id}`)}
+            emptyState={
+              <EmptyState
+                icon={<FolderKanban size={24} strokeWidth={1.5} />}
+                title="No workspaces yet"
+                description="Activate one from a ready project, or by its project ID."
+              />
+            }
+          />
         </div>
       )}
+
+      <Modal
+        open={manualOpen}
+        onOpenChange={(open) => { setManualOpen(open); if (!open) setProjectId(""); }}
+        title="Activate by project ID"
+        description="For a consulting project that isn't listed as ready."
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setManualOpen(false)}>Cancel</Button>
+            <Button type="submit" form="activate-workspace-form" variant="primary" loading={activate.isPending} disabled={!projectId.trim()}>Activate workspace</Button>
+          </>
+        }
+      >
+        <form id="activate-workspace-form" onSubmit={submit}>
+          <FormField label="Project number or ID" required hint="For example GXL-PRJ-2026-000001, or the project UUID.">
+            {(f) => <Input {...f} required value={projectId} onChange={(event) => setProjectId(event.target.value)} placeholder="GXL-PRJ-2026-000001" />}
+          </FormField>
+        </form>
+      </Modal>
     </div>
   );
 }

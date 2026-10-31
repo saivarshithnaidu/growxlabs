@@ -17,8 +17,8 @@ export function AdminDocumentActions({ assessmentId }: { assessmentId: string })
     onSuccess: ({ name }) => { setSuccess(`${name.replaceAll("-", " ")} completed successfully.`); setTimeout(() => window.location.reload(), 500); },
   });
   return <div className="flex flex-wrap items-center gap-2">
-    <button type="button" onClick={() => router.push(`/admin/discovery-meetings/new?assessmentId=${assessmentId}`)} className="min-h-11 rounded bg-[#1d4f7a] px-3 text-sm font-semibold text-white">Schedule Discovery Meeting</button>
-    {["start-review", "request-information", "reopen"].map((name) => <button key={name} type="button" disabled={action.isPending} onClick={() => { setSuccess(""); action.mutate(name); }} className="min-h-11 rounded border border-slate-300 px-3 text-sm font-semibold capitalize disabled:opacity-50">{action.isPending ? "Working…" : name.replaceAll("-", " ")}</button>)}
+    <button type="button" onClick={() => router.push(`/admin/discovery-meetings/new?assessmentId=${assessmentId}`)} className="min-h-11 rounded bg-[var(--accent)] px-3 text-sm font-semibold text-white">Schedule Discovery Meeting</button>
+    {["start-review", "request-information", "reopen"].map((name) => <button key={name} type="button" disabled={action.isPending} onClick={() => { setSuccess(""); action.mutate(name); }} className="min-h-11 rounded border border-[var(--border)] px-3 text-sm font-semibold capitalize disabled:opacity-50">{action.isPending ? "Working…" : name.replaceAll("-", " ")}</button>)}
     {action.error && <span role="alert" className="text-xs text-red-700">{action.error.message}</span>}{success && <span role="status" className="text-xs font-semibold text-emerald-700">{success}</span>}
   </div>;
 }

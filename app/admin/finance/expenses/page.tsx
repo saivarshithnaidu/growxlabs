@@ -86,13 +86,13 @@ export default function ExpensesPage() {
           <Loader2 className="animate-spin text-[#0075de] h-6 w-6" />
         </div>
       ) : expenses.length === 0 ? (
-        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-white text-center p-6">
+        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-[var(--surface-1)] text-center p-6">
           <Wallet className="w-10 h-10 text-neutral-300 mb-2" />
           <h4 className="text-sm font-bold text-neutral-850">No expenses recorded</h4>
           <p className="text-xs text-neutral-400 max-w-xs mt-1">Log corporate expenditures to balance income ledger accounts.</p>
         </div>
       ) : (
-        <Card className="p-6 border border-[#e6e6e6] bg-white rounded-lg shadow-sm">
+        <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
           <div className="overflow-x-auto text-xs text-left">
             <table className="w-full border-collapse">
               <thead>
@@ -123,7 +123,7 @@ export default function ExpensesPage() {
       {/* Add Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <Card className="bg-white border border-[#e6e6e6] w-full max-w-md p-6 shadow-xl rounded-lg space-y-6">
+          <Card className="bg-[var(--surface-1)] border border-[#e6e6e6] w-full max-w-md p-6 shadow-xl rounded-lg space-y-6">
             <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5">Log Corporate Expense</h3>
             <form onSubmit={handleCreateExpense} className="space-y-4">
               <div className="space-y-3">
@@ -132,7 +132,7 @@ export default function ExpensesPage() {
                   <select
                     value={newExpense.category}
                     onChange={e => setNewExpense({ ...newExpense, category: e.target.value })}
-                    className="w-full h-9 bg-white border border-[#e6e6e6] rounded-md px-2 text-xs text-neutral-805"
+                    className="w-full h-9 bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md px-2 text-xs text-neutral-805"
                   >
                     <option value="Cloud Infrastructure">Cloud Infrastructure (5020)</option>
                     <option value="Employee Salaries">Employee Salaries (5010)</option>
@@ -158,7 +158,7 @@ export default function ExpensesPage() {
               </div>
 
               <div className="flex gap-3 justify-end border-t border-[#e6e6e6] pt-4">
-                <Button type="button" onClick={() => setShowAddModal(false)} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-white border border-[#e6e6e6] text-neutral-500 hover:bg-neutral-50 rounded-md px-4">Cancel</Button>
+                <Button type="button" onClick={() => setShowAddModal(false)} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-[var(--surface-1)] border border-[#e6e6e6] text-neutral-500 hover:bg-[var(--surface-hover)] rounded-md px-4">Cancel</Button>
                 <Button type="submit" className="h-9 text-[10px] font-bold uppercase tracking-widest bg-[#0075de] text-white hover:bg-[#0075de]/90 rounded-md px-4">Log Claim</Button>
               </div>
             </form>

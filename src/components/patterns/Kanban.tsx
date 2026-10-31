@@ -33,13 +33,15 @@ export interface KanbanColumnProps {
   /** Drop target hooks; the caller owns drag state. */
   onDragOver?: (e: DragEvent<HTMLElement>) => void;
   onDrop?: (e: DragEvent<HTMLElement>) => void;
+  /** Extra classes on the column, e.g. a width or a drop-target ring. */
+  className?: string;
   children: ReactNode;
 }
 
-export function KanbanColumn({ title, count, meta, tone = "neutral", actions, footer, emptyText, onDragOver, onDrop, children }: KanbanColumnProps) {
+export function KanbanColumn({ title, count, meta, tone = "neutral", actions, footer, emptyText, onDragOver, onDrop, className, children }: KanbanColumnProps) {
   const empty = Array.isArray(children) ? children.length === 0 : !children;
   return (
-    <section role="listitem" aria-label={title} onDragOver={onDragOver} onDrop={onDrop} className="flex w-72 shrink-0 flex-col rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-canvas)]">
+    <section role="listitem" aria-label={title} onDragOver={onDragOver} onDrop={onDrop} className={cn("flex w-72 shrink-0 flex-col rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-canvas)]", className)}>
       <header className="flex h-10 items-center gap-2 px-3">
         <span aria-hidden className={cn("h-2 w-2 shrink-0 rounded-[var(--radius-full)]", toneDot[tone])} />
         <h3 className="ds-t-body-bold truncate text-[var(--text-primary)]">{title}</h3>
