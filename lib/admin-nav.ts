@@ -4,7 +4,7 @@ import {
   UsersRound, ClipboardCheck, Search, Calendar, Sparkles, Layers, CheckCircle2, FolderKanban, Receipt,
   Zap, GitBranch, Clock, Bug, CreditCard, BookOpen, UserPlus, ClipboardList, UserCheck,
   CalendarOff, Key, Send, Mail, MessageSquare, Image as ImageIcon, Award, Ticket, ShoppingBag,
-  BarChart3, Clipboard, AlertCircle, Terminal, Shield,
+  BarChart3, Clipboard, AlertCircle, Terminal, Shield, MapPin, KeyRound, History,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { findActiveNav, type BreadcrumbItem, type NavGroupConfig, type NavItemConfig, type NavModuleConfig } from "@/src/components/ui";
@@ -241,6 +241,18 @@ export const MODULES: NavModule[] = [
       ]},
       { label: "ACCOUNTS", items: [
         { label: "Client Accounts", href: "/admin/clients", icon: Users },
+      ]},
+    ],
+  },
+  {
+    id: "location",
+    label: "Growx Location",
+    icon: MapPin,
+    href: "/admin/location",
+    groups: [
+      { label: "LOCATION API", items: [
+        { label: "Tenants & Keys", href: "/admin/location", icon: KeyRound },
+        { label: "Activity", href: "/admin/location/activity", icon: History },
       ]},
     ],
   },
