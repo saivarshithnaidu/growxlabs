@@ -9,8 +9,8 @@ export interface BadgeProps {
 
 export function Badge({ children, variant = "default", className }: BadgeProps) {
   const variantStyles = {
-    default: "bg-neutral-100 text-neutral-700 border-neutral-200",
-    outline: "border-neutral-300 text-neutral-600 bg-transparent",
+    default: "bg-[var(--surface-hover)] text-neutral-700 border-[var(--border)]",
+    outline: "border-[var(--border)] text-neutral-600 bg-transparent",
     blue: "bg-[#0075de]/10 text-[#0075de] border-[#0075de]/20",
     emerald: "bg-emerald-50 text-emerald-700 border-emerald-200",
     amber: "bg-amber-50 text-amber-700 border-amber-200"

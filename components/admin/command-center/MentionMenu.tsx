@@ -7,15 +7,28 @@ import type { MentionOption } from "./command-center.types";
 export function MentionMenu({ options, activeIndex, onSelect }: { options: MentionOption[]; activeIndex: number; onSelect: (option: MentionOption) => void }) {
   if (!options.length) return null;
   return (
-    <div role="listbox" aria-label="Command suggestions" className="absolute bottom-full left-0 z-20 mb-2 w-full max-w-md overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl">
+    <div role="listbox" aria-label="Suggestions" className="absolute bottom-full left-4 right-4 z-20 mb-2 max-w-md overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-[var(--bg-surface)] p-1 shadow-[var(--shadow-flyout)] sm:left-6">
       {options.map((option, index) => {
         const Icon = option.kind === "agent" ? Bot : option.kind === "project" ? Box : option.kind === "model" ? Cpu : Slash;
         return (
-          <button key={option.id} role="option" aria-selected={index === activeIndex} onMouseDown={(event) => event.preventDefault()} onClick={() => onSelect(option)}
-            className={cn("flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left", index === activeIndex ? "bg-blue-50" : "hover:bg-slate-50")}>
-            <Icon size={15} className="text-slate-500" />
-            <span className="min-w-0 flex-1"><span className="block text-xs font-semibold text-slate-800">{option.label}</span><span className="block truncate text-[11px] text-slate-500">{option.description}</span></span>
-            <code className="text-[10px] text-slate-400">{option.token}</code>
+          <button
+            key={option.id}
+            type="button"
+            role="option"
+            aria-selected={index === activeIndex}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => onSelect(option)}
+            className={cn(
+              "ds-focus flex w-full items-center gap-3 rounded-[var(--radius-sm)] px-2.5 py-2 text-left focus-visible:shadow-[var(--focus-ring)]",
+              index === activeIndex ? "bg-[var(--bg-active)]" : "hover:bg-[var(--bg-hover)] active:bg-[var(--bg-active)]"
+            )}
+          >
+            <Icon size={16} strokeWidth={1.5} className="shrink-0 text-[var(--text-muted)]" />
+            <span className="min-w-0 flex-1">
+              <span className="ds-t-body-strong block text-[var(--text-primary)]">{option.label}</span>
+              <span className="ds-t-meta block truncate text-[var(--text-muted)]">{option.description}</span>
+            </span>
+            <code className="ds-t-mono shrink-0 text-[var(--text-disabled)]">{option.token}</code>
           </button>
         );
       })}

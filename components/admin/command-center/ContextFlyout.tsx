@@ -141,156 +141,118 @@ export function ContextFlyout({
     <aside
       ref={panelRef}
       tabIndex={-1}
-      className="relative z-30 flex h-full w-[360px] shrink-0 flex-col border-l border-[#27272a] bg-[#141416] text-[#f4f4f5] shadow-2xl transition-all select-none"
-      aria-label="Agent Workspace Timeline & Details"
+      className="relative z-30 flex h-full w-[360px] shrink-0 flex-col border-l border-[var(--border)] bg-[var(--bg-surface)]"
+      aria-label="Activity and alerts"
     >
-      {/* Header Bar */}
-      <div className="flex h-14 items-center justify-between border-b border-[#27272a] px-4">
-        <div className="flex items-center gap-2">
-          {mode === "activity" && <Terminal size={16} className="text-blue-400" />}
-          {mode === "artifacts" && <Layers size={16} className="text-emerald-400" />}
-          {mode === "approvals" && <ShieldCheck size={16} className="text-amber-400" />}
-          {mode === "notifications" && <Bell size={16} className="text-purple-400" />}
-          <span className="font-semibold text-sm text-white capitalize">
-            {mode === "activity" ? "Execution Timeline" : mode}
-          </span>
-        </div>
-        
-        <button
-          onClick={onClose}
-          title="Close Panel"
-          className="size-8 rounded-lg text-zinc-400 hover:bg-white/5 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-        >
-          <X size={16} />
-        </button>
-      </div>
-
-      {/* Segmented Tabs Control */}
-      <div className="p-3 border-b border-[#27272a] bg-[#121214]">
-        <nav className="flex rounded-xl bg-white/[0.04] p-1 border border-white/5" aria-label="Details view tabs">
-          {(["activity", "artifacts", "approvals", "notifications"] as const).map((tab) => (
+      <div className="flex h-14 items-center gap-2 px-3">
+        <nav className="flex min-w-0 flex-1 gap-1" aria-label="Panel views">
+          {TABS.map((tab) => (
             <button
-              key={tab}
-              onClick={() => onMode(tab)}
+              key={tab.id}
+              type="button"
+              onClick={() => onMode(tab.id)}
+              aria-current={mode === tab.id ? "page" : undefined}
               className={cn(
-                "flex-1 rounded-lg py-1.5 text-[11.5px] font-semibold transition-all cursor-pointer text-center",
-                mode === tab
-                  ? "bg-white/[0.12] text-white shadow-xs"
-                  : "text-zinc-400 hover:text-white hover:bg-white/[0.03]"
+                "ds-focus ds-t-body-strong rounded-[var(--radius-sm)] px-2.5 py-1.5 focus-visible:shadow-[var(--focus-ring)]",
+                mode === tab.id
+                  ? "bg-[var(--bg-active)] text-[var(--text-primary)]"
+                  : "text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] active:bg-[var(--bg-active)]"
               )}
             >
-              {tab === "activity" ? "Timeline" : tab === "artifacts" ? "Artifacts" : tab === "approvals" ? "Approvals" : "Alerts"}
+              {tab.label}
             </button>
           ))}
         </nav>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close panel"
+          title="Close panel"
+          className="ds-focus grid size-8 shrink-0 place-items-center rounded-[var(--radius-sm)] text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:shadow-[var(--focus-ring)] active:bg-[var(--bg-active)]"
+        >
+          <X size={16} strokeWidth={1.5} />
+        </button>
       </div>
 
-      {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+      <div className="custom-scrollbar flex-1 overflow-y-auto px-3 pb-4">
         {loading ? (
-          <div className="flex h-48 items-center justify-center text-zinc-500">
-            <Loader2 size={22} className="animate-spin text-blue-400" />
+          <div className="flex h-48 items-center justify-center">
+            <span className="ds-working ds-t-body">Loading</span>
           </div>
         ) : mode === "activity" ? (
-          /* Execution Timeline Tab */
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-1 border-b border-white/5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                Live Orchestrator Trace
-              </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-zinc-400">
-                {activity.length} Events
-              </span>
-            </div>
-
-            {activity.length > 0 ? (
-              <div className="relative pl-4 space-y-4 before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/10">
-                {activity.map((act) => (
-                  <div key={act.id} className="relative group">
-                    <span
-                      className={cn(
-                        "absolute -left-4 top-1.5 size-2 rounded-full ring-4 ring-[#141416]",
-                        act.state === "complete"
-                          ? "bg-emerald-400"
-                          : act.state === "failed"
-                          ? "bg-red-400"
-                          : "bg-blue-400 animate-pulse"
-                      )}
-                    />
-                    <div className="rounded-xl border border-white/10 bg-[#1e1e22] p-3 text-xs space-y-1.5 shadow-xs hover:border-white/20 transition-all">
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-zinc-200">{act.label}</span>
-                        <time className="text-[10px] font-mono text-zinc-500">
-                          {formatTimestamp(act.timestamp)}
-                        </time>
-                      </div>
-                      {act.detail && (
-                        <p className="text-zinc-400 text-[11px] leading-relaxed">
-                          {act.detail}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="py-20 text-center text-xs text-zinc-500 space-y-2">
-                <Clock size={24} className="mx-auto text-zinc-600 mb-1" />
-                <p className="font-semibold text-zinc-300">No active trace recorded</p>
-                <p className="text-[11px] max-w-[220px] mx-auto text-zinc-500">
-                  Agent reasoning, tool calls, and execution steps will appear here in real time.
-                </p>
-              </div>
-            )}
-          </div>
+          activity.length > 0 ? (
+            <ol className="flex flex-col">
+              {activity.map((act) => (
+                <li key={act.id} className="flex items-start gap-3 rounded-[var(--radius-sm)] px-2 py-2">
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "mt-1.5 size-1.5 shrink-0 rounded-[var(--radius-full)]",
+                      act.state === "complete" ? "bg-[var(--success)]" : act.state === "failed" ? "bg-[var(--danger)]" : "bg-[var(--accent)]"
+                    )}
+                  />
+                  <span className="ds-t-body min-w-0 flex-1 text-[var(--text-primary)]">{act.label}</span>
+                  <time className="ds-t-meta ds-num shrink-0 text-[var(--text-disabled)]">{formatTimestamp(act.timestamp)}</time>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="ds-t-body px-2 py-16 text-center text-[var(--text-muted)]">Nothing has run yet.</p>
+          )
         ) : (
-          /* Other Tabs: Artifacts, Approvals, Alerts */
-          <div className="space-y-3">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="rounded-xl border border-white/10 bg-[#1e1e22] p-3.5 text-xs space-y-2.5 shadow-xs hover:border-white/20 transition-all"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="font-semibold text-sm text-zinc-100 leading-snug">
-                    {item.title}
-                  </div>
-                  <span className="shrink-0 rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-mono font-bold uppercase text-zinc-300">
-                    {item.status}
-                  </span>
-                </div>
-
-                <p className="text-zinc-400 text-xs leading-relaxed">{item.subtitle}</p>
-
-                {item.action && (
-                  <div className="pt-1 flex items-center justify-end">
-                    <button
-                      onClick={() => void act(item, item.action)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-colors cursor-pointer"
-                    >
-                      <span>{item.action}</span>
-                      <ChevronRight size={13} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
+          <>
+            {items.length > 0 && (
+              <ul className="flex flex-col gap-1">
+                {items.map((item) => (
+                  <li key={item.id} className="rounded-[var(--radius-md)] px-2 py-2.5 hover:bg-[var(--bg-hover)]">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="ds-t-body-strong min-w-0 text-[var(--text-primary)]">{item.title}</p>
+                      <span className="ds-t-meta shrink-0 text-[var(--text-muted)]">{sentence(item.status)}</span>
+                    </div>
+                    {item.subtitle && item.subtitle !== "Details unavailable" && (
+                      <p className="ds-t-meta mt-0.5 line-clamp-2 text-[var(--text-muted)]">{item.subtitle}</p>
+                    )}
+                    {item.action && (
+                      <button
+                        type="button"
+                        onClick={() => void act(item, item.action)}
+                        className="ds-focus ds-t-meta-strong mt-1.5 inline-flex items-center gap-1 rounded-[var(--radius-xs)] text-[var(--accent)] hover:underline focus-visible:shadow-[var(--focus-ring)] active:opacity-80"
+                      >
+                        {item.action}
+                        <ChevronRight size={12} strokeWidth={1.5} />
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
 
             {!items.length && !error && (
-              <div className="py-20 text-center text-xs text-zinc-500 space-y-2">
-                <Layers size={24} className="mx-auto text-zinc-600 mb-1" />
-                <p className="font-semibold text-zinc-300">No {mode} records</p>
-                <p className="text-[11px] max-w-[220px] mx-auto text-zinc-500">
-                  Deliverables, code artifacts, and governance logs will be captured here.
-                </p>
-              </div>
+              <p className="ds-t-body px-2 py-16 text-center text-[var(--text-muted)]">{EMPTY[mode] || "Nothing here yet."}</p>
             )}
-          </div>
+          </>
         )}
       </div>
     </aside>
   );
 }
+
+const TABS: { id: FlyoutMode; label: string }[] = [
+  { id: "activity", label: "Activity" },
+  { id: "approvals", label: "Approvals" },
+  { id: "artifacts", label: "Files" },
+  { id: "notifications", label: "Alerts" },
+];
+const EMPTY: Partial<Record<FlyoutMode, string>> = {
+  approvals: "Nothing waiting for approval.",
+  artifacts: "No files created yet.",
+  notifications: "No alerts.",
+  memory: "Nothing remembered yet.",
+};
+const sentence = (value: string) => {
+  const t = value.replaceAll("_", " ").toLowerCase().trim();
+  return t.charAt(0).toUpperCase() + t.slice(1);
+};
 
 function mapItem(mode: FlyoutMode, raw: unknown): SafeItem | null {
   const item = record(raw);

@@ -1,13 +1,7 @@
 "use client";
 
-import { 
-  Bell, 
-  ChevronDown, 
-  PanelLeft, 
-  PanelRight 
-} from "lucide-react";
+import { PanelLeft, PanelRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AgentPresence } from "./AgentPresence";
 import { CommandComposer } from "./CommandComposer";
 import { CommandSidebar } from "./CommandSidebar";
 import { ContextFlyout } from "./ContextFlyout";
@@ -22,6 +16,7 @@ import type {
   ToolActivity 
 } from "./command-center.types";
 import { consumeSSEChunk, record, safeString } from "./sse";
+import { ArtifactOpenContext, ArtifactPanel, isArtifactResult, type ArtifactResult } from "./ArtifactPanel";
 import { cn } from "@/lib/utils";
 
 export function CommandCenterWorkspace() {
@@ -36,6 +31,11 @@ export function CommandCenterWorkspace() {
   const [flyout, setFlyout] = useState(false);
   const [flyoutMode, setFlyoutMode] = useState<FlyoutMode>("activity");
   const [unread, setUnread] = useState(0);
+  const [openArtifact, setOpenArtifact] = useState<ArtifactResult | null>(null);
+  const showArtifact = useCallback((artifact: ArtifactResult) => {
+    setFlyout(false);
+    setOpenArtifact(artifact);
+  }, []);
   const [lastSubmission, setLastSubmission] = useState<{ text: string; attachments: ComposerAttachment[] } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -190,7 +190,7 @@ export function CommandCenterWorkspace() {
 
       setBusy(true);
       setAgentState("working");
-      setAgentSummary("Analyzing intent & tools...");
+      setAgentSummary("Working out what to do");
 
       abortRef.current = new AbortController();
       const idempotencyKey = `gxl-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
@@ -315,7 +315,7 @@ export function CommandCenterWorkspace() {
         } catch (_e) {}
         return updated;
       });
-      setAgentSummary(`Executing ${name}...`);
+      setAgentSummary(safeToolLabel(name));
       addActivity(safeToolLabel(name), "working", "Running authorized tool");
     } else if (event === "tool_result") {
       const name = safeString(value.name);
@@ -336,6 +336,7 @@ export function CommandCenterWorkspace() {
         } catch (_e) {}
         return updated;
       });
+      if (isArtifactResult(value.result)) showArtifact(value.result);
       addActivity(safeToolLabel(name), "complete", "Tool action completed");
     } else if (event === "error") {
       const errorMsg = safeString(value.message) || "Execution encountered an error.";
@@ -356,15 +357,20 @@ export function CommandCenterWorkspace() {
     ]);
   }
 
+  const openPanel = () => {
+    if (flyout) { setFlyout(false); return; }
+    setOpenArtifact(null);
+    setFlyoutMode(unread > 0 ? "notifications" : flyoutMode);
+    setFlyout(true);
+  };
+
   return (
-    <div className="flex h-full min-h-0 overflow-hidden bg-[#141416] text-[#f4f4f5] select-none font-sans">
-      
-      {/* 1. GROWX LABS SIDEBAR */}
+    <ArtifactOpenContext.Provider value={showArtifact}>
+    <div className="ds-shell ds-dark flex h-full min-h-0 overflow-hidden bg-[var(--bg-page)] text-[var(--text-primary)]">
       <CommandSidebar
         open={sidebar}
         conversations={conversations}
         activeId={activeId}
-        unread={unread}
         onClose={() => setSidebar(false)}
         onSelect={(id) => {
           setActiveId(id);
@@ -374,82 +380,35 @@ export function CommandCenterWorkspace() {
           setActiveId("new");
           setMessages([]);
           setActivity([]);
+          setOpenArtifact(null);
           if (window.innerWidth < 768) setSidebar(false);
         }}
       />
 
-      {/* 2. MAIN CONVERSATION CANVAS */}
-      <section className="flex min-w-0 flex-1 flex-col bg-[#141416] relative overflow-hidden">
-        
-        {/* Top Header Bar */}
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-[#27272a] px-3 sm:px-4 bg-[#141416]">
-          
-          {/* Left: Sidebar toggle & Conversation dropdown */}
-          <div className="flex items-center gap-2 min-w-0">
+      <section className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="flex h-14 shrink-0 items-center justify-between gap-3 px-3 sm:px-4">
+          <div className="flex min-w-0 items-center gap-2">
             {!sidebar && (
-              <button
-                onClick={() => setSidebar(true)}
-                className="size-8 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 border border-white/10 flex items-center justify-center transition-colors cursor-pointer"
-                title="Open sidebar"
-              >
-                <PanelLeft size={16} />
+              <button type="button" onClick={() => setSidebar(true)} aria-label="Open sidebar" title="Open sidebar" className={headerButton}>
+                <PanelLeft size={16} strokeWidth={1.5} />
               </button>
             )}
-
-            <button
-              type="button"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-white/5 text-left text-xs font-semibold text-white transition-colors cursor-pointer truncate max-w-[260px] sm:max-w-md"
-            >
-              <span className="truncate">{activeTitle}</span>
-              <ChevronDown size={14} className="text-zinc-500 shrink-0" />
-            </button>
+            {activeId !== "new" && <h1 className="ds-t-body-strong truncate text-[var(--text-primary)]">{activeTitle}</h1>}
           </div>
 
-          {/* Right: Agent presence pill, notification bell, timeline toggle */}
-          <div className="flex items-center gap-2">
-            
-            {/* Agent Status Presence Pill */}
-            <div className="hidden sm:block">
-              <AgentPresence
-                name="GXL Orchestrator"
-                state={agentState}
-                summary={agentSummary}
-              />
-            </div>
-
-            {/* Notification Bell */}
-            <button
-              onClick={() => {
-                setFlyoutMode("notifications");
-                setFlyout(true);
-              }}
-              className="relative size-8 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 flex items-center justify-center transition-colors cursor-pointer"
-              title="Notifications"
-            >
-              <Bell size={15} />
-              {unread > 0 && (
-                <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-red-500" />
-              )}
-            </button>
-
-            {/* Timeline Drawer Toggle */}
-            <button
-              onClick={() => setFlyout(!flyout)}
-              className={cn(
-                "size-8 rounded-lg border transition-colors flex items-center justify-center cursor-pointer",
-                flyout
-                  ? "bg-white/10 text-white border-white/20"
-                  : "text-zinc-400 hover:text-white hover:bg-white/5 border-white/10"
-              )}
-              title="Toggle Timeline & Artifacts"
-            >
-              <PanelRight size={15} />
-            </button>
-          </div>
-
+          <button
+            type="button"
+            onClick={openPanel}
+            aria-pressed={flyout}
+            aria-label={unread > 0 ? `Activity and alerts, ${unread} unread` : "Activity and alerts"}
+            title="Activity and alerts"
+            className={cn(headerButton, "relative", flyout && "bg-[var(--bg-active)] text-[var(--text-primary)]")}
+          >
+            <PanelRight size={16} strokeWidth={1.5} />
+            {unread > 0 && <span aria-hidden className="absolute right-1.5 top-1.5 size-1.5 rounded-[var(--radius-full)] bg-[var(--accent)]" />}
+          </button>
         </header>
 
-        {/* Scrollable Conversation Thread */}
         <div className="min-h-0 flex-1 overflow-y-auto custom-scrollbar" aria-live="polite">
           <MessageThread
             messages={messages}
@@ -459,18 +418,9 @@ export function CommandCenterWorkspace() {
           />
         </div>
 
-        {/* Floating Capsule Composer */}
-        <CommandComposer
-          busy={busy}
-          canRetry={Boolean(lastSubmission)}
-          onSubmit={submit}
-          onStop={stop}
-          onRetry={retry}
-        />
-
+        <CommandComposer busy={busy} onSubmit={submit} onStop={stop} />
       </section>
 
-      {/* 3. CONTEXT & TIMELINE DRAWER */}
       {flyout && (
         <ContextFlyout
           open={flyout}
@@ -482,17 +432,24 @@ export function CommandCenterWorkspace() {
         />
       )}
 
+      {openArtifact && !flyout && <ArtifactPanel result={openArtifact} onClose={() => setOpenArtifact(null)} />}
     </div>
+    </ArtifactOpenContext.Provider>
   );
 }
 
+const headerButton =
+  "ds-focus grid size-8 shrink-0 place-items-center rounded-[var(--radius-sm)] text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:shadow-[var(--focus-ring)] active:bg-[var(--bg-active)]";
+
 function safeToolLabel(name: string): string {
   const map: Record<string, string> = {
-    get_company_stats: "Database Lead Statistics",
-    search_leads: "Lead Search Pipeline",
-    search: "Web Research",
-    terminal: "Terminal Execution",
-    sql: "Database Query",
+    get_company_stats: "Reading lead statistics",
+    search_leads: "Searching leads",
+    search: "Searching the web",
+    terminal: "Running a command",
+    sql: "Querying the database",
   };
-  return map[name] || `Tool: ${name}`;
+  if (map[name]) return map[name];
+  const words = name.replaceAll("_", " ").trim();
+  return words ? words.charAt(0).toUpperCase() + words.slice(1) : "Working";
 }

@@ -230,6 +230,105 @@ export const TOOLS_DEFINITIONS = [
       },
       required: ["invoiceId"]
     }
+  },
+  {
+    name: "get_billing_overview",
+    description: "Consulting billing at a glance: totals invoiced, received and outstanding; overdue invoices; payments waiting for verification; signed agreements not yet invoiced. Use this for any general billing or money question.",
+    parameters: { type: "object", properties: {}, required: [] }
+  },
+  {
+    name: "list_consulting_invoices",
+    description: "List consulting milestone invoices (GXL-INV-...) with client, total, paid, balance, issued and due dates, and whether each is overdue.",
+    parameters: {
+      type: "object",
+      properties: {
+        status: { type: "string", description: "Optional status: draft, sent, partially_paid, paid, overdue" },
+        unpaidOnly: { type: "boolean", description: "Only invoices with a balance still due" },
+        search: { type: "string", description: "Invoice number or client name to match" },
+        limit: { type: "number", description: "Maximum rows (default 20, max 50)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "list_consulting_payments",
+    description: "List client payment submissions (GXL-PAY-...). Defaults to payments waiting for verification.",
+    parameters: {
+      type: "object",
+      properties: {
+        status: { type: "string", enum: ["verification_required", "verified", "failed", "all"], description: "Which payments to list (default verification_required)" },
+        limit: { type: "number", description: "Maximum rows (default 20, max 50)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "issue_consulting_invoice",
+    description: "Issue a consulting invoice to its client. This does not run immediately: it returns an approval request and the user approves it on a card in the chat. After calling it, tell the user in one short line to approve the card.",
+    parameters: {
+      type: "object",
+      properties: { invoice: { type: "string", description: "Invoice number, e.g. GXL-INV-2026-000001" } },
+      required: ["invoice"]
+    }
+  },
+  {
+    name: "decide_consulting_payment",
+    description: "Verify or reject a payment waiting for verification. Verifying updates the invoice balance, issues a receipt and notifies the client. This does not run immediately: it returns an approval request the user approves on a card. After calling it, tell the user in one short line to approve the card.",
+    parameters: {
+      type: "object",
+      properties: {
+        payment: { type: "string", description: "Payment number, e.g. GXL-PAY-2026-000003" },
+        decision: { type: "string", enum: ["verify", "reject"], description: "verify or reject" }
+      },
+      required: ["payment", "decision"]
+    }
+  },
+  {
+    name: "create_milestone_invoice",
+    description: "Create the milestone invoice for a signed agreement. Milestone 0 is the advance. Later milestones need triggerConfirmed=true, which you may only set when the user has said that milestone's trigger was reached. Returns an approval request the user approves on a card.",
+    parameters: {
+      type: "object",
+      properties: {
+        agreement: { type: "string", description: "Agreement number, e.g. GXL-MSA-2026-000001" },
+        milestoneIndex: { type: "number", description: "0 for the first (advance) milestone, 1 for the second, and so on" },
+        triggerConfirmed: { type: "boolean", description: "Only true when the user confirmed the milestone trigger was reached" }
+      },
+      required: ["agreement"]
+    }
+  },
+  {
+    name: "create_artifact",
+    description: "Create a file the user can open in the side panel and download: a document (Markdown), a spreadsheet (CSV, opens in Excel) or a PDF. Use it when the user asks for a file, export, report, sheet or PDF. Fill it only with data from tool results in this conversation or text the user gave you; fetch the data with a read tool first if needed. After creating it, say in one short line what it contains.",
+    parameters: {
+      type: "object",
+      properties: {
+        format: { type: "string", enum: ["document", "spreadsheet", "pdf"], description: "document, spreadsheet or pdf" },
+        name: { type: "string", description: "File name without extension, e.g. Unpaid invoices October 2026" },
+        title: { type: "string", description: "Title shown at the top of the file" },
+        sections: {
+          type: "array",
+          description: "Optional text sections",
+          items: {
+            type: "object",
+            properties: {
+              heading: { type: "string", description: "Optional section heading" },
+              body: { type: "string", description: "Section text; plain text or simple markdown" }
+            },
+            required: ["body"]
+          }
+        },
+        table: {
+          type: "object",
+          description: "Optional table; required for a spreadsheet",
+          properties: {
+            headers: { type: "array", items: { type: "string" }, description: "Column headings" },
+            rows: { type: "array", items: { type: "array", items: { type: "string" } }, description: "Rows of cell values, in header order" }
+          },
+          required: ["headers", "rows"]
+        }
+      },
+      required: ["format", "name", "title"]
+    }
   }
 ];
 

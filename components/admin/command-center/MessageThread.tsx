@@ -1,19 +1,14 @@
 "use client";
 
-import { 
-  Check, 
-  Copy, 
-  ChevronDown, 
-  Terminal, 
-  Sparkles, 
-  RotateCcw,
-  Loader2,
-  AlertTriangle
-} from "lucide-react";
+import { AlertTriangle, Check, ChevronDown, Copy } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { CommandMessage, ToolActivity } from "./command-center.types";
-import { StructuredResponseFormatter } from "./StructuredResponseFormatter";
+import { FollowUps, StructuredResponseFormatter } from "./StructuredResponseFormatter";
+import { ApprovalCard, isApprovalRequest } from "./ApprovalCard";
+import { ToolResultView } from "./ToolResultView";
+import { ArtifactCard, isArtifactResult } from "./ArtifactPanel";
+import { LiveSteps } from "./LiveSteps";
 
 interface Props {
   messages: CommandMessage[];
@@ -22,50 +17,38 @@ interface Props {
   onRetry?: () => void;
 }
 
+// One line each, and only things the orchestrator has tools for today.
+const SUGGESTIONS = [
+  "Summarize today's lead pipeline",
+  "Which invoices are unpaid?",
+  "Status of active projects",
+  "Lead stats this month",
+];
+
 export function MessageThread({ messages, busy, onSuggestion, onRetry }: Props) {
-  // Empty State: GrowX Labs Command Center Design (Matches Image 1 with dark cards)
   if (!messages.length) {
     return (
-      <div className="mx-auto flex h-full max-w-2xl flex-col justify-center px-4 py-12 text-center select-none">
-        <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 shadow-md">
-          <Sparkles size={24} />
-        </div>
-        
-        <h2 className="text-2xl font-serif font-bold tracking-tight text-[#f4f4f5]">
-          What should we move forward?
-        </h2>
-        <p className="mx-auto mt-2 max-w-md text-xs leading-relaxed text-zinc-400 font-sans">
-          The GXL Orchestrator coordinates your specialized agents and software tools across your business operations.
-        </p>
-
-        {/* 4 Dark Quick Action Cards (Never white, immune to light theme) */}
-        <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
-          {[
-            { tag: "SALES", text: "Summarize today's lead pipeline and qualified opportunities" },
-            { tag: "RESEARCH", text: "Compare top frontier model benchmarks for desktop computer use" },
-            { tag: "FINANCE", text: "Audit overdue client invoices and balance receivable" },
-            { tag: "OPERATIONS", text: "Prepare an executive briefing on ongoing software deliverables" },
-          ].map((item) => (
-            <button
-              key={item.tag}
-              onClick={() => onSuggestion(item.text)}
-              className="group rounded-xl border border-white/10 bg-[#1e1e22] hover:bg-[#26262b] hover:border-white/20 p-4 shadow-sm transition-all cursor-pointer flex flex-col justify-between gap-2.5 text-left"
-            >
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-blue-400">
-                {item.tag}
-              </span>
-              <span className="text-xs font-medium text-zinc-300 group-hover:text-white leading-relaxed">
-                {item.text}
-              </span>
-            </button>
+      <div className="mx-auto flex h-full max-w-2xl flex-col justify-center px-4 py-12">
+        <h2 className="ds-t-title-md text-center text-[var(--text-primary)] sm:text-[22px] sm:leading-8">What needs doing?</h2>
+        <ul className="mt-6 flex flex-wrap justify-center gap-2">
+          {SUGGESTIONS.map((text) => (
+            <li key={text}>
+              <button
+                type="button"
+                onClick={() => onSuggestion(text)}
+                className="ds-focus ds-t-body rounded-[var(--radius-full)] border border-[var(--border-strong)] px-3.5 py-1.5 text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:shadow-[var(--focus-ring)] active:bg-[var(--bg-active)]"
+              >
+                {text}
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 space-y-6">
+    <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8 sm:px-6">
       {messages.map((message, idx) => (
         <MessageItem
           key={message.id || idx}
@@ -79,14 +62,14 @@ export function MessageThread({ messages, busy, onSuggestion, onRetry }: Props) 
   );
 }
 
-function MessageItem({ 
-  message, 
-  streaming, 
+function MessageItem({
+  message,
+  streaming,
   onSuggestion,
-  onRetry 
-}: { 
-  message: CommandMessage; 
-  streaming: boolean; 
+  onRetry
+}: {
+  message: CommandMessage;
+  streaming: boolean;
   onSuggestion?: (text: string) => void;
   onRetry?: () => void;
 }) {
@@ -95,8 +78,8 @@ function MessageItem({
 
   if (user) {
     return (
-      <div className="flex justify-end w-full">
-        <div className="rounded-2xl bg-[#27272a] border border-white/10 px-4 py-2.5 text-[14.5px] text-[#f4f4f5] max-w-[80%] leading-relaxed select-text shadow-xs">
+      <div className="flex w-full justify-end">
+        <div className="max-w-[80%] whitespace-pre-wrap rounded-[var(--radius-lg)] bg-[var(--bg-active)] px-4 py-2.5 text-[15px] leading-relaxed text-[var(--text-primary)]">
           {message.text}
         </div>
       </div>
@@ -107,41 +90,39 @@ function MessageItem({
   return (
     <div className="flex flex-col items-start w-full space-y-3 select-text">
       
-      {/* Real Tool Calling Activity Widget */}
-      {message.toolCalls && message.toolCalls.length > 0 && (
+      {/* While the reply is in progress: what is happening, step by step */}
+      {streaming && (!message.text || (message.toolCalls?.length ?? 0) > 0) && (
+        <LiveSteps toolCalls={message.toolCalls ?? []} hasText={Boolean(message.text)} />
+      )}
+
+      {/* The answer, then the data it came from, then anything waiting for approval */}
+      {message.text && message.kind !== "error" && (
+        <StructuredResponseFormatter content={message.text} onSuggestion={onSuggestion} hideFollowUps />
+      )}
+
+      {message.toolCalls?.map((t) => <ToolResultView key={`data-${t.id}`} tool={t} />)}
+
+      {message.toolCalls?.map((t) => isArtifactResult(t.result) ? <ArtifactCard key={`file-${t.id}`} result={t.result} /> : null)}
+
+      {message.toolCalls?.map((t) => isApprovalRequest(t.result) ? <ApprovalCard key={t.id} request={t.result} /> : null)}
+
+      {message.text && message.kind !== "error" && !streaming && <FollowUps content={message.text} onSuggestion={onSuggestion} />}
+
+      {!streaming && message.toolCalls && message.toolCalls.length > 0 && (
         <AgentToolCallingTimeline toolCalls={message.toolCalls} />
       )}
 
-      {/* Main Streamed Response Text (Structured & Clean without raw symbols) */}
-      {message.text && (
-        <div className="w-full">
-          <StructuredResponseFormatter 
-            content={message.text} 
-            onSuggestion={onSuggestion}
-          />
-        </div>
-      )}
-
-      {/* Streaming spinner while generating */}
-      {streaming && !message.text && (
-        <div className="flex items-center gap-2 text-xs text-zinc-400 py-1">
-          <Loader2 size={14} className="animate-spin text-blue-400" />
-          <span>Orchestrator is processing your request...</span>
-        </div>
-      )}
-
-      {/* Error state alert if real error occurred */}
       {message.kind === "error" && (
-        <div className="w-full rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 flex items-center justify-between gap-4 mt-2">
-          <div className="flex items-center gap-2 text-xs text-red-200">
-            <AlertTriangle size={15} className="text-red-400 shrink-0" />
-            <span>{message.text || "Execution could not be completed safely."}</span>
-          </div>
+        <div className="flex w-full items-center justify-between gap-4 rounded-[var(--radius-md)] bg-[var(--danger-tint)] px-4 py-3">
+          <p className="ds-t-body flex items-center gap-2 text-[var(--text-primary)]">
+            <AlertTriangle size={16} strokeWidth={1.5} className="shrink-0 text-[var(--danger)]" />
+            {message.text || "That didn't complete."}
+          </p>
           {onRetry && (
             <button
               type="button"
               onClick={onRetry}
-              className="rounded-lg border border-red-500/30 bg-red-500/20 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500/30 transition-colors cursor-pointer"
+              className="ds-focus ds-t-body-strong shrink-0 rounded-[var(--radius-sm)] px-3 py-1.5 text-[var(--text-primary)] hover:bg-[var(--bg-hover)] focus-visible:shadow-[var(--focus-ring)] active:bg-[var(--bg-active)]"
             >
               Retry
             </button>
@@ -149,24 +130,21 @@ function MessageItem({
         </div>
       )}
 
-      {/* Copy Response Action */}
-      {message.text && !streaming && (
-        <div className="pt-1 flex items-center gap-2 text-zinc-500">
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(message.text);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 2000);
-            }}
-            className="flex items-center gap-1 text-[11px] hover:text-zinc-300 transition-colors cursor-pointer"
-            title="Copy response"
-          >
-            {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-            <span>{copied ? "Copied" : "Copy"}</span>
-          </button>
-        </div>
+      {message.text && !streaming && message.kind !== "error" && (
+        <button
+          type="button"
+          onClick={() => {
+            navigator.clipboard.writeText(message.text);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }}
+          aria-label={copied ? "Copied" : "Copy response"}
+          title={copied ? "Copied" : "Copy"}
+          className="ds-focus grid size-7 place-items-center rounded-[var(--radius-sm)] text-[var(--text-disabled)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:shadow-[var(--focus-ring)] active:bg-[var(--bg-active)]"
+        >
+          {copied ? <Check size={14} strokeWidth={1.5} className="text-[var(--success)]" /> : <Copy size={14} strokeWidth={1.5} />}
+        </button>
       )}
-
     </div>
   );
 }
@@ -174,47 +152,42 @@ function MessageItem({
 /**
  * Senior Collapsible Tool Calling Activity Widget
  */
+/** One quiet line per reply ("Used 2 tools"); expands to the raw calls when you need to check them. */
 function AgentToolCallingTimeline({ toolCalls }: { toolCalls: ToolActivity[] }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const running = toolCalls.some((t) => t.status === "calling");
 
   return (
-    <div className="w-full rounded-xl border border-white/10 bg-[#1e1e22] p-3 text-xs text-[#f4f4f5] shadow-xs">
+    <div className="w-full">
       <button
+        type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between text-left cursor-pointer hover:opacity-90"
+        aria-expanded={open}
+        className="ds-focus ds-t-meta inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] px-1.5 py-1 text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:shadow-[var(--focus-ring)] active:bg-[var(--bg-active)]"
       >
-        <div className="flex items-center gap-2 font-medium">
-          <Terminal size={14} className="text-blue-400" />
-          <span>Executed {toolCalls.length} tool {toolCalls.length === 1 ? "action" : "actions"}</span>
-        </div>
-        <ChevronDown size={14} className={cn("text-zinc-400 transition-transform", open && "rotate-180")} />
+        {running
+          ? <span aria-hidden className="ds-breathe mx-[3px] size-1.5 rounded-[var(--radius-full)] bg-[var(--accent)]" />
+          : <Check size={12} strokeWidth={1.5} className="text-[var(--success)]" />}
+        Used {toolCalls.length} {toolCalls.length === 1 ? "tool" : "tools"}
+        <ChevronDown size={12} strokeWidth={1.5} className={cn("transition-transform motion-reduce:transition-none", open && "rotate-180")} />
       </button>
 
       {open && (
-        <div className="mt-2.5 space-y-2 pt-2 border-t border-white/10">
+        <ul className="mt-2 flex flex-col gap-2">
           {toolCalls.map((t) => (
-            <div key={t.id} className="rounded-lg bg-[#141416] p-2.5 font-mono text-[11px] border border-white/5">
-              <div className="flex items-center justify-between text-zinc-200 font-semibold mb-1">
-                <span className="text-blue-400">{t.name}</span>
-                <span className={cn(
-                  "text-[10px] px-1.5 py-0.5 rounded font-bold uppercase",
-                  t.status === "complete" ? "bg-emerald-950 text-emerald-400 border border-emerald-800/40" : "bg-amber-950 text-amber-400 border border-amber-800/40"
-                )}>
-                  {t.status}
-                </span>
-              </div>
-              {t.result ? (
-                <pre className="text-[10px] text-zinc-400 overflow-x-auto whitespace-pre-wrap max-h-32 custom-scrollbar">
-                  {typeof t.result === "string" ? t.result : JSON.stringify(t.result, null, 2)}
-                </pre>
-              ) : t.args ? (
-                <pre className="text-[10px] text-zinc-500 overflow-x-auto whitespace-pre-wrap">
-                  {JSON.stringify(t.args, null, 2)}
+            <li key={t.id} className="rounded-[var(--radius-md)] bg-[var(--bg-canvas)] p-3">
+              <p className="ds-t-meta-strong flex items-center justify-between gap-2 text-[var(--text-secondary)]">
+                <span className="ds-t-mono">{t.name}</span>
+                <span className="text-[var(--text-muted)]">{t.status === "complete" ? "Done" : "Running"}</span>
+              </p>
+              {(t.result || t.args) ? (
+                <pre className="custom-scrollbar mt-2 max-h-40 overflow-x-auto whitespace-pre-wrap text-[11px] leading-4 text-[var(--text-muted)]">
+                  {t.result ? (typeof t.result === "string" ? t.result : JSON.stringify(t.result, null, 2)) : JSON.stringify(t.args, null, 2)}
                 </pre>
               ) : null}
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

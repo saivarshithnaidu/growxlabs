@@ -17,7 +17,7 @@ export function Header({
   className
 }: HeaderProps) {
   return (
-    <header className={cn("h-14 border-b border-[#e6e6e6] bg-white px-4 flex items-center justify-between shrink-0 select-none z-10", className)}>
+    <header className={cn("h-14 border-b border-[#e6e6e6] bg-[var(--surface-1)] px-4 flex items-center justify-between shrink-0 select-none z-10", className)}>
       <div className="flex items-center gap-3">
         {leftActions}
         <div>

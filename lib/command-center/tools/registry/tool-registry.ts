@@ -12,6 +12,16 @@ import {
   createAdminProjectExecutor,
   sendAdminInvoiceExecutor
 } from "../executors/admin-finance.executor";
+import {
+  getBillingOverviewExecutor,
+  listConsultingInvoicesExecutor,
+  listConsultingPaymentsExecutor,
+  issueConsultingInvoiceExecutor,
+  decideConsultingPaymentExecutor,
+  createMilestoneInvoiceExecutor
+} from "../executors/billing.executor";
+import { createArtifactExecutor } from "../executors/artifact.executor";
+import { createApproval } from "../../approvals/pending-action";
 
 export class ToolRegistry {
   private static executors = new Map<string, ToolExecutor<any, any>>();
@@ -35,6 +45,13 @@ export class ToolRegistry {
     this.register(getAdminProjectsExecutor);
     this.register(createAdminProjectExecutor);
     this.register(sendAdminInvoiceExecutor);
+    this.register(getBillingOverviewExecutor);
+    this.register(listConsultingInvoicesExecutor);
+    this.register(listConsultingPaymentsExecutor);
+    this.register(issueConsultingInvoiceExecutor);
+    this.register(decideConsultingPaymentExecutor);
+    this.register(createMilestoneInvoiceExecutor);
+    this.register(createArtifactExecutor);
   }
 
   static register(executor: ToolExecutor<any, any>): void {
@@ -74,6 +91,17 @@ export class ToolRegistry {
 
     // Zod Input Validation
     const parsedInput = executor.inputSchema.parse(args);
+
+    // Writes wait for the user: the model gets a signed approval request, not the result.
+    if (executor.requiresApproval && !context.approved) {
+      const preview = executor.preview
+        ? await executor.preview(parsedInput, context)
+        : { summary: `Run ${name}`, details: [] };
+      return createApproval(
+        { tool: name, args: parsedInput as Record<string, unknown>, userId: context.commandContext.userId, summary: preview.summary },
+        preview.details
+      );
+    }
 
     // Execute tool
     return await executor.execute(parsedInput, context);

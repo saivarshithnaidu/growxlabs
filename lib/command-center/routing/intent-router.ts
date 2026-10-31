@@ -18,6 +18,16 @@ export interface IntentDecision {
   reason: string;
 }
 
+// Kept in step with BILLING_TOOL_NAMES in tools/executors/billing.executor.ts (not imported: that file is server-only).
+const BILLING_TOOLS = [
+  "get_billing_overview",
+  "list_consulting_invoices",
+  "list_consulting_payments",
+  "issue_consulting_invoice",
+  "decide_consulting_payment",
+  "create_milestone_invoice",
+];
+
 function normalizeMessage(value: string): string {
   if (!value) return "";
   return value
@@ -28,7 +38,7 @@ function normalizeMessage(value: string): string {
     .trim();
 }
 
-export function routeCommandIntent(input: {
+function routeBaseIntent(input: {
   message: string;
   history?: Array<{ sender: string; text: string }>;
   attachments?: Array<{ name: string; type: string }>;
@@ -96,6 +106,20 @@ export function routeCommandIntent(input: {
     };
   }
 
+  // 4b. CONSULTING BILLING. Any money question gets the billing tools; writes among them
+  // only return an approval request, so offering them is safe.
+  const isBilling = /\b(invoices?|invoiced|billing|bills?|payments?|paid|unpaid|overdue|receivables?|outstanding|receipts?|balance due|milestone invoice)\b/.test(normalized);
+  if (isBilling) {
+    const writes = /\b(issue|send|verify|approve|reject|decline|create|raise|generate|mark)\b/.test(normalized);
+    return {
+      intent: writes ? "business_write" : "business_read",
+      allowedTools: BILLING_TOOLS,
+      requiresModel: true,
+      requiresTools: true,
+      reason: `Consulting billing ${writes ? "action" : "question"}. Allowed: ${BILLING_TOOLS.join(", ")}`
+    };
+  }
+
   // 5. GENERAL KNOWLEDGE & CONVERSATIONAL QUESTIONS (e.g. "what is OAuth", "do you know AI-NATIVE")
   // These should run the LLM models, but must not execute any operational database tools.
   const isKnowledgeQuery =
@@ -136,7 +160,10 @@ export function routeCommandIntent(input: {
   const isInvoice = normalized.includes("invoice") || normalized.includes("billing") || normalized.includes("payment");
   const isAgreement = normalized.includes("agreement") || normalized.includes("contract") || normalized.includes("sow");
 
-  if (isRead) {
+  // A question about company data needs its tools even without a verb ("lead stats this month"),
+  // otherwise the model has nothing real to answer from.
+  const looksLikeWrite = /\b(add|create|insert|save|generate|send|dispatch|upload|import|store|bulk|delete|update)\b/.test(normalized);
+  if (isRead || ((isLeads || isStats || isBlogs || isAgreement) && !looksLikeWrite)) {
     const tools: string[] = [];
     if (isLeads) tools.push("query_leads");
     if (isStats) tools.push("get_company_stats");
@@ -238,5 +265,27 @@ export function routeCommandIntent(input: {
     requiresModel: true,
     requiresTools: false,
     reason: "General or ambiguous query. No automated database tools forced."
+  };
+}
+
+// Asking for a file adds the artifact tool next to whatever read tools supply its data.
+const ARTIFACT_REQUEST = /\b(export|download|pdf|spreadsheet|excel|xlsx|csv|sheet|document|doc|report|file)\b/;
+
+export function routeCommandIntent(input: {
+  message: string;
+  history?: Array<{ sender: string; text: string }>;
+  attachments?: Array<{ name: string; type: string }>;
+}): IntentDecision {
+  const decision = routeBaseIntent(input);
+  const normalized = normalizeMessage(input.message || "");
+  if (!ARTIFACT_REQUEST.test(normalized) || ["greeting", "courtesy", "small_talk", "product_help"].includes(decision.intent)) return decision;
+  if (decision.allowedTools.includes("create_artifact")) return decision;
+  return {
+    ...decision,
+    intent: decision.intent === "ambiguous" || decision.intent === "knowledge" ? "business_write" : decision.intent,
+    allowedTools: [...decision.allowedTools, "create_artifact"],
+    requiresModel: true,
+    requiresTools: true,
+    reason: decision.reason + " File requested: create_artifact allowed.",
   };
 }

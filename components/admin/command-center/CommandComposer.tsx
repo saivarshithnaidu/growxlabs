@@ -1,6 +1,6 @@
 "use client";
 
-import { Mic, Paperclip, Plus, RotateCcw, Send, Square, X } from "lucide-react";
+import { ArrowUp, Paperclip, Plus, Square, X } from "lucide-react";
 import { useMemo, useRef, useState, useEffect } from "react";
 import { MentionMenu } from "./MentionMenu";
 import type { ComposerAttachment, MentionOption } from "./command-center.types";
@@ -9,19 +9,11 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   busy: boolean;
-  canRetry: boolean;
   onSubmit: (text: string, attachments: ComposerAttachment[]) => Promise<void>;
   onStop: () => void;
-  onRetry: () => void;
 }
 
-export function CommandComposer({
-  busy,
-  canRetry,
-  onSubmit,
-  onStop,
-  onRetry,
-}: Props) {
+export function CommandComposer({ busy, onSubmit, onStop }: Props) {
   const [value, setValue] = useState("");
   const [attachments, setAttachments] = useState<ComposerAttachment[]>([]);
   const [error, setError] = useState("");
@@ -89,45 +81,39 @@ export function CommandComposer({
     if (fileRef.current) fileRef.current.value = "";
   }
 
+  const canSend = Boolean(value.trim() || attachments.length);
+
   return (
-    <div className="relative px-4 pb-4 pt-1 sm:px-6 w-full max-w-3xl mx-auto">
-      
-      {/* Mention Dropdown Menu */}
+    <div className="relative mx-auto w-full max-w-3xl px-4 pb-5 pt-1 sm:px-6">
       <MentionMenu options={options} activeIndex={activeIndex} onSelect={choose} />
 
-      {/* Floating Capsule Input Box (GrowX Dark Architecture) */}
-      <div className="relative rounded-2xl bg-[#1e1e22] border border-white/10 shadow-2xl transition-all focus-within:border-white/20 focus-within:bg-[#222226]">
-        
-        {/* Attachment Badges */}
+      <div className="relative rounded-[var(--radius-lg)] border border-[var(--border-strong)] bg-[var(--bg-canvas)] focus-within:border-[var(--text-disabled)]">
         {attachments.length > 0 && (
-          <div className="px-3 pt-3 flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 px-3 pt-3">
             {attachments.map((file) => (
-              <span
-                key={file.id}
-                className="flex items-center gap-1.5 rounded-lg bg-white/10 px-2.5 py-1 text-xs text-zinc-200 border border-white/10"
-              >
-                <Paperclip size={12} className="text-zinc-400" />
-                <span className="truncate max-w-[160px]">{file.name}</span>
+              <span key={file.id} className="ds-t-meta flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--bg-active)] py-1 pl-2.5 pr-1 text-[var(--text-secondary)]">
+                <Paperclip size={12} strokeWidth={1.5} className="text-[var(--text-muted)]" />
+                <span className="max-w-40 truncate">{file.name}</span>
                 <button
                   type="button"
                   onClick={() => setAttachments((items) => items.filter((item) => item.id !== file.id))}
                   aria-label={`Remove ${file.name}`}
-                  className="hover:text-white cursor-pointer"
+                  className="ds-focus grid size-5 place-items-center rounded-[var(--radius-xs)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:shadow-[var(--focus-ring)]"
                 >
-                  <X size={12} />
+                  <X size={12} strokeWidth={1.5} />
                 </button>
               </span>
             ))}
           </div>
         )}
 
-        {/* Textarea */}
         <textarea
           ref={textareaRef}
           value={value}
           disabled={busy}
           rows={1}
-          placeholder="Write a message... Try @agent or @project"
+          aria-label="Message"
+          placeholder="Ask or instruct"
           onChange={(e) => {
             setValue(e.target.value);
             setError("");
@@ -144,98 +130,53 @@ export function CommandComposer({
               void submit();
             }
           }}
-          className="w-full resize-none bg-transparent px-4 pt-3.5 pb-2 text-sm text-[#f4f4f5] outline-none placeholder:text-zinc-500 disabled:opacity-50 min-h-[48px] max-h-[180px] custom-scrollbar leading-relaxed"
+          className="custom-scrollbar max-h-[180px] min-h-12 w-full resize-none bg-transparent px-4 pb-1 pt-3.5 text-[15px] leading-relaxed text-[var(--text-primary)] outline-none placeholder:text-[var(--text-disabled)] disabled:opacity-50"
         />
 
-        {/* Toolbar Inside Bottom of Capsule */}
-        <div className="flex items-center justify-between px-3 pb-2.5 pt-1">
-          {/* Left Action Buttons */}
-          <div className="flex items-center gap-1">
-            <input
-              ref={fileRef}
-              type="file"
-              multiple
-              className="hidden"
-              onChange={(e) => addFiles(e.target.files)}
-            />
+        <div className="flex items-center justify-between px-2.5 pb-2.5">
+          <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={busy || attachments.length >= 5}
+            aria-label="Attach files"
+            title="Attach files"
+            className="ds-focus grid size-8 place-items-center rounded-[var(--radius-sm)] text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:shadow-[var(--focus-ring)] active:bg-[var(--bg-active)] disabled:opacity-40"
+          >
+            <Plus size={18} strokeWidth={1.5} />
+          </button>
+
+          {busy ? (
             <button
               type="button"
-              onClick={() => fileRef.current?.click()}
-              disabled={busy || attachments.length >= 5}
-              className="flex size-7 items-center justify-center rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 disabled:opacity-40 transition-colors cursor-pointer"
-              title="Attach files"
+              onClick={onStop}
+              aria-label="Stop"
+              title="Stop"
+              className="ds-focus grid size-8 place-items-center rounded-[var(--radius-full)] bg-[var(--bg-inverse)] text-[var(--text-inverse)] focus-visible:shadow-[var(--focus-ring)] active:opacity-80"
             >
-              <Plus size={16} />
+              <Square size={12} fill="currentColor" />
             </button>
-
-            {canRetry && !busy && (
-              <button
-                type="button"
-                onClick={onRetry}
-                className="flex h-7 items-center gap-1.5 rounded-lg px-2 text-xs text-zinc-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-              >
-                <RotateCcw size={12} />
-                <span>Retry</span>
-              </button>
-            )}
-          </div>
-
-          {/* Right Action: Mic + Send Circular Button */}
-          <div className="flex items-center gap-2">
+          ) : (
             <button
               type="button"
-              className="size-7 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 flex items-center justify-center transition-colors cursor-pointer"
-              title="Voice dictation"
+              onClick={() => void submit()}
+              disabled={!canSend}
+              aria-label="Send"
+              title="Send"
+              className={cn(
+                "ds-focus grid size-8 place-items-center rounded-[var(--radius-full)] focus-visible:shadow-[var(--focus-ring)]",
+                canSend
+                  ? "bg-[var(--bg-inverse)] text-[var(--text-inverse)] active:opacity-80"
+                  : "bg-[var(--bg-active)] text-[var(--text-disabled)] disabled:cursor-not-allowed"
+              )}
             >
-              <Mic size={15} />
+              <ArrowUp size={16} strokeWidth={2} />
             </button>
-
-            {busy ? (
-              <button
-                type="button"
-                onClick={onStop}
-                className="size-8 rounded-full bg-white text-black hover:bg-zinc-200 flex items-center justify-center transition-transform active:scale-95 shadow-xs cursor-pointer"
-                title="Stop generation"
-              >
-                <Square size={12} fill="currentColor" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void submit()}
-                disabled={!value.trim() && !attachments.length}
-                className={cn(
-                  "size-8 rounded-full flex items-center justify-center transition-all duration-200 shadow-xs",
-                  value.trim() || attachments.length
-                    ? "bg-white text-black hover:bg-zinc-200 active:scale-95 cursor-pointer"
-                    : "bg-white/10 text-zinc-500 cursor-not-allowed"
-                )}
-                title="Send message"
-              >
-                <Send size={14} className="ml-0.5" />
-              </button>
-            )}
-          </div>
-        </div>
-
-      </div>
-
-      {/* Error alert */}
-      {error && (
-        <p className="mt-1.5 text-center text-xs text-red-400 font-medium">
-          {error}
-        </p>
-      )}
-
-      {/* Bottom Subtext & Model Pill */}
-      <div className="mt-2 flex items-center justify-between px-2 text-[11px] text-zinc-500 font-sans">
-        <span>GrowX AI can make mistakes. Verify critical business data.</span>
-        <div className="flex items-center gap-1.5 text-zinc-400 font-mono text-[10px] bg-white/[0.04] px-2 py-0.5 rounded-full border border-white/[0.06]">
-          <span className="size-1.5 rounded-full bg-emerald-500" />
-          <span>GXL Orchestrator · Claude Sonnet</span>
+          )}
         </div>
       </div>
 
+      {error && <p role="alert" className="ds-t-meta mt-1.5 text-center text-[var(--danger)]">{error}</p>}
     </div>
   );
 }

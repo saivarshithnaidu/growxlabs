@@ -75,8 +75,40 @@ test("GXL Command Center Pre-Router — Business Read (Specific Tools)", () => {
 
   const res2 = routeCommandIntent({ message: "show invoices" });
   assert.strictEqual(res2.intent, "business_read");
-  assert.ok(res2.allowedTools.includes("get_admin_invoices"));
+  assert.ok(res2.allowedTools.includes("list_consulting_invoices"));
   assert.ok(!res2.allowedTools.includes("query_leads"));
+});
+
+test("GXL Command Center Pre-Router — Data Questions Without A Verb Get Tools", () => {
+  const res = routeCommandIntent({ message: "Lead stats this month" });
+  assert.strictEqual(res.intent, "business_read");
+  assert.ok(res.allowedTools.includes("query_leads"));
+  assert.ok(res.allowedTools.includes("get_company_stats"));
+  assert.strictEqual(res.requiresTools, true);
+});
+
+test("GXL Command Center Pre-Router — File Requests Add The Artifact Tool", () => {
+  const res = routeCommandIntent({ message: "Make a PDF of unpaid invoices" });
+  assert.ok(res.allowedTools.includes("create_artifact"));
+  assert.ok(res.allowedTools.includes("list_consulting_invoices"));
+
+  const leads = routeCommandIntent({ message: "Export leads to a spreadsheet" });
+  assert.ok(leads.allowedTools.includes("create_artifact"));
+  assert.ok(leads.allowedTools.includes("query_leads"));
+
+  const plain = routeCommandIntent({ message: "Which invoices are unpaid?" });
+  assert.ok(!plain.allowedTools.includes("create_artifact"));
+});
+
+test("GXL Command Center Pre-Router — Consulting Billing", () => {
+  const read = routeCommandIntent({ message: "Which invoices are unpaid?" });
+  assert.strictEqual(read.intent, "business_read");
+  assert.ok(read.allowedTools.includes("get_billing_overview"));
+  assert.ok(read.allowedTools.includes("list_consulting_invoices"));
+
+  const write = routeCommandIntent({ message: "verify payment GXL-PAY-2026-000003" });
+  assert.strictEqual(write.intent, "business_write");
+  assert.ok(write.allowedTools.includes("decide_consulting_payment"));
 });
 
 test("GXL Command Center Pre-Router — Web Research", () => {

@@ -8,7 +8,7 @@ export interface WorkspaceProps {
 
 export function Workspace({ children, className }: WorkspaceProps) {
   return (
-    <div className={cn("flex-1 flex min-h-0 relative overflow-hidden bg-white", className)}>
+    <div className={cn("flex-1 flex min-h-0 relative overflow-hidden bg-[var(--surface-1)]", className)}>
       {children}
     </div>
   );
