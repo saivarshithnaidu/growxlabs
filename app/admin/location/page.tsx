@@ -13,6 +13,7 @@ import { useAdminBreadcrumb } from "@/lib/admin-nav";
 import {
   formatCount, locationApi, type LocationOverview, type LocationTenant, TENANT_STATUS_BADGE, type TenantStatus,
 } from "@/components/admin/location/api";
+import { LocationMockBanner } from "@/components/admin/location/MockBanner";
 
 const PAGE_SIZE = 50;
 const STATUS_FILTERS: { value: TenantStatus | "all"; label: string }[] = [
@@ -134,6 +135,7 @@ export default function LocationTenantsPage() {
         />
       }
     >
+      <LocationMockBanner />
       {tenants.error ? (
         <ErrorState description={tenants.error.message} onRetry={() => tenants.refetch()} />
       ) : (

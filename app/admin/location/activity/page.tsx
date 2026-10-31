@@ -7,6 +7,7 @@ import { Button, RelativeTime, Timeline } from "@/src/components/ui";
 import { EmptyState, ErrorState, ListPage, LoadingState } from "@/src/components/patterns";
 import { useAdminBreadcrumb } from "@/lib/admin-nav";
 import { AUDIT_ACTION_LABEL, auditTone, describeAudit, locationApi, type LocationAuditEntry } from "@/components/admin/location/api";
+import { LocationMockBanner } from "@/components/admin/location/MockBanner";
 
 type AuditPage = { data: LocationAuditEntry[]; nextBefore: string | null };
 
@@ -25,6 +26,7 @@ export default function LocationActivityPage() {
 
   return (
     <ListPage header={{ title: "Location activity", breadcrumb, info: "Every change staff made to Location tenants and API keys, newest first." }}>
+      <LocationMockBanner />
       {audit.isPending ? (
         <LoadingState size="inline" label="Loading activity…" />
       ) : audit.error ? (

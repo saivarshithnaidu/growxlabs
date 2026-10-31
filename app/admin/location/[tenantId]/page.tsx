@@ -14,6 +14,7 @@ import {
   type LocationAuditEntry, type LocationTenant, type LocationUsage, PERMISSIONS, TENANT_STATUS_BADGE, type TenantStatus,
 } from "@/components/admin/location/api";
 import { ConfirmModal, CreateKeyModal, type CreateKeyInput, IssuedKeyModal, RotateKeyModal } from "@/components/admin/location/KeyDialogs";
+import { LocationMockBanner } from "@/components/admin/location/MockBanner";
 
 type Tab = "keys" | "usage" | "activity";
 
@@ -170,6 +171,7 @@ export default function LocationTenantPage({ params }: { params: Promise<{ tenan
         />
       }
     >
+      <LocationMockBanner />
       {!isActive && (
         <Alert variant="warning" title={`This tenant is ${t.status}`} className="mb-4">
           All of its API keys are rejected until it is reactivated. New keys cannot be issued.

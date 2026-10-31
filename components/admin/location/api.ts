@@ -1,5 +1,7 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
+
 // Browser-side client for /api/admin/location/* (proxied to growx-loc /admin/v1 on the server).
 
 export type TenantStatus = "active" | "suspended" | "archived";
@@ -68,6 +70,18 @@ export class LocationApiError extends Error {
   }
 }
 
+// The server marks local mock responses with X-Location-Mock; pages show a banner while it is set.
+let mockMode = false;
+const mockListeners = new Set<() => void>();
+
+export function useLocationMockMode(): boolean {
+  return useSyncExternalStore(
+    (listener) => { mockListeners.add(listener); return () => mockListeners.delete(listener); },
+    () => mockMode,
+    () => false,
+  );
+}
+
 export async function locationApi<T>(path: string, init: { method?: "GET" | "POST" | "PATCH"; body?: unknown } = {}): Promise<T> {
   const response = await fetch(`/api/admin/location/${path}`, {
     method: init.method ?? "GET",
@@ -75,6 +89,11 @@ export async function locationApi<T>(path: string, init: { method?: "GET" | "POS
     body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
     cache: "no-store",
   });
+  const isMock = response.headers.get("X-Location-Mock") === "1";
+  if (isMock !== mockMode) {
+    mockMode = isMock;
+    mockListeners.forEach((listener) => listener());
+  }
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     const error = payload?.error ?? {};

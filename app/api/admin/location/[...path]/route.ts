@@ -1,4 +1,5 @@
 import { isSameOrigin } from "@/lib/command-center/security/origin";
+import { handleLocationMock, isLocationMockMode } from "@/lib/location/mock";
 import { isAllowedLocationRoute, locationAdminFetch, locationError, LocationHttpError, requireLocationAdmin } from "@/lib/location/server";
 
 const MAX_BODY_BYTES = 64 * 1024;
@@ -23,7 +24,15 @@ async function proxy(request: Request, { params }: { params: Promise<{ path: str
       if (!body) body = "{}";
     }
 
-    const upstream = await locationAdminFetch(actor, { method, path, search: new URL(request.url).search, body });
+    const search = new URL(request.url).search;
+
+    // Local development without GROWX_LOC_ADMIN_URL: serve in-memory mock data (never in production).
+    if (isLocationMockMode()) {
+      const mock = handleLocationMock({ method, path, search, body }, actor.email);
+      return Response.json(mock.body, { status: mock.status, headers: { "Cache-Control": "no-store", "X-Location-Mock": "1" } });
+    }
+
+    const upstream = await locationAdminFetch(actor, { method, path, search, body });
     const text = await upstream.text();
 
     return new Response(text || "{}", {
