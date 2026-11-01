@@ -2349,6 +2349,17 @@ export function EditorialCarouselClient() {
     toast.success("Duplicated slide");
   };
 
+  // Reorder: swap a slide with its neighbour; the moved slide stays selected.
+  const moveSlide = (idx: number, direction: -1 | 1) => {
+    const target = idx + direction;
+    if (target < 0 || target >= slides.length) return;
+    const newSlides = [...slides];
+    [newSlides[idx], newSlides[target]] = [newSlides[target], newSlides[idx]];
+    setSlides(newSlides);
+    setActiveIndex(target);
+    saveHistory(newSlides);
+  };
+
   const deleteSlide = (idx: number) => {
     if (slides.length <= 1) {
       toast.error("Cannot delete the only remaining slide.");
@@ -4096,6 +4107,7 @@ export function EditorialCarouselClient() {
                   setShowLeftSidebar(false);
                 }}
                 onDuplicateSlide={duplicateSlide}
+                onMoveSlide={moveSlide}
                 onDeleteSlide={deleteSlide}
                 onSelectElement={(key) => {
                   setSelectedElement(key);
@@ -4165,6 +4177,7 @@ export function EditorialCarouselClient() {
             }}
             onAddSlide={addSlide}
             onDuplicateSlide={duplicateSlide}
+            onMoveSlide={moveSlide}
             onDeleteSlide={deleteSlide}
             onSelectElement={(key) => {
               setSelectedElement(key);
@@ -4351,21 +4364,13 @@ export function EditorialCarouselClient() {
 
           {/* Paper.design Signature Floating Inspector Pill (when right sidebar is collapsed) */}
           {!showRightSidebar && (
-            <div className="absolute top-3.5 right-3.5 z-40 h-[34px] bg-[#242426] border border-[#383838] rounded-lg px-2.5 flex items-center gap-2 shadow-[0_4px_16px_rgba(0,0,0,0.4)] text-white select-none">
-              <div
-                className="w-5 h-5 rounded-full bg-[#7c3aed] text-white text-[10px] font-bold flex items-center justify-center shrink-0 shadow-sm"
-                title="GrowXLabs Workspace"
-              >
-                S
-              </div>
-              <span className="text-[12px] font-medium text-[#ececec]">
-                {Math.round(zoomScale * 100)}%
-              </span>
+            <div className="absolute top-3.5 right-3.5 z-40 h-[34px] bg-[#242426] border border-[#383838] rounded-lg px-1 flex items-center shadow-[0_4px_16px_rgba(0,0,0,0.4)] text-white select-none">
               <button
                 type="button"
                 onClick={() => setShowRightSidebar(true)}
-                className="p-1 rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer ml-0.5"
-                title="Expand inspector sidebar"
+                className="p-1.5 rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                aria-label="Show panel"
+                title="Show panel"
               >
                 <svg
                   width="13"
@@ -4415,7 +4420,7 @@ export function EditorialCarouselClient() {
               <button
                 type="button"
                 onClick={() => setEditorMode("fixed")}
-                className={`px-2.5 py-1 rounded-md text-[10px] font-medium tracking-wide transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer ${
                   editorMode === "fixed"
                     ? "bg-[#3a3a3c] text-white shadow-sm font-semibold"
                     : "text-[#8e8e93] hover:text-[#ececec]"
@@ -4427,7 +4432,7 @@ export function EditorialCarouselClient() {
               <button
                 type="button"
                 onClick={() => setEditorMode("free")}
-                className={`px-2.5 py-1 rounded-md text-[10px] font-medium tracking-wide transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer ${
                   editorMode === "free"
                     ? "bg-[#3a3a3c] text-[#38bdf8] shadow-sm font-semibold"
                     : "text-[#8e8e93] hover:text-[#ececec]"
@@ -4439,42 +4444,6 @@ export function EditorialCarouselClient() {
             </div>
 
             <div className="h-4 w-px bg-[#383838] mx-0.5" />
-
-            {/* 2. Safe Margins Toggle */}
-            <button
-              type="button"
-              onClick={() => setShowSafeArea(!showSafeArea)}
-              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all group relative cursor-pointer ${
-                showSafeArea
-                  ? "bg-[#3a3a3c] text-[#38bdf8] shadow-sm"
-                  : "text-[#8e8e93] hover:text-white hover:bg-white/5"
-              }`}
-              title="Toggle Safe Margins (S)"
-            >
-              <Smartphone size={13} />
-              <span className="opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity absolute bottom-full mb-2 px-2 py-1 bg-[#1c1c1e] text-white text-[10px] font-medium rounded-md whitespace-nowrap shadow-xl border border-[#353535] z-50 flex items-center gap-1.5">
-                <span>Safe Margins</span>
-                <kbd className="text-[9px] bg-white/10 px-1 py-0.5 rounded font-mono text-neutral-300">S</kbd>
-              </span>
-            </button>
-
-            {/* 3. Pixel Grid Toggle */}
-            <button
-              type="button"
-              onClick={() => setShowGrid(!showGrid)}
-              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all group relative cursor-pointer ${
-                showGrid
-                  ? "bg-[#3a3a3c] text-[#38bdf8] shadow-sm"
-                  : "text-[#8e8e93] hover:text-white hover:bg-white/5"
-              }`}
-              title="Toggle Grid (G)"
-            >
-              <Grid size={13} />
-              <span className="opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity absolute bottom-full mb-2 px-2 py-1 bg-[#1c1c1e] text-white text-[10px] font-medium rounded-md whitespace-nowrap shadow-xl border border-[#353535] z-50 flex items-center gap-1.5">
-                <span>Grid Dots</span>
-                <kbd className="text-[9px] bg-white/10 px-1 py-0.5 rounded font-mono text-neutral-300">G</kbd>
-              </span>
-            </button>
 
             {/* Live Video Reel Play/Pause Preview */}
             {(activeFormat.id === "mobile" || isVideo(activeSlide.featuredImage?.mediaUrl)) && (

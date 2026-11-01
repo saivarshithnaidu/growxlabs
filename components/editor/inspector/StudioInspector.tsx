@@ -30,6 +30,21 @@ import {
   Loader2,
 } from "@/components/editor/icons/StudioIcons";
 import type { Slide, ElementKey } from "./inspectorTypes";
+
+/** Names shown at the top of the panel; match the layer names on the left. */
+const ELEMENT_NAMES: Record<ElementKey, string> = {
+  category: "Category",
+  headline: "Title",
+  featuredImage: "Image",
+  secondaryImage: "Image 2",
+  body: "Text",
+  bullets: "Bullets",
+  quote: "Quote",
+  cta: "Button",
+  logo: "Logo",
+  divider: "Divider",
+  author: "Author",
+};
 import { toast } from "sonner";
 import { StudioDropdown } from "./StudioDropdown";
 
@@ -340,131 +355,57 @@ export const StudioInspector: React.FC<StudioInspectorProps> = ({
           1. PAPER.DESIGN TOP BAR (42px)
           Avatar • Document Name • Zoom % • Collapse Toggle
           ---------------------------------------------------- */}
-      <div className="h-[42px] px-3 border-b border-[#353535] flex items-center justify-between shrink-0 bg-[#2a2a2a] gap-1.5">
-        {/* Left: User Avatar & Live Indicator & Name */}
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          {/* Avatar Circle with Initial */}
-          <div
-            className="w-5 h-5 rounded-full bg-[#7c3aed] text-white text-[10px] font-bold flex items-center justify-center shrink-0 shadow-sm"
-            title="GrowXLabs Workspace"
-          >
-            S
-          </div>
-
-          {/* Project Title Capsule */}
-          <div className="flex items-center gap-1.5 min-w-0 flex-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0 shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
-            {isEditingName ? (
-              <input
-                type="text"
-                value={tempName}
-                onChange={(e) => setTempName(e.target.value)}
-                onBlur={() => {
+      <div className="h-[42px] px-3 border-b border-[#353535] flex items-center justify-between shrink-0 bg-[#2a2a2a] gap-2">
+        <div className="min-w-0 flex-1">
+          {isEditingName ? (
+            <input
+              type="text"
+              aria-label="Project name"
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              onBlur={() => {
+                setIsEditingName(false);
+                if (onUpdateProjectName && tempName.trim()) onUpdateProjectName(tempName.trim());
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
                   setIsEditingName(false);
-                  if (onUpdateProjectName && tempName.trim()) {
-                    onUpdateProjectName(tempName.trim());
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setIsEditingName(false);
-                    if (onUpdateProjectName && tempName.trim()) {
-                      onUpdateProjectName(tempName.trim());
-                    }
-                  }
-                }}
-                autoFocus
-                className="bg-[#373737] border border-[#1687f8] rounded px-1.5 py-0.5 text-[11px] font-medium text-white focus:outline-none w-full"
-              />
-            ) : (
-              <span
-                onDoubleClick={() => setIsEditingName(true)}
-                className="font-medium text-[11px] text-[#ececec] truncate tracking-tight hover:text-white cursor-pointer"
-                title="Double click to rename project"
-              >
-                {projectName || "Untitled"}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Right: Zoom Level % and Panel Collapse */}
-        <div className="flex items-center gap-1 shrink-0">
-          {/* Zoom % Pill with Dropdown */}
-          <div className="relative">
+                  if (onUpdateProjectName && tempName.trim()) onUpdateProjectName(tempName.trim());
+                }
+                if (e.key === "Escape") {
+                  setIsEditingName(false);
+                  setTempName(projectName || "");
+                }
+              }}
+              autoFocus
+              className="bg-[#373737] border border-[#1687f8] rounded px-1.5 py-0.5 text-[12px] font-medium text-white focus:outline-none w-full"
+            />
+          ) : (
             <button
               type="button"
-              onClick={() => setShowZoomMenu(!showZoomMenu)}
-              className="px-1.5 py-0.5 rounded hover:bg-white/10 text-[11px] font-medium text-[#ececec] hover:text-white transition-colors cursor-pointer flex items-center gap-0.5"
-              title="Canvas Zoom Options"
+              onClick={() => setIsEditingName(true)}
+              className="max-w-full truncate rounded px-1 py-0.5 text-left text-[12px] font-medium text-[#ececec] hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1687f8]"
+              title="Rename project"
             >
-              <span>{Math.round(zoomScale * 100)}%</span>
-            </button>
-
-            {showZoomMenu && (
-              <div
-                className="absolute top-full right-0 mt-1 w-28 bg-[#242426] border border-[#383838] rounded-lg shadow-2xl py-1 z-50 text-[11px] font-medium text-neutral-200"
-                onMouseLeave={() => setShowZoomMenu(false)}
-              >
-                {onZoomFit && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onZoomFit();
-                      setShowZoomMenu(false);
-                    }}
-                    className="w-full px-3 py-1 text-left hover:bg-white/10 hover:text-white transition-colors flex items-center justify-between cursor-pointer"
-                  >
-                    <span>Zoom to Fit</span>
-                    <span className="text-[9px] text-neutral-400 font-mono">Fit</span>
-                  </button>
-                )}
-                <div className="h-px bg-white/5 my-1" />
-                {[
-                  { label: "50%", val: 0.5 },
-                  { label: "100%", val: 1.0 },
-                  { label: "200%", val: 2.0 },
-                ].map((z) => (
-                  <button
-                    key={z.label}
-                    type="button"
-                    onClick={() => {
-                      if (onSetZoomScale) onSetZoomScale(z.val);
-                      setShowZoomMenu(false);
-                    }}
-                    className="w-full px-3 py-1 text-left hover:bg-white/10 hover:text-white transition-colors flex items-center justify-between cursor-pointer"
-                  >
-                    <span>{z.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Paper.design Right Sidebar Collapse Icon [ |] */}
-          {onClose && (
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1 rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
-              title="Collapse inspector panel"
-            >
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="2" y="2" width="12" height="12" rx="2" />
-                <path d="M11 2v12" />
-              </svg>
+              {projectName || "Untitled"}
             </button>
           )}
         </div>
+
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Collapse panel"
+            className="p-1 rounded text-neutral-400 hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1687f8] cursor-pointer"
+            title="Collapse panel"
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="2" y="2" width="12" height="12" rx="2" />
+              <path d="M11 2v12" />
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* ----------------------------------------------------
@@ -509,7 +450,7 @@ export const StudioInspector: React.FC<StudioInspectorProps> = ({
                       <Download size={14} className="text-emerald-400 shrink-0" />
                       <div className="flex-1">
                         <div className="font-semibold text-white group-hover:text-emerald-400 transition-colors">Download All as ZIP (PNGs)</div>
-                        <div className="text-[9px] text-[#8e8e93]">All 6 individual slide images</div>
+                        <div className="text-[9px] text-[#8e8e93]">{slidesCount} slide {slidesCount === 1 ? "image" : "images"}</div>
                       </div>
                     </button>
                   )}
@@ -556,66 +497,6 @@ export const StudioInspector: React.FC<StudioInspectorProps> = ({
           </button>
         </div>
 
-        {/* Secondary Template / Mode Segmented Pill */}
-        {onSwitchDocumentKind && (
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex bg-[#1f1f21] p-0.5 rounded-lg border border-[#383838] flex-1">
-              <button
-                type="button"
-                onClick={() => onSwitchDocumentKind("editorial")}
-                className={`flex-1 h-5 text-[9px] font-medium tracking-wide rounded transition-all flex items-center justify-center cursor-pointer ${
-                  documentKind === "editorial"
-                    ? "bg-[#3a3a3c] text-white shadow-sm font-semibold"
-                    : "text-[#8e8e93] hover:text-white"
-                }`}
-              >
-                Daily News
-              </button>
-              <button
-                type="button"
-                onClick={() => onSwitchDocumentKind("product")}
-                className={`flex-1 h-5 text-[9px] font-medium tracking-wide rounded transition-all flex items-center justify-center cursor-pointer ${
-                  documentKind === "product"
-                    ? "bg-[#3a3a3c] text-[#38bdf8] shadow-sm font-semibold"
-                    : "text-[#8e8e93] hover:text-white"
-                }`}
-              >
-                Product
-              </button>
-              <button
-                type="button"
-                onClick={() => onSwitchDocumentKind("heritage")}
-                className={`flex-1 h-5 text-[9px] font-medium tracking-wide rounded transition-all flex items-center justify-center cursor-pointer ${
-                  documentKind === "heritage"
-                    ? "bg-[#3a3a3c] text-[#d4af37] shadow-sm font-semibold"
-                    : "text-[#8e8e93] hover:text-[#d4af37]"
-                }`}
-              >
-                Heritage
-              </button>
-            </div>
-
-            {/* Selection Tag Pill / Quick Deselect Button */}
-            {selectedElement || isFooterSelected ? (
-              <button
-                type="button"
-                onClick={() => {
-                  onSelectElement(null);
-                  onSelectFooter(false);
-                }}
-                className="text-[9px] font-mono text-[#38bdf8] hover:text-white uppercase bg-[#1f1f21] hover:bg-white/10 px-2 py-0.5 rounded border border-[#383838] hover:border-white/20 shrink-0 flex items-center gap-1.5 cursor-pointer transition-colors group shadow-sm"
-                title="Click to deselect element (or press Escape)"
-              >
-                <span>{isFooterSelected ? "Footer" : selectedElement}</span>
-                <span className="text-[#8e8e93] group-hover:text-white font-bold text-[10px]">✕</span>
-              </button>
-            ) : (
-              <span className="text-[9px] font-mono text-[#8e8e93] uppercase bg-[#1f1f21] px-2 py-0.5 rounded border border-[#383838] shrink-0">
-                Slide {activeIndex + 1}
-              </span>
-            )}
-          </div>
-        )}
       </div>
 
       {/* ----------------------------------------------------
@@ -627,6 +508,22 @@ export const StudioInspector: React.FC<StudioInspectorProps> = ({
             ======================================================== */}
         {selectedElement && currentElement && (
           <>
+            {/* Which element is being edited, and the way out (Escape works too) */}
+            <div className="flex items-center justify-between gap-2 px-3 py-2">
+              <span className="text-[12px] font-semibold text-white">{ELEMENT_NAMES[selectedElement] || selectedElement}</span>
+              <button
+                type="button"
+                onClick={() => onSelectElement(null)}
+                aria-label="Deselect"
+                title="Deselect (Esc)"
+                className="p-1 rounded text-[#8e8e93] hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1687f8] cursor-pointer"
+              >
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
+                  <path d="M4 4l8 8M12 4l-8 8" />
+                </svg>
+              </button>
+            </div>
+
             {/* SECTION 1: LAYOUT (Paper Header + Align Icons + X/Y/∠/W/H/Constraints) */}
             <div className="p-3 space-y-2.5">
               {/* Layout Header with Align Icons */}
@@ -1879,9 +1776,38 @@ export const StudioInspector: React.FC<StudioInspectorProps> = ({
             ======================================================== */}
         {!selectedElement && !isFooterSelected && (
           <div className="p-3 space-y-3.5">
+            {/* Template */}
+            {onSwitchDocumentKind && (
+              <div className="space-y-2">
+                <span className="text-[11px] font-medium text-[#ececec] block">Template</span>
+                <div className="grid grid-cols-3 gap-1.5" role="radiogroup" aria-label="Template">
+                  {([
+                    { id: "editorial", label: "Daily news" },
+                    { id: "product", label: "Product" },
+                    { id: "heritage", label: "Heritage" },
+                  ] as const).map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={documentKind === t.id}
+                      onClick={() => onSwitchDocumentKind(t.id)}
+                      className={`h-8 rounded-lg border text-[11px] font-medium cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1687f8] ${
+                        documentKind === t.id
+                          ? "bg-[#3a3a3c] border-[#1687f8] text-white"
+                          : "bg-[#373737] border-[#48484a]/30 text-[#ececec] hover:bg-[#3f3f3f]"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Target Format Presets */}
             <div className="space-y-2">
-              <span className="text-[11px] font-medium text-[#ececec] block">Target Aspect Ratio</span>
+              <span className="text-[11px] font-medium text-[#ececec] block">Size</span>
 
               <div className="grid grid-cols-1 gap-1.5">
                 {CANVAS_FORMAT_PRESETS.map((preset) => (
@@ -1910,14 +1836,14 @@ export const StudioInspector: React.FC<StudioInspectorProps> = ({
             {/* Slide Canvas Background Color */}
             <div className="pt-1 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-medium text-[#ececec]">Canvas Background</span>
+                <span className="text-[11px] font-medium text-[#ececec]">Background</span>
                 <span className="text-[10px] font-mono text-[#8e8e93] uppercase">
                   {activeSlide.backgroundColor || "#ffffff"}
                 </span>
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap">
-                {["#ffffff", "#000000", "#0a0a0c", "#18181b", "#0f172a", "#f8fafc", "#fdfbf7"].map((hex) => (
+                {["#ffffff", "#fdfbf7", "#0a0a0c", "#0f172a"].map((hex) => (
                   <button
                     key={hex}
                     type="button"
@@ -1954,56 +1880,6 @@ export const StudioInspector: React.FC<StudioInspectorProps> = ({
               </div>
             </div>
 
-            {/* One-Click Exports */}
-            <div className="pt-2 space-y-2">
-              <span className="text-[11px] font-medium text-[#ececec] block">One-Click Exports</span>
-
-              <button
-                type="button"
-                onClick={onDownloadPng}
-                className="w-full h-8 bg-[#1687f8] hover:bg-[#1374d6] text-white rounded-lg text-[11px] font-medium transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
-              >
-                <Download size={13} />
-                <span>Download Current Slide (PNG)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onDownloadPdf}
-                className="w-full h-8 bg-[#373737] hover:bg-[#404040] border border-[#48484a]/30 text-[#ececec] rounded-lg text-[11px] font-medium transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <FileText size={13} className="text-[#1687f8]" />
-                <span>Export Full PDF ({slidesCount} Slides)</span>
-              </button>
-
-              {onDownloadZip && (
-                <button
-                  type="button"
-                  onClick={onDownloadZip}
-                  className="w-full h-8 bg-[#373737] hover:bg-[#404040] border border-[#48484a]/30 text-[#ececec] rounded-lg text-[11px] font-medium transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Download size={13} className="text-emerald-400" />
-                  <span>Download All as ZIP (PNGs)</span>
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={onDownloadMp4}
-                className="w-full h-8 bg-[#373737] hover:bg-[#404040] border border-[#48484a]/30 text-[#ececec] rounded-lg text-[11px] font-medium transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Play size={13} />
-                <span>Render MP4 Video Reel</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onDownloadAllSvg}
-                className="w-full h-7 bg-transparent hover:bg-white/5 border border-white/5 text-[#8e8e93] hover:text-white rounded-lg text-[10px] font-medium transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>Export All Vector SVGs</span>
-              </button>
-            </div>
           </div>
         )}
       </div>

@@ -15,6 +15,7 @@ import {
   Quote,
   MousePointer,
   ChevronDown,
+  ChevronUp,
   ChevronRight,
   Sparkles,
   ArrowLeft,
@@ -39,6 +40,7 @@ interface StudioLeftPanelProps {
   onSelectSlide: (index: number) => void;
   onAddSlide: () => void;
   onDuplicateSlide: (index: number) => void;
+  onMoveSlide?: (index: number, direction: -1 | 1) => void;
   onDeleteSlide: (index: number) => void;
   onSelectElement: (key: ElementKey | null) => void;
   onSelectFooter: (selected: boolean) => void;
@@ -85,6 +87,7 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
   onSelectSlide,
   onAddSlide,
   onDuplicateSlide,
+  onMoveSlide,
   onDeleteSlide,
   onSelectElement,
   onSelectFooter,
@@ -369,18 +372,6 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
                   ({slides.length})
                 </span>
               </div>
-
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAddSlide();
-                }}
-                className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded text-neutral-400 hover:text-white transition-opacity"
-                title="Add Artboard"
-              >
-                <Plus size={11} />
-              </button>
             </div>
 
             {/* Artboard Rows under Page 1 */}
@@ -450,8 +441,38 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
                           </span>
                         </div>
 
-                        {/* Hover Actions: Duplicate, Delete */}
-                        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                        {/* Hover Actions: Move, Duplicate, Delete */}
+                        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
+                          {onMoveSlide && slides.length > 1 && (
+                            <>
+                              <button
+                                type="button"
+                                disabled={sIdx === 0}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onMoveSlide(sIdx, -1);
+                                }}
+                                className="p-0.5 rounded hover:bg-white/10 text-neutral-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                                aria-label={`Move slide ${sIdx + 1} up`}
+                                title="Move up"
+                              >
+                                <ChevronUp size={11} />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={sIdx === slides.length - 1}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onMoveSlide(sIdx, 1);
+                                }}
+                                className="p-0.5 rounded hover:bg-white/10 text-neutral-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                                aria-label={`Move slide ${sIdx + 1} down`}
+                                title="Move down"
+                              >
+                                <ChevronDown size={11} />
+                              </button>
+                            </>
+                          )}
                           <button
                             type="button"
                             onClick={(e) => {
@@ -528,7 +549,7 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
                                   isSelected
                                     ? "bg-[#3a3a3c] text-white font-medium"
                                     : "text-neutral-300 hover:bg-white/5"
-                                } ${!elem.visible ? "opacity-35" : ""}`}
+                                } ${!elem.visible ? "text-neutral-500" : ""}`}
                               >
                                 <div className="flex items-center gap-2 truncate">
                                   {/* Paper Layer Icons */}
@@ -575,12 +596,18 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
                                                 ? "Bullets"
                                                 : key === "cta"
                                                   ? "Button"
-                                                  : key}
+                                                  : key === "author"
+                                                    ? "Author"
+                                                    : key === "logo"
+                                                      ? "Logo"
+                                                      : key === "divider"
+                                                        ? "Divider"
+                                                        : key}
                                   </span>
                                 </div>
 
                                 {/* Hover Lock & Eye toggles */}
-                                <div className="flex items-center gap-0.5 opacity-0 group-hover/layer:opacity-100 transition-opacity shrink-0">
+                                <div className={`flex items-center gap-0.5 transition-opacity shrink-0 ${elem.locked || !elem.visible ? "opacity-100" : "opacity-0 group-hover/layer:opacity-100 focus-within:opacity-100"}`}>
                                   <button
                                     type="button"
                                     onClick={(e) => {
@@ -654,7 +681,7 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
               className="w-full h-7 rounded-md border border-dashed border-[#3d3d3d] hover:border-neutral-400 bg-transparent hover:bg-white/5 text-neutral-400 hover:text-white transition-all flex items-center justify-center gap-1.5 text-[11px] font-medium mt-2 cursor-pointer"
             >
               <Plus size={12} />
-              <span>Add Artboard</span>
+              <span>Add slide</span>
             </button>
           </div>
         )}
@@ -664,41 +691,10 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
             ======================================================== */}
         {tab === "theme" && (
           <div className="space-y-3 px-1">
-            {/* Aspect Ratio Format Presets */}
-            <div className="space-y-1.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#8e8e93] block">
-                Format Aspect Ratio
-              </span>
-              <div className="grid grid-cols-2 gap-1.5">
-                {CANVAS_FORMAT_PRESETS.map((preset) => {
-                  const isActive = activeFormat.id === preset.id;
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      onClick={() => onFormatChange(preset)}
-                      className={`p-2 rounded-lg border text-left flex flex-col transition-all cursor-pointer ${
-                        isActive
-                          ? "bg-[#3a3a3c] border-[#555] text-white"
-                          : "bg-[#222224] hover:bg-[#28282b] border-[#353535] text-neutral-300"
-                      }`}
-                    >
-                      <span className="text-[10px] font-semibold truncate">
-                        {preset.name}
-                      </span>
-                      <span className="text-[9px] text-[#8e8e93] font-mono mt-0.5">
-                        {preset.aspectRatio}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
             {/* Editorial Layout Templates */}
-            <div className="space-y-1.5 pt-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#8e8e93] block">
-                Editorial Layout Styles
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-medium text-[#ececec] block">
+                Layout styles
               </span>
 
               <div className="flex flex-col gap-1.5">
@@ -736,8 +732,8 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
             {/* Header & Quick Action */}
             <div className="px-1.5 space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-white uppercase tracking-wider">
-                  Reel & Slide Assets
+                <span className="text-[11px] font-semibold text-white">
+                  Assets
                 </span>
                 <span className="text-[9px] font-mono text-neutral-400 bg-white/5 px-1.5 py-0.5 rounded">
                   {uploadedAssets?.length || 0} Assets
@@ -779,8 +775,8 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
 
             {/* Overlay Sizing Presets for Active Slide */}
             <div className="px-1.5 space-y-1.5 pt-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 block">
-                Overlay Card Sizing
+              <span className="text-[11px] font-medium text-[#ececec] block">
+                Overlay size
               </span>
               <div className="grid grid-cols-2 gap-1 text-[10px]">
                 <button
@@ -824,8 +820,8 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
 
             {/* Uploaded Assets List */}
             <div className="px-1.5 space-y-2 pt-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 block">
-                Project Assets
+              <span className="text-[11px] font-medium text-[#ececec] block">
+                Your files
               </span>
 
               {(!uploadedAssets || uploadedAssets.length === 0) ? (
@@ -916,13 +912,6 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
         )}
       </div>
 
-      {/* 4. Paper.design Bottom Footer */}
-      <div className="h-8 px-3 border-t border-[#353535] bg-[#2a2a2a] flex items-center justify-between text-[11px] text-[#8e8e93] shrink-0">
-        <span className="hover:text-white cursor-pointer transition-colors">
-          What's new • Feedback
-        </span>
-        <span className="text-[10px] font-mono text-[#636366]">v2.4</span>
-      </div>
     </aside>
   );
 };
