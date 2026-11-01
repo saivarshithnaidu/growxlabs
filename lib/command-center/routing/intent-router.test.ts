@@ -100,6 +100,14 @@ test("GXL Command Center Pre-Router — File Requests Add The Artifact Tool", ()
   assert.ok(!plain.allowedTools.includes("create_artifact"));
 });
 
+test("GXL Command Center Pre-Router — Daily Brief", () => {
+  for (const message of ["What needs me today?", "daily brief", "What should I do today", "What's pending?"]) {
+    const res = routeCommandIntent({ message });
+    assert.ok(res.allowedTools.includes("get_daily_brief"), message);
+    assert.strictEqual(res.requiresTools, true);
+  }
+});
+
 test("GXL Command Center Pre-Router — Consulting Billing", () => {
   const read = routeCommandIntent({ message: "Which invoices are unpaid?" });
   assert.strictEqual(read.intent, "business_read");

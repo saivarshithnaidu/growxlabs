@@ -165,35 +165,6 @@ export const TOOLS_DEFINITIONS = [
     }
   },
   {
-    name: "get_admin_invoices",
-    description: "Retrieve a list of billing invoices showing amounts, statuses, and due dates.",
-    parameters: {
-      type: "object",
-      properties: {
-        clientId: { type: "string", description: "Optional UUID of the client user to filter by" },
-        status: { type: "string", description: "Optional status filter (e.g. 'pending', 'paid', 'failed')" },
-        limit: { type: "number", description: "Maximum number of records to return (default 20)" }
-      },
-      required: []
-    }
-  },
-  {
-    name: "create_admin_invoice",
-    description: "Create and persist a new billing invoice in the system for a specific client user.",
-    parameters: {
-      type: "object",
-      properties: {
-        clientId: { type: "string", description: "The UUID of the client user to invoice (required)" },
-        agreementId: { type: "string", description: "Optional UUID of the agreement this invoice relates to" },
-        amount: { type: "number", description: "Invoice amount in decimals (required)" },
-        balanceDue: { type: "number", description: "Balance due amount in decimals (required)" },
-        dueDate: { type: "string", description: "Due date in YYYY-MM-DD format (required)" },
-        advancePaid: { type: "boolean", description: "True if advance has been paid" }
-      },
-      required: ["clientId", "amount", "balanceDue", "dueDate"]
-    }
-  },
-  {
     name: "get_admin_projects",
     description: "Retrieve a list of client development projects and their current completion progress (0-100).",
     parameters: {
@@ -220,16 +191,9 @@ export const TOOLS_DEFINITIONS = [
     }
   },
   {
-    name: "send_admin_invoice",
-    description: "Send a billing invoice PDF link to a client user via email using Resend.",
-    parameters: {
-      type: "object",
-      properties: {
-        invoiceId: { type: "string", description: "The UUID of the invoice to send (required)" },
-        email: { type: "string", description: "Optional email address to override the invoice's default destination" }
-      },
-      required: ["invoiceId"]
-    }
+    name: "get_daily_brief",
+    description: "What needs the founder's attention today across the business: payments to verify, overdue invoices, signed agreements to invoice, lead follow-ups due, proposals waiting for internal review, blocked delivery tasks and today's discovery meetings. Use it for 'what needs me today', 'daily brief', 'what should I do', 'morning summary'. Answer with the few items that matter most, most urgent first.",
+    parameters: { type: "object", properties: {}, required: [] }
   },
   {
     name: "get_billing_overview",

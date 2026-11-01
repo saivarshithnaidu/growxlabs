@@ -19,10 +19,10 @@ interface Props {
 
 // One line each, and only things the orchestrator has tools for today.
 const SUGGESTIONS = [
-  "Summarize today's lead pipeline",
+  "What needs me today?",
   "Which invoices are unpaid?",
+  "Summarize today's lead pipeline",
   "Status of active projects",
-  "Lead stats this month",
 ];
 
 export function MessageThread({ messages, busy, onSuggestion, onRetry }: Props) {

@@ -14,6 +14,7 @@ const LABELS: Record<string, { doing: string; done: string }> = {
   get_admin_users: { doing: "Reading users", done: "Read users" },
   get_admin_agreements: { doing: "Reading agreements", done: "Read agreements" },
   get_admin_projects: { doing: "Reading projects", done: "Read projects" },
+  get_daily_brief: { doing: "Checking what needs you", done: "Checked what needs you" },
   get_billing_overview: { doing: "Checking billing", done: "Checked billing" },
   list_consulting_invoices: { doing: "Reading invoices", done: "Read invoices" },
   list_consulting_payments: { doing: "Reading payments", done: "Read payments" },

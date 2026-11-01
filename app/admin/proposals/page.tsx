@@ -76,6 +76,11 @@ export default function AdminProposalsPage() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [scopes, setScopes] = useState<Scope[]>([]);
   const [status, setStatus] = useState("all");
+  // Deep links such as the "Proposal Approvals" menu item open with a status filter (?status=internal_review).
+  useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get("status");
+    if (fromUrl && (fromUrl === "all" || fromUrl in statusLabels)) setStatus(fromUrl);
+  }, []);
   const [scopeId, setScopeId] = useState("");
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);

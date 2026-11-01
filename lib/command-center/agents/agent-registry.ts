@@ -52,7 +52,7 @@ export class AgentRegistry {
       supportedIntents: ["CREATE_INVOICE", "QUERY_FINANCE"],
       supportedCapabilities: ["finance.invoices", "finance.agreements"],
       supportedSkills: ["skill_revenue_analysis"],
-      allowedTools: ["get_admin_invoices", "create_admin_invoice", "send_admin_invoice", "get_admin_agreements", "get_company_stats"],
+      allowedTools: ["get_billing_overview", "list_consulting_invoices", "list_consulting_payments", "issue_consulting_invoice", "decide_consulting_payment", "create_milestone_invoice", "get_admin_agreements", "get_company_stats"],
       requiredPermissions: ["invoices:read"],
       supportedProviders: ["gemini", "openrouter"],
       defaultProviderPolicy: "gemini-primary"

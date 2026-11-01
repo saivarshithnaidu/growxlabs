@@ -6,11 +6,8 @@ import { getBlogPostsStatsExecutor, queryWishGameDataExecutor, sendBlogToSubscri
 import {
   getAdminUsersExecutor,
   getAdminAgreementsExecutor,
-  getAdminInvoicesExecutor,
-  createAdminInvoiceExecutor,
   getAdminProjectsExecutor,
-  createAdminProjectExecutor,
-  sendAdminInvoiceExecutor
+  createAdminProjectExecutor
 } from "../executors/admin-finance.executor";
 import {
   getBillingOverviewExecutor,
@@ -21,6 +18,7 @@ import {
   createMilestoneInvoiceExecutor
 } from "../executors/billing.executor";
 import { createArtifactExecutor } from "../executors/artifact.executor";
+import { getDailyBriefExecutor } from "../executors/daily-brief.executor";
 import { createApproval } from "../../approvals/pending-action";
 
 export class ToolRegistry {
@@ -40,11 +38,8 @@ export class ToolRegistry {
     this.register(sendBlogToSubscribersExecutor);
     this.register(getAdminUsersExecutor);
     this.register(getAdminAgreementsExecutor);
-    this.register(getAdminInvoicesExecutor);
-    this.register(createAdminInvoiceExecutor);
     this.register(getAdminProjectsExecutor);
     this.register(createAdminProjectExecutor);
-    this.register(sendAdminInvoiceExecutor);
     this.register(getBillingOverviewExecutor);
     this.register(listConsultingInvoicesExecutor);
     this.register(listConsultingPaymentsExecutor);
@@ -52,6 +47,7 @@ export class ToolRegistry {
     this.register(decideConsultingPaymentExecutor);
     this.register(createMilestoneInvoiceExecutor);
     this.register(createArtifactExecutor);
+    this.register(getDailyBriefExecutor);
   }
 
   static register(executor: ToolExecutor<any, any>): void {

@@ -72,7 +72,7 @@ export const MODULES: NavModule[] = [
         { label: "Scopes of Work", href: "/admin/scopes", icon: FileText },
       ]},
       { label: "CONTRACTS", items: [
-        { label: "Proposal Approvals", href: "/admin/proposal-approvals", icon: CheckCircle2 },
+        { label: "Proposal Approvals", href: "/admin/proposals?status=internal_review", icon: CheckCircle2 },
         { label: "Agreements", href: "/admin/agreements", icon: FileSignature },
         { label: "Contractor Agreements", href: "/admin/contractor-agreements", icon: FileSignature },
         { label: "Client Onboarding", href: "/admin/onboarding", icon: Zap },

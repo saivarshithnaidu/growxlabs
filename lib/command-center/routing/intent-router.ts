@@ -106,6 +106,19 @@ function routeBaseIntent(input: {
     };
   }
 
+  // 4a. DAILY BRIEF. "What needs me today" reads across the business; billing tools come along
+  // so the founder can act on what it shows (writes still need approval).
+  const isBrief = /\b(daily brief|morning brief|brief me|what needs me|needs my attention|what should i (do|focus)|my priorities|to ?do today|what s pending|whats pending|what is pending|today s agenda|todays agenda)\b/.test(normalized);
+  if (isBrief) {
+    return {
+      intent: "business_read",
+      allowedTools: ["get_daily_brief", ...BILLING_TOOLS],
+      requiresModel: true,
+      requiresTools: true,
+      reason: "Daily brief. Allowed: get_daily_brief and billing tools."
+    };
+  }
+
   // 4b. CONSULTING BILLING. Any money question gets the billing tools; writes among them
   // only return an approval request, so offering them is safe.
   const isBilling = /\b(invoices?|invoiced|billing|bills?|payments?|paid|unpaid|overdue|receivables?|outstanding|receipts?|balance due|milestone invoice)\b/.test(normalized);
@@ -168,7 +181,7 @@ function routeBaseIntent(input: {
     if (isLeads) tools.push("query_leads");
     if (isStats) tools.push("get_company_stats");
     if (isBlogs) tools.push("get_blog_posts_stats");
-    if (isInvoice) tools.push("get_admin_invoices");
+    if (isInvoice) tools.push("get_billing_overview", "list_consulting_invoices", "list_consulting_payments");
     if (isAgreement) tools.push("get_admin_agreements");
 
     if (tools.length > 0) {
@@ -214,8 +227,7 @@ function routeBaseIntent(input: {
       tools.push("generate_proposal");
     }
     if (isInvoice) {
-      tools.push("create_admin_invoice");
-      tools.push("send_admin_invoice");
+      tools.push(...BILLING_TOOLS);
     }
     if (isBlogs) {
       tools.push("send_blog_to_subscribers");

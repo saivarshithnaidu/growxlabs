@@ -18,6 +18,7 @@ const MAX_COLUMNS = 8;
 const TITLES: Record<string, string> = {
   get_company_stats: "Company stats",
   query_leads: "Leads",
+  get_daily_brief: "Today",
   get_billing_overview: "Billing",
   list_consulting_invoices: "Invoices",
   list_consulting_payments: "Payments",

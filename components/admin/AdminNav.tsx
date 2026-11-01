@@ -91,7 +91,7 @@ const NAV_GROUPS: NavGroup[] = [
       { name: "AI Solution Reports", href: "/admin/ai-solution-reports", icon: IconSparkle },
       { name: "Solution Architectures", href: "/admin/solution-architectures", icon: IconLayers },
       { name: "Scopes of Work", href: "/admin/scopes", icon: IconFile },
-      { name: "Proposal Approvals", href: "/admin/proposal-approvals", icon: IconCheckCircle },
+      { name: "Proposal Approvals", href: "/admin/proposals?status=internal_review", icon: IconCheckCircle },
       { name: "Outreach", href: "/admin/outreach", icon: IconMarketing },
       { name: "GrowX Email", href: "/admin/growx-email", icon: IconFile },
       { name: "Communications", href: "/admin/communications", icon: IconFile },

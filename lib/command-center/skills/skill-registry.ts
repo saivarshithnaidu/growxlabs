@@ -42,7 +42,7 @@ export class SkillRegistry {
       supportedIntentTypes: ["CREATE_INVOICE", "QUERY_FINANCE"],
       allowedAgentIds: ["agent_cfo"],
       requiredPermissions: ["invoices:read"],
-      allowedToolIds: ["get_admin_invoices", "create_admin_invoice", "send_admin_invoice", "get_admin_agreements"],
+      allowedToolIds: ["get_billing_overview", "list_consulting_invoices", "list_consulting_payments", "issue_consulting_invoice", "decide_consulting_payment", "create_milestone_invoice", "get_admin_agreements"],
       status: "active"
     });
 
