@@ -10,10 +10,11 @@ export const TOOLS_DEFINITIONS = [
   },
   {
     name: "query_leads",
-    description: "Query the leads database with optional filters for status, city, or record limit.",
+    description: "Query the leads database. Search a company, contact, email or phone (e.g. search 'Trionyx'), and/or filter by status or city.",
     parameters: {
       type: "object",
       properties: {
+        search: { type: "string", description: "Company name, contact name, email or phone to find, e.g. 'Trionyx'" },
         status: { type: "string", description: "Filter leads by status (e.g. 'new', 'contacted', 'qualified', 'lost')" },
         city: { type: "string", description: "Filter leads by city name" },
         limit: { type: "number", description: "Maximum number of records to return (default 10, max 50)" }

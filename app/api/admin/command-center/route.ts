@@ -50,6 +50,13 @@ export async function POST(req: Request) {
     const idempotencyKey = req.headers.get("idempotency-key");
     await reserveSubmission(context, idempotencyKey, body);
     const baseUrl = new URL(req.url).origin;
+    // The model needs the conversation so far. Load it from what the server stored rather than
+    // trusting the browser; loaded before this turn's own message is saved.
+    const history = body.history?.length
+      ? body.history
+      : body.conversationId
+        ? await loadHistory(body.conversationId, context.organizationId, context.workspaceId)
+        : undefined;
 
     const stream = new ReadableStream({
       async start(controller) {
@@ -57,7 +64,7 @@ export async function POST(req: Request) {
         try {
           await CommandOrchestrator.handleRequest(
             body.message,
-            body.history,
+            history,
             body.attachments,
             body.conversationId,
             context,
@@ -89,4 +96,26 @@ export async function POST(req: Request) {
     CommandCenterLogger.error("POST Command Center handler error", { requestId, route: "/api/admin/command-center", errorCode: error instanceof CommandCenterError ? error.code : "INTERNAL_ERROR" });
     return errorResponse(error, requestId);
   }
+}
+
+const HISTORY_TURNS = 20;
+const DATA_NOTE_CHARS = 1500;
+
+/**
+ * The last turns of a conversation, oldest first. Each earlier reply also carries a short note of
+ * the data its tools returned, so follow-ups ("what about Vijayawada?") can refer back to it.
+ */
+async function loadHistory(conversationId: string, organizationId: string, workspaceId: string) {
+  const messages = await MessageRepository.listByConversationId(conversationId, organizationId, workspaceId);
+  return messages.slice(-HISTORY_TURNS).flatMap((m) => {
+    let text = m.text || "";
+    if (m.sender === "gxl" && Array.isArray(m.toolCalls) && m.toolCalls.length) {
+      const data = m.toolCalls
+        .filter((t: { result?: unknown }) => t.result !== undefined)
+        .map((t: { name?: string; result?: unknown }) => `${t.name}: ${JSON.stringify(t.result).slice(0, DATA_NOTE_CHARS)}`)
+        .join("\n");
+      if (data) text += `\n\n[Data shown with this reply]\n${data}`;
+    }
+    return text.trim() ? [{ id: m.id, sender: m.sender, text, timestamp: m.timestamp }] : [];
+  });
 }

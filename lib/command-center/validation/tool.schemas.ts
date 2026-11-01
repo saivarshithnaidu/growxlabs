@@ -5,6 +5,10 @@ export const GetCompanyStatsSchema = z.object({});
 export const QueryLeadsSchema = z.object({
   status: z.string().optional(),
   city: z.string().optional(),
+  /** Company, contact, email or phone to match (e.g. "Trionyx"). */
+  search: z.string().max(200).optional(),
+  /** Older callers send the whole message as `query`; treated like `search`. */
+  query: z.string().max(2000).optional(),
   limit: z.number().optional().default(10)
 });
 

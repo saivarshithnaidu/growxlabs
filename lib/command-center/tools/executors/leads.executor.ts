@@ -59,19 +59,22 @@ export const getCompanyStatsExecutor: ToolExecutor<z.infer<typeof GetCompanyStat
 
 export const queryLeadsExecutor: ToolExecutor<z.infer<typeof QueryLeadsSchema>, unknown> = {
   name: "query_leads",
-  description: "Query the leads database with optional filters for status, city, or search terms.",
+  description: "Query the leads database: filter by status or city, or search a company, contact, email or phone.",
   inputSchema: QueryLeadsSchema,
   riskLevel: "low",
   requiredPermissions: ["leads:read"],
   async execute(input) {
     let query = supabaseAdmin.from("leads").select("*");
-    
+
     if (input.status) query = query.eq("status", input.status);
     if (input.city) query = query.ilike("city", `%${input.city}%`);
-    
-    const searchTerm = ((input as any).query || "").trim();
-    if (searchTerm) {
-      const cleanTerm = searchTerm.replace(/[^a-zA-Z0-9\s]/g, "");
+
+    if (input.search?.trim()) {
+      // A name search matches the whole phrase ("Trionyx India") in any identifying field.
+      const term = input.search.trim().replace(/[^\p{L}\p{N}\s@.+-]/gu, "").slice(0, 100);
+      if (term) query = query.or(["business_name", "name", "contact_name", "email", "phone", "city"].map((f) => `${f}.ilike.%${term}%`).join(","));
+    } else if (input.query?.trim()) {
+      const cleanTerm = input.query.replace(/[^a-zA-Z0-9\s]/g, "");
       const words = cleanTerm.split(/\s+/).filter((w: string) => w.length > 2);
       if (words.length > 0) {
         const orConditions = words.map((w: string) => `business_name.ilike.%${w}%,city.ilike.%${w}%,notes.ilike.%${w}%,name.ilike.%${w}%`).join(",");
