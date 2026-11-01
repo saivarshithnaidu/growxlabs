@@ -55,7 +55,7 @@ export default function TrionyxCaseStudyPage() {
   return (
     <CaseStudyTemplate
       slug="trionyx"
-      title="Trionyx"
+      title="AI-Native DMS"
       tagline="CLIENT PLATFORM"
       categoryTag="// CASE STUDY"
       summary="A digital platform built around Trionyx's products, customer experience and day-to-day operations."

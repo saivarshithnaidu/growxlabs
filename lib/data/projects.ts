@@ -33,9 +33,9 @@ export interface CaseStudy {
 export const projects: CaseStudy[] = [
   {
     slug: "trionyx",
-    title: "TRIONYX",
-    subtitle: "Distributor Management Platform",
-    client: "Client: Trionyx India Pvt. Ltd.",
+    title: "AI-Native DMS",
+    subtitle: "Distribution Management System",
+    client: "Client: Trionyx India",
     tag: "Distribution Platform",
     category: "// DISTRIBUTION PLATFORM",
     description: "Connects distributor operations, enquiries, inventory and sales in one platform.",

@@ -17,8 +17,8 @@ interface Slide {
 const PORTFOLIO_SLIDES: Slide[] = [
   {
     src: "/portfolio/trionyx-dashboard.png",
-    alt: "TRIONYX — Distributor Management Platform",
-    title: "TRIONYX™",
+    alt: "AI-Native DMS — Distribution Management System",
+    title: "AI-Native DMS",
     fit: "cover",
   },
   {

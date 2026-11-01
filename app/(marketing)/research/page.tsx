@@ -25,10 +25,10 @@ interface LabItem {
 // AI Lab: real product screens lead (the most populated first), the Deepfake diagram last
 const AILAB_ITEMS: LabItem[] = [
   {
-    title: "TRIONYX™",
-    detail: "Distributor Management Platform",
+    title: "AI-Native DMS",
+    detail: "Distribution Management System",
     src: "/portfolio/trionyx-dashboard.png",
-    alt: "TRIONYX — Distributor Management Platform",
+    alt: "AI-Native DMS — Distribution Management System",
     fit: "cover",
   },
   {
