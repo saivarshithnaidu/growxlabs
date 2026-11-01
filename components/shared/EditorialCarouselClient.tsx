@@ -63,6 +63,8 @@ import { calculateSnap, SnapGuide } from "../editor/canvas/SmartSnapEngine";
 import { FigmaTransformGizmo, TransformHandle } from "../editor/canvas/FigmaTransformGizmo";
 import { InlineCanvasTextEditor } from "../editor/canvas/InlineCanvasTextEditor";
 import { CanvasContextMenu } from "../editor/canvas/CanvasContextMenu";
+import { applyBrandKit, brandSwatches, DEFAULT_BRAND_KIT, normaliseBrandKit, type BrandKit } from "../editor/brand/brandKit";
+import { BrandKitPanel } from "../editor/brand/BrandKitPanel";
 
 const isVideo = (url?: string) => {
   if (!url) return false;
@@ -1394,6 +1396,23 @@ export function EditorialCarouselClient() {
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isSavingRef = useRef(false);
 
+  // Brand kit (workspace-wide, stored once in system_settings)
+  const [brandKit, setBrandKit] = useState<BrandKit>(DEFAULT_BRAND_KIT);
+  const [brandKitState, setBrandKitState] = useState<"saved" | "unsaved" | "saving" | "failed">("saved");
+  useEffect(() => {
+    fetch("/api/v1/editor/brand-kit")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.kit) setBrandKit(normaliseBrandKit(data.kit));
+        if (data && !data.saved) setBrandKitState("unsaved");
+      })
+      .catch(() => setBrandKitState("unsaved"));
+  }, []);
+  const updateBrandKit = (kit: BrandKit) => {
+    setBrandKit(kit);
+    setBrandKitState("unsaved");
+  };
+
   // Synchronized state refs for keyboard shortcuts and async callbacks
   const slidesRef = useRef(slides);
   slidesRef.current = slides;
@@ -2348,6 +2367,43 @@ export function EditorialCarouselClient() {
     saveHistory(newSlides);
     toast.success("Duplicated slide");
   };
+
+  // ── Brand kit: shared by every carousel; applying it restyles slides without moving anything.
+  const applyBrandTo = (indexes: number[]) => {
+    const newSlides = slides.map((s, i) => (indexes.includes(i) ? (applyBrandKit(s as any, brandKit) as any) : s));
+    setSlides(newSlides);
+    saveHistory(newSlides);
+    toast.success(indexes.length === 1 ? "Brand applied to this slide" : `Brand applied to ${indexes.length} slides`);
+  };
+
+  const saveBrandKit = async () => {
+    setBrandKitState("saving");
+    try {
+      const res = await fetch("/api/v1/editor/brand-kit", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kit: brandKit }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Couldn't save the brand kit.");
+      setBrandKitState("saved");
+    } catch (e: any) {
+      setBrandKitState("failed");
+      toast.error(e.message || "Couldn't save the brand kit.");
+    }
+  };
+
+  const brandKitPanel = (
+    <BrandKitPanel
+      kit={brandKit}
+      onChange={updateBrandKit}
+      onSave={saveBrandKit}
+      saveState={brandKitState}
+      onApplyCurrent={() => applyBrandTo([activeIndex])}
+      onApplyAll={() => applyBrandTo(slides.map((_, i) => i))}
+      slidesCount={slides.length}
+    />
+  );
 
   // Reorder: swap a slide with its neighbour; the moved slide stays selected.
   const moveSlide = (idx: number, direction: -1 | 1) => {
@@ -4076,6 +4132,7 @@ export function EditorialCarouselClient() {
             />
             <div className="relative z-10 w-[280px] h-full bg-[#1a1a1c] shadow-2xl">
               <StudioLeftPanel
+                themeTop={brandKitPanel}
                 slides={slides}
                 activeIndex={activeIndex}
                 activeSlide={activeSlide}
@@ -4150,6 +4207,7 @@ export function EditorialCarouselClient() {
 
         {showLeftSidebar && !isMobileView && (
           <StudioLeftPanel
+            themeTop={brandKitPanel}
             slides={slides}
             activeIndex={activeIndex}
             activeSlide={activeSlide}
@@ -5283,6 +5341,7 @@ export function EditorialCarouselClient() {
             />
             <div className="relative z-10 w-[300px] max-w-[85vw] h-full bg-[#2a2a2a] shadow-2xl overflow-y-auto">
               <StudioInspector
+                brandColors={brandSwatches(brandKit)}
                 activeSlide={activeSlide}
                 selectedElement={selectedElement}
                 isFooterSelected={isFooterSelected}
@@ -5331,6 +5390,7 @@ export function EditorialCarouselClient() {
 
         {showRightSidebar && !isMobileView && (
           <StudioInspector
+            brandColors={brandSwatches(brandKit)}
             activeSlide={activeSlide}
             selectedElement={selectedElement}
             isFooterSelected={isFooterSelected}

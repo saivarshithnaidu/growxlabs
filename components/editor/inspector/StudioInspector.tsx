@@ -150,6 +150,8 @@ interface StudioInspectorProps {
   zoomScale?: number;
   onSetZoomScale?: (zoom: number) => void;
   onZoomFit?: () => void;
+  /** The brand kit colours, offered first in colour swatches. */
+  brandColors?: string[];
 }
 
 export const StudioInspector: React.FC<StudioInspectorProps> = ({
@@ -183,6 +185,7 @@ export const StudioInspector: React.FC<StudioInspectorProps> = ({
   zoomScale = 0.45,
   onSetZoomScale,
   onZoomFit,
+  brandColors = [],
 }) => {
   const [fillMode, setFillMode] = useState<"solid" | "gradient" | "image">("solid");
   const [aspectLocked, setAspectLocked] = useState(true);
@@ -1291,16 +1294,16 @@ export const StudioInspector: React.FC<StudioInspectorProps> = ({
                     </div>
                   </div>
 
-                  {/* Quick Palette Chips */}
+                  {/* Quick Palette Chips: brand colours first, then the general palette */}
                   <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                    {COLOR_SWATCHES.map((hex) => (
+                    {[...brandColors, ...COLOR_SWATCHES.filter((hex) => !brandColors.some((b) => b.toLowerCase() === hex.toLowerCase()))].map((hex, i) => (
                       <button
                         key={hex}
                         type="button"
                         onClick={() => handleElementFillChange(hex)}
-                        className="w-5 h-5 rounded-md border border-white/20 hover:scale-110 transition-transform relative cursor-pointer"
+                        className={`w-5 h-5 rounded-md border hover:scale-110 transition-transform relative cursor-pointer ${i < brandColors.length ? "border-[#1687f8]/70" : "border-white/20"} ${i === brandColors.length - 1 ? "mr-1.5" : ""}`}
                         style={{ backgroundColor: hex }}
-                        title={`Set fill to ${hex}`}
+                        title={i < brandColors.length ? `Brand colour ${hex}` : `Set fill to ${hex}`}
                       >
                         {activeColor.toLowerCase() === hex.toLowerCase() && (
                           <Check size={9} className={hex === "#ffffff" ? "text-black mx-auto" : "text-white mx-auto"} />

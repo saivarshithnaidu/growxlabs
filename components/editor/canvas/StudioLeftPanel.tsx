@@ -47,6 +47,8 @@ interface StudioLeftPanelProps {
   onToggleVisibility: (key: ElementKey) => void;
   onToggleLock: (key: ElementKey) => void;
   onApplyPreset: (presetId: string) => void;
+  /** Rendered at the top of the Theme tab (the brand kit). */
+  themeTop?: React.ReactNode;
   onFormatChange: (preset: CanvasPreset) => void;
   presets: { id: string; name: string; desc: string }[];
   onCollapse?: () => void;
@@ -94,6 +96,7 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
   onToggleVisibility,
   onToggleLock,
   onApplyPreset,
+  themeTop,
   onFormatChange,
   presets,
   onCollapse,
@@ -691,6 +694,7 @@ export const StudioLeftPanel: React.FC<StudioLeftPanelProps> = ({
             ======================================================== */}
         {tab === "theme" && (
           <div className="space-y-3 px-1">
+            {themeTop && <div className="border-b border-[#353535] pb-3">{themeTop}</div>}
             {/* Editorial Layout Templates */}
             <div className="space-y-1.5">
               <span className="text-[11px] font-medium text-[#ececec] block">
