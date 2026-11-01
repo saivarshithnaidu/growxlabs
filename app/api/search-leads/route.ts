@@ -16,31 +16,30 @@ export async function POST(req: Request) {
 
     const searchQuery = `${category} in ${city}`;
     
-    // Call Apify Google Maps Scraper (Official Actor: apify/google-maps-scraper)
-    const runRes = await fetch("https://api.apify.com/v2/acts/apify~google-maps-scraper/run-sync?token=" + process.env.APIFY_API_TOKEN, {
+    // Call Apify Google Maps Places API (Actor: johnvc/google-maps-places-api), which returns the dataset items directly
+    const runRes = await fetch("https://api.apify.com/v2/acts/johnvc~google-maps-places-api/run-sync-get-dataset-items?token=" + process.env.APIFY_API_TOKEN, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        queries: [searchQuery],
-        maxItems: 20,
-        searchMatching: "all",
+        searchTerms: [searchQuery],
+        maxResultsPerSearch: 20,
         language: "en"
       })
     });
 
-    const runData = await runRes.json();
-    const datasetId = runData.data.defaultDatasetId;
-    
-    // Fetch dataset results
-    const resultsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${process.env.APIFY_API_TOKEN}`);
-    const items = await resultsRes.json();
+    if (!runRes.ok) {
+      throw new Error(`Apify run error: ${await runRes.text()}`);
+    }
 
-    const leads = items.map((item: any) => ({
+    const items = await runRes.json();
+
+    // Skip rows without a place name (the Actor's error and notice rows)
+    const leads = items.filter((item: { title?: string }) => item.title).map((item: any) => ({
       business_name: item.title,
-      phone: item.phone,
+      phone: item.phoneNumber,
       website: item.website,
       address: item.address,
-      rating: item.totalScore,
+      rating: item.rating,
       category: category,
       city: city
     }));
