@@ -8,16 +8,8 @@ export class AiFinanceService {
    * AI Expense receipt scanning and automatic chart of accounts category classification.
    */
   static async categorizeExpenseReceipt(receiptText: string) {
-    if (!ai) {
-      // Mock local fallback
-      return {
-        category_code: "5020",
-        category_name: "Cloud Infrastructure",
-        confidence: 95,
-        extracted_amount: 12500.00,
-        detected_vendor: "AWS Cloud Services"
-      };
-    }
+    // No invented results: without a model there is nothing to classify.
+    if (!ai) throw new Error("AI is not configured (GEMINI_API_KEY is missing).");
 
     try {
       const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -51,14 +43,7 @@ export class AiFinanceService {
    * Cash Flow and Revenue yielding forecasting.
    */
   static async predictCashFlowTrajectory(transactions: any[]) {
-    if (!ai) {
-      return {
-        forecasts: [
-          { month: "Aug", inflow: 150000, outflow: 80000, net: 70000 },
-          { month: "Sep", inflow: 180000, outflow: 85000, net: 95000 }
-        ]
-      };
-    }
+    if (!ai) throw new Error("AI is not configured (GEMINI_API_KEY is missing).");
 
     try {
       const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });

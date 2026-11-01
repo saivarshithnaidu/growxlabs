@@ -1,14 +1,83 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2, FileText, ArrowDown, TrendingUp } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Alert, Card, Skeleton, Tabs, TabsList, TabsTrigger, formatCurrency } from "@/src/components/ui";
+import { ErrorState, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
 import { cn } from "@/lib/utils";
 
+/*
+ * Financial statements built only from the chart of accounts: every line is a real ledger
+ * account and its balance. Nothing is defaulted or estimated, and the balance sheet and
+ * trial balance say plainly whether they balance.
+ */
+
+type Account = { id: string; code: string; name: string; type: string; balance: number | string | null; is_active?: boolean };
+type ReportId = "pl" | "bs" | "tb" | "gst";
+const REPORTS: { id: ReportId; label: string }[] = [
+  { id: "pl", label: "Profit and loss" },
+  { id: "bs", label: "Balance sheet" },
+  { id: "tb", label: "Trial balance" },
+  { id: "gst", label: "GST" },
+];
+
+const num = (v: unknown) => Number(v) || 0;
+const money = (v: number) => formatCurrency(v);
+const ofType = (accounts: Account[], type: string) => accounts.filter((a) => String(a.type).toUpperCase() === type);
+const total = (accounts: Account[]) => accounts.reduce((s, a) => s + num(a.balance), 0);
+const DEBIT_NORMAL = new Set(["ASSET", "EXPENSE"]);
+
+function Lines({ title, accounts, totalLabel, extra }: { title: string; accounts: Account[]; totalLabel: string; extra?: Array<{ name: string; value: number }> }) {
+  const rows = [...accounts.map((a) => ({ key: a.id, name: a.name, code: a.code, value: num(a.balance) })), ...(extra || []).map((e) => ({ key: e.name, name: e.name, code: "", value: e.value }))];
+  const sum = rows.reduce((s, r) => s + r.value, 0);
+  return (
+    <section className="flex flex-col">
+      <h3 className="ds-t-meta-strong border-b border-[var(--border)] pb-2 text-[var(--text-secondary)]">{title}</h3>
+      {rows.length === 0 ? (
+        <p className="ds-t-body py-2.5 text-[var(--text-muted)]">No accounts.</p>
+      ) : (
+        <ul className="divide-y divide-[var(--border-subtle)]">
+          {rows.map((r) => (
+            <li key={r.key} className="flex items-baseline justify-between gap-4 py-2.5">
+              <span className="ds-t-body min-w-0 text-[var(--text-primary)]">
+                {r.name}
+                {r.code && <span className="ds-t-meta ds-num ml-2 text-[var(--text-disabled)]">{r.code}</span>}
+              </span>
+              <span className="ds-t-body ds-num shrink-0 text-[var(--text-primary)]">{money(r.value)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="flex items-baseline justify-between gap-4 border-t border-[var(--border-strong)] py-2.5">
+        <span className="ds-t-body-strong text-[var(--text-primary)]">{totalLabel}</span>
+        <span className="ds-t-body-strong ds-num text-[var(--text-primary)]">{money(sum)}</span>
+      </div>
+    </section>
+  );
+}
+
+function ResultRow({ label, value, tone }: { label: string; value: number; tone?: "good" | "bad" }) {
+  return (
+    <div className={cn("flex items-baseline justify-between gap-4 rounded-[var(--radius-md)] px-4 py-3", tone === "bad" ? "bg-[var(--danger-tint)]" : "bg-[var(--bg-active)]")}>
+      <span className="ds-t-body-strong text-[var(--text-primary)]">{label}</span>
+      <span className={cn("ds-num text-[17px] font-semibold", tone === "bad" ? "text-[var(--danger)]" : "text-[var(--text-primary)]")}>{money(value)}</span>
+    </div>
+  );
+}
+
 export default function ReportsPage() {
-  const [accounts, setAccounts] = useState<any[]>([]);
+  const breadcrumb = useAdminBreadcrumb();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
-  const [reportType, setReportType] = useState<"PL" | "BS" | "TB" | "GST">("PL");
+  const [error, setError] = useState("");
+
+  const param = searchParams.get("report") as ReportId | null;
+  const report: ReportId = param && REPORTS.some((r) => r.id === param) ? param : "pl";
+  const setReport = (id: string) => router.replace(id === "pl" ? pathname : `${pathname}?report=${id}`, { scroll: false });
 
   useEffect(() => {
     fetchAccounts();
@@ -17,223 +86,143 @@ export default function ReportsPage() {
   const fetchAccounts = async () => {
     try {
       setLoading(true);
+      setError("");
       const res = await fetch("/api/finance/accounts");
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Couldn't load the ledger.");
       setAccounts(data.accounts || []);
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      setError(e.message || "Couldn't load the ledger.");
     } finally {
       setLoading(false);
     }
   };
 
-  const getBalance = (code: string) => {
-    const acc = accounts.find((a: any) => a.code === code);
-    return acc ? Number(acc.balance) : 0;
-  };
+  const income = ofType(accounts, "INCOME");
+  const expenses = ofType(accounts, "EXPENSE");
+  const assets = ofType(accounts, "ASSET");
+  const liabilities = ofType(accounts, "LIABILITY");
+  const equity = ofType(accounts, "EQUITY");
+  const profit = total(income) - total(expenses);
+  const liabilitiesAndEquity = total(liabilities) + total(equity) + profit;
+  const bsDifference = Math.round((total(assets) - liabilitiesAndEquity) * 100) / 100;
 
-  // 1. Profit & Loss calculations
-  const revenues = [
-    { name: "SaaS Licensing Revenue (4010)", value: getBalance("4010") || 150000 },
-    { name: "Consulting Setup Fees (4020)", value: getBalance("4020") || 25000 }
-  ];
-  const totalRevenue = revenues.reduce((acc, curr) => acc + curr.value, 0);
+  const tbRows = accounts.map((a) => {
+    const v = num(a.balance);
+    const debitSide = DEBIT_NORMAL.has(String(a.type).toUpperCase());
+    // A negative balance sits on the opposite side.
+    return { ...a, debit: debitSide ? Math.max(v, 0) : Math.max(-v, 0), credit: debitSide ? Math.max(-v, 0) : Math.max(v, 0) };
+  });
+  const tbDebit = tbRows.reduce((s, r) => s + r.debit, 0);
+  const tbCredit = tbRows.reduce((s, r) => s + r.credit, 0);
+  const gstAccounts = accounts.filter((a) => /\b(gst|cgst|sgst|igst|tds)\b/i.test(a.name));
 
-  const expenses = [
-    { name: "Employee Salaries (5010)", value: getBalance("5010") || 20000 },
-    { name: "Cloud Infrastructure (5020)", value: getBalance("5020") || 15000 },
-    { name: "Travel & Entertainment (5030)", value: getBalance("5030") || 5000 }
-  ];
-  const totalExpenses = expenses.reduce((acc, curr) => acc + curr.value, 0);
-  const netProfit = totalRevenue - totalExpenses;
-
-  // 2. Balance Sheet calculations
-  const assets = [
-    { name: "Cash & Bank Balances (1010)", value: getBalance("1010") || 500000 },
-    { name: "Accounts Receivable (1200)", value: getBalance("1200") || 25000 },
-    { name: "Office Equipment (1500)", value: getBalance("1500") || 150000 }
-  ];
-  const totalAssets = assets.reduce((acc, curr) => acc + curr.value, 0);
-
-  const liabilities = [
-    { name: "Accounts Payable (2010)", value: getBalance("2010") || 12000 },
-    { name: "GST Payable (2200)", value: getBalance("2200") || 13000 }
-  ];
-  const totalLiabilities = liabilities.reduce((acc, curr) => acc + curr.value, 0);
-
-  const equity = [
-    { name: "Retained Earnings (3010)", value: getBalance("3010") || 650000 },
-    { name: "Current Year Net Profit", value: netProfit }
-  ];
-  const totalEquity = equity.reduce((acc, curr) => acc + curr.value, 0);
+  const asOf = new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold text-neutral-950 tracking-tight leading-none flex items-center gap-2">
-            <FileText size={28} className="text-[#0075de]" /> Financial Statements
-          </h1>
-          <p className="text-neutral-500 text-xs">Generate trial balances, Balance Sheets, Profit & Loss reports, and GST filings.</p>
-        </div>
+    <div className="mx-auto max-w-[1280px]">
+      <PageHeader title="Reports" breadcrumb={breadcrumb} info="Statements built from the current balances in the ledger." />
 
-        {/* Report Selector Tabs */}
-        <div className="flex bg-[#f6f5f4] border border-[#e6e6e6] p-1 rounded-lg text-xs font-bold uppercase tracking-wider text-neutral-500">
-          <button onClick={() => setReportType("PL")} className={cn("px-4 py-1.5 rounded-md cursor-pointer", reportType === "PL" && "bg-white text-neutral-950 shadow-sm")}>P&L</button>
-          <button onClick={() => setReportType("BS")} className={cn("px-4 py-1.5 rounded-md cursor-pointer", reportType === "BS" && "bg-white text-neutral-950 shadow-sm")}>Balance Sheet</button>
-          <button onClick={() => setReportType("TB")} className={cn("px-4 py-1.5 rounded-md cursor-pointer", reportType === "TB" && "bg-white text-neutral-950 shadow-sm")}>Trial Balance</button>
-          <button onClick={() => setReportType("GST")} className={cn("px-4 py-1.5 rounded-md cursor-pointer", reportType === "GST" && "bg-white text-neutral-950 shadow-sm")}>GST Report</button>
-        </div>
-      </div>
+      <Tabs value={report} onValueChange={setReport}>
+        <TabsList aria-label="Report" className="mb-6">
+          {REPORTS.map((r) => <TabsTrigger key={r.id} value={r.id}>{r.label}</TabsTrigger>)}
+        </TabsList>
+      </Tabs>
 
-      {loading ? (
-        <div className="h-64 flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-8 w-8" />
-        </div>
+      {error ? (
+        <ErrorState title="Couldn't load the ledger" description={error} onRetry={fetchAccounts} />
+      ) : loading ? (
+        <Skeleton height={420} radius="md" />
+      ) : accounts.length === 0 ? (
+        <Alert variant="info" title="No ledger accounts yet">Add accounts in Ledger accounts and post journal entries; the reports fill in from there.</Alert>
       ) : (
-        <Card className="p-8 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm max-w-3xl mx-auto space-y-6">
-          {reportType === "PL" && (
-            <div className="space-y-6 text-xs font-semibold">
-              <div className="text-center border-b border-[#e6e6e6] pb-4">
-                <h2 className="text-sm font-bold text-neutral-950 uppercase tracking-widest">Profit & Loss Statement</h2>
-                <span className="text-[10px] text-neutral-400 font-bold tracking-wider block mt-1">FOR CURRENT FINANCIAL QUARTER</span>
-              </div>
-
-              {/* Revenues */}
-              <div className="space-y-2">
-                <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 border-b border-[#e6e6e6]/60 pb-1.5">REVENUE</h3>
-                {revenues.map((r, i) => (
-                  <div key={i} className="flex justify-between pl-2">
-                    <span className="text-neutral-800">{r.name}</span>
-                    <span className="font-mono text-neutral-900">₹{r.value.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between border-t border-[#e6e6e6] pt-2 font-bold text-neutral-950 bg-[#f6f5f4] p-2 rounded">
-                  <span>Gross Operating Revenue:</span>
-                  <span className="font-mono">₹{totalRevenue.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Expenses */}
-              <div className="space-y-2 pt-4">
-                <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 border-b border-[#e6e6e6]/60 pb-1.5">OPERATING EXPENSES</h3>
-                {expenses.map((e, i) => (
-                  <div key={i} className="flex justify-between pl-2">
-                    <span className="text-neutral-800">{e.name}</span>
-                    <span className="font-mono text-neutral-900">₹{e.value.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between border-t border-[#e6e6e6] pt-2 font-bold text-neutral-950 bg-[#f6f5f4] p-2 rounded">
-                  <span>Total Operating Expenses:</span>
-                  <span className="font-mono">₹{totalExpenses.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Net Income */}
-              <div className="border-t-2 border-double border-[#e6e6e6] pt-4 flex justify-between text-sm font-black text-neutral-950 bg-[#0075de]/5 p-3 rounded">
-                <span>Net Earnings (Profit):</span>
-                <span className="font-mono text-[#0075de]">₹{netProfit.toLocaleString()}</span>
-              </div>
+        <Card as="section" className="mx-auto w-full max-w-3xl">
+          {report === "pl" && (
+            <div className="flex flex-col gap-6">
+              <header>
+                <h2 className="ds-t-title-md text-[var(--text-primary)]">Profit and loss</h2>
+                <p className="ds-t-meta text-[var(--text-muted)]">Ledger balances as of {asOf}</p>
+              </header>
+              <Lines title="Income" accounts={income} totalLabel="Total income" />
+              <Lines title="Expenses" accounts={expenses} totalLabel="Total expenses" />
+              <ResultRow label={profit < 0 ? "Net loss" : "Net profit"} value={profit} tone={profit < 0 ? "bad" : "good"} />
             </div>
           )}
 
-          {reportType === "BS" && (
-            <div className="space-y-6 text-xs font-semibold">
-              <div className="text-center border-b border-[#e6e6e6] pb-4">
-                <h2 className="text-sm font-bold text-neutral-950 uppercase tracking-widest">Balance Sheet</h2>
-                <span className="text-[10px] text-neutral-400 font-bold tracking-wider block mt-1">AS OF CURRENT TRANSACTION DATE</span>
-              </div>
-
-              {/* Assets */}
-              <div className="space-y-2">
-                <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 border-b border-[#e6e6e6]/60 pb-1.5">ASSETS</h3>
-                {assets.map((a, i) => (
-                  <div key={i} className="flex justify-between pl-2">
-                    <span className="text-neutral-800">{a.name}</span>
-                    <span className="font-mono text-neutral-900">₹{a.value.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between border-t border-[#e6e6e6] pt-2 font-bold text-neutral-950 bg-[#f6f5f4] p-2 rounded">
-                  <span>Total Corporate Assets:</span>
-                  <span className="font-mono">₹{totalAssets.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Liabilities */}
-              <div className="space-y-2 pt-4">
-                <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 border-b border-[#e6e6e6]/60 pb-1.5">LIABILITIES</h3>
-                {liabilities.map((l, i) => (
-                  <div key={i} className="flex justify-between pl-2">
-                    <span className="text-neutral-800">{l.name}</span>
-                    <span className="font-mono text-neutral-900">₹{l.value.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between border-t border-[#e6e6e6] pt-2 font-bold text-neutral-950 bg-[#f6f5f4] p-2 rounded">
-                  <span>Total Liabilities:</span>
-                  <span className="font-mono">₹{totalLiabilities.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Equity */}
-              <div className="space-y-2 pt-4">
-                <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 border-b border-[#e6e6e6]/60 pb-1.5">SHAREHOLDER EQUITY</h3>
-                {equity.map((eq, i) => (
-                  <div key={i} className="flex justify-between pl-2">
-                    <span className="text-neutral-800">{eq.name}</span>
-                    <span className="font-mono text-neutral-900">₹{eq.value.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between border-t border-[#e6e6e6] pt-2 font-bold text-neutral-950 bg-[#f6f5f4] p-2 rounded">
-                  <span>Total Shareholder Equity:</span>
-                  <span className="font-mono">₹{totalEquity.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Reconcile Check */}
-              <div className="border-t-2 border-double border-[#e6e6e6] pt-4 flex justify-between text-xs font-bold text-green-600 bg-green-500/5 p-3.5 rounded border border-green-200">
-                <span>Ledger Reconcile balance (Assets = Liabilities + Equity):</span>
-                <span>₹{totalAssets.toLocaleString()} = ₹{(totalLiabilities + totalEquity).toLocaleString()} (✓ Balanced)</span>
-              </div>
+          {report === "bs" && (
+            <div className="flex flex-col gap-6">
+              <header>
+                <h2 className="ds-t-title-md text-[var(--text-primary)]">Balance sheet</h2>
+                <p className="ds-t-meta text-[var(--text-muted)]">As of {asOf}</p>
+              </header>
+              <Lines title="Assets" accounts={assets} totalLabel="Total assets" />
+              <Lines title="Liabilities" accounts={liabilities} totalLabel="Total liabilities" />
+              <Lines title="Equity" accounts={equity} totalLabel="Total equity" extra={[{ name: "Current period profit", value: profit }]} />
+              {bsDifference === 0 ? (
+                <Alert variant="success" title="Balanced">Assets equal liabilities plus equity ({money(total(assets))}).</Alert>
+              ) : (
+                <Alert variant="warning" title="Doesn't balance">
+                  Assets are {money(total(assets))}; liabilities plus equity are {money(liabilitiesAndEquity)}, a difference of {money(Math.abs(bsDifference))}. Check the journal for one-sided or missing entries.
+                </Alert>
+              )}
             </div>
           )}
 
-          {reportType === "TB" && (
-            <div className="space-y-4 text-xs font-semibold">
-              <div className="text-center border-b border-[#e6e6e6] pb-4">
-                <h2 className="text-sm font-bold text-neutral-950 uppercase tracking-widest">Trial Balance</h2>
+          {report === "tb" && (
+            <div className="flex flex-col gap-4">
+              <header>
+                <h2 className="ds-t-title-md text-[var(--text-primary)]">Trial balance</h2>
+                <p className="ds-t-meta text-[var(--text-muted)]">As of {asOf}</p>
+              </header>
+              <div className="custom-scrollbar overflow-x-auto">
+                <table className="w-full min-w-[480px] border-collapse text-left">
+                  <thead>
+                    <tr className="border-b border-[var(--border)]">
+                      <th scope="col" className="ds-t-meta-strong py-2 pr-3 text-[var(--text-muted)]">Code</th>
+                      <th scope="col" className="ds-t-meta-strong py-2 pr-3 text-[var(--text-muted)]">Account</th>
+                      <th scope="col" className="ds-t-meta-strong py-2 pr-3 text-right text-[var(--text-muted)]">Debit</th>
+                      <th scope="col" className="ds-t-meta-strong py-2 text-right text-[var(--text-muted)]">Credit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tbRows.map((r) => (
+                      <tr key={r.id} className="border-b border-[var(--border-subtle)]">
+                        <td className="ds-t-meta ds-num py-2.5 pr-3 text-[var(--text-muted)]">{r.code}</td>
+                        <td className="ds-t-body py-2.5 pr-3 text-[var(--text-primary)]">{r.name}</td>
+                        <td className="ds-t-body ds-num py-2.5 pr-3 text-right text-[var(--text-primary)]">{r.debit ? money(r.debit) : ""}</td>
+                        <td className="ds-t-body ds-num py-2.5 text-right text-[var(--text-primary)]">{r.credit ? money(r.credit) : ""}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t border-[var(--border-strong)]">
+                      <td />
+                      <th scope="row" className="ds-t-body-strong py-2.5 pr-3 text-left text-[var(--text-primary)]">Total</th>
+                      <td className="ds-t-body-strong ds-num py-2.5 pr-3 text-right text-[var(--text-primary)]">{money(tbDebit)}</td>
+                      <td className="ds-t-body-strong ds-num py-2.5 text-right text-[var(--text-primary)]">{money(tbCredit)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
-              <div className="space-y-2">
-                {accounts.map(acc => (
-                  <div key={acc.id} className="flex justify-between border-b border-[#e6e6e6]/40 pb-2">
-                    <span>[{acc.code}] {acc.name}</span>
-                    <span className="font-mono">₹{Number(acc.balance).toLocaleString()}</span>
-                  </div>
-                ))}
-              </div>
+              {Math.round((tbDebit - tbCredit) * 100) === 0
+                ? <Alert variant="success" title="Debits equal credits" />
+                : <Alert variant="warning" title="Debits and credits differ">The difference is {money(Math.abs(tbDebit - tbCredit))}.</Alert>}
             </div>
           )}
 
-          {reportType === "GST" && (
-            <div className="space-y-6 text-xs font-semibold">
-              <div className="text-center border-b border-[#e6e6e6] pb-4">
-                <h2 className="text-sm font-bold text-neutral-950 uppercase tracking-widest">GST Filing Reports</h2>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-4">
-                <Card className="p-4 border bg-[var(--surface-1)] rounded-md text-center">
-                  <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider block">CGST (9%)</span>
-                  <h4 className="text-base font-black font-mono mt-1 text-neutral-900">₹{(totalRevenue * 0.09).toLocaleString()}</h4>
-                </Card>
-                <Card className="p-4 border bg-[var(--surface-1)] rounded-md text-center">
-                  <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider block">SGST (9%)</span>
-                  <h4 className="text-base font-black font-mono mt-1 text-neutral-900">₹{(totalRevenue * 0.09).toLocaleString()}</h4>
-                </Card>
-                <Card className="p-4 border bg-[var(--surface-1)] rounded-md text-center">
-                  <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider block">Total GST Liability</span>
-                  <h4 className="text-base font-black font-mono mt-1 text-[#0075de]">₹{(totalRevenue * 0.18).toLocaleString()}</h4>
-                </Card>
-              </div>
+          {report === "gst" && (
+            <div className="flex flex-col gap-6">
+              <header>
+                <h2 className="ds-t-title-md text-[var(--text-primary)]">GST</h2>
+                <p className="ds-t-meta text-[var(--text-muted)]">Balances of the tax accounts in the ledger, as of {asOf}</p>
+              </header>
+              {gstAccounts.length > 0 ? (
+                <Lines title="Tax accounts" accounts={gstAccounts} totalLabel="Total" />
+              ) : (
+                <Alert variant="info" title="No GST accounts in the ledger">
+                  Add GST accounts (for example "GST payable" or "Input GST") and post tax with each invoice and bill; this report then shows what you owe and can claim.
+                </Alert>
+              )}
             </div>
           )}
         </Card>

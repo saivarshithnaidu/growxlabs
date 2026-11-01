@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
+import { denyUnlessFinanceAdmin } from "@/lib/finance/admin-guard";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { EnterpriseFinanceService } from "@/services/enterprise-finance";
 
 export async function GET(request: Request) {
   try {
+    const denied = await denyUnlessFinanceAdmin();
+    if (denied) return denied;
+
     const { data: expenses, error } = await supabaseAdmin
       .from("expenses")
       .select("*")
@@ -18,6 +22,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const denied = await denyUnlessFinanceAdmin();
+    if (denied) return denied;
+
     const body = await request.json();
     const { data: expense, error } = await supabaseAdmin
       .from("expenses")

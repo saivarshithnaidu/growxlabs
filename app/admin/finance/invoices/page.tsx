@@ -1,22 +1,44 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2, Plus, FileText, ArrowLeft, Send, Check } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { InvoiceBuilder } from "@/components/admin/finance/InvoiceBuilder";
-import { Input } from "@/components/ui/Input";
-import { cn } from "@/lib/utils";
+import { FileText, Plus } from "lucide-react";
+import {
+  Badge, Button, DataTable, type DataTableColumn, Input, KPIItem, KPIStrip, Modal, Select, formatCurrency, toast, type BadgeVariant,
+} from "@/src/components/ui";
+import { EmptyState, ErrorState, FormField, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
+
+/*
+ * Sales invoices. New invoices are created from a quotation (the server copies its client,
+ * amounts and tax), which is the only creation path the invoices API supports.
+ */
+
+type Invoice = { id: string; invoice_number: string; company?: { name?: string } | null; due_date: string | null; status: string; grand_total: number | string };
+type Quotation = { id: string; status: string; grand_total: number | string; company?: { name?: string } | null; deal?: { name?: string } | null; created_at: string };
+
+const STATUS: Record<string, BadgeVariant> = { DRAFT: "neutral", SENT: "info", PARTIALLY_PAID: "warning", PAID: "success", OVERDUE: "danger", CANCELLED: "neutral" };
+const human = (v: string) => v.replaceAll("_", " ").toLowerCase().replace(/^./, (c) => c.toUpperCase());
+const METHODS = [
+  { value: "UPI", label: "UPI" },
+  { value: "BANK_TRANSFER", label: "Bank transfer" },
+  { value: "RAZORPAY", label: "Razorpay" },
+  { value: "CASH", label: "Cash" },
+];
+const today = () => new Date().toISOString().slice(0, 10);
 
 export default function InvoicesPage() {
-  const [invoices, setInvoices] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  const [companies, setCompanies] = useState<any[]>([]);
+  const breadcrumb = useAdminBreadcrumb();
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [quotations, setQuotations] = useState<Quotation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCreator, setShowCreator] = useState(false);
+  const [error, setError] = useState("");
 
-  // Payment Recording State
-  const [payInvoiceId, setPayInvoiceId] = useState<string | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [quotationId, setQuotationId] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [creating, setCreating] = useState(false);
+
+  const [payInvoice, setPayInvoice] = useState<Invoice | null>(null);
   const [payAmount, setPayAmount] = useState("");
   const [payMethod, setPayMethod] = useState("UPI");
   const [submitting, setSubmitting] = useState(false);
@@ -28,198 +50,172 @@ export default function InvoicesPage() {
   const fetchInvoicesData = async () => {
     try {
       setLoading(true);
-      const [invRes, prodRes, compRes] = await Promise.all([
-        fetch("/api/finance/invoices"),
-        fetch("/api/products"),
-        fetch("/api/companies")
-      ]);
-
+      setError("");
+      const [invRes, quoteRes] = await Promise.all([fetch("/api/finance/invoices"), fetch("/api/quotations")]);
       const invData = await invRes.json();
-      const prodData = await prodRes.json();
-      const compData = await compRes.json();
-
+      if (!invRes.ok) throw new Error(invData.error || "Couldn't load invoices.");
       setInvoices(invData.invoices || []);
-      setProducts(prodData.products || []);
-      setCompanies(compData.companies || []);
-    } catch (e) {
-      console.error(e);
+      if (quoteRes.ok) setQuotations((await quoteRes.json()).quotations || []);
+    } catch (e: any) {
+      setError(e.message || "Couldn't load invoices.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGenerateInvoice = async (formData: any) => {
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreating(true);
     try {
       const res = await fetch("/api/finance/invoices", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ quotation_id: quotationId, due_date: dueDate })
       });
-      if (res.ok) {
-        setShowCreator(false);
-        fetchInvoicesData();
-      } else {
-        throw new Error("Failed to compile invoice");
-      }
-    } catch (e: any) {
-      console.error(e);
-      throw e;
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Couldn't create the invoice.");
+      toast({ title: `Invoice ${data.invoice?.invoice_number || ""} created`, variant: "success" });
+      setShowCreate(false);
+      setQuotationId("");
+      setDueDate("");
+      fetchInvoicesData();
+    } catch (err: any) {
+      toast({ title: err.message, variant: "danger" });
+    } finally {
+      setCreating(false);
     }
   };
 
   const handleRecordPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!payInvoiceId || !payAmount) return;
-
+    if (!payInvoice || !payAmount) return;
     setSubmitting(true);
     try {
       const res = await fetch("/api/finance/payments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          invoice_id: payInvoiceId,
-          amount: payAmount,
-          payment_method: payMethod
-        })
+        body: JSON.stringify({ invoice_id: payInvoice.id, amount: payAmount, payment_method: payMethod })
       });
-      if (res.ok) {
-        setPayInvoiceId(null);
-        setPayAmount("");
-        fetchInvoicesData();
-      }
-    } catch (e) {
-      console.error(e);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Couldn't record the payment.");
+      toast({ title: "Payment recorded", variant: "success" });
+      setPayInvoice(null);
+      setPayAmount("");
+      fetchInvoicesData();
+    } catch (err: any) {
+      toast({ title: err.message, variant: "danger" });
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (showCreator) {
-    return (
-      <div className="space-y-6">
-        <button 
-          onClick={() => setShowCreator(false)}
-          className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-450 hover:text-neutral-900 bg-transparent outline-none cursor-pointer"
-        >
-          <ArrowLeft size={14} /> Back to Listings
-        </button>
-        <InvoiceBuilder 
-          products={products}
-          companies={companies}
-          onGenerateInvoice={handleGenerateInvoice}
-        />
-      </div>
-    );
-  }
+  const open = invoices.filter((i) => i.status !== "PAID" && i.status !== "CANCELLED");
+  const outstanding = open.reduce((s, i) => s + Number(i.grand_total || 0), 0);
+  const overdue = open.filter((i) => i.due_date && i.due_date < today());
+  const quotationOptions = quotations.map((q) => ({
+    value: q.id,
+    label: `${q.company?.name || q.deal?.name || "Quotation"} (${formatCurrency(Number(q.grand_total))}, ${human(q.status)})`,
+  }));
+
+  const columns: DataTableColumn<Invoice>[] = [
+    { id: "number", header: "Invoice", sortValue: (i) => i.invoice_number, cell: (i) => <span className="ds-t-body-strong ds-num text-[var(--text-primary)]">{i.invoice_number}</span> },
+    { id: "client", header: "Client", width: "30%", sortValue: (i) => i.company?.name || "", cell: (i) => i.company?.name || <span className="text-[var(--text-disabled)]">No client</span> },
+    {
+      id: "due",
+      header: "Due",
+      sortValue: (i) => i.due_date || "",
+      cell: (i) => {
+        const late = i.due_date && i.due_date < today() && i.status !== "PAID";
+        return <span className={`ds-num ${late ? "text-[var(--danger)]" : "text-[var(--text-secondary)]"}`}>{i.due_date || "No date"}</span>;
+      },
+    },
+    { id: "status", header: "Status", sortValue: (i) => i.status, cell: (i) => <Badge variant={STATUS[i.status] || "neutral"}>{human(i.status)}</Badge> },
+    { id: "total", header: "Total", numeric: true, sortValue: (i) => Number(i.grand_total), cell: (i) => <span className="text-[var(--text-primary)]">{formatCurrency(Number(i.grand_total))}</span> },
+    {
+      id: "actions",
+      header: <span className="sr-only">Actions</span>,
+      cell: (i) => i.status !== "PAID" && i.status !== "CANCELLED"
+        ? <span className="flex justify-end"><Button size={28} variant="secondary" onClick={() => { setPayInvoice(i); setPayAmount(String(i.grand_total)); }}>Record payment</Button></span>
+        : null,
+    },
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold text-neutral-950 tracking-tight leading-none">Invoices Registry</h1>
-          <p className="text-neutral-500 text-xs">Configure sales billing accounts, tracking balances, and payouts.</p>
-        </div>
-        <Button 
-          onClick={() => setShowCreator(true)}
-          className="bg-[#0075de] hover:bg-[#0075de]/90 text-white font-bold tracking-widest uppercase text-[10px] px-6 h-10 rounded-md"
-        >
-          <Plus size={14} className="mr-1" /> Compile Invoice
-        </Button>
-      </div>
+    <div className="mx-auto max-w-[1280px]">
+      <PageHeader
+        title="Sales invoices"
+        breadcrumb={breadcrumb}
+        info="Invoices created from quotations, and the payments recorded against them."
+        actions={<Button variant="primary" iconLeft={<Plus size={16} strokeWidth={1.5} />} onClick={() => setShowCreate(true)}>New invoice</Button>}
+      />
 
-      {/* List */}
-      {loading ? (
-        <div className="h-64 flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-6 w-6" />
-        </div>
-      ) : invoices.length === 0 ? (
-        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-[var(--surface-1)] text-center p-6">
-          <FileText className="w-10 h-10 text-neutral-300 mb-2" />
-          <h4 className="text-sm font-bold text-neutral-850">No sales invoices drafted</h4>
-          <p className="text-xs text-neutral-400 max-w-xs mt-1">Compile client billings to log receivables and balance sheet assets.</p>
-        </div>
+      {error ? (
+        <ErrorState title="Couldn't load invoices" description={error} onRetry={fetchInvoicesData} />
       ) : (
-        <Card className="p-6 border border-[#e6e6e6] bg-[var(--surface-1)] rounded-lg shadow-sm">
-          <div className="overflow-x-auto text-xs text-left">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-[#e6e6e6] text-[10px] font-bold uppercase tracking-wider text-neutral-450">
-                  <th className="py-2.5 pl-2">Invoice Number</th>
-                  <th className="py-2.5">Client Company</th>
-                  <th className="py-2.5">Due Date</th>
-                  <th className="py-2.5">Status</th>
-                  <th className="py-2.5 text-right">Grand Total</th>
-                  <th className="py-2.5 pr-2 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoices.map((inv) => (
-                  <tr key={inv.id} className="border-b border-[#e6e6e6]/60 hover:bg-[#f6f5f4]/30 font-medium">
-                    <td className="py-3 pl-2 text-neutral-900 font-bold">{inv.invoice_number}</td>
-                    <td className="py-3 text-neutral-500 font-bold">{inv.company?.name}</td>
-                    <td className="py-3 text-neutral-500 font-mono">{inv.due_date}</td>
-                    <td className="py-3">
-                      <span className={cn(
-                        "text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border",
-                        inv.status === "PAID" ? "bg-green-500/5 text-green-600 border-green-200" : "bg-amber-500/5 text-amber-600 border-amber-200"
-                      )}>
-                        {inv.status}
-                      </span>
-                    </td>
-                    <td className="py-3 text-right text-neutral-950 font-bold font-mono">₹{Number(inv.grand_total).toLocaleString()}</td>
-                    <td className="py-3 pr-2 text-right">
-                      {inv.status !== "PAID" && (
-                        <Button 
-                          onClick={() => { setPayInvoiceId(inv.id); setPayAmount(inv.grand_total); }}
-                          className="h-7 text-[8px] font-bold uppercase tracking-widest bg-[var(--surface-1)] border border-[#e6e6e6] text-[#0075de] hover:bg-[var(--surface-hover)] px-2 rounded-md"
-                        >
-                          Record Payment
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      )}
+        <div className="flex flex-col gap-6">
+          <KPIStrip>
+            <KPIItem label="Outstanding" loading={loading} value={<span className="ds-num">{formatCurrency(outstanding)}</span>} hint={`${open.length} unpaid`} />
+            <KPIItem label="Overdue" loading={loading} value={<span className={`ds-num ${overdue.length ? "text-[var(--danger)]" : ""}`}>{overdue.length}</span>} />
+            <KPIItem label="Invoices" loading={loading} value={<span className="ds-num">{invoices.length}</span>} />
+          </KPIStrip>
 
-      {/* Record Payment Modal */}
-      {payInvoiceId && (
-        <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <Card className="bg-[var(--surface-1)] border border-[#e6e6e6] w-full max-w-sm p-6 shadow-xl rounded-lg space-y-6">
-            <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-widest border-b border-[#e6e6e6] pb-2.5">Record Cash Payment</h3>
-            <form onSubmit={handleRecordPayment} className="space-y-4">
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <span className="text-[9px] font-bold uppercase text-neutral-400">Payment Amount (₹)</span>
-                  <Input type="number" required value={payAmount} onChange={e => setPayAmount(e.target.value)} className="h-9 text-xs" />
-                </div>
-                <div className="space-y-1">
-                  <span className="text-[9px] font-bold uppercase text-neutral-400">Payment Method</span>
-                  <select
-                    value={payMethod}
-                    onChange={e => setPayMethod(e.target.value)}
-                    className="w-full h-9 bg-[var(--surface-1)] border border-[#e6e6e6] rounded-md px-2 text-xs text-neutral-805"
-                  >
-                    <option value="UPI">UPI (Unified Payments Interface)</option>
-                    <option value="BANK_TRANSFER">Bank Transfer IMPS/NEFT</option>
-                    <option value="RAZORPAY">Razorpay Gateway</option>
-                    <option value="CASH">Liquid Cash</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex gap-3 justify-end border-t border-[#e6e6e6] pt-4">
-                <Button type="button" onClick={() => setPayInvoiceId(null)} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-[var(--surface-1)] border border-[#e6e6e6] text-neutral-500 hover:bg-[var(--surface-hover)] rounded-md px-4">Cancel</Button>
-                <Button type="submit" disabled={submitting} className="h-9 text-[10px] font-bold uppercase tracking-widest bg-[#0075de] text-white hover:bg-[#0075de]/90 rounded-md px-4">Record Payment</Button>
-              </div>
-            </form>
-          </Card>
+          <DataTable
+            label="Sales invoices"
+            columns={columns}
+            rows={invoices}
+            getRowId={(i) => i.id}
+            loading={loading}
+            skeletonRows={5}
+            emptyState={<EmptyState icon={<FileText size={24} strokeWidth={1.5} />} title="No sales invoices yet" description="Create one from an accepted quotation." action={<Button variant="primary" onClick={() => setShowCreate(true)}>New invoice</Button>} />}
+          />
         </div>
       )}
+
+      <Modal
+        open={showCreate}
+        onOpenChange={(o) => { setShowCreate(o); if (!o) { setQuotationId(""); setDueDate(""); } }}
+        title="New invoice"
+        description="The invoice copies the quotation's client, amounts and tax."
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowCreate(false)}>Cancel</Button>
+            <Button type="submit" form="invoice-form" variant="primary" loading={creating} disabled={!quotationId || !dueDate}>Create invoice</Button>
+          </>
+        }
+      >
+        <form id="invoice-form" onSubmit={handleCreate} className="flex flex-col gap-4">
+          <FormField label="Quotation" required hint={quotations.length ? undefined : "No quotations yet. Create one in Quotations first."}>
+            {(f) => <Select {...f} required disabled={!quotations.length} value={quotationId || undefined} placeholder="Choose a quotation" onValueChange={setQuotationId} options={quotationOptions} />}
+          </FormField>
+          <FormField label="Due date" required>
+            {(f) => <Input {...f} type="date" required min={today()} value={dueDate} onChange={(e) => setDueDate(e.target.value)} />}
+          </FormField>
+        </form>
+      </Modal>
+
+      <Modal
+        open={!!payInvoice}
+        onOpenChange={(o) => { if (!o) setPayInvoice(null); }}
+        title="Record payment"
+        description={payInvoice ? `${payInvoice.invoice_number}, ${formatCurrency(Number(payInvoice.grand_total))}` : undefined}
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setPayInvoice(null)}>Cancel</Button>
+            <Button type="submit" form="payment-form" variant="primary" loading={submitting} disabled={!Number(payAmount)}>Record payment</Button>
+          </>
+        }
+      >
+        <form id="payment-form" onSubmit={handleRecordPayment} className="flex flex-col gap-4">
+          <FormField label="Amount (₹)" required>
+            {(f) => <Input {...f} type="number" min={0} step="0.01" required inputMode="decimal" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} />}
+          </FormField>
+          <FormField label="Method">
+            {(f) => <Select {...f} value={payMethod} onValueChange={setPayMethod} options={METHODS} />}
+          </FormField>
+        </form>
+      </Modal>
     </div>
   );
 }

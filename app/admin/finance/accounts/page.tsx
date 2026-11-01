@@ -1,13 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { GeneralLedger } from "@/components/admin/finance/GeneralLedger";
+import { Button, Skeleton } from "@/src/components/ui";
+import { ErrorState, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
 
 export default function AccountsPage() {
+  const breadcrumb = useAdminBreadcrumb();
   const [accounts, setAccounts] = useState<any[]>([]);
   const [items, setItems] = useState<any[]>([]);
+  const [entries, setEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [entryOpen, setEntryOpen] = useState(false);
 
   useEffect(() => {
     fetchAccountsData();
@@ -16,53 +23,48 @@ export default function AccountsPage() {
   const fetchAccountsData = async () => {
     try {
       setLoading(true);
+      setError("");
       const res = await fetch("/api/finance/accounts");
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Couldn't load the ledger.");
       setAccounts(data.accounts || []);
       setItems(data.items || []);
-    } catch (e) {
-      console.error(e);
+      setEntries(data.entries || []);
+    } catch (e: any) {
+      setError(e.message || "Couldn't load the ledger.");
     } finally {
       setLoading(false);
     }
   };
 
   const handlePostVoucher = async (voucherData: any) => {
-    try {
-      const res = await fetch("/api/finance/accounts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(voucherData)
-      });
-      if (res.ok) {
-        fetchAccountsData();
-      } else {
-        throw new Error("Failed to post voucher");
-      }
-    } catch (e: any) {
-      console.error(e);
-      throw e;
+    const res = await fetch("/api/finance/accounts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(voucherData)
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || "Couldn't post the journal entry.");
     }
+    fetchAccountsData();
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-bold text-neutral-950 tracking-tight leading-none">Accounts & General Ledger</h1>
-        <p className="text-neutral-500 text-xs">Verify the double-entry charts, asset valuations, and post journal entries.</p>
-      </div>
+    <div className="mx-auto max-w-[1280px]">
+      <PageHeader
+        title="Ledger accounts"
+        breadcrumb={breadcrumb}
+        info="The chart of accounts with current balances, and every journal line posted against them."
+        actions={<Button variant="primary" iconLeft={<Plus size={16} strokeWidth={1.5} />} disabled={loading || !accounts.length} onClick={() => setEntryOpen(true)}>New journal entry</Button>}
+      />
 
-      {loading ? (
-        <div className="h-64 flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-8 w-8" />
-        </div>
+      {error ? (
+        <ErrorState title="Couldn't load the ledger" description={error} onRetry={fetchAccountsData} />
+      ) : loading ? (
+        <Skeleton height={420} radius="md" />
       ) : (
-        <GeneralLedger 
-          accounts={accounts}
-          items={items}
-          onPostVoucher={handlePostVoucher}
-        />
+        <GeneralLedger accounts={accounts} items={items} entries={entries} onPostVoucher={handlePostVoucher} entryOpen={entryOpen} onEntryOpenChange={setEntryOpen} />
       )}
     </div>
   );

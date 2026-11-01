@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
+import { denyUnlessFinanceAdmin } from "@/lib/finance/admin-guard";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { EnterpriseFinanceService } from "@/services/enterprise-finance";
 
 export async function GET(request: Request) {
   try {
+    const denied = await denyUnlessFinanceAdmin();
+    if (denied) return denied;
+
     const { data: payments, error } = await supabaseAdmin
       .from("payments")
       .select("*, invoice:invoices(invoice_number, company:companies(name))")
@@ -18,6 +22,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const denied = await denyUnlessFinanceAdmin();
+    if (denied) return denied;
+
     const { invoice_id, amount, payment_method, transaction_id } = await request.json();
     if (!invoice_id || !amount || !payment_method) throw new Error("Missing parameters");
 

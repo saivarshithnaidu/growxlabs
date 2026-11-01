@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
+import { denyUnlessFinanceAdmin } from "@/lib/finance/admin-guard";
 import { AiFinanceService } from "@/services/ai-finance";
 
 export async function POST(request: Request) {
   try {
+    const denied = await denyUnlessFinanceAdmin();
+    if (denied) return denied;
+
     const { action, receiptText, transactions } = await request.json();
 
     if (action === "categorize_receipt") {
