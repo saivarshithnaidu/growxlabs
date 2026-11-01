@@ -22,6 +22,16 @@ const LABELS: Record<string, { doing: string; done: string }> = {
   decide_consulting_payment: { doing: "Preparing the payment for approval", done: "Payment ready for approval" },
   create_milestone_invoice: { doing: "Preparing the invoice for approval", done: "Invoice ready for approval" },
   create_artifact: { doing: "Creating the file", done: "Created the file" },
+  list_delivery_projects: { doing: "Reading projects", done: "Read projects" },
+  list_project_tasks: { doing: "Reading the board", done: "Read the board" },
+  list_sprints: { doing: "Reading sprints", done: "Read sprints" },
+  get_team_workload: { doing: "Checking team workload", done: "Checked team workload" },
+  list_change_requests: { doing: "Reading change requests", done: "Read change requests" },
+  move_task: { doing: "Preparing the task move for approval", done: "Task move ready for approval" },
+  change_sprint: { doing: "Preparing the sprint change for approval", done: "Sprint change ready for approval" },
+  list_discovery_meetings: { doing: "Reading discovery meetings", done: "Read discovery meetings" },
+  list_proposals: { doing: "Reading proposals", done: "Read proposals" },
+  list_assessments: { doing: "Reading assessments", done: "Read assessments" },
 };
 
 const sentence = (name: string) => {

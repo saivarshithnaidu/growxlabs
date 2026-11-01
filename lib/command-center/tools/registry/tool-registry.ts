@@ -19,6 +19,18 @@ import {
 } from "../executors/billing.executor";
 import { createArtifactExecutor } from "../executors/artifact.executor";
 import { getDailyBriefExecutor } from "../executors/daily-brief.executor";
+import {
+  listDeliveryProjectsExecutor,
+  listProjectTasksExecutor,
+  listSprintsExecutor,
+  getTeamWorkloadExecutor,
+  listChangeRequestsExecutor,
+  moveTaskExecutor,
+  changeSprintExecutor,
+  listDiscoveryMeetingsExecutor,
+  listProposalsExecutor,
+  listAssessmentsExecutor
+} from "../executors/delivery.executor";
 import { createApproval } from "../../approvals/pending-action";
 
 export class ToolRegistry {
@@ -48,6 +60,16 @@ export class ToolRegistry {
     this.register(createMilestoneInvoiceExecutor);
     this.register(createArtifactExecutor);
     this.register(getDailyBriefExecutor);
+    this.register(listDeliveryProjectsExecutor);
+    this.register(listProjectTasksExecutor);
+    this.register(listSprintsExecutor);
+    this.register(getTeamWorkloadExecutor);
+    this.register(listChangeRequestsExecutor);
+    this.register(moveTaskExecutor);
+    this.register(changeSprintExecutor);
+    this.register(listDiscoveryMeetingsExecutor);
+    this.register(listProposalsExecutor);
+    this.register(listAssessmentsExecutor);
   }
 
   static register(executor: ToolExecutor<any, any>): void {

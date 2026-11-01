@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { changeSprint, DeliveryError } from "@/lib/pm/delivery";
 
 const READ_ROLES = ["ADMIN", "CO_ADMIN", "crm_agent"];
 const WRITE_ROLES = ["ADMIN", "CO_ADMIN"];
@@ -68,30 +69,9 @@ export async function PATCH(request: Request) {
     const { id, action } = (await request.json()) as { id?: string; action?: "start" | "complete" };
     if (!id || !["start", "complete"].includes(String(action))) return NextResponse.json({ error: "Sprint id and a start or complete action are required." }, { status: 400 });
 
-    const { data: sprint, error: findError } = await supabaseAdmin.from("sprints").select("id,project_id,status").eq("id", id).maybeSingle();
-    if (findError) throw findError;
-    if (!sprint) return NextResponse.json({ error: "Sprint not found." }, { status: 404 });
-
-    if (action === "start") {
-      if (sprint.status !== "FUTURE") return NextResponse.json({ error: "Only an upcoming sprint can be started." }, { status: 409 });
-      let active = supabaseAdmin.from("sprints").select("id,name").eq("status", "ACTIVE");
-      active = sprint.project_id ? active.eq("project_id", sprint.project_id) : active.is("project_id", null);
-      const { data: running, error: activeError } = await active.limit(1);
-      if (activeError) throw activeError;
-      if (running?.length) return NextResponse.json({ error: `Complete "${running[0].name}" before starting another sprint.` }, { status: 409 });
-    } else if (sprint.status !== "ACTIVE") {
-      return NextResponse.json({ error: "Only the active sprint can be completed." }, { status: 409 });
-    }
-
-    const { data: updated, error } = await supabaseAdmin
-      .from("sprints")
-      .update({ status: action === "start" ? "ACTIVE" : "COMPLETED", updated_at: new Date().toISOString() })
-      .eq("id", id)
-      .select()
-      .single();
-    if (error) throw error;
-    return NextResponse.json({ sprint: updated });
+    return NextResponse.json({ sprint: await changeSprint(id, action as "start" | "complete") });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed to update sprint" }, { status: 500 });
+    const status = error instanceof DeliveryError ? error.status : 500;
+    return NextResponse.json({ error: error.message || "Failed to update sprint" }, { status });
   }
 }

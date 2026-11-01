@@ -100,6 +100,21 @@ test("GXL Command Center Pre-Router — File Requests Add The Artifact Tool", ()
   assert.ok(!plain.allowedTools.includes("create_artifact"));
 });
 
+test("GXL Command Center Pre-Router — Delivery And Pipeline", () => {
+  const board = routeCommandIntent({ message: "Move TRX-03 to done on the Trionyx project" });
+  assert.strictEqual(board.intent, "business_write");
+  assert.ok(board.allowedTools.includes("move_task"));
+
+  const sprint = routeCommandIntent({ message: "Start sprint 2" });
+  assert.ok(sprint.allowedTools.includes("change_sprint"));
+
+  const pipeline = routeCommandIntent({ message: "Which proposals are waiting for review?" });
+  assert.ok(pipeline.allowedTools.includes("list_proposals"));
+
+  const draft = routeCommandIntent({ message: "Create a proposal for ABC Hospital" });
+  assert.ok(draft.allowedTools.includes("generate_proposal"));
+});
+
 test("GXL Command Center Pre-Router — Daily Brief", () => {
   for (const message of ["What needs me today?", "daily brief", "What should I do today", "What's pending?"]) {
     const res = routeCommandIntent({ message });

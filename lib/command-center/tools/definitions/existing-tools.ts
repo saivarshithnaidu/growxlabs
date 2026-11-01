@@ -196,6 +196,103 @@ export const TOOLS_DEFINITIONS = [
     parameters: { type: "object", properties: {}, required: [] }
   },
   {
+    name: "list_delivery_projects",
+    description: "List delivery projects with client, status, health, progress and open and blocked task counts.",
+    parameters: { type: "object", properties: {}, required: [] }
+  },
+  {
+    name: "list_project_tasks",
+    description: "List the tasks on one project's board, optionally by status.",
+    parameters: {
+      type: "object",
+      properties: {
+        project: { type: "string", description: "Project name (or part of it)" },
+        status: { type: "string", enum: ["BACKLOG", "TODO", "IN_PROGRESS", "REVIEW", "TESTING", "BLOCKED", "DONE"], description: "Optional status filter" }
+      },
+      required: ["project"]
+    }
+  },
+  {
+    name: "list_sprints",
+    description: "List sprints with dates and story points committed and completed.",
+    parameters: {
+      type: "object",
+      properties: { status: { type: "string", enum: ["FUTURE", "ACTIVE", "COMPLETED", "all"], description: "FUTURE is upcoming" } },
+      required: []
+    }
+  },
+  {
+    name: "get_team_workload",
+    description: "Open tasks and story points per active team member across projects. No hours or capacity data exists, so never call anyone over or under capacity.",
+    parameters: { type: "object", properties: {}, required: [] }
+  },
+  {
+    name: "list_change_requests",
+    description: "List client change requests with status and impact.",
+    parameters: { type: "object", properties: {}, required: [] }
+  },
+  {
+    name: "move_task",
+    description: "Move a task to another status on its project board. Returns an approval request the user approves on a card; after calling it, say in one short line that it is ready to approve.",
+    parameters: {
+      type: "object",
+      properties: {
+        project: { type: "string", description: "Project name" },
+        task: { type: "string", description: "Task key (e.g. TRX-03) or title" },
+        status: { type: "string", enum: ["BACKLOG", "TODO", "IN_PROGRESS", "REVIEW", "TESTING", "BLOCKED", "DONE"], description: "New status" }
+      },
+      required: ["project", "task", "status"]
+    }
+  },
+  {
+    name: "change_sprint",
+    description: "Start an upcoming sprint or complete the active one. Returns an approval request the user approves on a card; after calling it, say in one short line that it is ready to approve.",
+    parameters: {
+      type: "object",
+      properties: {
+        sprint: { type: "string", description: "Sprint name" },
+        action: { type: "string", enum: ["start", "complete"], description: "start or complete" }
+      },
+      required: ["sprint", "action"]
+    }
+  },
+  {
+    name: "list_discovery_meetings",
+    description: "List discovery meetings with client, status, schedule and agenda progress.",
+    parameters: {
+      type: "object",
+      properties: {
+        status: { type: "string", description: "Optional: draft, scheduled, confirmed, in_progress, completed, closed, cancelled" },
+        limit: { type: "number", description: "Maximum rows (default 20)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "list_proposals",
+    description: "List commercial proposals with status and version. Status internal_review means waiting for approval.",
+    parameters: {
+      type: "object",
+      properties: {
+        status: { type: "string", description: "Optional status, e.g. internal_review, approved_internal, sent, approved" },
+        limit: { type: "number", description: "Maximum rows (default 20)" }
+      },
+      required: []
+    }
+  },
+  {
+    name: "list_assessments",
+    description: "List client business assessments with status and completion.",
+    parameters: {
+      type: "object",
+      properties: {
+        status: { type: "string", description: "Optional: draft, submitted, under_review, review_complete, more_information_required" },
+        limit: { type: "number", description: "Maximum rows (default 20)" }
+      },
+      required: []
+    }
+  },
+  {
     name: "get_billing_overview",
     description: "Consulting billing at a glance: totals invoiced, received and outstanding; overdue invoices; payments waiting for verification; signed agreements not yet invoiced. Use this for any general billing or money question.",
     parameters: { type: "object", properties: {}, required: [] }

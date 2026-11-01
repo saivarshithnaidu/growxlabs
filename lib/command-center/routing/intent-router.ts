@@ -28,6 +28,10 @@ const BILLING_TOOLS = [
   "create_milestone_invoice",
 ];
 
+// Kept in step with DELIVERY_TOOL_NAMES / PIPELINE_TOOL_NAMES in tools/executors/delivery.executor.ts.
+const DELIVERY_TOOLS = ["list_delivery_projects", "list_project_tasks", "list_sprints", "get_team_workload", "list_change_requests", "move_task", "change_sprint"];
+const PIPELINE_TOOLS = ["list_discovery_meetings", "list_proposals", "list_assessments"];
+
 function normalizeMessage(value: string): string {
   if (!value) return "";
   return value
@@ -130,6 +134,27 @@ function routeBaseIntent(input: {
       requiresModel: true,
       requiresTools: true,
       reason: `Consulting billing ${writes ? "action" : "question"}. Allowed: ${BILLING_TOOLS.join(", ")}`
+    };
+  }
+
+  // 4c. DELIVERY and CONSULTING PIPELINE. Reads run directly; task moves and sprint changes
+  // only return an approval request.
+  const isDelivery = /\b(projects?|tasks?|sprints?|board|backlog|blocked|workload|team load|change requests?|kanban|delivery|milestones?)\b/.test(normalized);
+  const isPipeline = /\b(discovery|meetings?|proposals?|assessments?)\b/.test(normalized);
+  if (isDelivery || isPipeline) {
+    const draftsProposal = /\b(proposals?|sow)\b/.test(normalized) && /\b(generate|create|draft|write|make|prepare)\b/.test(normalized);
+    const tools = [
+      ...(isDelivery ? DELIVERY_TOOLS : []),
+      ...(isPipeline ? PIPELINE_TOOLS : []),
+      ...(draftsProposal ? ["generate_proposal"] : []),
+    ];
+    const writes = /\b(move|mark|start|complete|finish|close|set)\b/.test(normalized);
+    return {
+      intent: writes ? "business_write" : "business_read",
+      allowedTools: tools,
+      requiresModel: true,
+      requiresTools: true,
+      reason: `Delivery/pipeline ${writes ? "action" : "question"}. Allowed: ${tools.join(", ")}`
     };
   }
 

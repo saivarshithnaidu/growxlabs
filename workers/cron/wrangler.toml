@@ -1,0 +1,13 @@
+name = "growx-cron"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+# One trigger every minute; the worker runs only the jobs due that minute (UTC).
+[triggers]
+crons = ["* * * * *"]
+
+[vars]
+APP_URL = "https://growxlabs.tech"
+
+# Secret (not stored here): npx wrangler secret put CRON_SECRET
+# Use the same CRON_SECRET value the app has in its environment.
