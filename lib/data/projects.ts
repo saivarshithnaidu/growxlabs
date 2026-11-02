@@ -39,7 +39,7 @@ export const projects: CaseStudy[] = [
     tag: "Distribution Platform",
     category: "// DISTRIBUTION PLATFORM",
     description: "Connects distributor operations, enquiries, inventory and sales in one platform.",
-    image: "/portfolio/trionyx-dashboard.png",
+    image: "/portfolio/ai-native-dms.png",
     problem: "Trionyx needed a modern, high-performance digital platform to showcase their specialized product catalog, provide direct technical specifications to buyers, and streamline day-to-day customer communication.",
     solution: "Engineered a custom enterprise web platform with interactive product catalogs, structured technical documentation, automated inquiry routing, and unified operational workflows.",
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],

@@ -65,10 +65,10 @@ export default function TrionyxCaseStudyPage() {
         { label: "Client", value: "Trionyx" },
       ]}
       heroImage={{
-        src: "/portfolio/trionyx-operations.png",
+        src: "/portfolio/ai-native-dms.png",
         alt: "Trionyx Central Operations & Inventory Telemetry Platform",
-        width: 1920,
-        height: 1080,
+        width: 1917,
+        height: 1070,
         captionLeft: "OPERATIONS SUMMARY · LIVE TELEMETRY",
         captionRight: "DOMAIN BALANCES & INVENTORY CONTROL",
       }}

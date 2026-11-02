@@ -1,54 +1,112 @@
-import React from "react";
+"use client";
+
+import React, { useState, useMemo } from "react";
+import { ProjectCard } from "@/components/ui/ProjectCard";
 import { CaseStudy } from "@/lib/data/projects";
 import { Reveal } from "@/components/marketing/Reveal";
-import { FeaturedProjectCard } from "@/components/marketing/FeaturedProjectCard";
+import { cn } from "@/lib/utils";
 
 interface PortfolioFilterGridProps {
   projects: CaseStudy[];
 }
 
-/* How each portfolio entry is shown; titles come from the project record. */
-const SHOWCASE: Record<string, { tag: string; summary: string; image: string; imageAlt: string; width: number; height: number }> = {
-  trionyx: {
-    tag: "Case study",
-    summary: "One platform for dealers, stock, warranties and enquiries, built for a distribution business.",
-    image: "/portfolio/ai-native-dms-operations.png",
-    imageAlt: "Operations summary showing dealers, stock, enquiries and warranties with their status",
-    width: 776,
-    height: 212,
-  },
-  "growx-crawl": {
-    tag: "Product",
-    summary: "Our web research platform: finds companies, crawls their sites and keeps the source behind every finding.",
-    image: "/portfolio/growx-crawl.png",
-    imageAlt: "GrowX Crawl workspace",
-    width: 2880,
-    height: 1620,
-  },
-};
-
 export function PortfolioFilterGrid({ projects }: PortfolioFilterGridProps) {
-  const shown = projects.filter((p) => SHOWCASE[p.slug]);
+  const [activeFilter, setActiveFilter] = useState<"all" | "software">("all");
+
+  const trionyxProject = useMemo(
+    () => projects.find((p) => p.slug === "trionyx"),
+    [projects]
+  );
+
+  const crawlProject = useMemo(
+    () => projects.find((p) => p.slug === "growx-crawl"),
+    [projects]
+  );
 
   return (
-    <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-10">
-      {shown.map((project, i) => {
-        const view = SHOWCASE[project.slug];
-        return (
-          <Reveal key={project.slug} delay={0.08 * i} className="h-full">
-            <FeaturedProjectCard
-              slug={project.slug}
-              tag={view.tag}
-              title={project.title}
-              summary={view.summary}
-              image={view.image}
-              imageAlt={view.imageAlt}
-              imageWidth={view.width}
-              imageHeight={view.height}
-            />
-          </Reveal>
-        );
-      })}
+    <div className="space-y-12 sm:space-y-16">
+      {/* Filter Tabs / Buttons */}
+      <div className="flex flex-wrap items-center gap-3 select-none">
+        <button
+          type="button"
+          onClick={() => setActiveFilter("all")}
+          className={cn(
+            "px-5 py-2 sm:px-6 sm:py-2.5 rounded-md font-mono text-xs sm:text-[13px] tracking-[0.14em] uppercase font-bold transition-all duration-300 cursor-pointer select-none",
+            activeFilter === "all"
+              ? "bg-[#C0F0FB] text-black border border-[#C0F0FB] shadow-[0_0_25px_rgba(192,240,251,0.25)]"
+              : "bg-[#0A0A0D] text-neutral-400 border border-neutral-800/80 hover:border-neutral-700 hover:text-white"
+          )}
+        >
+          <span>Show All</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveFilter("software")}
+          className={cn(
+            "px-5 py-2 sm:px-6 sm:py-2.5 rounded-md font-mono text-xs sm:text-[13px] tracking-[0.14em] uppercase font-bold transition-all duration-300 cursor-pointer select-none",
+            activeFilter === "software"
+              ? "bg-[#C0F0FB] text-black border border-[#C0F0FB] shadow-[0_0_25px_rgba(192,240,251,0.25)]"
+              : "bg-[#0A0A0D] text-neutral-400 border border-neutral-800/80 hover:border-neutral-700 hover:text-white"
+          )}
+        >
+          <span>Software</span>
+        </button>
+      </div>
+
+      {/* Vertical Stack: TRIONYX (Distribution Platform) -> Middle Border -> GrowX Crawl (Platform and Tools) */}
+      <div className="space-y-16 sm:space-y-20">
+        {/* Section 1: Distribution Platform (TRIONYX) */}
+        {trionyxProject && (
+          <div className="space-y-6 sm:space-y-8">
+            <div className="flex items-center justify-between pb-4 border-b border-white/15">
+              <h2 className="font-mono text-xs sm:text-sm font-bold text-[#C0F0FB] tracking-[0.2em] uppercase">
+                Distribution Platform
+              </h2>
+              <span className="font-mono text-xs text-neutral-500 tracking-widest">[ 01 ]</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-5xl">
+              <Reveal delay={0.08}>
+                <ProjectCard {...trionyxProject} />
+              </Reveal>
+            </div>
+          </div>
+        )}
+
+        {/* Middle Border Separator */}
+        {trionyxProject && crawlProject && (
+          <div className="w-full border-t border-white/10" />
+        )}
+
+        {/* Section 2: Platform and Tools (GrowX Crawl) */}
+        {crawlProject && (
+          <div className="space-y-6 sm:space-y-8">
+            <div className="flex items-center justify-between pb-4 border-b border-white/15">
+              <h2 className="font-mono text-xs sm:text-sm font-bold text-[#C0F0FB] tracking-[0.2em] uppercase">
+                Platform and Tools
+              </h2>
+              <span className="font-mono text-xs text-neutral-500 tracking-widest">[ 02 ]</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-5xl">
+              <Reveal delay={0.08}>
+                <ProjectCard {...crawlProject} />
+              </Reveal>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom End of Portfolio Meta Bar */}
+      <div className="pt-10 sm:pt-14 mt-16 sm:mt-20 border-t border-white/15 flex items-center justify-between font-mono text-xs sm:text-sm tracking-[0.18em] uppercase select-none">
+        <span className="text-neutral-500 font-bold">
+          //End of Portfolio
+        </span>
+        <span className="text-[#C0F0FB] font-bold">
+          15 projects
+        </span>
+      </div>
     </div>
   );
 }
