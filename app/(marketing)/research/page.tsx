@@ -20,55 +20,64 @@ interface LabItem {
   alt?: string;
   fit?: "contain" | "cover";
   isComponent?: boolean;
+  caption?: string;
 }
 
 // AI Lab: real product screens lead (the most populated first), the Deepfake diagram last
 const AILAB_ITEMS: LabItem[] = [
   {
     title: "AI-Native DMS",
-    detail: "Distribution Management System",
+    detail: "Distribution management system",
     src: "/portfolio/trionyx-dashboard.png",
     alt: "AI-Native DMS — Distribution Management System",
     fit: "cover",
   },
   {
     title: "Pipper™",
-    detail: "Multi-Agent Workspace",
+    detail: "Multi-agent workspace",
     src: "/images/ailab/pipper-harness.png",
     alt: "Pipper — Multi-Agent Workspace",
     fit: "cover",
   },
   {
     title: "GrowX Crawl API Suite",
-    detail: "RESTful API Specification Suite",
+    detail: "RESTful API specification suite",
     src: "/portfolio/growx-crawl-api.png",
     alt: "GrowX Crawl — RESTful API Specification Suite",
     fit: "cover",
   },
   {
     title: "GrowX Crawl™",
-    detail: "Extraction Playground",
+    detail: "Extraction playground",
     src: "/images/ailab/crawl-playground.png",
     alt: "GrowX Crawl — Extraction Playground",
     fit: "cover",
   },
   {
     title: "GrowX Deepfake™ Architecture",
-    detail: "Neural Architecture & Pipeline",
+    detail: "Neural architecture & pipeline",
     isComponent: true,
   },
 ];
 
-// Robotics Lab: no photographs yet. Add `src` and `alt` to an item when a real photo of the
-// lab's work exists, and the panel shows it instead of the type.
+// Robotics Lab: concept renders until real photos of the lab's work exist; `caption` labels them
+// as such on the panel. Swap `src` for a real photo and drop the caption.
 const ROBOTICS_ITEMS: LabItem[] = [
   {
     title: "Embodied Humanoid AI",
-    detail: "Humanoid Embodied Intelligence & Kinematics",
+    detail: "Humanoid intelligence & kinematics",
+    src: "/images/robotics/humanoid-embodied-ai.jpg",
+    alt: "Concept render of a humanoid robot beside a robotic arm",
+    fit: "cover",
+    caption: "Concept render",
   },
   {
     title: "Autonomous Manipulation",
-    detail: "Autonomous Precision Manipulation & Real-Time Teleoperation",
+    detail: "Precision manipulation & teleoperation",
+    src: "/images/robotics/autonomous-manipulation.jpg",
+    alt: "Concept render of a robotic arm machining an engine block",
+    fit: "cover",
+    caption: "Concept render",
   },
 ];
 
@@ -104,37 +113,47 @@ function LabPanel({ item, priority }: { item: LabItem; priority: boolean }) {
 }
 
 /**
- * Lab card as a small index: identifier row, a 16:10 media panel, the lab's projects as a
- * list that switches the panel, then the serif heading, description and action. The whole
- * card is one link (stretched from the action); the project buttons sit above it.
+ * Lab card, compact: the lab's head (title, description, action) first, then one 16:10 media
+ * panel, then the lab's projects as a row of tabs that switch the panel. The head's action is
+ * the card's link; the tabs are buttons and never navigate.
  */
 function LabCard({
   href,
-  identifier,
   title,
   description,
   cta,
   items,
 }: {
   href: string;
-  identifier: string;
   title: string;
   description: string;
   cta: string;
   items: LabItem[];
 }) {
   const [active, setActive] = useState(0);
-  const listId = `${identifier.replace("/", "-")}-projects`;
+  const current = items[active];
 
   return (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--svc-border)] bg-[var(--svc-card)] transition-colors duration-200 hover:border-[var(--svc-accent)] has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-4 has-[a:focus-visible]:outline-[var(--svc-accent)]">
-      {/* Identifier */}
-      <div className="flex h-11 items-center border-b border-[var(--svc-border)] px-5 sm:px-6">
-        <span className="text-xs text-[var(--svc-text)]">{identifier}</span>
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--svc-border)] bg-[var(--svc-card)]">
+      {/* Head: title and action on one line, description under */}
+      <div className="flex flex-col gap-3 p-5 sm:p-7">
+        <div className="flex items-start justify-between gap-4">
+          <h3 className="min-w-0 break-words font-serif text-[30px] font-semibold leading-[1.1] tracking-tight text-[var(--svc-heading)] sm:text-[36px]">
+            {title}
+          </h3>
+          <Link
+            href={href}
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-[var(--svc-border)] pl-4 pr-3 text-sm font-medium text-[var(--svc-heading)] outline-none transition-colors duration-200 hover:border-[var(--svc-accent)] hover:bg-[var(--svc-accent)] hover:text-[var(--svc-on-accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--svc-accent)] active:opacity-80"
+          >
+            {cta}
+            <ArrowUpRight size={16} strokeWidth={1.5} aria-hidden="true" />
+          </Link>
+        </div>
+        <p className="max-w-xl text-base leading-relaxed text-[var(--svc-text)] lg:min-h-[52px]">{description}</p>
       </div>
 
       {/* Media panel: items stacked in one cell, the chosen one fades in */}
-      <div className="relative grid aspect-[16/10] w-full overflow-hidden bg-[var(--svc-card)]">
+      <div className="relative grid aspect-[16/10] w-full overflow-hidden border-y border-[var(--svc-border)] bg-black">
         {items.map((item, i) => (
           <div
             key={item.title}
@@ -144,59 +163,40 @@ function LabCard({
             aria-hidden={i !== active}
           >
             <LabPanel item={item} priority={i === 0} />
+            {item.caption && (
+              <span className="absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 text-xs text-[var(--svc-text)]">
+                {item.caption}
+              </span>
+            )}
           </div>
         ))}
       </div>
 
-      {/* Project index: switches the panel */}
-      {/* Same minimum height on both cards (5 rows) so the headings and descriptions line up */}
-      <ul id={listId} aria-label={`${title} projects`} className="relative z-10 border-y border-[var(--svc-border)] lg:min-h-[226px]">
-        {items.map((item, i) => {
-          const isActive = i === active;
-          return (
-            <li key={item.title} className="border-b border-[var(--svc-border)] last:border-b-0">
+      {/* Projects: a row of tabs that switch the panel, the chosen one's detail under */}
+      <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
+        <div role="group" aria-label={`${title} projects`} className="flex flex-wrap gap-2">
+          {items.map((item, i) => {
+            const isActive = i === active;
+            return (
               <button
+                key={item.title}
                 type="button"
                 onClick={() => setActive(i)}
                 aria-pressed={isActive}
-                className="flex min-h-11 w-full cursor-pointer items-center justify-between gap-4 px-5 py-2 text-left outline-none transition-colors duration-200 hover:bg-[var(--svc-border)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--svc-accent)] active:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 sm:px-6"
+                className={`min-h-9 cursor-pointer rounded-full border px-3.5 text-sm outline-none transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--svc-accent)] active:opacity-80 ${
+                  isActive
+                    ? "border-[var(--svc-accent)] bg-[var(--svc-accent)] text-[var(--svc-on-accent)]"
+                    : "border-[var(--svc-border)] text-[var(--svc-heading)] hover:border-[var(--svc-text)]"
+                }`}
               >
-                <span
-                  className={`shrink-0 whitespace-nowrap text-sm ${
-                    isActive ? "font-semibold text-[var(--svc-accent)]" : "text-[var(--svc-heading)]"
-                  }`}
-                >
-                  {item.title}
-                </span>
-                {/* Type-led items already name their detail in the panel above */}
-                {isActive && (item.src || item.isComponent) && (
-                  <span className="hidden min-w-0 truncate text-xs text-[var(--svc-text)] sm:block">{item.detail}</span>
-                )}
+                {item.title}
               </button>
-            </li>
-          );
-        })}
-      </ul>
-
-      {/* Heading, description, action */}
-      <div className="flex flex-1 flex-col px-5 pt-6 pb-6 sm:px-6 sm:pt-7">
-        <h3 className="min-w-0 break-words font-serif text-[32px] font-semibold leading-[1.1] tracking-tight text-[var(--svc-heading)] sm:text-[38px]">
-          {title}
-        </h3>
-        <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--svc-text)]">{description}</p>
-
-        <Link
-          href={href}
-          className="mt-auto flex items-center justify-between gap-4 pt-8 outline-none after:absolute after:inset-0 after:content-['']"
-        >
-          <span className="text-sm font-medium text-[var(--svc-accent)]">{cta}</span>
-          <span
-            aria-hidden="true"
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[var(--svc-border)] text-[var(--svc-heading)] transition-colors duration-200 group-hover:border-[var(--svc-accent)] group-hover:bg-[var(--svc-accent)] group-hover:text-[var(--svc-on-accent)]"
-          >
-            <ArrowUpRight size={18} strokeWidth={1.5} />
-          </span>
-        </Link>
+            );
+          })}
+        </div>
+        <p className="text-sm text-[var(--svc-text)]" aria-live="polite">
+          {current.detail}
+        </p>
       </div>
     </div>
   );
@@ -220,11 +220,10 @@ export default function ResearchPage() {
             </h2>
           </AnimatedSection>
 
-          <AnimatedStagger className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-12 lg:gap-10 xl:gap-12">
+          <AnimatedStagger className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-8 xl:gap-10">
             <AnimatedItem className="h-full">
               <LabCard
                 href="/ailab"
-                identifier="growx/ailab"
                 title="AI Lab"
                 description="We research and develop new AI models, neural methods, and autonomous agent workflows in-house."
                 cta="Explore AI Lab"
@@ -235,7 +234,6 @@ export default function ResearchPage() {
             <AnimatedItem className="h-full">
               <LabCard
                 href="/robotics"
-                identifier="growx/robotics"
                 title="Robotics Lab"
                 description="Autonomous systems, embodied humanoid intelligence, and physical AI platforms bridging software models with real-world robotics."
                 cta="Explore robotics"
