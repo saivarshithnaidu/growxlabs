@@ -18,3 +18,19 @@
     transition: none;
   }
 }
+
+/* Lab card surface: the card colour with a faint dot grid, as in a lab notebook */
+.card {
+  background-color: var(--svc-card);
+  background-image: radial-gradient(var(--svc-border) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Project tabs stay on one row so both cards' frames line up; the row scrolls when it overflows */
+.tabs {
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}

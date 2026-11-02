@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "@/navigation";
 import { PageHero } from "@/components/marketing/PageHero";
 import { AnimatedSection, AnimatedStagger, AnimatedItem } from "@/components/marketing/AnimatedSection";
@@ -54,7 +54,7 @@ const AILAB_ITEMS: LabItem[] = [
     fit: "cover",
   },
   {
-    title: "GrowX Deepfake™ Architecture",
+    title: "GrowX Deepfake™",
     detail: "Neural architecture & pipeline",
     isComponent: true,
   },
@@ -113,68 +113,53 @@ function LabPanel({ item, priority }: { item: LabItem; priority: boolean }) {
 }
 
 /**
- * Lab card, compact: the lab's head (title, description, action) first, then one 16:10 media
- * panel, then the lab's projects as a row of tabs that switch the panel. The head's action is
- * the card's link; the tabs are buttons and never navigate.
+ * Lab card: a label and a round arrow link on top, the large title and description, then an
+ * inset media frame pinned to the bottom. The frame's top bar holds the lab's projects as tabs
+ * that switch the panel; the chosen one's detail sits on the picture. Dot grid from the module.
  */
 function LabCard({
   href,
+  label,
   title,
   description,
   cta,
   items,
 }: {
   href: string;
+  label: string;
   title: string;
   description: string;
   cta: string;
   items: LabItem[];
 }) {
   const [active, setActive] = useState(0);
-  const current = items[active];
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--svc-border)] bg-[var(--svc-card)]">
-      {/* Head: title and action on one line, description under */}
-      <div className="flex flex-col gap-3 p-5 sm:p-7">
-        <div className="flex items-start justify-between gap-4">
-          <h3 className="min-w-0 break-words font-serif text-[30px] font-semibold leading-[1.1] tracking-tight text-[var(--svc-heading)] sm:text-[36px]">
-            {title}
-          </h3>
-          <Link
-            href={href}
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-[var(--svc-border)] pl-4 pr-3 text-sm font-medium text-[var(--svc-heading)] outline-none transition-colors duration-200 hover:border-[var(--svc-accent)] hover:bg-[var(--svc-accent)] hover:text-[var(--svc-on-accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--svc-accent)] active:opacity-80"
-          >
-            {cta}
-            <ArrowUpRight size={16} strokeWidth={1.5} aria-hidden="true" />
-          </Link>
-        </div>
-        <p className="max-w-xl text-base leading-relaxed text-[var(--svc-text)] lg:min-h-[52px]">{description}</p>
+    <div className={`${styles.card} flex h-full flex-col rounded-3xl border border-[var(--svc-border)] p-5 sm:p-10`}>
+      {/* Label and arrow */}
+      <div className="flex items-start justify-between gap-4">
+        <span className="rounded-md border border-[var(--svc-border)] bg-[var(--svc-card)] px-2.5 py-1 text-sm text-[var(--svc-text)]">
+          {label}
+        </span>
+        <Link
+          href={href}
+          aria-label={cta}
+          className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[var(--svc-border)] bg-[var(--svc-card)] text-[var(--svc-heading)] outline-none transition-colors duration-200 hover:border-[var(--svc-accent)] hover:bg-[var(--svc-accent)] hover:text-[var(--svc-on-accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--svc-accent)] active:opacity-80"
+        >
+          <ArrowRight size={18} strokeWidth={1.5} aria-hidden="true" />
+        </Link>
       </div>
 
-      {/* Media panel: items stacked in one cell, the chosen one fades in */}
-      <div className="relative grid aspect-[16/10] w-full overflow-hidden border-y border-[var(--svc-border)] bg-black">
-        {items.map((item, i) => (
-          <div
-            key={item.title}
-            className={`${styles.panel} relative col-start-1 row-start-1 h-full w-full ${
-              i === active ? "opacity-100" : "pointer-events-none opacity-0"
-            }`}
-            aria-hidden={i !== active}
-          >
-            <LabPanel item={item} priority={i === 0} />
-            {item.caption && (
-              <span className="absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 text-xs text-[var(--svc-text)]">
-                {item.caption}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
+      {/* Title and description */}
+      <h3 className="mt-10 min-w-0 break-words font-serif text-[40px] font-semibold leading-[1.05] tracking-tight text-[var(--svc-heading)] sm:mt-14 sm:text-[56px]">
+        {title}
+      </h3>
+      <p className="mt-5 max-w-lg text-base leading-relaxed text-[var(--svc-text)] sm:text-lg lg:min-h-[58px]">{description}</p>
 
-      {/* Projects: a row of tabs that switch the panel, the chosen one's detail under */}
-      <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
-        <div role="group" aria-label={`${title} projects`} className="flex flex-wrap gap-2">
+      {/* Media frame: project tabs on the bar, the chosen panel under */}
+      <div className="flex-1" />
+      <div className="mt-10 overflow-hidden rounded-xl border border-[var(--svc-border)] bg-black shadow-[0_24px_48px_-24px_rgba(0,0,0,0.8)]">
+        <div role="group" aria-label={`${title} projects`} className={`${styles.tabs} flex gap-x-1 overflow-x-auto border-b border-[var(--svc-border)] bg-[var(--svc-card)] px-2 py-1.5`}>
           {items.map((item, i) => {
             const isActive = i === active;
             return (
@@ -183,10 +168,10 @@ function LabCard({
                 type="button"
                 onClick={() => setActive(i)}
                 aria-pressed={isActive}
-                className={`min-h-9 cursor-pointer rounded-full border px-3.5 text-sm outline-none transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--svc-accent)] active:opacity-80 ${
+                className={`min-h-8 shrink-0 cursor-pointer whitespace-nowrap rounded-md px-2.5 text-xs outline-none transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--svc-accent)] active:opacity-80 ${
                   isActive
-                    ? "border-[var(--svc-accent)] bg-[var(--svc-accent)] text-[var(--svc-on-accent)]"
-                    : "border-[var(--svc-border)] text-[var(--svc-heading)] hover:border-[var(--svc-text)]"
+                    ? "bg-[var(--svc-border)] text-[var(--svc-accent)]"
+                    : "text-[var(--svc-text)] hover:text-[var(--svc-heading)]"
                 }`}
               >
                 {item.title}
@@ -194,9 +179,24 @@ function LabCard({
             );
           })}
         </div>
-        <p className="text-sm text-[var(--svc-text)]" aria-live="polite">
-          {current.detail}
-        </p>
+
+        {/* Items stacked in one cell, the chosen one fades in */}
+        <div className="relative grid aspect-[16/10] w-full">
+          {items.map((item, i) => (
+            <div
+              key={item.title}
+              className={`${styles.panel} relative col-start-1 row-start-1 h-full w-full ${
+                i === active ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+              aria-hidden={i !== active}
+            >
+              <LabPanel item={item} priority={i === 0} />
+              <span className="absolute bottom-3 left-3 max-w-[calc(100%-24px)] truncate rounded-md bg-black/75 px-2 py-1 text-xs text-[var(--svc-text)]">
+                {item.caption ? `${item.detail} (${item.caption.toLowerCase()})` : item.detail}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -224,6 +224,7 @@ export default function ResearchPage() {
             <AnimatedItem className="h-full">
               <LabCard
                 href="/ailab"
+                label="growx/ailab"
                 title="AI Lab"
                 description="We research and develop new AI models, neural methods, and autonomous agent workflows in-house."
                 cta="Explore AI Lab"
@@ -234,6 +235,7 @@ export default function ResearchPage() {
             <AnimatedItem className="h-full">
               <LabCard
                 href="/robotics"
+                label="growx/robotics"
                 title="Robotics Lab"
                 description="Autonomous systems, embodied humanoid intelligence, and physical AI platforms bridging software models with real-world robotics."
                 cta="Explore robotics"
