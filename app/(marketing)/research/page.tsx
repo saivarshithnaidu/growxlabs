@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/navigation";
@@ -114,8 +114,8 @@ function LabPanel({ item, priority }: { item: LabItem; priority: boolean }) {
 
 /**
  * Lab card: a label and a round arrow link on top, the large title and description, then an
- * inset media frame pinned to the bottom. The frame's top bar holds the lab's projects as tabs
- * that switch the panel; the chosen one's detail sits on the picture. Dot grid from the module.
+ * inset media frame pinned to the bottom that cross-fades through the lab's work on its own.
+ * Dot grid from the module.
  */
 function LabCard({
   href,
@@ -124,6 +124,7 @@ function LabCard({
   description,
   cta,
   items,
+  interval,
 }: {
   href: string;
   label: string;
@@ -131,8 +132,18 @@ function LabCard({
   description: string;
   cta: string;
   items: LabItem[];
+  interval: number;
 }) {
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  // Advance every few seconds; paused on hover, and never with reduced motion
+  useEffect(() => {
+    if (paused || items.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = setInterval(() => setActive((prev) => (prev + 1) % items.length), interval);
+    return () => clearInterval(timer);
+  }, [paused, items.length, interval]);
 
   return (
     <div className={`${styles.card} flex h-full flex-col rounded-3xl border border-[var(--svc-border)] p-5 sm:p-10`}>
@@ -156,47 +167,24 @@ function LabCard({
       </h3>
       <p className="mt-5 max-w-lg text-base leading-relaxed text-[var(--svc-text)] sm:text-lg lg:min-h-[58px]">{description}</p>
 
-      {/* Media frame: project tabs on the bar, the chosen panel under */}
+      {/* Media frame: a plain window on the lab's work, cross-fading through its items */}
       <div className="flex-1" />
-      <div className="mt-10 overflow-hidden rounded-xl border border-[var(--svc-border)] bg-black shadow-[0_24px_48px_-24px_rgba(0,0,0,0.8)]">
-        <div role="group" aria-label={`${title} projects`} className={`${styles.tabs} flex gap-x-1 overflow-x-auto border-b border-[var(--svc-border)] bg-[var(--svc-card)] px-2 py-1.5`}>
-          {items.map((item, i) => {
-            const isActive = i === active;
-            return (
-              <button
-                key={item.title}
-                type="button"
-                onClick={() => setActive(i)}
-                aria-pressed={isActive}
-                className={`min-h-8 shrink-0 cursor-pointer whitespace-nowrap rounded-md px-2.5 text-xs outline-none transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--svc-accent)] active:opacity-80 ${
-                  isActive
-                    ? "bg-[var(--svc-border)] text-[var(--svc-accent)]"
-                    : "text-[var(--svc-text)] hover:text-[var(--svc-heading)]"
-                }`}
-              >
-                {item.title}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Items stacked in one cell, the chosen one fades in */}
-        <div className="relative grid aspect-[16/10] w-full">
-          {items.map((item, i) => (
-            <div
-              key={item.title}
-              className={`${styles.panel} relative col-start-1 row-start-1 h-full w-full ${
-                i === active ? "opacity-100" : "pointer-events-none opacity-0"
-              }`}
-              aria-hidden={i !== active}
-            >
-              <LabPanel item={item} priority={i === 0} />
-              <span className="absolute bottom-3 left-3 max-w-[calc(100%-24px)] truncate rounded-md bg-black/75 px-2 py-1 text-xs text-[var(--svc-text)]">
-                {item.caption ? `${item.detail} (${item.caption.toLowerCase()})` : item.detail}
-              </span>
-            </div>
-          ))}
-        </div>
+      <div
+        className="relative mt-10 grid aspect-[16/10] w-full overflow-hidden rounded-xl border border-[var(--svc-border)] bg-black shadow-[0_24px_48px_-24px_rgba(0,0,0,0.8)]"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        {items.map((item, i) => (
+          <div
+            key={item.title}
+            className={`${styles.panel} relative col-start-1 row-start-1 h-full w-full ${
+              i === active ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+            aria-hidden={i !== active}
+          >
+            <LabPanel item={item} priority={i === 0} />
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -229,6 +217,7 @@ export default function ResearchPage() {
                 description="We research and develop new AI models, neural methods, and autonomous agent workflows in-house."
                 cta="Explore AI Lab"
                 items={AILAB_ITEMS}
+                interval={4200}
               />
             </AnimatedItem>
 
@@ -240,6 +229,7 @@ export default function ResearchPage() {
                 description="Autonomous systems, embodied humanoid intelligence, and physical AI platforms bridging software models with real-world robotics."
                 cta="Explore robotics"
                 items={ROBOTICS_ITEMS}
+                interval={4000}
               />
             </AnimatedItem>
           </AnimatedStagger>
