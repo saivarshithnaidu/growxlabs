@@ -40,10 +40,6 @@ export const metadata = {
       },
     ],
   },
-
-  icons: {
-    icon: "/logo-symbol.svg",
-  },
 };
 
 export default async function RootLayout({
