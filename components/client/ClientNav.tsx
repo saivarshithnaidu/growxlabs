@@ -2,7 +2,9 @@
 
 import { Link, usePathname } from "@/navigation-client";
 import { cn } from "@/lib/utils";
-import { Bell, LogOut, ShieldCheck } from "lucide-react";
+import { Bell, LogOut, Moon, ShieldCheck, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -20,6 +22,10 @@ const focus = "focus-visible:outline focus-visible:outline-2 focus-visible:outli
 
 export function ClientNav() {
   const pathname = usePathname();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const dark = resolvedTheme === "dark";
   const { data } = useQuery({
     queryKey: ["client", "notifications"],
     queryFn: async () => {
@@ -71,6 +77,14 @@ export function ClientNav() {
             </span>
           )}
         </Link>
+        <button
+          onClick={() => setTheme(dark ? "light" : "dark")}
+          aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+          className={cn("rounded-md p-2 text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]", focus)}
+        >
+          {mounted && (dark ? <Sun size={16} aria-hidden /> : <Moon size={16} aria-hidden />)}
+          {!mounted && <span className="block h-4 w-4" />}
+        </button>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className={cn("rounded-md p-2 text-[var(--text-secondary)] transition-colors hover:bg-red-500/10 hover:text-red-500", focus)}

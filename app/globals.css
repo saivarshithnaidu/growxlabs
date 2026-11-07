@@ -2008,3 +2008,17 @@ html {
   --res-text: #b8c0c5;
   --res-surface: #050709;
 }
+
+/* Client portal dark mode: its pages use Tailwind's light palette (slate, white, blue-50),
+   so map those to theme tokens instead of leaving dark text on a dark page. */
+.dark .client-portal :is(.text-slate-950, .text-slate-900, .text-slate-800, .text-neutral-900, .text-black) { color: var(--text-primary) !important; }
+.dark .client-portal :is(.text-slate-700, .text-slate-600, .text-neutral-700, .text-neutral-600) { color: var(--text-secondary) !important; }
+.dark .client-portal :is(.text-slate-500, .text-slate-400, .text-neutral-500) { color: var(--text-muted) !important; }
+.dark .client-portal :is(.bg-white, .bg-slate-50, .bg-neutral-50) { background-color: var(--card) !important; }
+.dark .client-portal :is(.bg-slate-100, .bg-blue-50\/50, .bg-blue-50) { background-color: var(--surface-2) !important; }
+.dark .client-portal :is(.border-slate-200, .border-slate-300, .border-blue-100, .border-neutral-200) { border-color: var(--border-subtle) !important; }
+.dark .client-portal :is(.text-blue-700, .text-blue-800, .text-\[\#005bab\], .text-\[\#0075de\]) { color: #4da3ff !important; }
+.dark .client-portal .border-\[\#0075de\] { border-color: #4da3ff !important; }
+.dark .client-portal :is(.bg-red-50, .bg-emerald-50) { background-color: var(--surface-2) !important; }
+.dark .client-portal .text-emerald-700, .dark .client-portal .text-emerald-800 { color: #34d399 !important; }
+.dark .client-portal .text-red-700 { color: #f87171 !important; }
