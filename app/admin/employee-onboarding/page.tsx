@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect, useRef } from "react";
 import { 
   ChevronRight, FileText, CheckCircle2, ShieldCheck, Mail, Send, 
@@ -586,7 +587,7 @@ export default function DedicatedOfferLetterStudioPage() {
     return (
       <div className="min-h-screen bg-[#F7F7F5] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-2 border-[#111827] border-t-transparent rounded-full animate-spin" />
+          <LogoLoader size={48} className="text-[#111827]" />
           <p className="text-xs font-semibold text-[#6B7280]">Loading Offer Studio…</p>
         </div>
       </div>

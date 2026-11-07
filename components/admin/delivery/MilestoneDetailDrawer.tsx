@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -208,7 +209,7 @@ export function MilestoneDetailDrawer({
         <div className="p-6 flex-1 space-y-6">
           {query.isPending && (
             <div className="py-12 flex flex-col items-center justify-center gap-3 text-[var(--text-muted)]">
-              <IconSpinner size={24} className="animate-spin text-[#164d75]" />
+              <LogoLoader size={36} className="text-[var(--text-primary)]" />
               <p className="text-xs">Loading milestone details…</p>
             </div>
           )}

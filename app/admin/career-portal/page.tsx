@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useState, useEffect } from "react";
 import { Loader2, Search, Filter, Mail, Phone, MapPin, Briefcase, Calendar, Link2, FileText, CheckCircle, XCircle, AlertCircle, Clock, Save, ExternalLink } from "lucide-react";
 import { Reveal } from "@/components/marketing/Reveal";
@@ -276,7 +277,7 @@ export default function AdminCareersPage() {
     return (
       <div className="h-[80vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="animate-spin text-primary h-8 w-8" />
+          <LogoLoader size={40} className="text-[var(--text-primary)]" />
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--text-muted)]">Loading Candidates</p>
         </div>
       </div>

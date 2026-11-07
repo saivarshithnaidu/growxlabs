@@ -1,9 +1,10 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2, AlertTriangle, Clock, ChevronRight, ChevronLeft, CheckSquare, Square, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Clock, ChevronRight, ChevronLeft, CheckSquare, Square } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Question } from "@/types/courses";
 
@@ -197,7 +198,7 @@ export default function AssessmentPage() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center pt-20">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+          <LogoLoader size={48} className="text-white" />
           <p className="text-white/40 text-sm font-medium uppercase tracking-widest">Loading assessment...</p>
         </div>
       </div>

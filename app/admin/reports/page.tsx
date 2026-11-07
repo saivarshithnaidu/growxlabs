@@ -1,7 +1,8 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect } from "react";
-import { Loader2, TrendingUp, DollarSign, Award, Target, Users, ArrowUpRight } from "lucide-react";
+import { TrendingUp, DollarSign, Award, Target, Users, ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 
@@ -66,7 +67,7 @@ export default function ReportsPage() {
 
       {loading ? (
         <div className="h-[50vh] flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-8 w-8" />
+          <LogoLoader size={40} className="text-[var(--text-primary)]" />
         </div>
       ) : (
         <div className="space-y-6">

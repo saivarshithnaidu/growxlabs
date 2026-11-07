@@ -1,9 +1,10 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/Button";
-import { Download, ShieldCheck, CheckCircle2, QrCode, Loader2 } from "lucide-react";
+import { Download, ShieldCheck, CheckCircle2, QrCode } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface CourseData {
@@ -67,7 +68,7 @@ export default function CertificatePage() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center pt-20">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+          <LogoLoader size={48} className="text-white" />
           <p className="text-white/40 text-sm font-medium uppercase tracking-widest">Loading certificate...</p>
         </div>
       </div>

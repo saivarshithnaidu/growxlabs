@@ -1,7 +1,8 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect } from "react";
-import { Loader2, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 import { AutomationBuilder } from "@/components/admin/AutomationBuilder";
 
 export default function WorkflowsPage() {
@@ -58,7 +59,7 @@ export default function WorkflowsPage() {
       {/* Builder */}
       {loading ? (
         <div className="h-[50vh] flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-8 w-8" />
+          <LogoLoader size={40} className="text-[var(--text-primary)]" />
         </div>
       ) : (
         <AutomationBuilder 

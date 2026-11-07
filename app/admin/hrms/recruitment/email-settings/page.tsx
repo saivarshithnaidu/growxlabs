@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect } from "react";
 import { Settings, Save, Loader2, CheckCircle, Mail, ToggleLeft, ToggleRight, AlertCircle, Send, FileText, History } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -107,7 +108,7 @@ export default function EmailSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-6 w-6 animate-spin text-[#0075de]" />
+        <LogoLoader size={36} className="text-[var(--text-primary)]" />
       </div>
     );
   }

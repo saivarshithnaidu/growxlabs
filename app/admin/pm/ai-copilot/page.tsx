@@ -1,7 +1,8 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState } from "react";
-import { Loader2, Zap, AlertTriangle, CheckSquare } from "lucide-react";
+import { Zap, AlertTriangle, CheckSquare } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
@@ -74,7 +75,7 @@ export default function AiCopilotPage() {
         <div className="md:col-span-2">
           {loading ? (
             <div className="h-64 flex flex-col items-center justify-center border border-[#e6e6e6] rounded-md bg-[var(--surface-1)]">
-              <Loader2 className="animate-spin text-[#0075de] h-8 w-8 mb-2" />
+              <LogoLoader size={40} className="mb-2 text-[var(--text-primary)]" />
               <span className="text-xs font-semibold text-neutral-450">Gemini parsing requirements scope...</span>
             </div>
           ) : plan ? (

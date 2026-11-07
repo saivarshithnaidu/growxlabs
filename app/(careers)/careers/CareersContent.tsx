@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Loader2, FileText } from "lucide-react";
@@ -937,7 +938,7 @@ export function CareersContent() {
 
                 {uploading ? (
                   <div className="p-8 border border-dashed border-[#D5E2E9] rounded-xl bg-[#F4F8FA] flex flex-col items-center justify-center gap-2">
-                    <Loader2 className="animate-spin text-white h-6 w-6" />
+                    <LogoLoader size={36} className="text-[#55788D]" />
                     <span className="text-xs font-mono text-[#55788D] uppercase tracking-widest">
                       Uploading to cloud...
                     </span>

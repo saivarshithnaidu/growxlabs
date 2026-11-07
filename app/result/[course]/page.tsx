@@ -1,8 +1,9 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { CheckCircle2, XCircle, Award, ShieldCheck, Download, ExternalLink, RefreshCcw, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, Award, ShieldCheck, Download, ExternalLink, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { useEffect, useState } from "react";
@@ -51,7 +52,7 @@ export default function ResultPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center pt-20">
-        <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+        <LogoLoader size={48} className="text-white" />
       </div>
     );
   }

@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useState, useEffect } from "react";
 import { 
   CheckCircle2, 
@@ -25,7 +26,6 @@ import { CertificatePreview } from "@/components/marketing/CertificatePreview";
 import Script from "next/script";
 import { PageHero } from "@/components/marketing/PageHero";
 import { getAbsoluteUrl } from "@/lib/subdomains";
-import { Loader2 } from "lucide-react";
 
 
 
@@ -148,7 +148,7 @@ export default function CoursesPage() {
 
       {catalogLoading ? (
         <div className="min-h-[50vh] bg-[#F5F4F0] flex flex-col items-center justify-center pt-20">
-          <Loader2 className="w-8 h-8 text-[#55788D] animate-spin mb-4" />
+          <LogoLoader size={48} className="mb-4 text-[#55788D]" />
           <p className="text-[#55788D] font-mono tracking-widest text-[10px] uppercase">Retrieving catalog...</p>
         </div>
       ) : (

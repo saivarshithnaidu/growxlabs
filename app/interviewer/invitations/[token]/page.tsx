@@ -1,8 +1,9 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, ShieldCheck, AlertCircle, CheckCircle2, ArrowRight } from "lucide-react";
+import { ShieldCheck, AlertCircle, CheckCircle2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function InvitationAcceptPage({ params }: { params: Promise<{ token: string }> }) {
@@ -43,7 +44,7 @@ export default function InvitationAcceptPage({ params }: { params: Promise<{ tok
     <div className="h-[70vh] flex flex-col items-center justify-center space-y-4 text-center px-4">
       {accepting ? (
         <div className="space-y-3">
-          <Loader2 size={36} className="animate-spin text-[#0075de] mx-auto" />
+          <LogoLoader size={48} className="flex justify-center text-slate-900" />
           <h2 className="text-xl font-bold text-slate-900">Validating & Accepting Interview Invitation...</h2>
           <p className="text-xs text-slate-500 max-w-sm">Verifying your secure token and establishing temporary interviewer session.</p>
         </div>

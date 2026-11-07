@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -90,7 +91,7 @@ export default function PublicProposalView() {
   if (loading) return (
     <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-8 h-8 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
+        <LogoLoader size={48} className="text-[#070707]" />
         <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-neutral-400">Loading proposal</p>
       </div>
     </div>

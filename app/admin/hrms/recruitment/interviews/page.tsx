@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2, Plus, RefreshCw, Calendar, Clock, Video, ShieldCheck, UserCheck, ChevronRight, ExternalLink, ShieldAlert, KeyRound, Mail, X } from "lucide-react";
@@ -224,7 +225,7 @@ export default function AdminInterviewsPage() {
 
         {loading ? (
           <div className="h-48 flex items-center justify-center space-y-2">
-            <Loader2 className="animate-spin text-[#0075de]" size={24} />
+            <LogoLoader size={36} className="text-[var(--text-primary)]" />
           </div>
         ) : interviews.length === 0 ? (
           <div className="p-12 text-center space-y-3">

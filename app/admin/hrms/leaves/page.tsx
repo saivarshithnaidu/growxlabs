@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect } from "react";
 import { Loader2, Plus, X } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -75,7 +76,7 @@ export default function LeavesPage() {
 
       {loading ? (
         <div className="h-64 flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-8 w-8" />
+          <LogoLoader size={40} className="text-[var(--text-primary)]" />
         </div>
       ) : (
         <>

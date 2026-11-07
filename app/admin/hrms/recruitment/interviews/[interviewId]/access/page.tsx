@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect, use } from "react";
 import { Loader2, ArrowLeft, KeyRound, ShieldAlert, Clock, UserPlus, RefreshCw, Eye, Check, X, ShieldCheck, Mail, AlertTriangle } from "lucide-react";
 import Link from "next/link";
@@ -91,7 +92,7 @@ export default function AdminInterviewAccessPage({ params }: { params: Promise<{
   if (loading) {
     return (
       <div className="h-64 flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#0075de]" size={28} />
+        <LogoLoader size={40} className="text-[var(--text-primary)]" />
       </div>
     );
   }

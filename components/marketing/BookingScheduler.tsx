@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -264,7 +265,7 @@ export function BookingScheduler({ onClose }: BookingSchedulerProps) {
                   
                   {loadingSlots ? (
                     <div className="flex-1 flex items-center justify-center bg-white/[0.01] border border-white/5 rounded-xl">
-                      <Loader2 className="w-6 h-6 animate-spin text-[#C0F0FB]/80" />
+                      <LogoLoader size={36} className="text-[#C0F0FB]" />
                     </div>
                   ) : (
                     <div className="flex-grow overflow-y-auto grid grid-cols-3 sm:grid-cols-4 md:grid-cols-1 gap-1.5 md:space-y-1.5 md:gap-0 pr-1 md:pr-2 custom-scrollbar">

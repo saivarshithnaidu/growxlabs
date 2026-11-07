@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { adminGeist } from "@/components/admin/typography";
 import "./admin-typography.css";
 import "@/src/components/ui/tokens.css";
@@ -11,7 +12,7 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { AppShell, ToastViewport } from "@/src/components/ui";
 import { ADMIN_EXACT_HREFS, MODULES, stripLocale } from "@/lib/admin-nav";
-import { Loader2, ShieldAlert, ArrowLeft, LogOut, ExternalLink, ChevronRight, Settings, Moon, Sun } from "@/components/icons";
+import { ShieldAlert, ArrowLeft, LogOut, ExternalLink, ChevronRight, Settings, Moon, Sun } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { AdminOperationsDock } from "@/components/admin/AdminOperationsDock";
@@ -162,7 +163,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         adminGeist.variable, "admin-typography min-h-screen flex items-center justify-center"
       )}>
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className={cn("h-8 w-8 animate-spin", isCommandCenter ? "text-blue-500" : "text-[#0075de]")} />
+          <LogoLoader size={48} className={isCommandCenter ? "text-zinc-100" : "text-[var(--text-primary)]"} />
           <p className={cn("text-[13px] font-normal", isCommandCenter ? "text-zinc-400" : "text-[var(--text-muted)]")}>
             Authenticating workspace access...
           </p>

@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { ChatInput, ChatInputTextArea, ChatInputSubmit } from "@/components/ui/chat-input";
@@ -9,7 +10,7 @@ const DeepSpaceScene = dynamic(() => import("@/components/earth/Scene"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full min-h-[450px] sm:min-h-[550px] bg-[#000000] flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+      <LogoLoader size={48} className="text-white" />
     </div>
   ),
 });

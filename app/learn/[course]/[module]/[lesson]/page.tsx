@@ -1,7 +1,8 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useParams, notFound, useRouter } from "next/navigation";
-import { CheckCircle2, ChevronLeft, ChevronRight, Menu, X, FileText, Loader2 } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight, Menu, X, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -82,7 +83,7 @@ export default function LearningPage() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center pt-20">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+          <LogoLoader size={48} className="text-white" />
           <p className="text-white/40 text-sm font-medium uppercase tracking-widest">Loading lesson...</p>
         </div>
       </div>

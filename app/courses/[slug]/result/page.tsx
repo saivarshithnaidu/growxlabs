@@ -1,9 +1,10 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2, XCircle, Award, RefreshCcw, ShieldCheck, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, Award, RefreshCcw, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -59,7 +60,7 @@ export default function AssessmentResultPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center pt-20">
-        <Loader2 className="w-8 h-8 text-[#00A86B] animate-spin" />
+        <LogoLoader size={48} className="text-white" />
       </div>
     );
   }

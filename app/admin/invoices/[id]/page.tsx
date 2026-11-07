@@ -1,9 +1,9 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import InvoiceTemplate from "@/components/admin/InvoiceTemplate";
-import { Loader2 } from "lucide-react";
 
 export default function InvoiceDetailPage() {
   const { id } = useParams();
@@ -29,7 +29,7 @@ export default function InvoiceDetailPage() {
   if (loading) {
     return (
       <div className="h-[80vh] flex items-center justify-center">
-        <Loader2 className="animate-spin text-white/20" size={48} />
+        <LogoLoader size={48} className="text-white" />
       </div>
     );
   }

@@ -1,7 +1,8 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect } from "react";
-import { Loader2, Calendar, Clock, ChevronRight, UserCheck, ShieldCheck, AlertCircle, FileText, CheckCircle2 } from "lucide-react";
+import { Calendar, Clock, ChevronRight, UserCheck, ShieldCheck, AlertCircle, FileText, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 export default function InterviewerDashboardPage() {
@@ -73,7 +74,7 @@ export default function InterviewerDashboardPage() {
 
         {loading ? (
           <div className="h-48 flex items-center justify-center space-y-2">
-            <Loader2 className="animate-spin text-[#0075de]" size={28} />
+            <LogoLoader size={40} className="text-slate-900" />
           </div>
         ) : assignments.length === 0 ? (
           <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">

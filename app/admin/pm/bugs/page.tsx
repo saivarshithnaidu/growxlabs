@@ -1,7 +1,8 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect } from "react";
-import { Loader2, Bug, Plus } from "lucide-react";
+import { Bug, Plus } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -97,7 +98,7 @@ export default function BugsPage() {
       {/* Grid/List */}
       {loading ? (
         <div className="h-64 flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-6 w-6" />
+          <LogoLoader size={40} className="text-[var(--text-primary)]" />
         </div>
       ) : bugs.length === 0 ? (
         <div className="h-64 flex flex-col items-center justify-center border border-dashed border-[#e6e6e6] rounded-md bg-[var(--surface-1)] text-center p-6">

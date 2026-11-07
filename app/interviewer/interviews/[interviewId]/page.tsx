@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import React, { useState, useEffect, use } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -121,7 +122,7 @@ export default function InterviewerWorkspacePage({ params }: { params: Promise<{
   if (query.isPending) {
     return (
       <div className="h-[75vh] flex flex-col items-center justify-center space-y-3">
-        <Loader2 size={32} className="animate-spin text-[#0075de]" />
+        <LogoLoader size={48} className="text-slate-900" />
         <p className="text-xs font-medium text-slate-500">Loading candidate workspace & context...</p>
       </div>
     );

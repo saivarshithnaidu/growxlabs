@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoLoader } from "@/components/ui/LogoLoader";
 import { useParams, notFound, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
@@ -10,8 +11,7 @@ import {
   ChevronRight, 
   PlayCircle,
   ChevronDown,
-  BookOpen,
-  Loader2
+  BookOpen
 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
@@ -81,7 +81,7 @@ export default function CourseDetailsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#020202] flex items-center justify-center pt-20">
-        <Loader2 className="w-8 h-8 text-[#C0F0FB] animate-spin" />
+        <LogoLoader size={48} className="text-white" />
       </div>
     );
   }
