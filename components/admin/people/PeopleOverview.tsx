@@ -19,13 +19,12 @@ export default function PeopleOverview() {
     setLoading(true);
     setError("");
     try {
-      const [e, d, l] = await Promise.all([
-        fetchJson<{ employees: Employee[] }>("/api/hrms/employees"),
-        fetchJson<{ items: Department[] }>("/api/hrms/departments"),
+      const [directory, l] = await Promise.all([
+        fetchJson<{ employees: Employee[]; departments: Department[] }>("/api/hrms/directory"),
         fetchJson<{ leaves: Leave[] }>("/api/hrms/leaves"),
       ]);
-      setEmployees(e.employees || []);
-      setDepartments(d.items || []);
+      setEmployees(directory.employees || []);
+      setDepartments(directory.departments || []);
       setLeaves(l.leaves || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "The overview couldn't load.");

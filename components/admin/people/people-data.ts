@@ -5,7 +5,6 @@ export type Employee = {
   employee_id: string;
   full_name: string;
   email: string | null;
-  phone: string | null;
   joining_date: string | null;
   department_id: string | null;
   designation_id: string | null;
@@ -24,6 +23,7 @@ export const STATUS_OPTIONS = [
   { value: "ON_LEAVE", label: "On leave" },
   { value: "SUSPENDED", label: "Suspended" },
   { value: "TERMINATED", label: "Left" },
+  { value: "PROBATION", label: "Probation" },
 ];
 export const STATUS_BADGE: Record<string, BadgeVariant> = { ACTIVE: "success", ON_LEAVE: "warning", SUSPENDED: "danger", TERMINATED: "neutral" };
 export const TYPE_OPTIONS = [
@@ -44,8 +44,4 @@ export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "Something went wrong. Try again.");
   return data as T;
-}
-
-export function sendJson<T>(url: string, method: "POST" | "PATCH", body: unknown) {
-  return fetchJson<T>(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 }
