@@ -2,73 +2,81 @@
 
 import { Link, usePathname } from "@/navigation-client";
 import { cn } from "@/lib/utils";
-import {
-  Layout, FileText, CreditCard, Bell, ClipboardList,
-  Rocket, LogOut, ShieldCheck
-} from "lucide-react";
+import { Bell, LogOut, ShieldCheck } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 
 const navItems = [
-  { name: "Overview", href: "/client/dashboard", icon: Layout },
-  { name: "Proposals", href: "/client/proposals", icon: FileText },
-  { name: "Contracts", href: "/client/agreement", icon: FileText },
-  { name: "Onboarding", href: "/client/onboarding", icon: ClipboardList },
-  { name: "Billing", href: "/client/invoices", icon: CreditCard },
-  { name: "Progress", href: "/client/project", icon: Rocket },
-  { name: "Change Requests", href: "/client/change-requests", icon: ClipboardList },
-  { name: "Notifications", href: "/client/notifications", icon: Bell },
+  { name: "Overview", href: "/client/dashboard" },
+  { name: "Proposals", href: "/client/proposals" },
+  { name: "Contracts", href: "/client/agreement" },
+  { name: "Onboarding", href: "/client/onboarding" },
+  { name: "Billing", href: "/client/invoices" },
+  { name: "Progress", href: "/client/project" },
+  { name: "Changes", href: "/client/change-requests" },
 ];
+
+const focus = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0075de]";
 
 export function ClientNav() {
   const pathname = usePathname();
+  const { data } = useQuery({
+    queryKey: ["client", "notifications"],
+    queryFn: async () => {
+      const response = await fetch("/api/client/notifications", { cache: "no-store" });
+      return response.ok ? ((await response.json()) as { notifications: { status: string }[] }) : { notifications: [] };
+    },
+  });
+  const unread = data?.notifications.filter((n) => n.status === "unread").length ?? 0;
+  const onNotifications = pathname === "/client/notifications";
 
   return (
-    <nav className="flex items-center justify-between bg-white border border-[#e6e6e6] p-2 pl-5 pr-2 rounded-md mb-8 shadow-sm">
-      <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
-        {/* Logo/Brand for Client Portal */}
-        <div className="flex items-center gap-2 shrink-0 pr-4 border-r border-[#e6e6e6]">
-           <div className="w-6 h-6 bg-[#f6f5f4] border border-[#e6e6e6] rounded-md flex items-center justify-center">
-              <ShieldCheck className="text-[#0075de]" size={14} />
-           </div>
-           <span className="text-sm font-bold tracking-tight text-neutral-900 hidden sm:block">Client Portal</span>
-        </div>
+    <nav className="mb-8 flex items-center gap-3 rounded-md border border-[var(--border-subtle)] bg-[var(--card)] p-2 pl-4" aria-label="Client portal">
+      <Link href="/client/dashboard" className={cn("flex shrink-0 items-center gap-2 rounded-md pr-3", focus)}>
+        <ShieldCheck className="text-[#0075de]" size={16} aria-hidden />
+        <span className="hidden text-sm font-semibold text-[var(--text-primary)] sm:block">Client portal</span>
+      </Link>
 
-        <div className="flex items-center gap-1">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center px-3 py-1.5 rounded-md transition-all whitespace-nowrap group",
-                  isActive
-                    ? "bg-[#0075de]/10 text-[#0075de] font-semibold"
-                    : "text-[#615d59] hover:text-neutral-900 hover:bg-[#e6e6e6]/50"
-                )}
-              >
-                <item.icon className={cn(
-                  "h-4 w-4 mr-2",
-                  isActive ? "text-[#0075de]" : "text-[#615d59] group-hover:text-neutral-950"
-                )} />
-                <span className="text-[11px] uppercase tracking-wider font-semibold">{item.name}</span>
-              </Link>
-            );
-          })}
-        </div>
+      <div className="no-scrollbar flex min-w-0 flex-1 items-center gap-1 overflow-x-auto border-l border-[var(--border-subtle)] pl-3">
+        {navItems.map((item) => {
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "whitespace-nowrap rounded-md px-3 py-1.5 text-sm transition-colors",
+                active ? "bg-[#0075de]/10 font-medium text-[#0075de]" : "text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]",
+                focus,
+              )}
+            >
+              {item.name}
+            </Link>
+          );
+        })}
       </div>
 
-      <div className="flex items-center gap-3">
-        <div className="hidden md:flex items-center gap-2 px-2.5 py-1 bg-[#0075de]/5 rounded-md border border-[#0075de]/10">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#0075de] animate-pulse" />
-          <span className="text-[9px] font-bold text-[#0075de] uppercase tracking-widest">Active Partner</span>
-        </div>
+      <div className="flex shrink-0 items-center gap-1">
+        <Link
+          href="/client/notifications"
+          aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}
+          aria-current={onNotifications ? "page" : undefined}
+          className={cn("relative rounded-md p-2 transition-colors", onNotifications ? "bg-[#0075de]/10 text-[#0075de]" : "text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]", focus)}
+        >
+          <Bell size={16} aria-hidden />
+          {unread > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#0075de] px-1 text-[10px] font-semibold text-white" aria-hidden>
+              {unread > 9 ? "9+" : unread}
+            </span>
+          )}
+        </Link>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="p-2 text-[#615d59] hover:text-red-500 hover:bg-red-500/5 rounded-md transition-all"
-          title="Sign Out"
+          className={cn("rounded-md p-2 text-[var(--text-secondary)] transition-colors hover:bg-red-500/10 hover:text-red-500", focus)}
+          aria-label="Sign out"
         >
-          <LogOut size={16} />
+          <LogOut size={16} aria-hidden />
         </button>
       </div>
     </nav>
