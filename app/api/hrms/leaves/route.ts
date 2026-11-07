@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { denyUnlessHrAdmin } from "@/lib/hrms/admin-guard";
 
 export async function GET() {
+  const denied = await denyUnlessHrAdmin();
+  if (denied) return denied;
   try {
     const { data: leaves, error } = await supabaseAdmin
       .from("leave_requests")
@@ -22,6 +25,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const denied = await denyUnlessHrAdmin();
+  if (denied) return denied;
   try {
     const { employee_id, leave_type, start_date, end_date, reason } = await request.json();
 

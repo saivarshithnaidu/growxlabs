@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { denyUnlessHrAdmin } from "@/lib/hrms/admin-guard";
 import { EnterpriseHrmsService } from "@/services/enterprise-hrms";
 
 export async function GET() {
+  const denied = await denyUnlessHrAdmin();
+  if (denied) return denied;
   try {
     const { data: payrolls, error } = await supabaseAdmin
       .from("payroll")
@@ -17,6 +20,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const denied = await denyUnlessHrAdmin();
+  if (denied) return denied;
   try {
     const { payroll_month, employee_ids } = await request.json();
 

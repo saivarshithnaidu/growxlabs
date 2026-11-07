@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { denyUnlessHrAdmin } from "@/lib/hrms/admin-guard";
 import {
   CAREERS_ORGANISATION,
   nextJobReference,
@@ -13,6 +14,8 @@ import { TemplateType } from "@/lib/recruitment/email-templates";
 import { resolveApprovedOfferTerms } from "@/lib/recruitment/offer-terms";
 
 export async function GET() {
+  const denied = await denyUnlessHrAdmin();
+  if (denied) return denied;
   try {
     const { data: jobs, error } = await supabaseAdmin
       .schema("recruitment")
@@ -109,6 +112,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const denied = await denyUnlessHrAdmin();
+  if (denied) return denied;
   try {
     const body = await request.json();
     const requirements = Array.isArray(body.requirements)
@@ -165,6 +170,8 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  const denied = await denyUnlessHrAdmin();
+  if (denied) return denied;
   try {
     const body = await request.json();
     const applicationId = String(body.applicationId || "").trim();

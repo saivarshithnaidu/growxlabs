@@ -1,7 +1,10 @@
+import { denyUnlessHrAdmin } from "@/lib/hrms/admin-guard";
 import { NextResponse } from "next/server";
 import { AiHrmsService } from "@/services/ai-hrms";
 
 export async function POST(request: Request) {
+  const denied = await denyUnlessHrAdmin();
+  if (denied) return denied;
   try {
     const { action, requirements, resume_text, feedback_text } = await request.json();
 
