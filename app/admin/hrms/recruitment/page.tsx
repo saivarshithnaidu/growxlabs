@@ -1,234 +1,208 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Loader2, Plus, RefreshCw, X } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { Briefcase, Plus } from "lucide-react";
+import {
+  Badge, Button, DataTable, Input, KPIItem, KPIStrip, Modal, Tabs, TabsList, TabsTrigger, Textarea, toast, type BadgeVariant, type DataTableColumn,
+} from "@/src/components/ui";
+import { EmptyState, ErrorState, FormField, PageHeader } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
 import { RecruitmentPipeline } from "@/components/admin/hrms/RecruitmentPipeline";
 
+type Job = { id: string; title: string; department?: string | null; location?: string | null; status: string; applications_close_at?: string | null; candidates?: any[] };
+
+const BLANK = { title: "", department: "", description: "", salary_range: "", requirements: "", location: "India", employment_type: "Full-time", workplace_type: "On-site", applications_open_at: "", applications_close_at: "", application_limit: "" };
+const JOB_BADGE: Record<string, BadgeVariant> = { published: "success", scheduled: "info", closed: "neutral", draft: "neutral" };
+const VIEWS = [
+  { value: "active", label: "Active" },
+  { value: "rejected", label: "Rejected" },
+  { value: "jobs", label: "Jobs" },
+];
+const human = (v: string) => v.charAt(0).toUpperCase() + v.slice(1).replaceAll("_", " ");
+
+/* Jobs and candidates in one place. Stage changes email the candidate, as they always have. */
 export default function RecruitmentPage() {
-  const [jobs, setJobs] = useState<any[]>([]);
+  const breadcrumb = useAdminBreadcrumb();
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [interviews, setInterviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState("");
-  const [showJobForm, setShowJobForm] = useState(false);
-  const emptyJob = { title: "", department: "", description: "", salary_range: "", requirements: "", location: "India", employment_type: "Full-time", workplace_type: "On-site", applications_open_at: "", applications_close_at: "", application_limit: "" };
-  const [jobForm, setJobForm] = useState(emptyJob);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [updatingCandidateId, setUpdatingCandidateId] = useState<string | null>(null);
-  const [stageError, setStageError] = useState("");
-  const [pipelineView, setPipelineView] = useState<"active" | "rejected" | "all">("active");
+  const [error, setError] = useState("");
+  const [view, setView] = useState("active");
+  const [posting, setPosting] = useState(false);
+  const [form, setForm] = useState(BLANK);
+  const [formError, setFormError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  useEffect(() => { fetchJobs(); }, []);
-
-  const fetchJobs = async () => {
+  async function load() {
+    setError("");
     try {
-      setLoading(true);
-      setLoadError("");
       const res = await fetch("/api/hrms/recruitment", { cache: "no-store" });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Unable to load recruitment data");
+      if (!res.ok) throw new Error(data.error || "Recruitment couldn't load.");
       setJobs(data.jobs || []);
-      const interviewResponse = await fetch("/api/admin/recruitment/interviews", { cache: "no-store" });
-      if (interviewResponse.ok) {
-        const interviewData = await interviewResponse.json();
-        setInterviews(interviewData.interviews || []);
-      }
-    } catch (e) { console.error(e); setJobs([]); setLoadError("We couldn’t load recruitment information. Please refresh and try again."); } finally { setLoading(false); }
-  };
+      const interviewRes = await fetch("/api/admin/recruitment/interviews", { cache: "no-store" });
+      if (interviewRes.ok) setInterviews((await interviewRes.json()).interviews || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Recruitment couldn't load.");
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => { load(); }, []);
 
-  const handleCreateJob = async () => {
+  const candidates = useMemo(
+    () => jobs.flatMap((j) => (j.candidates || []).map((c) => ({ ...c, job_title: j.title, interview: interviews.find((i) => i.application_id === c.id) || null }))),
+    [jobs, interviews],
+  );
+  const active = candidates.filter((c) => c.status !== "rejected");
+  const rejected = candidates.filter((c) => c.status === "rejected");
+
+  async function moveStage(id: string, stage: string) {
+    setUpdatingId(id);
     try {
-      setSubmitting(true);
-      setSubmitError("");
+      const res = await fetch("/api/hrms/recruitment", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ applicationId: id, stage }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error);
+      await load();
+    } catch (err) {
+      toast({ title: err instanceof Error && err.message ? err.message : "Couldn't update the stage", variant: "danger" });
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  async function postJob(event: FormEvent) {
+    event.preventDefault();
+    setSaving(true);
+    setFormError("");
+    try {
       const res = await fetch("/api/hrms/recruitment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...jobForm,
-          requirements: jobForm.requirements.split(",").map(r => r.trim()).filter(Boolean),
-          applications_open_at: jobForm.applications_open_at ? new Date(jobForm.applications_open_at).toISOString() : null,
-          applications_close_at: jobForm.applications_close_at ? new Date(jobForm.applications_close_at).toISOString() : null,
-          application_limit: jobForm.application_limit ? Number(jobForm.application_limit) : null,
-        })
+          ...form,
+          requirements: form.requirements.split(",").map((r) => r.trim()).filter(Boolean),
+          applications_open_at: form.applications_open_at ? new Date(form.applications_open_at).toISOString() : null,
+          applications_close_at: form.applications_close_at ? new Date(form.applications_close_at).toISOString() : null,
+          application_limit: form.application_limit ? Number(form.application_limit) : null,
+        }),
       });
-      if (res.ok) {
-        setShowJobForm(false);
-        setJobForm(emptyJob);
-        fetchJobs();
-      } else { setSubmitError("We couldn’t publish this job opening. Please review the details and try again."); }
-    } catch (e) { console.error(e); setSubmitError("Unable to publish job opening. Please try again."); } finally { setSubmitting(false); }
-  };
-
-  const handleUpdateStage = async (candidateId: string, newStage: string) => {
-    try {
-      setUpdatingCandidateId(candidateId);
-      setStageError("");
-      const response = await fetch("/api/hrms/recruitment", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ applicationId: candidateId, stage: newStage }),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || "Unable to update candidate stage");
-      await fetchJobs();
-    } catch (e) {
-      console.error(e);
-      setStageError("We couldn’t update this candidate’s stage. Please try again.");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Couldn't publish this job.");
+      setPosting(false);
+      setForm(BLANK);
+      toast({ title: "Job published", variant: "success" });
+      await load();
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : "Couldn't publish this job.");
     } finally {
-      setUpdatingCandidateId(null);
+      setSaving(false);
     }
-  };
+  }
 
-  const allCandidates = jobs.flatMap((j: any) => (j.candidates || []).map((c: any) => ({ ...c, job_title: j.title })));
-  const visibleCandidates = allCandidates.filter((candidate: any) => pipelineView === "all" || (pipelineView === "rejected" ? candidate.status === "rejected" : candidate.status !== "rejected"));
-  const displayStage = (stage: string) => String(stage || "APPLIED").replace(/[_-]+/g, " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const jobColumns: DataTableColumn<Job>[] = [
+    { id: "title", header: "Job", width: "40%", sortValue: (j) => j.title, cell: (j) => <span className="ds-t-body-strong text-[var(--text-primary)]">{j.title}</span> },
+    { id: "department", header: "Department", sortValue: (j) => j.department || "", cell: (j) => j.department || <span className="text-[var(--text-disabled)]">Not set</span> },
+    { id: "location", header: "Location", sortValue: (j) => j.location || "", cell: (j) => j.location || "" },
+    { id: "applicants", header: "Applicants", numeric: true, sortValue: (j) => j.candidates?.length || 0, cell: (j) => <span className="ds-num">{j.candidates?.length || 0}</span> },
+    { id: "status", header: "Status", sortValue: (j) => j.status, cell: (j) => <Badge variant={JOB_BADGE[j.status] || "neutral"}>{human(j.status)}</Badge> },
+  ];
+
+  const text = (key: keyof typeof BLANK, label: string, type = "text", required = false) => (
+    <FormField label={label} required={required}>
+      {(field) => <Input {...field} type={type} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />}
+    </FormField>
+  );
 
   return (
-    <div className="space-y-8 text-[var(--text-primary)]">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-extrabold text-[var(--text-primary)] tracking-tight leading-none">Recruitment Pipeline</h1>
-        <p className="text-[var(--text-secondary)] text-xs">Track job openings, candidate progress, and hiring activity.</p>
-      </div>
+    <div>
+      <PageHeader
+        title="Jobs & candidates"
+        breadcrumb={breadcrumb}
+        actions={
+          <>
+            <Button variant="secondary" asChild><Link href="/admin/career-portal/playbook">Interview playbook</Link></Button>
+            <Button variant="primary" iconLeft={<Plus size={14} />} onClick={() => { setFormError(""); setPosting(true); }}>Post job</Button>
+          </>
+        }
+      />
 
-      {/* Actions */}
-      <div className="flex justify-between items-center">
-        <p className="text-xs font-bold text-[var(--text-secondary)]">Active Job Openings: {jobs.length}</p>
-        <div className="flex items-center gap-2">
-          <button onClick={fetchJobs} className="flex items-center gap-1.5 border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider cursor-pointer" title="Refresh applications"><RefreshCw className="h-3.5 w-3.5" /> Refresh</button>
-          <button onClick={() => setShowJobForm(true)} className="flex items-center gap-1.5 bg-[#0075de] hover:bg-[#005bab] text-white px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider shadow-sm transition-all cursor-pointer"><Plus className="h-3.5 w-3.5" /> Post Job Opening</button>
-        </div>
-      </div>
-      <div className="flex gap-1 rounded-lg border border-[var(--border-subtle)] bg-[var(--card)] p-1 w-fit">
-        {(["active", "rejected", "all"] as const).map((filter) => <button key={filter} onClick={() => setPipelineView(filter)} className={`rounded-md px-3 py-1.5 text-[10px] font-bold uppercase ${pipelineView === filter ? "bg-[#0075de] text-white" : "text-[var(--text-secondary)]"}`}>{filter}</button>)}
-      </div>
-
-      {loadError && <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">{loadError}</div>}
-
-      {/* Post Job Modal */}
-      {showJobForm && (
-        <Card className="p-5 border border-[var(--border-subtle)] bg-[var(--card)] rounded-xl shadow-sm">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-bold text-[var(--text-primary)]">New Job Opening</h3>
-            <button onClick={() => setShowJobForm(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)]"><X className="h-4 w-4" /></button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {[
-              { key: "title", label: "Job Title", placeholder: "Senior Full Stack Engineer" },
-              { key: "department", label: "Department", placeholder: "Sales & Marketing" },
-              { key: "salary_range", label: "Salary Range", placeholder: "₹15,00,000 - ₹25,00,000" },
-              { key: "description", label: "Description", placeholder: "Key responsibilities...", full: true },
-              { key: "requirements", label: "Requirements (comma-separated)", placeholder: "React, Node.js, PostgreSQL", full: true },
-              { key: "location", label: "Location", placeholder: "India" },
-              { key: "employment_type", label: "Employment type", placeholder: "Full-time / Internship" },
-              { key: "workplace_type", label: "Workplace", placeholder: "On-site / Remote / Hybrid" },
-              { key: "applications_open_at", label: "Opening (optional)", placeholder: "YYYY-MM-DDTHH:mm", type: "datetime-local" },
-              { key: "applications_close_at", label: "Closing (optional)", placeholder: "YYYY-MM-DDTHH:mm", type: "datetime-local" },
-              { key: "application_limit", label: "Application limit (optional)", placeholder: "Maximum applications", type: "number" },
-            ].map((field) => (
-              <div key={field.key} className={field.full ? "md:col-span-2" : ""}>
-                <label className="text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1 block">{field.label}</label>
-                <input
-                  type={(field as any).type || "text"}
-                  placeholder={field.placeholder}
-                  value={(jobForm as any)[field.key]}
-                  onChange={(e) => setJobForm({ ...jobForm, [field.key]: e.target.value })}
-                  className="w-full px-3 py-2 text-xs border border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0075de]/20"
-                />
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={handleCreateJob}
-            disabled={submitting}
-            className="mt-4 bg-[#0075de] hover:bg-[#005bab] text-white px-6 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider shadow-sm transition-all disabled:opacity-50 cursor-pointer"
-          >
-            {submitting ? <Loader2 className="animate-spin h-3.5 w-3.5" /> : "Publish Job Opening"}
-          </button>
-          {submitError && <p className="mt-3 text-xs text-red-600">{submitError}</p>}
-        </Card>
-      )}
-
-      {/* Kanban Board */}
-      {loading ? (
-        <div className="h-64 flex items-center justify-center">
-          <Loader2 className="animate-spin text-[#0075de] h-8 w-8" />
-        </div>
+      {error ? (
+        <ErrorState title="Recruitment couldn't load" description={error} onRetry={load} />
       ) : (
         <>
-          {stageError && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
-              {stageError}
-            </div>
-          )}
-          <RecruitmentPipeline
-            candidates={visibleCandidates.map((candidate: any) => ({ ...candidate, interview: interviews.find((interview: any) => interview.application_id === candidate.id) || null }))}
-            onUpdateStage={handleUpdateStage}
-            updatingCandidateId={updatingCandidateId}
-            onRefresh={fetchJobs}
-            showRejected={pipelineView === "rejected"}
-          />
+          <div className="mb-4">
+            <KPIStrip>
+              <KPIItem label="Open jobs" value={jobs.filter((j) => j.status === "published").length} loading={loading} />
+              <KPIItem label="Active candidates" value={active.length} loading={loading} />
+              <KPIItem label="At offer" value={active.filter((c) => c.stage === "OFFER").length} loading={loading} />
+              <KPIItem label="Hired" value={candidates.filter((c) => c.stage === "HIRED").length} loading={loading} />
+            </KPIStrip>
+          </div>
+
+          <Tabs value={view} onValueChange={setView}>
+            <TabsList>
+              {VIEWS.map((v) => <TabsTrigger key={v.value} value={v.value}>{v.label}</TabsTrigger>)}
+            </TabsList>
+          </Tabs>
+
+          <div className="mt-4">
+            {view === "jobs" ? (
+              <DataTable
+                label="Jobs"
+                columns={jobColumns}
+                rows={jobs}
+                getRowId={(j) => j.id}
+                loading={loading}
+                hideToolbar
+                emptyState={<EmptyState icon={<Briefcase size={20} />} title="No jobs yet" />}
+              />
+            ) : !loading && (
+              <RecruitmentPipeline
+                candidates={view === "rejected" ? rejected : active}
+                onUpdateStage={moveStage}
+                updatingCandidateId={updatingId}
+                onRefresh={load}
+                showRejected={view === "rejected"}
+              />
+            )}
+          </div>
         </>
       )}
 
-      {!loading && !loadError && (
-        <Card className="overflow-hidden border border-[var(--border-subtle)] bg-[var(--card)] rounded-xl">
-          <div className="flex items-center justify-between border-b border-[var(--border-subtle)] px-5 py-4">
-            <div><h2 className="text-sm font-bold">Submitted Applications</h2><p className="mt-1 text-xs text-[var(--text-secondary)]">Applications received from the public careers portal.</p></div>
-            <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700">{allCandidates.length}</span>
+      <Modal
+        open={posting}
+        onOpenChange={setPosting}
+        title="Post job"
+        size="lg"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setPosting(false)}>Cancel</Button>
+            <Button variant="primary" type="submit" form="post-job" loading={saving}>Publish job</Button>
+          </>
+        }
+      >
+        <form id="post-job" onSubmit={postJob} className="grid gap-4 sm:grid-cols-2">
+          {text("title", "Job title", "text", true)}
+          {text("department", "Department")}
+          <div className="sm:col-span-2">
+            <FormField label="Description">
+              {(field) => <Textarea id={field.id} rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />}
+            </FormField>
           </div>
-          {allCandidates.length === 0 ? (
-            <div className="px-5 py-10 text-center text-xs text-[var(--text-secondary)]">No applications have been submitted yet.</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-[var(--surface-1)] text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
-                  <tr>
-                    <th className="px-5 py-3">Reference</th>
-                    <th className="px-5 py-3">Candidate</th>
-                    <th className="px-5 py-3">Job</th>
-                    <th className="px-5 py-3">Stage</th>
-                    <th className="px-5 py-3">Resume</th>
-                    <th className="px-5 py-3">Submitted</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allCandidates.map((candidate: any) => (
-                    <tr key={candidate.id} className="border-t border-[var(--border-subtle)] hover:bg-[var(--surface-1)]/50 transition-colors">
-                      <td className="px-5 py-3 font-mono font-bold text-[#0075de]">{candidate.application_reference || "—"}</td>
-                      <td className="px-5 py-3 font-medium">
-                        {candidate.full_name}
-                        <div className="text-[10px] text-[var(--text-secondary)]">{candidate.email}</div>
-                      </td>
-                      <td className="px-5 py-3 font-medium">{candidate.job_title}</td>
-                      <td className="px-5 py-3">
-                        <span className="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-500">
-                          {displayStage(candidate.stage)}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3">
-                        {candidate.resume_url ? (
-                          <a
-                            href={candidate.resume_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 hover:underline uppercase tracking-wider"
-                          >
-                            Download Resume ↗
-                          </a>
-                        ) : (
-                          <span className="text-[10px] text-[var(--text-muted)] italic">No Resume</span>
-                        )}
-                      </td>
-                      <td className="px-5 py-3 text-[var(--text-secondary)]">{candidate.submitted_at ? new Date(candidate.submitted_at).toLocaleString() : "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
-      )}
+          <div className="sm:col-span-2">{text("requirements", "Requirements, separated by commas")}</div>
+          {text("salary_range", "Salary range")}
+          {text("location", "Location")}
+          {text("employment_type", "Employment type")}
+          {text("workplace_type", "Workplace")}
+          {text("applications_open_at", "Opens", "datetime-local")}
+          {text("applications_close_at", "Closes", "datetime-local")}
+          {text("application_limit", "Application limit", "number")}
+          {formError && <p role="alert" className="ds-t-meta text-[var(--danger)] sm:col-span-2">{formError}</p>}
+        </form>
+      </Modal>
     </div>
   );
 }

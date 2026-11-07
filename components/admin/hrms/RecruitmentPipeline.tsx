@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   ChevronRight,
-  Star,
   History,
   X,
   FileText,
@@ -25,22 +24,6 @@ const STAGES = [
   "OFFER",
   "HIRED",
 ];
-const STAGE_COLORS: Record<string, string> = {
-  APPLIED: "border-[#0075de]/20 bg-[var(--surface-1)]",
-  SCREENING: "border-violet-500/20 bg-[var(--surface-1)]",
-  INTERVIEW: "border-amber-500/20 bg-[var(--surface-1)]",
-  ASSESSMENT: "border-orange-500/20 bg-[var(--surface-1)]",
-  OFFER: "border-emerald-500/20 bg-[var(--surface-1)]",
-  HIRED: "border-green-500/20 bg-[var(--surface-1)]",
-};
-const STAGE_HEADER_COLORS: Record<string, string> = {
-  APPLIED: "bg-[#0075de]",
-  SCREENING: "bg-violet-600",
-  INTERVIEW: "bg-amber-600",
-  ASSESSMENT: "bg-orange-600",
-  OFFER: "bg-emerald-600",
-  HIRED: "bg-green-600",
-};
 
 interface RecruitmentPipelineProps {
   candidates: any[];
@@ -296,31 +279,25 @@ export function RecruitmentPipeline({
               );
             });
             return (
-              <div key={stage} className="w-[240px] flex-shrink-0">
+              <div key={stage} className="w-[260px] flex-shrink-0">
                 {/* Column Header */}
                 <div
-                  className={cn(
-                    "rounded-t-xl px-3 py-2 flex items-center justify-between",
-                    STAGE_HEADER_COLORS[stage],
-                  )}
+                  className="flex items-center justify-between rounded-t-xl border border-[var(--border-subtle)] bg-[var(--surface-2)] px-3 py-2"
                 >
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-white">
-                    {stage.replace("_", " ")}
+                  <span className="text-xs font-semibold text-[var(--text-primary)]">
+                    {stage.charAt(0) + stage.slice(1).toLowerCase()}
                   </span>
-                  <span className="bg-white/20 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-full">
+                  <span className="text-xs text-[var(--text-muted)]">
                     {stageCandidates.length}
                   </span>
                 </div>
 
                 {/* Candidate Cards */}
                 <div
-                  className={cn(
-                    "border-x border-b border-[var(--border-subtle)] rounded-b-xl p-2 space-y-2 min-h-[200px]",
-                    STAGE_COLORS[stage],
-                  )}
+                  className="min-h-[200px] space-y-2 rounded-b-xl border-x border-b border-[var(--border-subtle)] bg-[var(--surface-1)] p-2"
                 >
                   {stageCandidates.length === 0 && (
-                    <p className="text-[9px] text-[var(--text-muted)] text-center py-8 font-medium">
+                    <p className="text-[11px] text-[var(--text-muted)] text-center py-8 font-medium">
                       No candidates
                     </p>
                   )}
@@ -334,29 +311,23 @@ export function RecruitmentPipeline({
                           <p className="text-xs font-bold text-[var(--text-primary)] truncate">
                             {candidate.full_name}
                           </p>
-                          <span className="text-[8px] font-mono font-bold text-[var(--text-muted)] shrink-0">
+                          <span className="text-[11px] font-mono font-bold text-[var(--text-muted)] shrink-0">
                             {candidate.application_reference || "—"}
                           </span>
                         </div>
-                        <p className="text-[9px] text-[var(--text-secondary)] truncate">
+                        <p className="text-[11px] text-[var(--text-secondary)] truncate">
                           {candidate.email}
                         </p>
                       </div>
 
-                      <div className="flex items-center justify-between pt-1 border-t border-[var(--border-subtle)]">
-                        <div className="flex items-center gap-1">
-                          <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-                          <span className="text-[10px] font-bold text-[var(--text-secondary)]">
-                            {candidate.score || 0}
-                          </span>
-                        </div>
-                        {!showRejected &&
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[var(--border-subtle)]">
+                                                {!showRejected &&
                         stage === "HIRED" &&
                         candidate.employee_id ? (
                           <button
                             type="button"
                             onClick={() => void resendForCandidate(candidate)}
-                            className="text-[8px] font-bold uppercase text-amber-600 hover:underline"
+                            className="text-[11px] font-medium text-amber-600 hover:underline"
                           >
                             Resend activation
                           </button>
@@ -377,7 +348,7 @@ export function RecruitmentPipeline({
                               }
                               disabled={updatingCandidateId === candidate.id}
                               aria-busy={updatingCandidateId === candidate.id}
-                              className="flex items-center gap-0.5 text-[8px] font-bold text-[#0075de] hover:underline transition-colors uppercase tracking-wider cursor-pointer disabled:cursor-wait disabled:opacity-50"
+                              className="flex items-center gap-0.5 text-[11px] font-bold text-[#0075de] hover:underline transition-colors cursor-pointer disabled:cursor-wait disabled:opacity-50"
                             >
                               {updatingCandidateId === candidate.id
                                 ? "Updating..."
@@ -390,14 +361,14 @@ export function RecruitmentPipeline({
                           <button
                             type="button"
                             onClick={() => setRejecting(candidate)}
-                            className="text-[8px] font-bold uppercase text-red-600 hover:underline"
+                            className="text-[11px] font-medium text-red-600 hover:underline"
                           >
                             Reject
                           </button>
                         )}
                         {!showRejected && stage === "OFFER" && (
                           <div className="flex items-center gap-2">
-                            <span className="text-[8px] font-bold uppercase text-emerald-700">
+                            <span className="text-[11px] font-medium text-emerald-700">
                               {String(
                                 candidate.offer?.status || "draft",
                               ).toLowerCase() === "accepted"
@@ -410,7 +381,7 @@ export function RecruitmentPipeline({
                             </span>
                             <Link
                               href={`/admin/offers?applicationId=${encodeURIComponent(candidate.id)}&title=${encodeURIComponent(candidate.job_title || "")}`}
-                              className="text-[8px] font-bold uppercase text-emerald-700 hover:underline"
+                              className="text-[11px] font-medium text-emerald-700 hover:underline"
                             >
                               View Offer
                             </Link>
@@ -421,7 +392,7 @@ export function RecruitmentPipeline({
                           candidate.employee_id && (
                             <Link
                               href={`/admin/offers?applicationId=${encodeURIComponent(candidate.id)}&title=${encodeURIComponent(candidate.job_title || "")}&backfill=1`}
-                              className="text-[8px] font-bold uppercase text-violet-700 hover:underline"
+                              className="text-[11px] font-medium text-violet-700 hover:underline"
                             >
                               Create Missing Offer
                             </Link>
@@ -430,7 +401,7 @@ export function RecruitmentPipeline({
                           <button
                             type="button"
                             onClick={() => void openConversion(candidate)}
-                            className="text-[8px] font-bold uppercase text-emerald-600 hover:underline"
+                            className="text-[11px] font-medium text-emerald-600 hover:underline"
                           >
                             Convert to Employee
                           </button>
@@ -439,7 +410,7 @@ export function RecruitmentPipeline({
                           <button
                             type="button"
                             onClick={() => void reopen(candidate)}
-                            className="text-[8px] font-bold uppercase text-[#0075de] hover:underline"
+                            className="text-[11px] font-medium text-[#0075de] hover:underline"
                           >
                             Reopen
                           </button>
@@ -450,7 +421,7 @@ export function RecruitmentPipeline({
                         <div className="border-t border-[var(--border-subtle)] pt-2">
                           {candidate.interview ? (
                             <>
-                              <p className="mb-2 flex items-center gap-1 text-[9px] text-[var(--text-secondary)]">
+                              <p className="mb-2 flex items-center gap-1 text-[11px] text-[var(--text-secondary)]">
                                 <Video className="h-3 w-3 text-[#0075de]" />{" "}
                                 {candidate.interview.scheduled_at
                                   ? new Date(
@@ -468,7 +439,7 @@ export function RecruitmentPipeline({
                               </p>
                               <Link
                                 href={`/admin/hrms/recruitment/interviews/${candidate.interview.id}`}
-                                className="flex items-center justify-center rounded-md border border-[#0075de] px-2 py-1.5 text-[9px] font-bold text-[#0075de] hover:bg-blue-50"
+                                className="flex items-center justify-center rounded-md border border-[#0075de] px-2 py-1.5 text-[11px] font-bold text-[#0075de] hover:bg-blue-50"
                               >
                                 Manage Interview
                               </Link>
@@ -476,7 +447,7 @@ export function RecruitmentPipeline({
                           ) : (
                             <Link
                               href={`/admin/hrms/recruitment/interviews?applicationId=${encodeURIComponent(candidate.id)}`}
-                              className="flex items-center justify-center rounded-md bg-[#0075de] px-2 py-1.5 text-[9px] font-bold text-white hover:bg-[#005bab]"
+                              className="flex items-center justify-center rounded-md bg-[#0075de] px-2 py-1.5 text-[11px] font-bold text-white hover:bg-[#005bab]"
                             >
                               Schedule Interview
                             </Link>
@@ -485,7 +456,7 @@ export function RecruitmentPipeline({
                       )}
 
                       {/* Card Action Links */}
-                      <div className="flex items-center justify-between pt-2 border-t border-[var(--border-subtle)] text-[8px] font-bold uppercase tracking-wider">
+                      <div className="flex items-center justify-between pt-2 border-t border-[var(--border-subtle)] text-[11px] font-bold">
                         <button
                           type="button"
                           onClick={() => setSelectedCandidateModal(candidate)}
@@ -532,7 +503,7 @@ export function RecruitmentPipeline({
           <div className="h-full w-full max-w-lg bg-[var(--card)] border-l border-[var(--border-subtle)] shadow-2xl overflow-y-auto p-6 space-y-6">
             <div className="flex items-start justify-between pb-4 border-b border-[var(--border-subtle)]">
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase text-[#0075de] tracking-wider block">
+                <span className="text-[11px] font-mono font-medium text-[#0075de] tracking-wider block">
                   {selectedCandidateModal.application_reference ||
                     "APPLICATION DETAIL"}
                 </span>
@@ -554,7 +525,7 @@ export function RecruitmentPipeline({
             {/* Candidate Metadata Grid */}
             <div className="grid grid-cols-2 gap-4 text-xs">
               <div className="space-y-1">
-                <span className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-wider block">
+                <span className="text-[11px] font-bold text-[var(--text-muted)] block">
                   Email Address
                 </span>
                 <span className="font-medium text-[var(--text-primary)] flex items-center gap-1.5">
@@ -563,7 +534,7 @@ export function RecruitmentPipeline({
                 </span>
               </div>
               <div className="space-y-1">
-                <span className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-wider block">
+                <span className="text-[11px] font-bold text-[var(--text-muted)] block">
                   Phone Number
                 </span>
                 <span className="font-medium text-[var(--text-primary)] flex items-center gap-1.5">
@@ -572,7 +543,7 @@ export function RecruitmentPipeline({
                 </span>
               </div>
               <div className="space-y-1">
-                <span className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-wider block">
+                <span className="text-[11px] font-bold text-[var(--text-muted)] block">
                   Pipeline Stage
                 </span>
                 <span className="font-bold text-amber-500 uppercase">
@@ -580,7 +551,7 @@ export function RecruitmentPipeline({
                 </span>
               </div>
               <div className="space-y-1">
-                <span className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-wider block">
+                <span className="text-[11px] font-bold text-[var(--text-muted)] block">
                   Submitted Date
                 </span>
                 <span className="font-medium text-[var(--text-secondary)]">
@@ -613,7 +584,7 @@ export function RecruitmentPipeline({
             {/* Cover Letter */}
             {selectedCandidateModal.cover_letter && (
               <div className="space-y-2">
-                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">
+                <h3 className="text-xs font-bold text-[var(--text-primary)]">
                   Cover Letter / Statement
                 </h3>
                 <p className="text-xs text-[var(--text-secondary)] leading-relaxed p-4 rounded-xl bg-[var(--surface-1)] border border-[var(--border-subtle)] italic">
@@ -626,7 +597,7 @@ export function RecruitmentPipeline({
             {Array.isArray(selectedCandidateModal.answers) &&
               selectedCandidateModal.answers.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">
+                  <h3 className="text-xs font-bold text-[var(--text-primary)]">
                     Application Responses
                   </h3>
                   <div className="space-y-2">
@@ -661,7 +632,7 @@ export function RecruitmentPipeline({
                 <h2 className="text-sm font-bold text-[var(--text-primary)]">
                   {emailTimelineCandidate.full_name}
                 </h2>
-                <p className="text-[10px] text-[var(--text-muted)]">
+                <p className="text-[11px] text-[var(--text-muted)]">
                   {emailTimelineCandidate.email}
                 </p>
               </div>
@@ -690,7 +661,7 @@ export function RecruitmentPipeline({
             <p className="mt-1 text-xs text-[var(--text-secondary)]">
               This removes the application from the active pipeline.
             </p>
-            <label className="mt-4 block text-[10px] font-bold uppercase">
+            <label className="mt-4 block text-[11px] font-medium">
               Reason *
             </label>
             <select
@@ -703,7 +674,7 @@ export function RecruitmentPipeline({
                 <option key={item}>{item}</option>
               ))}
             </select>
-            <label className="mt-3 block text-[10px] font-bold uppercase">
+            <label className="mt-3 block text-[11px] font-medium">
               Optional internal note
             </label>
             <textarea
@@ -814,7 +785,7 @@ export function RecruitmentPipeline({
                   </p>
                 ) : (
                   <div className="mt-5 grid grid-cols-2 gap-3">
-                    <label className="text-[10px] font-bold uppercase">
+                    <label className="text-[11px] font-medium">
                       Employee code
                       <input
                         readOnly
@@ -822,7 +793,7 @@ export function RecruitmentPipeline({
                         className="mt-1 w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-2)] p-2 text-xs normal-case"
                       />
                     </label>
-                    <label className="text-[10px] font-bold uppercase">
+                    <label className="text-[11px] font-medium">
                       Department
                       <select
                         value={conversion.departmentId}
@@ -842,7 +813,7 @@ export function RecruitmentPipeline({
                         ))}
                       </select>
                     </label>
-                    <label className="text-[10px] font-bold uppercase">
+                    <label className="text-[11px] font-medium">
                       Designation
                       <select
                         value={conversion.designationId}
@@ -862,7 +833,7 @@ export function RecruitmentPipeline({
                         ))}
                       </select>
                     </label>
-                    <label className="text-[10px] font-bold uppercase">
+                    <label className="text-[11px] font-medium">
                       Reporting manager
                       <select
                         value={conversion.managerEmployeeId}
@@ -882,7 +853,7 @@ export function RecruitmentPipeline({
                         ))}
                       </select>
                     </label>
-                    <label className="text-[10px] font-bold uppercase">
+                    <label className="text-[11px] font-medium">
                       Joining date
                       <input
                         type="date"
@@ -896,14 +867,14 @@ export function RecruitmentPipeline({
                         className="mt-1 w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-1)] p-2 text-xs normal-case"
                       />
                     </label>
-                    <div className="text-[10px] font-bold uppercase">
+                    <div className="text-[11px] font-medium">
                       Workspace role
                       <div className="mt-1 rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-2)] p-2 text-xs normal-case">
                         {conversionOptions.roleName}
                       </div>
                     </div>
                     {conversionOptions.offerStatus && (
-                      <p className="col-span-2 text-[10px] text-[var(--text-secondary)]">
+                      <p className="col-span-2 text-[11px] text-[var(--text-secondary)]">
                         Offer source:{" "}
                         {String(conversionOptions.offerStatus).toUpperCase()} ·
                         version {conversionOptions.offerVersion || "current"}
@@ -916,7 +887,7 @@ export function RecruitmentPipeline({
                 )}
                 {offerOverrideRequired && (
                   <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3">
-                    <label className="text-[10px] font-bold uppercase text-amber-900">
+                    <label className="text-[11px] font-medium text-amber-900">
                       Admin override reason
                       <textarea
                         value={offerOverrideReason}
