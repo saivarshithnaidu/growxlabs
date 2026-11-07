@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const { data: leaves, error } = await supabaseAdmin
       .from("leave_requests")
-      .select("*, employee:employees(full_name, employee_id)")
+      .select("*, employee:employees!employee_id(full_name, employee_id)")
       .order("created_at", { ascending: false });
 
     if (error) throw error;

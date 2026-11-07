@@ -139,9 +139,8 @@ export const MODULES: NavModule[] = [
         { label: "People Overview", href: "/admin/hrms/dashboard", icon: LayoutDashboard },
       ]},
       { label: "DIRECTORY", items: [
-        { label: "People Core", href: "/admin/people", icon: Shield },
         { label: "My Team", href: "/admin/people/team", icon: UsersRound },
-        { label: "Employees", href: "/admin/hrms/employees", icon: Contact },
+        { label: "Employees", href: "/admin/people", icon: Contact },
         { label: "Departments", href: "/admin/people/departments", icon: Building2 },
         { label: "Designations", href: "/admin/people/designations", icon: Layers },
       ]},

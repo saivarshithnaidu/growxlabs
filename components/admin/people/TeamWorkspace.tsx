@@ -1,5 +1,71 @@
 "use client";
-import { useEffect,useState } from "react";
-import { CircleAlert, Network, Users } from "lucide-react";
-type Member={id:string;employee_number:string;name:string;manager_employee_id:string;depth:number};
-export default function TeamWorkspace(){const[items,setItems]=useState<Member[]>([]),[loading,setLoading]=useState(true),[error,setError]=useState("");useEffect(()=>{fetch("/api/v1/hrms/people/me/team").then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.detail||d.error);setItems(d.items||[])}).catch(e=>setError(e.message)).finally(()=>setLoading(false))},[]);return <div className="space-y-6"><header className="border-b border-[var(--border-subtle)] pb-6"><div className="mb-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#0075de]">Manager workspace</div><h1 className="text-3xl font-extrabold">My team</h1><p className="mt-2 text-xs text-[var(--text-secondary)]">Direct and indirect reporting structure.</p></header>{error&&<div className="flex gap-2 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-xs text-red-600"><CircleAlert size={15}/>{error}</div>}<section className="rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] p-5">{loading?<div className="h-40 animate-pulse rounded bg-[var(--surface-2)]"/>:items.length?items.map(member=><div key={member.id} style={{marginLeft:(member.depth-1)*28}} className="relative mb-3 flex items-center gap-3 rounded-xl border border-[var(--border-subtle)] p-3"><div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0075de]/10 text-[#0075de]"><Users size={14}/></div><div><b className="text-xs">{member.name}</b><p className="text-[10px] text-[var(--text-muted)]">{member.employee_number} · Level {member.depth}</p></div></div>):<div className="py-16 text-center text-xs text-[var(--text-muted)]"><Network className="mx-auto mb-3" size={28}/>No reporting employees found.</div>}</section></div>}
+
+import { useEffect, useState } from "react";
+import { Network, Users } from "lucide-react";
+import { Avatar, Badge, DataTable, type DataTableColumn } from "@/src/components/ui";
+import { EmptyState, ErrorState, ListPage } from "@/src/components/patterns";
+import { useAdminBreadcrumb } from "@/lib/admin-nav";
+import { fetchJson, statusLabel, STATUS_BADGE, type Employee } from "./people-data";
+
+type Member = Employee & { depth: number };
+
+/* The signed-in person's reports. Reporting lines come from each employee's manager field. */
+export default function TeamWorkspace() {
+  const breadcrumb = useAdminBreadcrumb();
+  const [members, setMembers] = useState<Member[]>([]);
+  const [linked, setLinked] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  async function load() {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await fetchJson<{ linked: boolean; members: Member[] }>("/api/hrms/team");
+      setLinked(data.linked);
+      setMembers(data.members || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Your team couldn't load.");
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => { load(); }, []);
+
+  const columns: DataTableColumn<Member>[] = [
+    {
+      id: "name",
+      header: "Name",
+      width: "40%",
+      cell: (m) => (
+        <span className="flex min-w-0 items-center gap-2.5" style={{ paddingLeft: (m.depth - 1) * 24 }}>
+          <Avatar name={m.full_name} size={28} />
+          <span className="ds-t-body-strong truncate text-[var(--text-primary)]">{m.full_name}</span>
+        </span>
+      ),
+    },
+    { id: "designation", header: "Designation", cell: (m) => m.designation?.title || <span className="text-[var(--text-disabled)]">Not set</span> },
+    { id: "reports", header: "Reports", cell: (m) => (m.depth === 1 ? "Direct" : "Indirect") },
+    { id: "status", header: "Status", cell: (m) => <Badge variant={STATUS_BADGE[m.status || ""] || "neutral"}>{statusLabel(m.status)}</Badge> },
+  ];
+
+  return (
+    <ListPage header={{ title: "My team", breadcrumb }}>
+      {error ? (
+        <ErrorState title="Your team couldn't load" description={error} onRetry={load} />
+      ) : !loading && !linked ? (
+        <EmptyState icon={<Users size={20} />} title="Your login isn't linked to an employee" description="Add an employee with the same email as your login to see your team here." />
+      ) : (
+        <DataTable
+          label="My team"
+          columns={columns}
+          rows={members}
+          getRowId={(m) => m.id}
+          loading={loading}
+          hideToolbar
+          emptyState={<EmptyState icon={<Network size={20} />} title="No one reports to you yet" description="Set a manager on an employee's profile to build reporting lines." />}
+        />
+      )}
+    </ListPage>
+  );
+}

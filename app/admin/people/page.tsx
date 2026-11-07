@@ -1,5 +1,5 @@
-import PeopleDirectory from "@/components/admin/people/PeopleDirectory";
+import EmployeesDirectory from "@/components/admin/people/EmployeesDirectory";
 
 export default function PeoplePage() {
-  return <PeopleDirectory />;
+  return <EmployeesDirectory />;
 }
